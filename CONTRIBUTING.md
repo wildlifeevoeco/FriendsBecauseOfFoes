@@ -6,3 +6,4 @@ To elaborate on...
 * Careful pushing large files/don't do it
 * add to the output table in README.md
 * subfolders in input, output and R 
+* rebase
