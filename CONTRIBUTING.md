@@ -7,3 +7,4 @@ To elaborate on...
 * add to the output table in README.md
 * subfolders in input, output and R 
 * rebase
+* update R and R packages
