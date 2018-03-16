@@ -7,4 +7,9 @@ To elaborate on...
 * add to the output table in README.md
 * subfolders in input, output and R 
 * rebase
-* update R and R packages
+* update R and R packages, Rstudio
+* see style guide
+* no need to put dates in file names, that's what version controlling is for
+* objects have proper descriptive names (unless tabular DT, locs)
+* anyone should be able to pick up after where you left off
+
