@@ -1,3 +1,3 @@
 # TODO
 
-* determine if absolute or relative angle is more relevant
+TODO: determine if absolute or relative angle is more relevant
