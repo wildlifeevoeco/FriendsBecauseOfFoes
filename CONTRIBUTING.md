@@ -9,10 +9,7 @@ Commits should be atomic:
 Careful pushing large files/don't do it
 
 ## Pulling
-Often, we can use `git rebase` instead of `git merge`, especially if you are pushing your changes and upstream changes are unrelated. See [this great stackoverflow answer](https://stackoverflow.com/a/804156/3481674).
-
-[<img src="https://wac-cdn.atlassian.com/dam/jcr:e229fef6-2c2f-4a4f-b270-e1e1baa94055/02.svg?cdnVersion=ka" style="width: 30%; height: 30%">](merge)[<img src="https://wac-cdn.atlassian.com/dam/jcr:5b153a22-38be-40d0-aec8-5f2fffc771e5/03.svg?cdnVersion=ka" style="width: 30%; height: 30%">](merge)
-
+Often, we can use `git rebase` instead of `git merge`, especially if you are pushing your changes and upstream changes are unrelated. See this [great stackoverflow answer](https://stackoverflow.com/a/804156/3481674) and this [tutorial](https://www.atlassian.com/git/tutorials/merging-vs-rebasing). 
 
 
 # Issues
