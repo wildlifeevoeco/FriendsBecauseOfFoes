@@ -27,3 +27,10 @@ Method development folder, to isolate development of methods from reproducible a
 script               | output path & name            | description
 ---------------------|-------------------------------|--------------------
 Example.R            | output/example                | example description
+                     |                               | 
+                     |                               | 
+                     |                               | 
+                     |                               | 
+                     |                               | 
+                     |                               | 
+                     |                               | 
