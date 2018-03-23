@@ -47,61 +47,37 @@ bear[, uniqueN(ANIMAL_ID)]
 
 # How many unique animals per year?
 bear[, .('N Unique Bears' = uniqueN(ANIMAL_ID)), by = year]
-# knitr::kable(bear[, .('N Unique Bears' = uniqueN(ANIMAL_ID)), by = year])
+# kable(bear[, .('N Unique Bears' = uniqueN(ANIMAL_ID)), by = year])
 
+# Temporal distribution of locs
+kable(bear[order(month), .N, by = month])
+kable(bear[order(year), .N, by = year])
 
-bear[Map_Quality == 'Y',
-     {print(ggplot() + 
-        geom_point(aes(X_COORD, Y_COORD, color = factor(ANIMAL_ID))) + 
-        guides(color = FALSE) + 
-        labs(title = paste('year: ', .BY[[1]])))
-      1},
+### Plots ----
+# Plot locs by year on NL bounds 
+PlotLocsBy <- function(DT, bounds, by){
+  print(
+    ggplot(nlBounds) +
+    geom_polygon(aes(long, lat, group = group), 
+                 color = 'black', fill = 'grey', alpha = 0.25) + 
+    geom_point(aes(EASTING, NORTHING, color = factor(ANIMAL_ID)), 
+               data = DT) + 
+    guides(color = FALSE) + 
+    labs(title = paste('year: ', by)))
+  return(1)
+}
+
+# To PDF 
+pdf('graphics/data-prep/bear-locs-by-year.pdf')
+bear[NAV == '3D',
+     PlotLocsBy(.SD, nlBounds, .BY[[1]]),
      by = year]
+dev.off()
 
 
-ggplot(bear) +
-  geom_point(aes(Y_COORD, X_COORD, color = factor(ANIMAL_ID)),
-             alpha = 0.5) + 
-  guides(color = FALSE)
-
-bear2 <- subset(bear, Y_COORD > 40 & Y_COORD < 60 & X_COORD < -30 & X_COORD > -70)
-
-bear2008 = subset(bear2, Year == '2008')
-bear2009 = subset(bear2, Year == '2009')
-bear2010 = subset(bear2, Year == '2010')
-bear2011 = subset(bear2, Year == '2011')
-bear2012 = subset(bear2, Year == '2012')
-bear2013 = subset(bear2, Year == '2013')
-
-
-
-## quick look at where the bears are located:
-aa = ggplot(bear2008[order(datetime)]) +
-  geom_path(aes(X_COORD, Y_COORD, color = factor(ANIMAL_ID),
-                group = factor(ANIMAL_ID)), alpha =0.5) +
-  theme(legend.position = 'none')
-bb = ggplot(bear2009[order(datetime)]) +
-  geom_path(aes(X_COORD, Y_COORD, color = factor(ANIMAL_ID),
-                group = factor(ANIMAL_ID)), alpha =0.5) +
-  theme(legend.position = 'none')
-cc = ggplot(bear2010[order(datetime)]) +
-  geom_path(aes(X_COORD, Y_COORD, color = factor(ANIMAL_ID),
-                group = factor(ANIMAL_ID)), alpha =0.5) +
-  theme(legend.position = 'none')
-dd = ggplot(bear2011[order(datetime)]) +
-  geom_path(aes(X_COORD, Y_COORD, color = factor(ANIMAL_ID),
-                group = factor(ANIMAL_ID)), alpha =0.5) +
-  theme(legend.position = 'none')
-ee = ggplot(bear2012[order(datetime)]) +
-  geom_path(aes(X_COORD, Y_COORD, color = factor(ANIMAL_ID),
-                group = factor(ANIMAL_ID)), alpha =0.5) +
-  theme(legend.position = 'none')
-ff = ggplot(bear2013[order(datetime)]) +
-  geom_path(aes(X_COORD, Y_COORD, color = factor(ANIMAL_ID),
-                group = factor(ANIMAL_ID)), alpha =0.5) +
-  theme(legend.position = 'none')
-grid.arrange(aa,bb,cc,dd,ee,ff,ncol = 3, nrow = 2)
-
-
-
-
+# Temporal distribution of locs
+ggplot(bear[order(month), .N, by = .(month, year)]) + 
+  geom_tile(aes(month, year, fill = N)) + 
+  scale_x_discrete(breaks = seq(1:12)) +  
+  scale_fill_distiller(type = "div", palette = 6, direction = -1) + 
+  coord_equal()
