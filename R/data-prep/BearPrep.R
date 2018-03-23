@@ -1,4 +1,4 @@
-### Wolf Step Length Calculation ----
+### Bear data preparation ----
 # Authors: Quinn Webber, Alec Robitaille
 # Purpose: To prepare bear data for EWC
 # Inputs: Bear relocation data
@@ -20,6 +20,9 @@ dropCols <- c('FIX_ID','VENDOR_CL','AGE','COLLAR_FILE_ID','EXCLUDE','DOP','LOCQU
 # Read in bear data, dropping above columns
 bear <- fread('input/locs/Bears.csv',
               drop = dropCols)
+
+# UTM zone 21N
+utm21N <- '+proj=utm +zone=21 ellps=WGS84'
 
 # NL Bounds shapefile
 nlBounds <- rgdal::readOGR('input/etc/NL-Bounds/NL-Bounds.shp') %>% 
