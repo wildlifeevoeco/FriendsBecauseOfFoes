@@ -6,12 +6,17 @@
 ## Project structure
 ```
 .
+├── input
+│   └── locs
+│       ├── Bears.csv
+│       └── Coyote.csv
+├── R
+│   ├── data-prep
+│   └── method-devel
 ├── CONTRIBUTING.md
 ├── ewc.Rproj
 ├── LICENSE
-├── R
-│   └── method-devel
-│       └── AbsoluteTurnAngle.R
+├── NOTES.md
 ├── README.md
 └── TODO.md
 ```
