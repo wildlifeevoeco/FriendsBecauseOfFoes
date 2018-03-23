@@ -35,7 +35,11 @@ bear[, datetime := as.POSIXct(paste(idate, itime))]
 
 bear[, julday := yday(idate)]
 bear[, year := year(idate)]
+bear[, month := month(idate)]
 
+## Project coordinates to UTM
+utm21N <- '+proj=utm +zone=21 ellps=WGS84'
+bear[, c('EASTING', 'NORTHING') := as.data.table(project(cbind(X_COORD, Y_COORD), utm21N))]
 
 ### Summary information ----
 # How many unique animals?
