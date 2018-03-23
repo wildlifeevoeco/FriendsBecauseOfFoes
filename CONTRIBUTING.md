@@ -35,6 +35,9 @@ Use the [Issue Board](https://gitlab.com/WEEL_grp/ewc/issues) to discuss decisio
 
 <!-- labels, separate boards --> 
 
+If you'd to like include a table, use `knitr::kable` and copy+paste the 
+output. 
+
 # Documentation
 ## CONTRIBUTING
 (this document)
