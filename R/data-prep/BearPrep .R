@@ -40,6 +40,7 @@ bear2013 = subset(bear2, Year == "2013")
 
 
 
+## quick look at where the bears are located:
 aa = ggplot(bear2008[order(datetime)]) +
   geom_path(aes(X_COORD, Y_COORD, color = factor(ANIMAL_ID),
                 group = factor(ANIMAL_ID)), alpha =0.5) +
