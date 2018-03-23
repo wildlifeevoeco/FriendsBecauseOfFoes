@@ -1,79 +1,85 @@
-
-library(data.table)
-library(ggplot2)
-library(gridExtra)
-
-
-coyote = fread("input/Coyote.csv")
-
-
-##### COYOTE ######
-length(unique(coyote$ANIMAL_ID))
-
-coyote[,c("FIX_ID","VENDOR_CL","AGE","COLLAR_FILE_ID","EXCLUDE","DOP","LOCQUAL",
-          "VALIDATED","COLLAR_TYPE_CL","COLLAR_ID","Fix_Time_Delta","Map_Quality",
-          "EPSG_CODE","NAV") := NULL]
-
-coyote[, c("X_COORD", "Y_COORD") := lapply(.SD, as.numeric), .SDcols = c("X_COORD", "Y_COORD")]
-
-coyote[, c("Date","Time") := .(as.IDate(FIX_DATE, format = "%d.%m.%Y"), as.ITime(FIX_TIME, format = "%H:%M:%S"))]
-coyote[,datetime := as.POSIXct(paste(FIX_DATE,FIX_TIME), format = "%Y-%m-%d %H:%M:%S" )]
-coyote[ , julday := yday(FIX_DATE)]
-coyote[ , Year := year(FIX_DATE)]
-
-coyote[, uniqueN(ANIMAL_ID), by = "Year"]
+### Coyote data preparation ----
+# Authors: Quinn Webber, Alec Robitaille
+# Purpose: To prepare coyote data for EWC
+# Inputs: Coyote relocation data
+# Outputs: 
+# Copyright: ./LICENSE.md 
 
 
-length(unique(coyote$ANIMAL_ID))
-unique(coyote$HERD)
-unique(coyote$Year)
+### Packages ----
+libs <- c('data.table', 'ggplot2', 'gridExtra', 
+          'knitr', 'sp', 'rgdal', 'magrittr')
+lapply(libs, require, character.only = TRUE)
 
-coyote2 <- subset(coyote, Y_COORD > 40 & Y_COORD < 60 & X_COORD < -30 & X_COORD > -60)
+### Input data ----
+dropCols <- c('FIX_ID','VENDOR_CL','AGE','COLLAR_FILE_ID','EXCLUDE','DOP','LOCQUAL',
+              'VALIDATED','COLLAR_TYPE_CL','COLLAR_ID','Fix_Time_Delta','EPSG_CODE')
+              #'Map_Quality','NAV')
 
-ggplot(coyote2) +
-  geom_point(aes(X_COORD, Y_COORD, color = factor(ANIMAL_ID)),alpha = 0.5) +
-  theme(legend.position = 'none') +
-  facet_wrap(~Year)
+# Read in coyote data, dropping above columns
+coyote <- fread('input/locs/Coyote.csv',
+                drop = dropCols)
 
+# UTM zone 21N
+utm21N <- '+proj=utm +zone=21 ellps=WGS84'
 
-
-
-coy2008 = subset(coyote2, Year == "2008")
-coy2009 = subset(coyote2, Year == "2009")
-coy2010 = subset(coyote2, Year == "2010")
-coy2011 = subset(coyote2, Year == "2011")
-coy2012 = subset(coyote2, Year == "2012")
-coy2013 = subset(coyote2, Year == "2013")
-coy2014 = subset(coyote2, Year == "2014")
-
+# NL Bounds shapefile
+nlBounds <- rgdal::readOGR('input/etc/NL-Bounds/NL-Bounds.shp') %>% 
+  spTransform(CRSobj = utm21N)
 
 
-aa = ggplot(coy2008[order(datetime)]) +
-  geom_path(aes(X_COORD, Y_COORD, color = factor(ANIMAL_ID),
-                group = factor(ANIMAL_ID)), alpha =0.5) +
-  theme(legend.position = 'none')
-bb = ggplot(coy2009[order(datetime)]) +
-  geom_path(aes(X_COORD, Y_COORD, color = factor(ANIMAL_ID),
-                group = factor(ANIMAL_ID)), alpha =0.5) +
-  theme(legend.position = 'none')
-cc = ggplot(coy2010[order(datetime)]) +
-  geom_path(aes(X_COORD, Y_COORD, color = factor(ANIMAL_ID),
-                group = factor(ANIMAL_ID)), alpha =0.5) +
-  theme(legend.position = 'none')
-dd = ggplot(coy2011[order(datetime)]) +
-  geom_path(aes(X_COORD, Y_COORD, color = factor(ANIMAL_ID),
-                group = factor(ANIMAL_ID)), alpha =0.5) +
-  theme(legend.position = 'none')
-ee = ggplot(coy2012[order(datetime)]) +
-  geom_path(aes(X_COORD, Y_COORD, color = factor(ANIMAL_ID),
-                group = factor(ANIMAL_ID)), alpha =0.5) +
-  theme(legend.position = 'none')
-ff = ggplot(coy2013[order(datetime)]) +
-  geom_path(aes(X_COORD, Y_COORD, color = factor(ANIMAL_ID),
-                group = factor(ANIMAL_ID)), alpha =0.5) +
-  theme(legend.position = 'none')
-ee = ggplot(coy2014[order(datetime)]) +
-  geom_path(aes(X_COORD, Y_COORD, color = factor(ANIMAL_ID),
-                group = factor(ANIMAL_ID)), alpha =0.5) +
-  theme(legend.position = 'none')
-grid.arrange(aa,bb,cc,dd,ee,ff,ee,ncol = 4, nrow = 2)
+### Add fields ----
+## Date time fields
+coyote[, idate := as.IDate(FIX_DATE)]
+coyote[, itime := as.ITime(FIX_TIME)]
+
+coyote[, datetime := as.POSIXct(paste(idate, itime))]
+
+coyote[, julday := yday(idate)]
+coyote[, year := year(idate)]
+coyote[, month := month(idate)]
+
+## Project coordinates to UTM
+utm21N <- '+proj=utm +zone=21 ellps=WGS84'
+coyote[, c('EASTING', 'NORTHING') := as.data.table(project(cbind(X_COORD, Y_COORD), utm21N))]
+
+### Summary information ----
+# How many unique animals?
+coyote[, uniqueN(ANIMAL_ID)]
+
+# How many unique animals per year?
+coyote[, .('N Unique coyotes' = uniqueN(ANIMAL_ID)), by = year]
+# kable(coyote[, .('N Unique coyotes' = uniqueN(ANIMAL_ID)), by = year])
+
+# Temporal distribution of locs
+kable(coyote[order(month), .N, by = month])
+kable(coyote[order(year), .N, by = year])
+
+### Plots ----
+# Plot locs by year on NL bounds 
+PlotLocsBy <- function(DT, bounds, by){
+  print(
+    ggplot(nlBounds) +
+      geom_polygon(aes(long, lat, group = group), 
+                   color = 'black', fill = 'grey', alpha = 0.25) + 
+      geom_point(aes(EASTING, NORTHING, color = factor(ANIMAL_ID)), 
+                 data = DT) + 
+      guides(color = FALSE) + 
+      labs(title = paste('year: ', by)))
+  return(1)
+}
+
+# To PDF 
+pdf('graphics/data-prep/coyote-locs-by-year.pdf')
+coyote[NAV == '3D',
+     PlotLocsBy(.SD, nlBounds, .BY[[1]]),
+     by = year]
+dev.off()
+
+
+# Temporal distribution of locs
+ggplot(coyote[order(month), .N, by = .(month, year)]) + 
+  geom_tile(aes(month, year, fill = N)) + 
+  scale_x_discrete(breaks = seq(1:12)) +  
+  scale_fill_distiller(type = "div", palette = 6, direction = -1) + 
+  coord_equal()
