@@ -1,9 +1,10 @@
 
 library(data.table)
 library(ggplot2)
+library(gridExtra)
 
-coyote = fread("/input/Coyote.csv")
 
+coyote = fread("input/Coyote.csv")
 
 
 ##### COYOTE ######
@@ -46,7 +47,6 @@ coy2013 = subset(coyote2, Year == "2013")
 coy2014 = subset(coyote2, Year == "2014")
 
 
-library(gridExtra)
 
 aa = ggplot(coy2008[order(datetime)]) +
   geom_path(aes(X_COORD, Y_COORD, color = factor(ANIMAL_ID),
