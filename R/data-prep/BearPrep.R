@@ -7,7 +7,8 @@
 
 
 ### Packages ----
-libs <- c('data.table', 'ggplot2', 'gridExtra', 'knitr')
+libs <- c('data.table', 'ggplot2', 'gridExtra', 
+          'knitr', 'sp', 'rgdal', 'magrittr')
 lapply(libs, require, character.only = TRUE)
 
 
@@ -20,7 +21,9 @@ dropCols <- c('FIX_ID','VENDOR_CL','AGE','COLLAR_FILE_ID','EXCLUDE','DOP','LOCQU
 bear <- fread('input/locs/Bears.csv',
               drop = dropCols)
 
-
+# NL Bounds shapefile
+nlBounds <- rgdal::readOGR('input/etc/NL-Bounds/NL-Bounds.shp') %>% 
+  spTransform(CRSobj = utm21N)
 
 
 ### Add fields ----
