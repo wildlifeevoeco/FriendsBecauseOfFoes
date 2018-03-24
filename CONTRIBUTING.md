@@ -14,6 +14,8 @@ Objects should have descriptive names, unless very generic (eg: DT, locs).
 This means we need to properly document our code, use the [Issue Board](https://gitlab.com/WEEL_grp/ewc/issues) to track progress, discuss decisions/challenges/successes!
 
 # Git
+See the [Getting Started with Git guide](https://gitlab.com/WEEL_grp/core/blob/master/Guides/Getting%20Started%20With%20Git/Getting_Started_With_Git.pdf).  
+
 ## Commits
 Commits should be atomic:
 
@@ -50,6 +52,9 @@ Add output files (intermediate or final) to the table.
 Track TODOs, tasks, etc. 
 
 Let's favor the [Issue Board](https://gitlab.com/WEEL_grp/ewc/issues).  
+
+Similarly, let's try and put comments/notes that we'd otherwise put inside scripts on the Issue Board. 
+
 
 ## LICENSE
 License used for this project. 
