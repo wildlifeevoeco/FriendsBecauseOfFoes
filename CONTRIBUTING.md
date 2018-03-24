@@ -33,7 +33,7 @@ Often, we can use `git rebase` instead of `git merge`, especially if you are pus
 
 
 # Issues
-Use the [Issue Board](https://gitlab.com/WEEL_grp/ewc/issues) to discuss decisions, problems, develop methods. Learn more [here](https://docs.gitlab.com/ee/user/project/issue_board.html). 
+Use the [IssueS](https://gitlab.com/WEEL_grp/ewc/issues) to discuss decisions, problems, develop methods. Learn more [here](https://docs.gitlab.com/ee/user/project/issue_board.html). You can look at Issues as a [list](https://gitlab.com/WEEL_grp/ewc/issues) or a [board](https://gitlab.com/WEEL_grp/ewc/boards?=). Note there are multiple boards in the dropdown menu. 
 
 <!-- labels, separate boards --> 
 
