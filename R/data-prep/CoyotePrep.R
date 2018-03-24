@@ -2,7 +2,8 @@
 # Authors: Quinn Webber, Alec Robitaille
 # Purpose: To prepare coyote data for EWC
 # Inputs: Coyote relocation data
-# Outputs: 
+# Outputs: Prepped coyote data as RDS
+# Project: Easter Week Challenge 2018
 # Copyright: ./LICENSE.md 
 
 

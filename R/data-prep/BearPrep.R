@@ -2,7 +2,8 @@
 # Authors: Quinn Webber, Alec Robitaille
 # Purpose: To prepare bear data for EWC
 # Inputs: Bear relocation data
-# Outputs: 
+# Outputs: Prepared bear data as RDS
+# Project: Easter Week Challenge 2018
 # Copyright: ./LICENSE.md 
 
 
