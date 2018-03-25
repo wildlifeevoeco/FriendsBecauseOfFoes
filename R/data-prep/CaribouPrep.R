@@ -13,7 +13,7 @@
 
 
 ### Packages ----
-libs <- c('data.table', 'ggplot2', 'gridExtra', 
+libs <- c('data.table', 'ggplot2', 
           'knitr', 'sp', 'rgdal', 'magrittr')
 lapply(libs, require, character.only = TRUE)
 
@@ -28,11 +28,11 @@ caribou <- fread('input/locs/Caribous.csv',
              drop = dropCols)
 
 # UTM zone 21N
-utm21N <- '+proj=utm +zone=21 ellps=WGS84'
+utm <- '+proj=utm +zone=21 ellps=WGS84'
 
 # NL Bounds shapefile
 nlBounds <- rgdal::readOGR('input/etc/NL-Bounds/NL-Bounds.shp') %>% 
-  spTransform(CRSobj = utm21N)
+  spTransform(CRSobj = utm)
 
 
 ### Add fields ----
@@ -47,8 +47,7 @@ caribou[, year := year(idate)]
 caribou[, month := month(idate)]
 
 ## Project coordinates to UTM
-utm21N <- '+proj=utm +zone=21 ellps=WGS84'
-caribou[, c('EASTING', 'NORTHING') := as.data.table(project(cbind(X_COORD, Y_COORD), utm21N))]
+caribou[, c('EASTING', 'NORTHING') := as.data.table(project(cbind(X_COORD, Y_COORD), utm))]
 
 ### Summary information ----
 # How many unique animals?
@@ -85,8 +84,7 @@ dev.off()
 
 
 # Temporal distribution of locs
-ggplot(caribou[order(month), .N, by = .(month, year)]) + 
-  geom_tile(aes(month, year, fill = N)) + 
-  scale_x_discrete(breaks = seq(1:12)) +  
-  scale_fill_distiller(type = "div", palette = 6, direction = -1) + 
-  coord_equal()
+source('R/functions/TemporalDistributionFigure.R')
+TempDistFig(caribou)
+
+ggsave('graphics/data-prep/caribou-temp-dist.png', TempDistFig(caribou), 'png')

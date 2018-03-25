@@ -8,7 +8,7 @@
 
 
 ### Packages ----
-libs <- c('data.table', 'ggplot2', 'gridExtra', 
+libs <- c('data.table', 'ggplot2', 
           'knitr', 'sp', 'rgdal', 'magrittr')
 lapply(libs, require, character.only = TRUE)
 
@@ -40,7 +40,6 @@ idCol <- 'ANIMAL_ID'
 source('R/functions/DatePrep.R')
 DatePrep(coyote, dateCol, timeCol)
 
-
 ## Project coordinates to UTM
 coyote[, c('EASTING', 'NORTHING') := as.data.table(project(cbind(get(xCol), get(yCol)), utm))]
 
@@ -49,7 +48,7 @@ coyote[, c('EASTING', 'NORTHING') := as.data.table(project(cbind(get(xCol), get(
 coyote[, uniqueN(get(idCol))]
 
 # How many unique animals per year?
-coyote[, .('N Unique coyotes' = uniqueN(idCol)), by = yr]
+coyote[, .('N Unique coyotes' = uniqueN(get(idCol))), by = yr]
 # kable(coyote[, .('N Unique coyotes' = uniqueN(get(idCol))), by = yr])
 
 # Temporal distribution of locs
@@ -79,8 +78,7 @@ dev.off()
 
 
 # Temporal distribution of locs
-ggplot(coyote[order(mnth), .N, by = .(mnth, yr)]) + 
-  geom_tile(aes(mnth, yr, fill = N)) + 
-  scale_x_discrete(breaks = seq(1:12)) +  
-  scale_fill_distiller(type = "div", palette = 6, direction = -1) + 
-  coord_equal()
+source('R/functions/TemporalDistributionFigure.R')
+TempDistFig(coyote)
+
+ggsave('graphics/data-prep/coyote-temp-dist.png', TempDistFig(coyote), 'png')

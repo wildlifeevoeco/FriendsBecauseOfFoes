@@ -1,5 +1,5 @@
 ### Wolf data preparation ----
-# Authors: Quinn Webber, Alec Robitaille
+# Authors: Alec Robitaille
 # Purpose: To prepare wolf data for EWC
 # Inputs: Wolf relocation data
 # Outputs: Prepared wolf data as RDS
@@ -13,7 +13,7 @@
 
 
 ### Packages ----
-libs <- c('data.table', 'ggplot2', 'gridExtra', 
+libs <- c('data.table', 'ggplot2', 
           'knitr', 'sp', 'rgdal', 'magrittr')
 lapply(libs, require, character.only = TRUE)
 
@@ -85,8 +85,7 @@ dev.off()
 
 
 # Temporal distribution of locs
-ggplot(wolf[order(month), .N, by = .(month, year)]) + 
-  geom_tile(aes(month, year, fill = N)) + 
-  scale_x_discrete(breaks = seq(1:12)) +  
-  scale_fill_distiller(type = "div", palette = 6, direction = -1) + 
-  coord_equal()
+source('R/functions/TemporalDistributionFigure.R')
+TempDistFig(wolf)
+
+ggsave('graphics/data-prep/wolf-temp-dist.png', TempDistFig(wolf), 'png')

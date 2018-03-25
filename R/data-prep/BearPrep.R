@@ -80,8 +80,7 @@ dev.off()
 
 
 # Temporal distribution of locs
-ggplot(bear[order(mnth), .N, by = .(mnth, yr)]) + 
-  geom_tile(aes(mnth, yr, fill = N)) + 
-  scale_x_discrete(breaks = seq(1:12)) +  
-  scale_fill_distiller(type = "div", palette = 6, direction = -1) + 
-  coord_equal()
+source('R/functions/TemporalDistributionFigure.R')
+TempDistFig(bear)
+
+ggsave('graphics/data-prep/bear-temp-dist.png', TempDistFig(bear), 'png')
