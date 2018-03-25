@@ -35,7 +35,8 @@ Often, we can use `git rebase` instead of `git merge`, especially if you are pus
 
 
 # Issues
-Use the [IssueS](https://gitlab.com/WEEL_grp/ewc/issues) to discuss decisions, problems, develop methods. Learn more [here](https://docs.gitlab.com/ee/user/project/issue_board.html). You can look at Issues as a [list](https://gitlab.com/WEEL_grp/ewc/issues) or a [board](https://gitlab.com/WEEL_grp/ewc/boards?=). Note there are multiple boards in the dropdown menu. 
+Use the [Issues](https://gitlab.com/WEEL_grp/ewc/issues) to discuss decisions, problems, develop methods. Learn more 
+[here](https://docs.gitlab.com/ee/user/project/issue_board.html). You can look at Issues as a [list](https://gitlab.com/WEEL_grp/ewc/issues) or a [board](https://gitlab.com/WEEL_grp/ewc/boards?=). Note there are multiple boards in the drop-down menu. 
 
 <!-- labels, separate boards --> 
 
@@ -53,7 +54,7 @@ Add output files (intermediate or final) to the table.
 ##  TODO
 Track TODOs, tasks, etc. 
 
-Let's favor the [Issue Board](https://gitlab.com/WEEL_grp/ewc/issues).  
+Let's favour the [Issue Board](https://gitlab.com/WEEL_grp/ewc/issues).  
 
 Similarly, let's try and put comments/notes that we'd otherwise put inside scripts on the Issue Board. 
 
@@ -65,6 +66,6 @@ License used for this project.
 ## Project structure 
 See README.md and [Standard Project Structure](https://gitlab.com/WEEL_grp/core/tree/master/Guides/Standard%20Project%20Structure). 
 
-Use subfolders in `/input`, `/output`, and `/R` to organize. 
+Use sub-folders in `/input`, `/output`, and `/R` to organize. 
 
 No need to put dates in any file names, that's what Git is for. 
