@@ -7,7 +7,7 @@
 # Copyright: ./LICENSE.md 
 
 ### Packages ----
-libs <- c('data.table', 'ggplot2', 'gridExtra', 
+libs <- c('data.table', 'ggplot', 
           'knitr', 'sp', 'rgdal', 'magrittr')
 lapply(libs, require, character.only = TRUE)
 
@@ -42,6 +42,9 @@ timeCol <- 'time'
 source('R/functions/DatePrep.R')
 DatePrep(elk, dateCol, timeCol, dateFormat = '%d/%m/%Y')
 
+# Check!
+elk[sample(.N, 5), .(idate, itime, yr, mnth, julday)]
+
 # Drop old date time fields
 dropCol <- c('Year', 'Month', 'Day', 'Hour', 'Minute', 'time')
 elk[, (dropCol) := NULL]
@@ -65,9 +68,9 @@ kable(elk[order(yr), .N, by = yr])
 # Plot locs by year on NL bounds 
 PlotLocsBy <- function(DT, bounds, by){
   print(
-    ggplot(bounds) +
-      geom_polygon(aes(long, lat, group = group), 
-                   color = 'black', fill = 'grey', alpha = 0.25) + 
+    ggplot() + #bounds) +
+      # geom_polygon(aes(long, lat, group = group), 
+      #              color = 'black', fill = 'grey', alpha = 0.25) + 
       geom_point(aes(EASTING, NORTHING, color = factor(get(idCol))), 
                  data = DT) + 
       guides(color = FALSE) + 
@@ -77,15 +80,13 @@ PlotLocsBy <- function(DT, bounds, by){
 
 # To PDF 
 pdf('graphics/data-prep/elk-locs-by-year.pdf')
-elk[,
-     PlotLocsBy(.SD, bounds, .BY[[1]]),
+elk[order(yr),
+     PlotLocsBy(.SD, NULL, .BY[[1]]),
      by = yr]
 dev.off()
 
-
 # Temporal distribution of locs
-ggplot(elk[order(mnth), .N, by = .(mnth, yr)]) + 
-  geom_tile(aes(mnth, yr, fill = N)) + 
-  scale_x_discrete(breaks = seq(1:12)) +  
-  scale_fill_distiller(type = "div", palette = 6, direction = -1) + 
-  coord_equal()
+source('R/functions/TemporalDistributionFigure.R')
+TempDistFig(elk)
+
+ggsave('graphics/data-prep/elk-temp-dist.png', TempDistFig(elk), 'png')
