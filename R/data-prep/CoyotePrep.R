@@ -22,39 +22,39 @@ coyote <- fread('input/locs/Coyote.csv',
                 drop = dropCols)
 
 # UTM zone 21N
-utm21N <- '+proj=utm +zone=21 ellps=WGS84'
+utm <- '+proj=utm +zone=21 ellps=WGS84'
 
 # NL Bounds shapefile
 nlBounds <- rgdal::readOGR('input/etc/NL-Bounds/NL-Bounds.shp') %>% 
-  spTransform(CRSobj = utm21N)
+  spTransform(CRSobj = utm)
 
+### Variables ----
+xCol <- 'X_COORD'
+yCol <- 'Y_COORD'
+dateCol <- 'FIX_DATE'
+timeCol <- 'FIX_TIME'
+idCol <- 'ANIMAL_ID'
 
 ### Add fields ----
 ## Date time fields
-coyote[, idate := as.IDate(FIX_DATE)]
-coyote[, itime := as.ITime(FIX_TIME)]
+source('R/functions/DatePrep.R')
+DatePrep(coyote, dateCol, timeCol)
 
-coyote[, datetime := as.POSIXct(paste(idate, itime))]
-
-coyote[, julday := yday(idate)]
-coyote[, year := year(idate)]
-coyote[, month := month(idate)]
 
 ## Project coordinates to UTM
-utm21N <- '+proj=utm +zone=21 ellps=WGS84'
-coyote[, c('EASTING', 'NORTHING') := as.data.table(project(cbind(X_COORD, Y_COORD), utm21N))]
+coyote[, c('EASTING', 'NORTHING') := as.data.table(project(cbind(get(xCol), get(yCol)), utm))]
 
 ### Summary information ----
 # How many unique animals?
-coyote[, uniqueN(ANIMAL_ID)]
+coyote[, uniqueN(get(idCol))]
 
 # How many unique animals per year?
-coyote[, .('N Unique coyotes' = uniqueN(ANIMAL_ID)), by = year]
-# kable(coyote[, .('N Unique coyotes' = uniqueN(ANIMAL_ID)), by = year])
+coyote[, .('N Unique coyotes' = uniqueN(idCol)), by = yr]
+# kable(coyote[, .('N Unique coyotes' = uniqueN(get(idCol))), by = yr])
 
 # Temporal distribution of locs
-kable(coyote[order(month), .N, by = month])
-kable(coyote[order(year), .N, by = year])
+kable(coyote[order(mnth), .N, by = mnth])
+kable(coyote[order(yr), .N, by = yr])
 
 ### Plots ----
 # Plot locs by year on NL bounds 
@@ -63,7 +63,7 @@ PlotLocsBy <- function(DT, bounds, by){
     ggplot(nlBounds) +
       geom_polygon(aes(long, lat, group = group), 
                    color = 'black', fill = 'grey', alpha = 0.25) + 
-      geom_point(aes(EASTING, NORTHING, color = factor(ANIMAL_ID)), 
+      geom_point(aes(EASTING, NORTHING, color = factor(get(idCol))), 
                  data = DT) + 
       guides(color = FALSE) + 
       labs(title = paste('year: ', by)))
@@ -74,13 +74,13 @@ PlotLocsBy <- function(DT, bounds, by){
 pdf('graphics/data-prep/coyote-locs-by-year.pdf')
 coyote[NAV == '3D',
      PlotLocsBy(.SD, nlBounds, .BY[[1]]),
-     by = year]
+     by = yr]
 dev.off()
 
 
 # Temporal distribution of locs
-ggplot(coyote[order(month), .N, by = .(month, year)]) + 
-  geom_tile(aes(month, year, fill = N)) + 
+ggplot(coyote[order(mnth), .N, by = .(mnth, yr)]) + 
+  geom_tile(aes(mnth, yr, fill = N)) + 
   scale_x_discrete(breaks = seq(1:12)) +  
   scale_fill_distiller(type = "div", palette = 6, direction = -1) + 
   coord_equal()
