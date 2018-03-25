@@ -23,39 +23,39 @@ bear <- fread('input/locs/Bears.csv',
               drop = dropCols)
 
 # UTM zone 21N
-utm21N <- '+proj=utm +zone=21 ellps=WGS84'
+utm <- '+proj=utm +zone=21 ellps=WGS84'
 
 # NL Bounds shapefile
 nlBounds <- rgdal::readOGR('input/etc/NL-Bounds/NL-Bounds.shp') %>% 
-  spTransform(CRSobj = utm21N)
+  spTransform(CRSobj = utm)
 
+### Variables ----
+xCol <- 'X_COORD'
+yCol <- 'Y_COORD'
+dateCol <- 'FIX_DATE'
+timeCol <- 'FIX_TIME'
+idCol <- 'ANIMAL_ID'
 
 ### Add fields ----
 ## Date time fields
-bear[, idate := as.IDate(FIX_DATE)]
-bear[, itime := as.ITime(FIX_TIME)]
-
-bear[, datetime := as.POSIXct(paste(idate, itime))]
-
-bear[, julday := yday(idate)]
-bear[, year := year(idate)]
-bear[, month := month(idate)]
+source('R/functions/DatePrep.R')
+DatePrep(bear, dateCol, timeCol)
 
 ## Project coordinates to UTM
-utm21N <- '+proj=utm +zone=21 ellps=WGS84'
-bear[, c('EASTING', 'NORTHING') := as.data.table(project(cbind(X_COORD, Y_COORD), utm21N))]
+bear[, c('EASTING', 'NORTHING') := as.data.table(project(cbind(get(xCol), get(yCol)), 
+                                                         utm))]
 
 ### Summary information ----
 # How many unique animals?
-bear[, uniqueN(ANIMAL_ID)]
+bear[, uniqueN(get(idCol))]
 
 # How many unique animals per year?
-bear[, .('N Unique Bears' = uniqueN(ANIMAL_ID)), by = year]
-# kable(bear[, .('N Unique Bears' = uniqueN(ANIMAL_ID)), by = year])
+bear[, .('N Unique Bears' = uniqueN(get(idCol))), by = yr]
+# kable(bear[, .('N Unique Bears' = uniqueN(get(idCol))), by = yr])
 
 # Temporal distribution of locs
-kable(bear[order(month), .N, by = month])
-kable(bear[order(year), .N, by = year])
+kable(bear[order(mnth), .N, by = mnth])
+kable(bear[order(yr), .N, by = yr])
 
 ### Plots ----
 # Plot locs by year on NL bounds 
@@ -64,7 +64,7 @@ PlotLocsBy <- function(DT, bounds, by){
     ggplot(nlBounds) +
     geom_polygon(aes(long, lat, group = group), 
                  color = 'black', fill = 'grey', alpha = 0.25) + 
-    geom_point(aes(EASTING, NORTHING, color = factor(ANIMAL_ID)), 
+    geom_point(aes(EASTING, NORTHING, color = factor(get(idCol))), 
                data = DT) + 
     guides(color = FALSE) + 
     labs(title = paste('year: ', by)))
@@ -75,13 +75,13 @@ PlotLocsBy <- function(DT, bounds, by){
 pdf('graphics/data-prep/bear-locs-by-year.pdf')
 bear[NAV == '3D',
      PlotLocsBy(.SD, nlBounds, .BY[[1]]),
-     by = year]
+     by = yr]
 dev.off()
 
 
 # Temporal distribution of locs
-ggplot(bear[order(month), .N, by = .(month, year)]) + 
-  geom_tile(aes(month, year, fill = N)) + 
+ggplot(bear[order(mnth), .N, by = .(mnth, yr)]) + 
+  geom_tile(aes(mnth, yr, fill = N)) + 
   scale_x_discrete(breaks = seq(1:12)) +  
   scale_fill_distiller(type = "div", palette = 6, direction = -1) + 
   coord_equal()
