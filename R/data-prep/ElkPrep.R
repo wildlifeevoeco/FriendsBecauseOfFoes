@@ -1,16 +1,10 @@
 ### Elk data preparation ----
-# Authors: Quinn Webber, Alec Robitaille
+# Authors: Alec Robitaille
 # Purpose: To prepare elk data for EWC
 # Inputs: Elk relocation data
 # Outputs: Prepared elk data as RDS
 # Project: Easter Week Challenge 2018
 # Copyright: ./LICENSE.md 
-
-
-
-# NOTE: skeleton simply carried over from bear, coyote. this code is not functional
-
-
 
 ### Packages ----
 libs <- c('data.table', 'ggplot2', 'gridExtra', 
@@ -19,57 +13,62 @@ lapply(libs, require, character.only = TRUE)
 
 
 ### Input data ----
-# dropCols <- c('FIX_ID','VENDOR_CL','AGE','COLLAR_FILE_ID','EXCLUDE','DOP','LOCQUAL',
-#               'VALIDATED','COLLAR_TYPE_CL','COLLAR_ID','Fix_Time_Delta','EPSG_CODE')
-#'Map_Quality','NAV')
+# Read in elk data
+elk <- fread('input/locs/RMNP_ElkData_clean.csv')
 
-# Read in elk data, dropping above columns
-elk <- fread('input/locs/Elks.csv',
-              drop = dropCols)
+# UTM zone 14N
+utm <- '+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
 
-# UTM zone 21N
-utm21N <- '+proj=utm +zone=21 ellps=WGS84'
+# MB Bounds shapefile
+# bounds <- rgdal::readOGR('input/etc/') %>% 
+#   spTransform(CRSobj = utm)
 
-# NL Bounds shapefile
-nlBounds <- rgdal::readOGR('input/etc/NL-Bounds/NL-Bounds.shp') %>% 
-  spTransform(CRSobj = utm21N)
+### Variables ----
+xCol <- 'X'
+yCol <- 'Y'
+dateCol <- 'datetime'
+hourCol <- 'Hour'
+minCol <- 'Minute'
+idCol <- 'ElkID'
 
 
 ### Add fields ----
+# Missing single time field, we'll combine hour and minute and save as 'time'
+# Combine hour, minute to timeCol
+elk[, time := paste0(get(hourCol), ':', sprintf('%02d', get(minCol)))]
+timeCol <- 'time'
+
 ## Date time fields
-elk[, idate := as.IDate(FIX_DATE)]
-elk[, itime := as.ITime(FIX_TIME)]
+source('R/functions/DatePrep.R')
+DatePrep(elk, dateCol, timeCol, dateFormat = '%d/%m/%Y')
 
-elk[, datetime := as.POSIXct(paste(idate, itime))]
+# Drop old date time fields
+dropCol <- c('Year', 'Month', 'Day', 'Hour', 'Minute', 'time')
+elk[, (dropCol) := NULL]
 
-elk[, julday := yday(idate)]
-elk[, year := year(idate)]
-elk[, month := month(idate)]
-
-## Project coordinates to UTM
-utm21N <- '+proj=utm +zone=21 ellps=WGS84'
-elk[, c('EASTING', 'NORTHING') := as.data.table(project(cbind(X_COORD, Y_COORD), utm21N))]
+## Coordinates already projected, simply rename
+elk[, c('EASTING', 'NORTHING') := .(get(xCol), get(yCol))]
 
 ### Summary information ----
 # How many unique animals?
-elk[, uniqueN(ANIMAL_ID)]
+elk[, uniqueN(get(idCol))]
 
 # How many unique animals per year?
-elk[, .('N Unique Elks' = uniqueN(ANIMAL_ID)), by = year]
-# kable(elk[, .('N Unique Elks' = uniqueN(ANIMAL_ID)), by = year])
+elk[, .('N Unique Elks' = uniqueN(get(idCol))), by = yr]
+# kable(elk[, .('N Unique Elks' = uniqueN(get(idCol))), by = yr])
 
 # Temporal distribution of locs
-kable(elk[order(month), .N, by = month])
-kable(elk[order(year), .N, by = year])
+kable(elk[order(mnth), .N, by = mnth])
+kable(elk[order(yr), .N, by = yr])
 
 ### Plots ----
 # Plot locs by year on NL bounds 
 PlotLocsBy <- function(DT, bounds, by){
   print(
-    ggplot(nlBounds) +
+    ggplot(bounds) +
       geom_polygon(aes(long, lat, group = group), 
                    color = 'black', fill = 'grey', alpha = 0.25) + 
-      geom_point(aes(EASTING, NORTHING, color = factor(ANIMAL_ID)), 
+      geom_point(aes(EASTING, NORTHING, color = factor(get(idCol))), 
                  data = DT) + 
       guides(color = FALSE) + 
       labs(title = paste('year: ', by)))
@@ -78,15 +77,15 @@ PlotLocsBy <- function(DT, bounds, by){
 
 # To PDF 
 pdf('graphics/data-prep/elk-locs-by-year.pdf')
-elk[NAV == '3D',
-     PlotLocsBy(.SD, nlBounds, .BY[[1]]),
-     by = year]
+elk[,
+     PlotLocsBy(.SD, bounds, .BY[[1]]),
+     by = yr]
 dev.off()
 
 
 # Temporal distribution of locs
-ggplot(elk[order(month), .N, by = .(month, year)]) + 
-  geom_tile(aes(month, year, fill = N)) + 
+ggplot(elk[order(mnth), .N, by = .(mnth, yr)]) + 
+  geom_tile(aes(mnth, yr, fill = N)) + 
   scale_x_discrete(breaks = seq(1:12)) +  
   scale_fill_distiller(type = "div", palette = 6, direction = -1) + 
   coord_equal()
