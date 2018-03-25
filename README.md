@@ -6,13 +6,28 @@
 ## Project structure
 ```
 .
+├── graphics
+│   └── data-prep
 ├── input
+│   ├── etc
 │   └── locs
-│       ├── Bears.csv
-│       └── Coyote.csv
 ├── R
 │   ├── data-prep
+│   │   ├── BearPrep.R
+│   │   ├── CaribouPrep.R
+│   │   ├── CoyotePrep.R
+│   │   ├── ElkPrep.R
+│   │   └── WolfPrep.R
 │   └── method-devel
+│       ├── predator-rsf
+│       │   ├── BearRSF.R
+│       │   ├── CoyoteRSF.R
+│       │   └── WolfRSF.R
+│       ├── prey-rsf
+│       │   ├── CaribouRSF.R
+│       │   └── ElkRSF.R
+│       └── sociality
+│           └── AbsoluteTurnAngle.R
 ├── CONTRIBUTING.md
 ├── ewc.Rproj
 ├── LICENSE
