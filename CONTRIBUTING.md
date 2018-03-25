@@ -13,6 +13,8 @@ Objects should have descriptive names, unless very generic (eg: DT, locs).
 
 This means we need to properly document our code, use the [Issue Board](https://gitlab.com/WEEL_grp/ewc/issues) to track progress, discuss decisions/challenges/successes!
 
+In addition, save intermediate objects (after long running tasks, at the end of scripts or significant chunks) as `Rds` files. This file type retains variable types (eg: integer, date, etc.) so we don't need to start every script re-casting variables, etc.  
+
 # Git
 See the [Getting Started with Git guide](https://gitlab.com/WEEL_grp/core/blob/master/Guides/Getting%20Started%20With%20Git/Getting_Started_With_Git.pdf).  
 
