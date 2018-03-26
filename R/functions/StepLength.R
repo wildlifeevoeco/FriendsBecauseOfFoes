@@ -42,9 +42,10 @@ StepLength <- function(DT, idCol, dateCol, timeCol, yrCol, xCol, yCol, returnInt
   
   if(DT[get(difTimeCol) > 24, .N] != 0) stop("check difitime, shouldn't be greater than 24")
   
-  
   # difference in days 
   DT[, (difDateCol) := (as.numeric(difftime(get(dateCol), get(lagDateCol), units = 'days')))]
+  
+  if(DT[get(difTimeCol) > 1, .N] != 0) warning("check difidate, some locs are greater than 1 day apart")
   
   # Step length divided by time difference
   DT[, moveRate := stepLength / (get(difTimeCol))]
