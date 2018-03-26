@@ -79,8 +79,7 @@ source('R/functions/PlotLocsByFigure.R')
 
 # To PDF 
 pdf('graphics/data-prep/wolf-locs-by-year.pdf')
-wolf[,
-     PlotLocsBy(.SD, bounds, .BY[[1]], idCol),
+wolf[, PlotLocsBy(.SD, bounds, .BY[[1]], idCol),
      by = yr]
 dev.off()
 
