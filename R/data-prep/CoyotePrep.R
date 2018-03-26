@@ -40,6 +40,9 @@ idCol <- 'ANIMAL_ID'
 source('R/functions/DatePrep.R')
 DatePrep(coyote, dateCol, timeCol)
 
+# Check!
+coyote[sample(.N, 5), .(idate, itime, yr, mnth, julday)]
+
 ## Project coordinates to UTM
 coyote[, c('EASTING', 'NORTHING') := as.data.table(project(cbind(get(xCol), get(yCol)), utm))]
 
@@ -48,8 +51,7 @@ coyote[, c('EASTING', 'NORTHING') := as.data.table(project(cbind(get(xCol), get(
 coyote[, uniqueN(get(idCol))]
 
 # How many unique animals per year?
-coyote[, .('N Unique coyotes' = uniqueN(get(idCol))), by = yr]
-# kable(coyote[, .('N Unique coyotes' = uniqueN(get(idCol))), by = yr])
+kable(coyote[, .('N Unique coyotes' = uniqueN(get(idCol))), by = yr])
 
 # Temporal distribution of locs
 kable(coyote[order(mnth), .N, by = mnth])

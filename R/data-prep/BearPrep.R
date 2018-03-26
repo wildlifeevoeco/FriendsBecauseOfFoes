@@ -41,6 +41,9 @@ idCol <- 'ANIMAL_ID'
 source('R/functions/DatePrep.R')
 DatePrep(bear, dateCol, timeCol)
 
+# Check!
+bear[sample(.N, 5), .(idate, itime, yr, mnth, julday)]
+
 ## Project coordinates to UTM
 bear[, c('EASTING', 'NORTHING') := as.data.table(project(cbind(get(xCol), get(yCol)), 
                                                          utm))]
@@ -50,8 +53,7 @@ bear[, c('EASTING', 'NORTHING') := as.data.table(project(cbind(get(xCol), get(yC
 bear[, uniqueN(get(idCol))]
 
 # How many unique animals per year?
-bear[, .('N Unique Bears' = uniqueN(get(idCol))), by = yr]
-# kable(bear[, .('N Unique Bears' = uniqueN(get(idCol))), by = yr])
+kable(bear[, .('N Unique Bears' = uniqueN(get(idCol))), by = yr])
 
 # Temporal distribution of locs
 kable(bear[order(mnth), .N, by = mnth])
