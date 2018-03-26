@@ -7,20 +7,35 @@
 # Copyright: ./LICENSE.md 
 
 
-
-# NOTE: skeleton simply carried over from bear, coyote. this code is not functional
-
-
 ### Packages ----
 libs <- c('data.table', 'ggplot2', 
           'knitr', 'sp', 'rgdal', 'magrittr')
 lapply(libs, require, character.only = TRUE)
 
-
 ### Input data ----
-# Read in wolf data, dropping above columns
-wolf <- fread('input/locs/Wolfs.csv',
-              drop = dropCols)
+# List individual wolf sheets
+paths <- dir('input/locs/RMNP_WolfLocations', '*.csv',
+             full.names = TRUE)
+
+# Check how many times each column appears in the sheets
+cols <- rbindlist(lapply(paths, FUN = function(x) fread(x) %>% colnames(.) %>% 
+                           data.table(col = ., path = x, val = 1))) %>% dcast(path~col, value.var = 'val')
+cols[, path := rowid(path)][, lapply(.SD, sum, na.rm = TRUE), .SDcol = colnames(cols)]
+
+# Read in each and rbindlist
+#   To make sure LATITUDE and Latitude are considered as the same, 
+#   change all colnames to lower case, and rbindlist!
+wolf <- rbindlist(lapply(paths, FUN = function(p){
+  fread(p) %>% setnames(colnames(.), tolower(colnames(.)))
+}), fill = TRUE, use.names = TRUE)
+
+# List drop and keep columns
+keepCols <- c('wolfid', 'packid', 'longitude', 'latitude', 'collar', 'gmtdate', 'gmttime', 
+              'time', 'date', '2d3d', 'fixstatus', 'info')
+dropCols <- colnames(wolf)[!(colnames(wolf) %in% keepCols)]
+
+# Drop columns above and rename 2d3d to Fix2d3d
+wolf[, (dropCols) := NULL][, c('Fix2d3d', '2d3d') := .(`2d3d`, NULL)]
 
 # UTM zone 14N
 utm <- '+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
