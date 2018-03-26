@@ -30,6 +30,8 @@ dateCol <- 'datetime'
 hourCol <- 'Hour'
 minCol <- 'Minute'
 idCol <- 'ElkID'
+projXCol <- 'EASTING'
+projYCol <- 'NORTHING'
 
 
 ### Add fields ----
@@ -50,7 +52,14 @@ dropCol <- c('Year', 'Month', 'Day', 'Hour', 'Minute', 'time')
 elk[, (dropCol) := NULL]
 
 ## Coordinates already projected, simply rename
-elk[, c('EASTING', 'NORTHING') := .(get(xCol), get(yCol))]
+elk[, c(projXCol, projYCol) := .(get(xCol), get(yCol))]
+
+# Step Length
+source('R/functions/StepLength.R')
+StepLength(elk, idCol, 
+           dateCol = 'idate', timeCol = 'itime', yrCol = 'yr', 
+           xCol = projXCol, yCol = projYCol,
+           returnIntermediate = FALSE)
 
 ### Summary information ----
 # How many unique animals?

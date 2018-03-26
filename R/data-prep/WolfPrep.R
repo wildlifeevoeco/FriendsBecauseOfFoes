@@ -105,11 +105,6 @@ wolf[order(yr), PlotLocsBy(.SD, bounds, .BY[[1]], idCol),
      by = yr]
 dev.off()
 
-# wolf[, rowid(.SD), by = c(idCol, 'yr')]
-# rowid(wolf[[idCol]], wolf[['yr']])
-# wolf[, rowByIDYear := rowidv(wolf, cols = c(idCol, 'yr'))]
-
-
 # Temporal distribution of locs
 source('R/functions/TemporalDistributionFigure.R')
 TempDistFig(wolf)

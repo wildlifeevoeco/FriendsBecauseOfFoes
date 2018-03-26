@@ -35,6 +35,8 @@ yCol <- 'Y_COORD'
 dateCol <- 'FIX_DATE'
 timeCol <- 'FIX_TIME'
 idCol <- 'ANIMAL_ID'
+projXCol <- 'EASTING'
+projYCol <- 'NORTHING'
 
 ### Add fields ----
 ## Date time fields
@@ -45,7 +47,7 @@ DatePrep(bear, dateCol, timeCol)
 bear[sample(.N, 5), .(idate, itime, yr, mnth, julday)]
 
 ## Project coordinates to UTM
-bear[, c('EASTING', 'NORTHING') := as.data.table(project(cbind(get(xCol), get(yCol)), 
+bear[, c(projXCol, projYCol) := as.data.table(project(cbind(get(xCol), get(yCol)), 
                                                          utm))]
 
 ### Summary information ----
