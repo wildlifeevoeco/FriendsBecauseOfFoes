@@ -40,6 +40,12 @@
 ### /R/method-devel
 Method development folder, to isolate development of methods from reproducible analysis. 
 
+### /R/functions
+Standalone functions for DRY (don't repeat yourself).
+
+Eg: figures, date handling, step length, etc. 
+
+*Ideally, these will be written defensively with tests*
 
 
 ## Output metadata
