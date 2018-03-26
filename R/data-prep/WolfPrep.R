@@ -60,7 +60,7 @@ checkCols <- c(xCol, yCol, timeCol, dateCol)
 wolf <- na.omit(wolf, cols = checkCols)
 
 # Subset any 0 in lat/long and where longitude is positive
-wolf <- wolf[get(xCol) != 0 | get(xCol) > 0]
+wolf <- wolf[get(xCol) != 0 & get(xCol) < 0]
 
 ### Add fields ----
 # Date time fields
