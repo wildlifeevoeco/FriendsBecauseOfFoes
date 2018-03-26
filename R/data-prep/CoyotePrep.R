@@ -57,23 +57,13 @@ kable(coyote[order(yr), .N, by = yr])
 
 ### Plots ----
 # Plot locs by year on NL bounds 
-PlotLocsBy <- function(DT, bounds, by){
-  print(
-    ggplot(nlBounds) +
-      geom_polygon(aes(long, lat, group = group), 
-                   color = 'black', fill = 'grey', alpha = 0.25) + 
-      geom_point(aes(EASTING, NORTHING, color = factor(get(idCol))), 
-                 data = DT) + 
-      guides(color = FALSE) + 
-      labs(title = paste('year: ', by)))
-  return(1)
-}
+source('R/functions/PlotLocsByFigure.R')
 
 # To PDF 
 pdf('graphics/data-prep/coyote-locs-by-year.pdf')
 coyote[NAV == '3D',
-     PlotLocsBy(.SD, nlBounds, .BY[[1]]),
-     by = yr]
+       PlotLocsBy(.SD, nlBounds, .BY[[1]], idCol),
+       by = yr]
 dev.off()
 
 
