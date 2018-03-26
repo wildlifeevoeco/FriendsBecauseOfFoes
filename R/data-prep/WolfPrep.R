@@ -44,30 +44,53 @@ utm <- '+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
 bounds <- rgdal::readOGR('input/etc/RMNP-extent/RMNPextent.shp') %>%
   spTransform(CRSobj = utm)
 
-
 ### Variables ----
-xCol <- 'X'
-yCol <- 'Y'
-dateCol <- 'datetime'
-hourCol <- 'Hour'
-minCol <- 'Minute'
-idCol <- 'ElkID'
+xCol <- 'longitude'
+yCol <- 'latitude'
+# Time zone of this data is CST (at least some seasons)
+timeCol <- 'time'
+dateCol <- 'date'
+idCol <- 'wolfid'
+projXCol <- 'EASTING'
+projYCol <- 'NORTHING'
+
+### Subset ----
+# Subset any NAs in defined cols
+checkCols <- c(xCol, yCol, timeCol, dateCol)
+wolf <- na.omit(wolf, cols = checkCols)
+
+# Subset any 0 in lat/long
+wolf <- wolf[get(xCol) != 0]
 
 ### Add fields ----
-## Date time fields
+# Date time fields
 source('R/functions/DatePrep.R')
-DatePrep(wolf, dateCol, timeCol, dateFormat = '%d/%m/%Y')
+DatePrep(wolf, dateCol, timeCol)
 
-## Project coordinates to UTM
-wolf[, c('EASTING', 'NORTHING') := as.data.table(project(cbind(X_COORD, Y_COORD), 
-                                                         utm))]
+# Project coordinates to UTM
+wolf[, c(projXCol, projYCol) := as.data.table(project(cbind(get(xCol), get(yCol)), 
+                                                      utm))]
+
+# Step Length
+source('R/functions/StepLength.R')
+StepLength(wolf, idCol, 
+           dateCol = 'idate', timeCol = 'itime', yrCol = 'yr', 
+           xCol = projXCol, yCol = projYCol,
+           returnIntermediate = FALSE)
+
+### Subset by collar fields ----
+# N by fix quality
+kable(wolf[, .N, by = info])
+kable(wolf[, .N, by = Fix2d3d])
+kable(wolf[, .N, by = fixstatus])
+
 
 ### Summary information ----
 # How many unique animals?
 wolf[, uniqueN(get(idCol))]
 
 # How many unique animals per year?
-kable(wolf[, .('N Unique Wolfs' = uniqueN(get(idCol))), by = yr])
+kable(wolf[, .('N Unique Wolves' = uniqueN(get(idCol))), by = yr])
 
 # Temporal distribution of locs
 kable(wolf[order(mnth), .N, by = mnth])
