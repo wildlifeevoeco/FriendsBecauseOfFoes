@@ -57,7 +57,7 @@ elk[, c('EASTING', 'NORTHING') := .(get(xCol), get(yCol))]
 elk[, uniqueN(get(idCol))]
 
 # How many unique animals per year?
-kable(elk[, .('N Unique Elks' = uniqueN(get(idCol))), by = yr])
+kable(elk[order(yr), .('N Unique Elks' = uniqueN(get(idCol))), by = yr])
 
 # Temporal distribution of locs
 kable(elk[order(mnth), .N, by = mnth])
