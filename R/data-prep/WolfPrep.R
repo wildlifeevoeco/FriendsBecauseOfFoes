@@ -59,8 +59,8 @@ projYCol <- 'NORTHING'
 checkCols <- c(xCol, yCol, timeCol, dateCol)
 wolf <- na.omit(wolf, cols = checkCols)
 
-# Subset any 0 in lat/long
-wolf <- wolf[get(xCol) != 0]
+# Subset any 0 in lat/long and where longitude is positive
+wolf <- wolf[get(xCol) != 0 | get(xCol) > 0]
 
 ### Add fields ----
 # Date time fields
@@ -84,7 +84,6 @@ kable(wolf[, .N, by = info])
 kable(wolf[, .N, by = Fix2d3d])
 kable(wolf[, .N, by = fixstatus])
 
-
 ### Summary information ----
 # How many unique animals?
 wolf[, uniqueN(get(idCol))]
@@ -102,9 +101,13 @@ source('R/functions/PlotLocsByFigure.R')
 
 # To PDF 
 pdf('graphics/data-prep/wolf-locs-by-year.pdf')
-wolf[, PlotLocsBy(.SD, bounds, .BY[[1]], idCol),
+wolf[order(yr), PlotLocsBy(.SD, bounds, .BY[[1]], idCol),
      by = yr]
 dev.off()
+
+# wolf[, rowid(.SD), by = c(idCol, 'yr')]
+# rowid(wolf[[idCol]], wolf[['yr']])
+# wolf[, rowByIDYear := rowidv(wolf, cols = c(idCol, 'yr'))]
 
 
 # Temporal distribution of locs
