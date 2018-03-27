@@ -11,7 +11,6 @@ libs <- c('data.table', 'ggplot2',
           'knitr', 'sp', 'rgdal', 'magrittr')
 lapply(libs, require, character.only = TRUE)
 
-
 ### Input data ----
 # Read in elk data
 elk <- fread('input/locs/RMNP_ElkData_clean.csv')
@@ -52,9 +51,8 @@ elk[, (dropCol) := NULL]
 
 # Season
 source('R/variables/CutOffThresholds.R')
-
-coyote[julday %between% winter, season := 'winter']
-coyote[julday %between% spring, season := 'spring']
+elk[julday %between% winter, season := 'winter']
+elk[julday %between% spring, season := 'spring']
 
 
 ### Subset ----
@@ -74,12 +72,6 @@ StepLength(elk, idCol,
            xCol = projXCol, yCol = projYCol,
            returnIntermediate = FALSE)
 
-elk[hours %% 2 != 0] 
-elk[yr == 2016, qplot(difdatetime, binwidth = 1)] 
-
-elk[difdatetime == 1 & hr %% 2 == 0] 
-
-
 ### Summary information ----
 # How many unique animals?
 elk[, uniqueN(get(idCol))]
@@ -95,16 +87,16 @@ kable(elk[order(yr), .N, by = yr])
 # Thresholds
 stepLengthThreshold <- 7750000
 moveRateThreshold <- 500000
-difTimeThreshold <- 24
+difTimeThreshold <- 2
 lowJul <- 0
 highJul <- 365
 
 # Map_Quality, NAV
 
 elk <- elk[stepLength < stepLengthThreshold & 
-               moveRate < moveRateThreshold &
-               difdatetime < difTimeThreshold &
-               between(julday, lowJul, highJul)]
+             moveRate < moveRateThreshold &
+             round(difdatetime) == difTimeThreshold &
+             between(julday, lowJul, highJul)]
 
 ### Output ----
 # Match variables to output variables = consistent variables across species
@@ -125,14 +117,14 @@ saveRDS(elk[, ..outputVariables], 'output/data-prep/elk.Rds')
 source('R/functions/PlotLocsByFigure.R')
 
 # To PDF 
-pdf('graphics/data-prep/elk-locs-by-year.pdf')
+# pdf('graphics/data-prep/elk-locs-by-year.pdf')
 elk[order(yr),
     PlotLocsBy(.SD, bounds, .BY[[1]], 'id'),
     by = yr]
-dev.off()
+# dev.off()
 
 # Temporal distribution of locs
 source('R/functions/TemporalDistributionFigure.R')
 TempDistFig(elk)
 
-ggsave('graphics/data-prep/elk-temp-dist.png', TempDistFig(elk), 'png')
+# ggsave('graphics/data-prep/elk-temp-dist.png', TempDistFig(elk), 'png')
