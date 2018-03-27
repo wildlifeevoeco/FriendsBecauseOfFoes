@@ -32,14 +32,13 @@ wolfMCP <- mcp(wolfSP, 95)
 
 # Create Regular Grid
 source('R/functions/GenerateGrid.R')
-regGrid <- GenerateGrid(30, mcpExtent = wolfMCP@bbox, crs = utm)
+regGrid <- GenerateGrid(3000, mcpExtent = wolfMCP, crs = utm)
 
+regPts <- data.table(regGrid@coords)[over(bounds, regGrid, returnList = TRUE)[[1]]]
 
-regGrid
-
-
-
-
+ggplot(wolfMCP) + 
+  geom_polygon(aes(long, lat, group = group)) + 
+  geom_point(aes(x, y), data = regPts)
 
 ### Generate Random Points ----
 # Drop columns leaving only needed
