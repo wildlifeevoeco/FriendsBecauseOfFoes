@@ -109,8 +109,9 @@ coyMRres<-subset(coyMR, STATUS=="RESIDENT" | STATUS=="SUB-TRANSIENT")
 plot(nlBounds)
 points(coyMRres$EASTING,coyMRres$NORTHING)
 
+points<-SpatialPoints(data.frame(coyMRres$EASTING,coyMRres$NORTHING))
 
-CoyAvail<-mcp(points, percent = 99.9)
+CoyAvail<-mcp(points, percent = 100)
 
 mean(coyMRres$stepLength)
 
@@ -144,6 +145,12 @@ Scr<-raster('input/Landcover/Scrub100.tif')
 Wat<-raster('input/Landcover/Water100.tif')
 Wet<-raster('input/Landcover/Wetland100.tif')
 
+Elev<-raster('input/Landcover/NLElev.tif')
+Rug<-terrain(Elev, opt="roughness")
+
+plot(Elev)
+plot(Rug)
+
 AntUsed<-extract(Ant,points)
 BroUsed<-extract(Bro,points)
 ConUsed<-extract(Con,points)
@@ -153,6 +160,7 @@ RocUsed<-extract(Roc,points)
 ScrUsed<-extract(Scr,points)
 WatUsed<-extract(Wat,points)
 WetUsed<-extract(Wet,points)
+RugUsed<-extract(Rug,points)
 
 randCo<-coords(rand)
 
@@ -170,10 +178,50 @@ RocAvail<-extract(Roc,randPoints)
 ScrAvail<-extract(Scr,randPoints)
 WatAvail<-extract(Wat,randPoints)
 WetAvail<-extract(Wet,randPoints)
+RugAvail<-extract(Rug,randPoints)
+
+UsedData<-data.frame(1,AntUsed,BroUsed,ConUsed,LicUsed,MixUsed,RocUsed,ScrUsed,WatUsed,WetUsed,RugUsed,coyMRres$EASTING,coyMRres$NORTHING)
+colnames(UsedData)<-c("use","Ant","Bro","Con","Lic","Mix","Roc","Scr","Wat","Wet","Rug","x","y")
+
+AvailData<-data.frame(0,AntAvail,BroAvail,ConAvail,LicAvail,MixAvail,RocAvail,ScrAvail,WatAvail,WetAvail,RugAvail,xyr)
+colnames(AvailData)<-c("use","Ant","Bro","Con","Lic","Mix","Roc","Scr","Wat","Wet","Rug","x","y")
+coyoteRSF<-rbind(UsedData,AvailData)
 
 
+## Remove all points with 50% NA data
+coyoteRSF$rs<-rowSums(coyoteRSF[2:10])
+coyRSF2<-subset(coyoteRSF,rs>0.5)
+summary(coyRSF2$rs)
 
+coyRSF2[,2]<-coyRSF2[,2]/coyRSF2$rs
+coyRSF2[,3]<-coyRSF2[,3]/coyRSF2$rs
+coyRSF2[,4]<-coyRSF2[,4]/coyRSF2$rs
+coyRSF2[,5]<-coyRSF2[,5]/coyRSF2$rs
+coyRSF2[,6]<-coyRSF2[,6]/coyRSF2$rs
+coyRSF2[,7]<-coyRSF2[,7]/coyRSF2$rs
+coyRSF2[,8]<-coyRSF2[,8]/coyRSF2$rs
+coyRSF2[,9]<-coyRSF2[,9]/coyRSF2$rs
+coyRSF2[,10]<-coyRSF2[,10]/coyRSF2$rs
 
+## Check to make sure it worked
+coyRSF2$rs2<-rowSums(coyRSF2[2:10])
+
+head(coyRSF2)
+##
+mean(coyRSF2$Ant)
+mean(coyRSF2$Bro)
+mean(coyRSF2$Con)
+mean(coyRSF2$Lic)
+mean(coyRSF2$Mix)
+mean(coyRSF2$Roc)
+mean(coyRSF2$Scr)
+mean(coyRSF2$Wat)
+mean(coyRSF2$Wet)
+
+### Wetland is the reference
+RSFCoyote<-glm(use~Ant+Bro+Con+Lic+Mix+Roc+Scr+Wat+Rug,data=coyRSF2)
+
+summary(RSFCoyote)
 
 
 ############ caribou
