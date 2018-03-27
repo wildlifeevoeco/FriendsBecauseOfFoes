@@ -18,12 +18,17 @@ StepLength <- function(DT, idCol, datetimeCol, yrCol, xCol, yCol, returnIntermed
      (lagCols) := shift(.SD, 1, NA, 'lag'),
      by = c(idCol, yrCol), .SDcols = coordCols]
   
-  # Find the difference squared between all points in each x,y separately
-  DT[, (difCols) := .((get(coordCols[1]) - get(lagCols[1])) ^ 2,
-                      (get(coordCols[2]) - get(lagCols[2])) ^ 2)]
+  # Find the difference between subsequent points in x,y
+  DT[, (difCols) := .((get(coordCols[1]) - get(lagCols[1])),
+                      (get(coordCols[2]) - get(lagCols[2])))]
 
+  difSqCols <- paste0('sq', difCols)
+  
+  # Square the difference 
+  DT[, (difSqCols) := .(get(difCols[1]) ^ 2, get(difCols[2]) ^ 2)]
+  
   # Square root the summed difference for a simple step length
-  DT[, stepLength := sqrt(rowSums(.SD)), .SDcols = difCols]
+  DT[, stepLength := sqrt(rowSums(.SD)), .SDcols = difSqCols]
 
   ## Delta Time
   DT[order(get(datetimeCol)),
@@ -36,10 +41,17 @@ StepLength <- function(DT, idCol, datetimeCol, yrCol, xCol, yCol, returnIntermed
   # Step length divided by time difference
   DT[, moveRate := stepLength / (get(difDateTimeCol))]
   
+  
+  # if(DT[(get(datetimeCol) == get(lagDateTimeCol)) |
+  #       (get(xCol) == get(lagCols[1])) |
+  #       (get(yCol) == get(lagCols[2])) |
+  #       (get(datetimeCol) == get(lagDateTimeCol)) |])
+  # 
+  
   if(returnIntermediate) {
     DT
   } else {
-    DT[, c(lagCols, difCols, lagDateTimeCol) := NULL]
+    DT[, c(lagCols, difCols, lagDateTimeCol, difSqCols) := NULL]
   }
 }
 
