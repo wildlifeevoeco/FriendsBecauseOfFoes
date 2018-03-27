@@ -16,7 +16,15 @@ lapply(libs, require, character.only = TRUE)
 
 ### Input data ----
 ##animal locations
-locs <- readRDS('output/data-prep/elk.Rds')
+elk <- readRDS('output/data-prep/elk.Rds')
+
+### MCPs ----
+# UTM zone 14N
+utm <- '+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
+
+elkSP <- SpatialPoints(elk[, .(EASTING, NORTHING)], proj4string = CRS(utm))
+
+elkMCP <- mcp(elkSP, 100)
 
 ##covariates
 #Distance
@@ -36,28 +44,32 @@ opendec<-raster('input/covariates/RMNP/Opendeciduous100m.tif')
 #Topography
 ruggedness<-raster('input/covariates/RMNP/Ruggedness_test.tif')
 
-###generate regular available 
-##alec
+# Create Regular Grid
+source('R/functions/GenerateGrid.R')
+regGrid <- GenerateGrid(300, mcpExtent = elkMCP, crs = utm)
 
 
-# and set all locs as observed
-observed.locs <- locs[, ..cols][, observed := 1]
+regGrid
+
+
+# and set all elk as observed
+observed.elk <- elk[, ..cols][, observed := 1]
 
 # Create identical for random with observed == 0
-available.locs <- locs[, ..cols][, observed := 0]
+available.elk <- elk[, ..cols][, observed := 0]
 
 # These should also match (they do)
-nrow(available.locs)
-nrow(observed.locs)
+nrow(available.elk)
+nrow(observed.elk)
 
-# Combine the observed and random locs and assign a rowID
-sample.locs <- rbindlist(list(available.locs, observed.locs))
+# Combine the observed and random elk and assign a rowID
+sample.elk <- rbindlist(list(available.elk, observed.elk))
 
 # Add row ID
-sample.locs[, rowID := .I]
+sample.elk[, rowID := .I]
 
-saveRDS(sample.locs, 'output/sample-locs')
-sample.locs <- readRDS('output/sample-locs')
+saveRDS(sample.elk, 'output/sample-elk')
+sample.elk <- readRDS('output/sample-elk')
 
 
 
@@ -73,27 +85,27 @@ ExtractPoints <- function(pt.matrix, raster.layer){
   
 ##Covariate sampling
 # Sample landcover at each point
-sample.locs[, agprop := ExtractPoints(matrix(c(EASTING, NORTHING), ncol = 2), agriculture)]
-sample.locs[, bgprop := ExtractPoints(matrix(c(EASTING, NORTHING), ncol = 2), bog)]
-sample.locs[, cnprop := ExtractPoints(matrix(c(EASTING, NORTHING), ncol = 2), coniferous)]
-sample.locs[, dcprop := ExtractPoints(matrix(c(EASTING, NORTHING), ncol = 2), deciduous)]
-sample.locs[, grprop := ExtractPoints(matrix(c(EASTING, NORTHING), ncol = 2), grassland)]
-sample.locs[, hudist := ExtractPoints(matrix(c(EASTING, NORTHING), ncol = 2), human)]
-sample.locs[, mrprop := ExtractPoints(matrix(c(EASTING, NORTHING), ncol = 2), marsh)]
-sample.locs[, mwprop := ExtractPoints(matrix(c(EASTING, NORTHING), ncol = 2), mixedwood)]
-sample.locs[, odprop := ExtractPoints(matrix(c(EASTING, NORTHING), ncol = 2), opendec)]
-sample.locs[, rgdns := ExtractPoints(matrix(c(EASTING, NORTHING), ncol = 2), ruggedness)]
-sample.locs[, wtdist := ExtractPoints(matrix(c(EASTING, NORTHING), ncol = 2), water)]
+sample.elk[, agprop := ExtractPoints(matrix(c(EASTING, NORTHING), ncol = 2), agriculture)]
+sample.elk[, bgprop := ExtractPoints(matrix(c(EASTING, NORTHING), ncol = 2), bog)]
+sample.elk[, cnprop := ExtractPoints(matrix(c(EASTING, NORTHING), ncol = 2), coniferous)]
+sample.elk[, dcprop := ExtractPoints(matrix(c(EASTING, NORTHING), ncol = 2), deciduous)]
+sample.elk[, grprop := ExtractPoints(matrix(c(EASTING, NORTHING), ncol = 2), grassland)]
+sample.elk[, hudist := ExtractPoints(matrix(c(EASTING, NORTHING), ncol = 2), human)]
+sample.elk[, mrprop := ExtractPoints(matrix(c(EASTING, NORTHING), ncol = 2), marsh)]
+sample.elk[, mwprop := ExtractPoints(matrix(c(EASTING, NORTHING), ncol = 2), mixedwood)]
+sample.elk[, odprop := ExtractPoints(matrix(c(EASTING, NORTHING), ncol = 2), opendec)]
+sample.elk[, rgdns := ExtractPoints(matrix(c(EASTING, NORTHING), ncol = 2), ruggedness)]
+sample.elk[, wtdist := ExtractPoints(matrix(c(EASTING, NORTHING), ncol = 2), water)]
 
 
 ###winter RSF
-winter.locs = subset()
+winter.elk <- sample.elk[season=="winter"]
 
-winterelkrsf <- glm(observed~agprop+bgprop+cnprop+dcprop+grprop+hudist+mrprop+mwprop+odprop+rgdns+wtdist, family = binomial,data=winter.locs)
+winterelkrsf <- glm(observed~agprop+bgprop+cnprop+dcprop+grprop+hudist+mrprop+mwprop+odprop+rgdns+wtdist, family = binomial,data=winter.elk)
 
 
 ###spring RSF
-spring.locs = subset()
+spring.elk <- sample.elk[season=="spring"]
 
-springelkrsf <- glm(observed~agprop+bgprop+cnprop+dcprop+grprop+hudist+mrprop+mwprop+odprop+rgdns+wtdist, family = binomial,data=spring.locs)
+springelkrsf <- glm(observed~agprop+bgprop+cnprop+dcprop+grprop+hudist+mrprop+mwprop+odprop+rgdns+wtdist, family = binomial,data=spring.elk)
 

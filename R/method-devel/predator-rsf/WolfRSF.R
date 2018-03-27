@@ -9,7 +9,7 @@
 
 ### Packages ----
 libs <- c('data.table', 'ggplot2',
-          'sp', 'adehabitatHR',
+          'sp', 'adehabitatHR', 'raster',
           'magrittr')
 lapply(libs, require, character.only = TRUE)
 
@@ -17,42 +17,28 @@ lapply(libs, require, character.only = TRUE)
 ### Input data ----
 wolf <- readRDS('output/data-prep/wolf.Rds')
 
+# UTM zone 14N
+utm <- '+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
+
+
 # MB Bounds shapefile
 bounds <- rgdal::readOGR('input/etc/RMNP-extent/RMNPextent.shp') %>%
   spTransform(CRSobj = utm)
 
 ### MCPs ----
-# UTM zone 14N
-utm <- '+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
-
 wolfSP <- SpatialPoints(wolf[, .(EASTING, NORTHING)], proj4string = CRS(utm))
 
 wolfMCP <- mcp(wolfSP, 95)
 
 # Create Regular Grid
 source('R/functions/GenerateGrid.R')
-regGrid <- GenerateGrid(30, mcpExtent = wolfMCP@bbox)
-rasterToPoints(r, spatial = TRUE)
-plot(regGrid)
-spGrid <- SpatialPointsDataFrame(regGrid, data = regGrid, proj4string = CRS(utm))
+regGrid <- GenerateGrid(3000, mcpExtent = wolfMCP, crs = utm)
 
-withinBounds <- data.table(over(bounds, spGrid, returnList = TRUE)[[1]])
-
-bDT <- data.table(wolfMCP@bbox, keep.rownames = TRUE)
-ext <- extent(bDT[rn == 'x', min], bDT[rn == 'x', min], 
-              y_ori, y_ori + (y_cell * cell_size)) 
-
-r <- raster::raster(wolfMCP@bbox, crs = CRS(utm))
-raster::res(r) <- c(30, 30)
-rp <- raster::rasterToPoints(r, spatial = TRUE) 
-gridded(rp) <- TRUE
-
-plot()
+regPts <- data.table(regGrid@coords)[over(bounds, regGrid, returnList = TRUE)[[1]]]
 
 ggplot(wolfMCP) + 
-  geom_polygon(aes(long, lat, group=group), fill = NA, color = 'black') + 
-  geom_point(aes(x, y), data = withinBounds)
-
+  geom_polygon(aes(long, lat, group = group)) + 
+  geom_point(aes(x, y), data = regPts)
 
 ### Generate Random Points ----
 # Drop columns leaving only needed
