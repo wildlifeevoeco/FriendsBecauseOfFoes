@@ -61,7 +61,6 @@ DatePrep(wolf, dateCol, timeCol)
 
 # Season
 source('R/variables/CutOffThresholds.R')
-
 wolf[julday %between% winter, season := 'winter']
 wolf[julday %between% spring, season := 'spring']
 
@@ -73,7 +72,6 @@ wolf <- na.omit(wolf, cols = checkCols)
 # Subset any 0 in lat/long and where longitude is positive
 wolf <- wolf[get(xCol) != 0 & get(xCol) < 0]
 
-
 ### Project + Step Length ----
 # Project coordinates to UTM
 wolf[, c(projXCol, projYCol) := as.data.table(project(cbind(get(xCol), get(yCol)), 
@@ -81,6 +79,14 @@ wolf[, c(projXCol, projYCol) := as.data.table(project(cbind(get(xCol), get(yCol)
 
 # Step Length
 source('R/functions/StepLength.R')
+StepLength(wolf, idCol, 
+           datetimeCol = 'datetime', yrCol = 'yr', 
+           xCol = projXCol, yCol = projYCol,
+           returnIntermediate = FALSE)
+
+difTimeThreshold <- c(1.5, 2.5)
+wolf <- wolf[difdatetime %between% difTimeThreshold]
+
 StepLength(wolf, idCol, 
            datetimeCol = 'datetime', yrCol = 'yr', 
            xCol = projXCol, yCol = projYCol,
@@ -107,16 +113,11 @@ kable(wolf[order(yr), .N, by = yr])
 # Thresholds
 stepLengthThreshold <- 7750000
 moveRateThreshold <- 500000
-difTimeThreshold <- 24
-lowJul <- 0
-highJul <- 365
 
 # Map_Quality, NAV
 
 wolf <- wolf[stepLength < stepLengthThreshold & 
-               moveRate < moveRateThreshold &
-               difdatetime < difTimeThreshold &
-               between(julday, lowJul, highJul)]
+               moveRate < moveRateThreshold]
 
 ### Output ----
 # Match variables to output variables = consistent variables across species
