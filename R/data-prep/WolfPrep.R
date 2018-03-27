@@ -84,13 +84,14 @@ StepLength(wolf, idCol,
            xCol = projXCol, yCol = projYCol,
            returnIntermediate = FALSE)
 
-difTimeThreshold <- c(1.5, 2.5)
-wolf <- wolf[difdatetime %between% difTimeThreshold]
+difTimeThreshold <- 2
+wolf <- wolf[round(difdatetime) == difTimeThreshold]
 
 StepLength(wolf, idCol, 
            datetimeCol = 'datetime', yrCol = 'yr', 
            xCol = projXCol, yCol = projYCol,
            returnIntermediate = FALSE)
+
 
 ### Subset by collar fields ----
 # N by fix quality
@@ -111,13 +112,20 @@ kable(wolf[order(yr), .N, by = yr])
 
 ### Subset ----
 # Thresholds
-stepLengthThreshold <- 7750000
-moveRateThreshold <- 500000
+moveRateThreshold <- 20000
 
 # Map_Quality, NAV
 
-wolf <- wolf[stepLength < stepLengthThreshold & 
-               moveRate < moveRateThreshold]
+wolf <- wolf[moveRate < moveRateThreshold]
+
+
+# Spatially constrain to RMNP bounds
+wolfSP <- SpatialPointsDataFrame(wolf[, .(get(projXCol), get(projYCol))],
+                                 wolf,
+                                 proj4string = CRS(utm))
+
+wolf <- data.table(over(bounds, wolfSP, returnList = TRUE)[[1]])
+
 
 ### Output ----
 # Match variables to output variables = consistent variables across species
@@ -141,13 +149,13 @@ saveRDS(wolf[, ..outputVariables], 'output/data-prep/wolf.Rds')
 source('R/functions/PlotLocsByFigure.R')
 
 # To PDF 
-pdf('graphics/data-prep/wolf-locs-by-year.pdf')
+# pdf('graphics/data-prep/wolf-locs-by-year.pdf')
 wolf[order(yr), PlotLocsBy(.SD, bounds, .BY[[1]], 'id'),
      by = yr]
-dev.off()
+# dev.off()
 
 # Temporal distribution of locs
 source('R/functions/TemporalDistributionFigure.R')
 TempDistFig(wolf)
 
-ggsave('graphics/data-prep/wolf-temp-dist.png', TempDistFig(wolf), 'png')
+# ggsave('graphics/data-prep/wolf-temp-dist.png', TempDistFig(wolf), 'png')
