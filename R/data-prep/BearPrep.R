@@ -96,13 +96,17 @@ bear <- bear[stepLength < stepLengthThreshold &
 ### Output ----
 # Match variables to output variables = consistent variables across species
 source('R/variables/PrepDataOutputVariables.R')
-setnames(bear, c('ANIMAL_ID', 'SPECIES', 'HERD', 'SEX', 
+
+outputVariables <- c(outputVariables, 'herd', 'sex')
+
+setnames(bear, c('ANIMAL_ID', 'SPECIES',
                  'idate', 'itime', 'datetime', 
                  'EASTING', 'NORTHING',
-                 'julday', 'yr', 'mnth', 'stepLength', 'moveRate', 'difdatetime'),
+                 'julday', 'yr', 'mnth', 'stepLength', 'moveRate', 'difdatetime',
+                 'HERD', 'SEX'),
          outputVariables)
 
-saveRDS(bear, 'output/data-prep/bear.Rds')
+saveRDS(bear[, ..outputVariables], 'output/data-prep/bear.Rds')
 
 ### Figures ----
 # Plot locs by year on NL bounds 
