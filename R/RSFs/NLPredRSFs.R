@@ -1,10 +1,14 @@
 ################ Coyote RSFs ######################
 
 library(adehabitatHR)
-
-
+library(rgeos)
+library(spatstat)
+library(polyCub)
+library(raster)
 
 coyote<-readRDS('output/data-prep/coyote.Rds')
+
+plot(coyote$EASTING,coyote$NORTHING)
 
 head(coyote)
 
@@ -106,14 +110,73 @@ plot(nlBounds)
 points(coyMRres$EASTING,coyMRres$NORTHING)
 
 
+CoyAvail<-mcp(points, percent = 99.9)
+
+mean(coyMRres$stepLength)
+
+plot(nlBounds)
+plot(CoyAvail,add=T)
+
+### Buffer by mean step length
+CoyAvailBuf<-gBuffer(CoyAvail,width=mean(coyMRres$stepLength))
+
+clipped<-gIntersection(nlBounds,CoyAvailBuf)
+
+plot(clipped)
+
+plot(nlBounds)
+plot(clipped,add=T)
+
+clipped2<-as.owin.SpatialPolygons(clipped)
+rand<-runifpoint(n=nrow(coyMRres)*10,win=clipped2)
+
+plot(rand)
+
+#### Load in habitat layers
+
+Ant<-raster('input/Landcover/Anthro100.tif')
+Bro<-raster('input/Landcover/Broadleaf100.tif')
+Con<-raster('input/Landcover/Conifer100.tif')
+Lic<-raster('input/Landcover/Lichen100.tif')
+Mix<-raster('input/Landcover/MixedWood100.tif')
+Roc<-raster('input/Landcover/Rocky100.tif')
+Scr<-raster('input/Landcover/Scrub100.tif')
+Wat<-raster('input/Landcover/Water100.tif')
+Wet<-raster('input/Landcover/Wetland100.tif')
+
+AntUsed<-extract(Ant,points)
+BroUsed<-extract(Bro,points)
+ConUsed<-extract(Con,points)
+LicUsed<-extract(Lic,points)
+MixUsed<-extract(Mix,points)
+RocUsed<-extract(Roc,points)
+ScrUsed<-extract(Scr,points)
+WatUsed<-extract(Wat,points)
+WetUsed<-extract(Wet,points)
+
+randCo<-coords(rand)
+
+xyr<-cbind(randCo$x,randCo$y)
+
+randPoints<-SpatialPoints(data.frame(xyr[,1],xyr[,2]))
+
+
+AntAvail<-extract(Ant,randPoints)
+BroAvail<-extract(Bro,randPoints)
+ConAvail<-extract(Con,randPoints)
+LicAvail<-extract(Lic,randPoints)
+MixAvail<-extract(Mix,randPoints)
+RocAvail<-extract(Roc,randPoints)
+ScrAvail<-extract(Scr,randPoints)
+WatAvail<-extract(Wat,randPoints)
+WetAvail<-extract(Wet,randPoints)
 
 
 
 
 
 
-
-
+############ caribou
 
 
 caribou<-readRDS('output/data-prep/caribou.Rds')
@@ -124,7 +187,7 @@ points(MRcar$EASTING,MRcar$NORTHING)
 
 points<-SpatialPoints(data.frame(MRcar$EASTING,MRcar$NORTHING))
 
-carMCP<-mcp(points, percent=100)
+carMCP<-mcp(points, percent=99.9)
 
 plot(nlBounds)
 plot(carMCP,add=T)
