@@ -72,6 +72,14 @@ StepLength(elk, idCol,
            xCol = projXCol, yCol = projYCol,
            returnIntermediate = FALSE)
 
+difTimeThreshold <- 2
+elk <- elk[round(difdatetime) == difTimeThreshold]
+
+StepLength(elk, idCol, 
+           datetimeCol = 'datetime', yrCol = 'yr', 
+           xCol = projXCol, yCol = projYCol,
+           returnIntermediate = FALSE)
+  
 ### Summary information ----
 # How many unique animals?
 elk[, uniqueN(get(idCol))]
@@ -86,8 +94,7 @@ kable(elk[order(yr), .N, by = yr])
 ### Subset ----
 # Thresholds
 stepLengthThreshold <- 7750000
-moveRateThreshold <- 500000
-difTimeThreshold <- 2
+moveRateThreshold <- 2000
 lowJul <- 0
 highJul <- 365
 
@@ -95,7 +102,6 @@ highJul <- 365
 
 elk <- elk[stepLength < stepLengthThreshold & 
              moveRate < moveRateThreshold &
-             round(difdatetime) == difTimeThreshold &
              between(julday, lowJul, highJul)]
 
 ### Output ----
