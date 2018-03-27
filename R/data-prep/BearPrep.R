@@ -67,20 +67,48 @@ kable(bear[, .('N Unique Bears' = uniqueN(get(idCol))), by = yr])
 kable(bear[order(mnth), .N, by = mnth])
 kable(bear[order(yr), .N, by = yr])
 
-### Plots ----
+### Subset ----
+# Thresholds
+stepLengthThreshold <- 7750000
+moveRateThreshold <- 500000
+difTimeThreshold <- 24
+lowJul <- 0
+highJul <- 365
+herdList <- 'MIDRIDGE'
+
+# Map_Quality, NAV
+
+
+bear <- bear[stepLength < stepLengthThreshold & 
+               moveRate < moveRateThreshold &
+               difdatetime < difTimeThreshold &
+               between(julday, lowJul, highJul) & 
+               HERD %in% herdList]
+
+### Output ----
+# Match variables to output variables = consistent variables across species
+source('R/variables/PrepDataOutputVariables.R')
+setnames(bear, c('ANIMAL_ID', 'SPECIES', 'HERD', 'SEX', 
+                 'idate', 'itime', 'datetime', 
+                 'EASTING', 'NORTHING',
+                 'julday', 'yr', 'mnth', 'stepLength', 'moveRate', 'difdatetime'),
+         outputVariables)
+
+saveRDS(bear, 'output/data-prep/bear.Rds')
+
+### Figures ----
 # Plot locs by year on NL bounds 
 source('R/functions/PlotLocsByFigure.R')
 
 # To PDF 
-pdf('graphics/data-prep/bear-locs-by-year.pdf')
+# pdf('graphics/data-prep/bear-locs-by-year.pdf')
 bear[NAV == '3D',
      PlotLocsBy(.SD, nlBounds, .BY[[1]], idCol),
      by = yr]
-dev.off()
-
+# dev.off()
 
 # Temporal distribution of locs
 source('R/functions/TemporalDistributionFigure.R')
 TempDistFig(bear)
 
-ggsave('graphics/data-prep/bear-temp-dist.png', TempDistFig(bear), 'png')
+# ggsave('graphics/data-prep/bear-temp-dist.png', TempDistFig(bear), 'png')
