@@ -2,7 +2,7 @@
 
 # Alec Robitaille
 # March 2018
-StepLength <- function(DT, idCol, dateCol, timeCol, yrCol, xCol, yCol, returnIntermediate = FALSE) {
+StepLength <- function(DT, idCol, datetimeCol, yrCol, xCol, yCol, returnIntermediate = FALSE) {
   
   coordCols <- c(xCol, yCol)
   
@@ -10,17 +10,13 @@ StepLength <- function(DT, idCol, dateCol, timeCol, yrCol, xCol, yCol, returnInt
   lagCols <- paste('lag', coordCols, sep = '')
   difCols <- c('difX', 'difY')
   
-  lagTimeCol <- paste0('lag', timeCol)
-  difTimeCol <- paste0('dif', timeCol)
-  
-  lagDateCol <- paste0('lag', dateCol)
-  difDateCol <- paste0('dif', dateCol)
+  lagDateTimeCol <- paste0('lag', datetimeCol)
+  difDateTimeCol <- paste0('dif', datetimeCol)
   
   # Use shift  to create lagged cols
-  DT[order(get(dateCol), get(timeCol)), 
+  DT[order(get(datetimeCol)), 
      (lagCols) := shift(.SD, 1, NA, 'lag'),
-     by = c(idCol, yrCol),
-     .SDcols = coordCols]
+     by = c(idCol, yrCol), .SDcols = coordCols]
   
   # Find the difference squared between all points in each x,y separately
   DT[, (difCols) := .((get(coordCols[1]) - get(lagCols[1])) ^ 2,
@@ -30,31 +26,31 @@ StepLength <- function(DT, idCol, dateCol, timeCol, yrCol, xCol, yCol, returnInt
   DT[, stepLength := sqrt(rowSums(.SD)), .SDcols = difCols]
 
   ## Delta Time
-  DT[order(get(dateCol), get(timeCol)),
-     c(lagTimeCol, lagDateCol) := shift(.SD, 1, NA, 'lag'),
-     by = c(idCol, yrCol), .SDcols = c(timeCol, dateCol)]
+  DT[order(get(datetimeCol)),
+     (lagDateTimeCol) := shift(.SD, 1, NA, 'lag'),
+     by = c(idCol, yrCol), .SDcols = datetimeCol]
 
   # difference in time in hours
-  DT[, (difTimeCol) := (as.numeric(difftime(get(timeCol), get(lagTimeCol), units = 'hours')))]
+  DT[, (difDateTimeCol) := as.numeric(difftime(get(datetimeCol), get(lagDateTimeCol), units = 'hours'))]
   
   # for comparison across days
-  DT[get(difTimeCol) < 0, (difTimeCol) := get(difTimeCol) + 24]
+  # DT[get(difTimeCol) < 0, (difTimeCol) := get(difTimeCol) + 24]
+  # 
+  # if(DT[get(difTimeCol) > 24, .N] != 0) stop("check difitime, shouldn't be greater than 24")
+  # 
+  # # difference in days 
+  # DT[, (difDateCol) := (as.numeric(difftime(get(dateCol), get(lagDateCol), units = 'days')))]
+  # 
+  # if(DT[get(difDateCol) > 1, .N] != 0) warning("check difidate, some locs are greater than 1 day apart")
+  # 
+  # # Step length divided by time difference
+  # DT[, moveRate := stepLength / (get(difTimeCol))]
   
-  if(DT[get(difTimeCol) > 24, .N] != 0) stop("check difitime, shouldn't be greater than 24")
-  
-  # difference in days 
-  DT[, (difDateCol) := (as.numeric(difftime(get(dateCol), get(lagDateCol), units = 'days')))]
-  
-  if(DT[get(difTimeCol) > 1, .N] != 0) warning("check difidate, some locs are greater than 1 day apart")
-  
-  # Step length divided by time difference
-  DT[, moveRate := stepLength / (get(difTimeCol))]
-  
-  if(returnIntermediate) {
-    DT
-  } else {
-    DT[, c(lagCols, difCols, lagTimeCol, difTimeCol) := NULL]
-  }
+  # if(returnIntermediate) {
+  #   DT
+  # } else {
+  #   DT[, c(lagCols, difCols, lagTimeCol) := NULL]
+  # }
 }
 
 
