@@ -50,6 +50,12 @@ bear[sample(.N, 5), .(idate, itime, yr, mnth, julday)]
 bear[, c(projXCol, projYCol) := as.data.table(project(cbind(get(xCol), get(yCol)), 
                                                          utm))]
 
+# Step Length
+source('R/functions/StepLength.R')
+StepLength(bear, idCol, datetimeCol = 'datetime', yrCol = 'yr',
+           xCol = projXCol, yCol = projYCol,
+           returnIntermediate = FALSE)
+
 ### Summary information ----
 # How many unique animals?
 bear[, uniqueN(get(idCol))]
