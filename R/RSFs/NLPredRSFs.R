@@ -224,6 +224,20 @@ RSFCoyote<-glm(use~Ant+Bro+Con+Lic+Mix+Roc+Scr+Wat+Rug,data=coyRSF2)
 summary(RSFCoyote)
 
 
+AntCrop<-crop(Ant,clipped)
+
+LicCrop<-crop(Lic,clipped)
+LicMask<-mask(LicCrop,clipped)
+
+plot(LicCrop)
+
+
+
+LicCroprp<-projectRaster(LicCrop, crs="+proj=utm +zone=21 ellps=WGS84")
+
+clipped<-spTransform(clipped, CRS("+proj=utm +zone=21 ellps=WGS84"))
+
+
 ############ caribou
 
 
