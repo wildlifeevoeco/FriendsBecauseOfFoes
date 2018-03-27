@@ -69,6 +69,14 @@ StepLength(coyote, idCol, datetimeCol = 'datetime', yrCol = 'yr',
            xCol = projXCol, yCol = projYCol,
            returnIntermediate = FALSE)
 
+difTimeThreshold <- 2
+coyote <- coyote[round(difdatetime) == difTimeThreshold]
+
+StepLength(coyote, idCol, 
+           datetimeCol = 'datetime', yrCol = 'yr', 
+           xCol = projXCol, yCol = projYCol,
+           returnIntermediate = FALSE)
+
 ### Summary information ----
 # How many unique animals?
 coyote[, uniqueN(get(idCol))]
@@ -97,7 +105,6 @@ herdList <- 'MIDRIDGE'
 
 coyote <- coyote[stepLength < stepLengthThreshold & 
                  moveRate < moveRateThreshold &
-                 difdatetime < difTimeThreshold &
                  between(julday, lowJul, highJul)]
                  #$HERD %in% herdList]
 
@@ -122,15 +129,14 @@ saveRDS(coyote[, ..outputVariables], 'output/data-prep/coyote.Rds')
 source('R/functions/PlotLocsByFigure.R')
 
 # To PDF 
-pdf('graphics/data-prep/coyote-locs-by-year.pdf')
-coyote[,
-       PlotLocsBy(.SD, nlBounds, .BY[[1]], 'id'),
+# pdf('graphics/data-prep/coyote-locs-by-year.pdf')
+coyote[, PlotLocsBy(.SD, nlBounds, .BY[[1]], 'id'),
        by = yr]
-dev.off()
+# dev.off()
 
 
 # Temporal distribution of locs
 source('R/functions/TemporalDistributionFigure.R')
 TempDistFig(coyote)
 
-ggsave('graphics/data-prep/coyote-temp-dist.png', TempDistFig(coyote), 'png')
+# ggsave('graphics/data-prep/coyote-temp-dist.png', TempDistFig(coyote), 'png')
