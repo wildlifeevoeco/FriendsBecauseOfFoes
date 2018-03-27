@@ -33,6 +33,10 @@ idCol <- 'ElkID'
 projXCol <- 'EASTING'
 projYCol <- 'NORTHING'
 
+### Subset ----
+# Subset any NAs in defined cols
+checkCols <- c(xCol, yCol, dateCol)
+elk <- na.omit(elk, cols = checkCols)
 
 ### Add fields ----
 # Missing single time field, we'll combine hour and minute and save as 'time'
@@ -57,7 +61,7 @@ elk[, c(projXCol, projYCol) := .(get(xCol), get(yCol))]
 # Step Length
 source('R/functions/StepLength.R')
 StepLength(elk, idCol, 
-           dateCol = 'idate', timeCol = 'itime', yrCol = 'yr', 
+           datetimeCol = 'datetime', yrCol = 'yr', 
            xCol = projXCol, yCol = projYCol,
            returnIntermediate = FALSE)
 
@@ -72,6 +76,37 @@ kable(elk[order(yr), .('N Unique Elks' = uniqueN(get(idCol))), by = yr])
 kable(elk[order(mnth), .N, by = mnth])
 kable(elk[order(yr), .N, by = yr])
 
+### Subset ----
+# Thresholds
+stepLengthThreshold <- 7750000
+moveRateThreshold <- 500000
+difTimeThreshold <- 24
+lowJul <- 0
+highJul <- 365
+herdList <- 'MIDRIDGE'
+
+# Map_Quality, NAV
+
+bear <- bear[stepLength < stepLengthThreshold & 
+               moveRate < moveRateThreshold &
+               difdatetime < difTimeThreshold &
+               between(julday, lowJul, highJul) & 
+               HERD %in% herdList]
+
+### Output ----
+# Match variables to output variables = consistent variables across species
+source('R/variables/PrepDataOutputVariables.R')
+
+elk[, SPECIES := 'ELK']
+
+setnames(elk, c('ElkID', 'SPECIES',
+                 'idate', 'itime', 'datetime', 
+                 'EASTING', 'NORTHING',
+                 'julday', 'yr', 'mnth', 'stepLength', 'moveRate', 'difdatetime'),
+         outputVariables)
+
+saveRDS(elk[, ..outputVariables], 'output/data-prep/elk.Rds')
+
 ### Plots ----
 # Plot locs by year on RMNP bounds 
 source('R/functions/PlotLocsByFigure.R')
@@ -79,7 +114,7 @@ source('R/functions/PlotLocsByFigure.R')
 # To PDF 
 pdf('graphics/data-prep/elk-locs-by-year.pdf')
 elk[order(yr),
-    PlotLocsBy(.SD, bounds, .BY[[1]], idCol),
+    PlotLocsBy(.SD, bounds, .BY[[1]], 'id'),
     by = yr]
 dev.off()
 
