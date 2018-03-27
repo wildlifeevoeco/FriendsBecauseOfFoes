@@ -16,13 +16,13 @@ lapply(libs, require, character.only = TRUE)
 
 ### Input data ----
 ##animal locations
-elk <- readRDS('output/data-prep/elk.Rds')
-
+#elk.locs <- readRDS('output/data-prep/elk.Rds')
+elk.locs<-elk
 ### MCPs ----
 # UTM zone 14N
 utm <- '+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
 
-elkSP <- SpatialPoints(elk[, .(EASTING, NORTHING)], proj4string = CRS(utm))
+elkSP <- SpatialPoints(elk.locs[, .(EASTING, NORTHING)], proj4string = CRS(utm))
 
 elkMCP <- mcp(elkSP, 100)
 
@@ -46,17 +46,18 @@ ruggedness<-raster('input/covariates/RMNP/Ruggedness_test.tif')
 
 # Create Regular Grid
 source('R/functions/GenerateGrid.R')
-regGrid <- GenerateGrid(300, mcpExtent = elkMCP, crs = utm)
+regGrid <- GenerateGrid(3000, mcpExtent = elkMCP, crs = utm)
 
-
-regGrid
-
+available.elk.locs <- data.table(regGrid@coords)[over(bounds, regGrid, returnList = TRUE)[[1]]]
+##################################################3
+# Drop columns leaving only needed
+cols <- c('id','EASTING', 'NORTHING','season')
 
 # and set all elk as observed
-observed.elk <- elk[, ..cols][, observed := 1]
+observed.elk <- elk.locs[, ..cols][, observed := 1]
 
 # Create identical for random with observed == 0
-available.elk <- elk[, ..cols][, observed := 0]
+available.elk <- available.elk.locs[, ..cols][, observed := 0]
 
 # These should also match (they do)
 nrow(available.elk)
