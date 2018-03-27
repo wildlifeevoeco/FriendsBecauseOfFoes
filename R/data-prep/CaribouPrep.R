@@ -6,26 +6,19 @@
 # Project: Easter Week Challenge 2018
 # Copyright: ./LICENSE.md 
 
-
-
-# NOTE: skeleton simply carried over from bear, coyote. this code is not functional
-
-
-
 ### Packages ----
 libs <- c('data.table', 'ggplot2', 
           'knitr', 'sp', 'rgdal', 'magrittr')
 lapply(libs, require, character.only = TRUE)
 
-
 ### Input data ----
-# dropCols <- c('FIX_ID','VENDOR_CL','AGE','COLLAR_FILE_ID','EXCLUDE','DOP','LOCQUAL',
-#               'VALIDATED','COLLAR_TYPE_CL','COLLAR_ID','Fix_Time_Delta','EPSG_CODE')
-#'Map_Quality','NAV')
+dropCols <- c('V1','FIX_ID','EPSG_CODE','Fix_Time_Delta','COLLAR_FILE_ID',
+              'COLLAR_ID','COLLAR_TYPE_CL',
+              'EXCLUDE','VENDOR_CL','AGE','DOP','VALIDATED')
 
 # Read in caribou data, dropping above columns
-caribou <- fread('input/locs/Caribous.csv',
-             drop = dropCols)
+caribou <- fread('input/locs/AllCaribouDataRaw.csv',
+                 drop = dropCols)
 
 # UTM zone 21N
 utm <- '+proj=utm +zone=21 ellps=WGS84'
@@ -34,32 +27,86 @@ utm <- '+proj=utm +zone=21 ellps=WGS84'
 nlBounds <- rgdal::readOGR('input/etc/NL-Bounds/NL-Bounds.shp') %>% 
   spTransform(CRSobj = utm)
 
+### Variables ----
+xCol <- 'X_COORD'
+yCol <- 'Y_COORD'
+dateCol <- 'FIX_DATE'
+timeCol <- 'FIX_TIME'
+idCol <- 'ANIMAL_ID'
+projXCol <- 'EASTING'
+projYCol <- 'NORTHING'
+
+### Subset ----
+# Subset any NAs in defined cols
+checkCols <- c(xCol, yCol, timeCol, dateCol)
+caribou <- na.omit(caribou, cols = checkCols)
+
+# Subset any 0 in lat/long and where longitude is positive
+caribou <- caribou[get(xCol) != 0 & get(xCol) < 0]
+
+# Drop down to Middle Ridge right away, so subsequent steps are faster
+caribou <- caribou[HERD == 'MIDRIDGE']
 
 ### Add fields ----
 ## Date time fields
-caribou[, idate := as.IDate(FIX_DATE)]
-caribou[, itime := as.ITime(FIX_TIME)]
+source('R/functions/DatePrep.R')
+DatePrep(caribou, dateCol, timeCol)
 
-caribou[, datetime := as.POSIXct(paste(idate, itime))]
-
-caribou[, julday := yday(idate)]
-caribou[, year := year(idate)]
-caribou[, month := month(idate)]
+# Check!
+caribou[sample(.N, 5), .(idate, itime, yr, mnth, julday)]
 
 ## Project coordinates to UTM
-caribou[, c('EASTING', 'NORTHING') := as.data.table(project(cbind(X_COORD, Y_COORD), utm))]
+caribou[, c(projXCol, projYCol) := as.data.table(project(cbind(get(xCol), get(yCol)), 
+                                                         utm))]
+
+# Step Length
+source('R/functions/StepLength.R')
+StepLength(caribou, idCol, datetimeCol = 'datetime', yrCol = 'yr',
+           xCol = projXCol, yCol = projYCol,
+           returnIntermediate = FALSE)
 
 ### Summary information ----
 # How many unique animals?
-caribou[, uniqueN(ANIMAL_ID)]
+caribou[, uniqueN(get(idCol))]
 
 # How many unique animals per year?
-caribou[, .('N Unique Caribous' = uniqueN(ANIMAL_ID)), by = year]
-# kable(caribou[, .('N Unique Caribous' = uniqueN(ANIMAL_ID)), by = year])
+kable(caribou[order(yr), .('N Unique Caribou' = uniqueN(get(idCol))), by = yr])
 
 # Temporal distribution of locs
-kable(caribou[order(month), .N, by = month])
-kable(caribou[order(year), .N, by = year])
+kable(caribou[order(mnth), .N, by = mnth])
+kable(caribou[order(yr), .N, by = yr])
+
+### Subset ----
+# Thresholds
+stepLengthThreshold <- 7750000
+moveRateThreshold <- 500000
+difTimeThreshold <- 24
+lowJul <- 0
+highJul <- 365
+
+# Map_Quality, NAV
+
+caribou <- caribou[stepLength < stepLengthThreshold & 
+                   moveRate < moveRateThreshold &
+                   difdatetime < difTimeThreshold &
+                   between(julday, lowJul, highJul)]
+
+
+### Output ----
+# Match variables to output variables = consistent variables across species
+source('R/variables/PrepDataOutputVariables.R')
+
+outputVariables <- c(outputVariables, 'herd', 'sex')
+
+setnames(caribou, c('ANIMAL_ID', 'SPECIES',
+                 'idate', 'itime', 'datetime', 
+                 'EASTING', 'NORTHING',
+                 'julday', 'yr', 'mnth', 'stepLength', 'moveRate', 'difdatetime',
+                 'HERD', 'SEX'),
+         outputVariables)
+
+saveRDS(caribou[, ..outputVariables], 'output/data-prep/caribou.Rds')
+
 
 ### Plots ----
 # Plot locs by year on NL bounds 
@@ -67,9 +114,8 @@ source('R/functions/PlotLocsByFigure.R')
 
 # To PDF 
 pdf('graphics/data-prep/caribou-locs-by-year.pdf')
-caribou[NAV == '3D',
-    PlotLocsBy(.SD, nlBounds, .BY[[1]], idCol),
-    by = year]
+caribou[, PlotLocsBy(.SD, nlBounds, .BY[[1]], 'id'),
+        by = yr]
 dev.off()
 
 
