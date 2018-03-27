@@ -37,6 +37,14 @@ idCol <- 'ANIMAL_ID'
 projXCol <- 'EASTING'
 projYCol <- 'NORTHING'
 
+### Subset ----
+# Subset any NAs in defined cols
+checkCols <- c(xCol, yCol, timeCol, dateCol)
+coyote <- na.omit(coyote, cols = checkCols)
+
+# Subset any 0 in lat/long and where longitude is positive
+coyote <- coyote[get(xCol) != 0 & get(xCol) < 0]
+
 ### Add fields ----
 ## Date time fields
 source('R/functions/DatePrep.R')
@@ -47,6 +55,12 @@ coyote[sample(.N, 5), .(idate, itime, yr, mnth, julday)]
 
 ## Project coordinates to UTM
 coyote[, c(projXCol, projYCol) := as.data.table(project(cbind(get(xCol), get(yCol)), utm))]
+
+# Step Length
+source('R/functions/StepLength.R')
+StepLength(coyote, idCol, datetimeCol = 'datetime', yrCol = 'yr',
+           xCol = projXCol, yCol = projYCol,
+           returnIntermediate = FALSE)
 
 ### Summary information ----
 # How many unique animals?
@@ -59,14 +73,48 @@ kable(coyote[, .('N Unique coyotes' = uniqueN(get(idCol))), by = yr])
 kable(coyote[order(mnth), .N, by = mnth])
 kable(coyote[order(yr), .N, by = yr])
 
+### Subset ----
+# Thresholds
+stepLengthThreshold <- 7750000
+moveRateThreshold <- 500000
+difTimeThreshold <- 24
+lowJul <- 0
+highJul <- 365
+herdList <- 'MIDRIDGE'
+
+# Map_Quality, NAV
+
+
+coyote <- coyote[stepLength < stepLengthThreshold & 
+                 moveRate < moveRateThreshold &
+                 difdatetime < difTimeThreshold &
+                 between(julday, lowJul, highJul) & 
+                 HERD %in% herdList]
+
+### Output ----
+# Match variables to output variables = consistent variables across species
+source('R/variables/PrepDataOutputVariables.R')
+
+outputVariables <- c(outputVariables, 'herd', 'sex')
+
+setnames(coyote, c('ANIMAL_ID', 'SPECIES',
+                 'idate', 'itime', 'datetime', 
+                 'EASTING', 'NORTHING',
+                 'julday', 'yr', 'mnth', 'stepLength', 'moveRate', 'difdatetime',
+                 'HERD', 'SEX'),
+         outputVariables)
+
+saveRDS(coyote[, ..outputVariables], 'output/data-prep/coyote.Rds')
+
+
 ### Plots ----
 # Plot locs by year on NL bounds 
 source('R/functions/PlotLocsByFigure.R')
 
 # To PDF 
 pdf('graphics/data-prep/coyote-locs-by-year.pdf')
-coyote[NAV == '3D',
-       PlotLocsBy(.SD, nlBounds, .BY[[1]], idCol),
+coyote[,
+       PlotLocsBy(.SD, nlBounds, .BY[[1]], 'id'),
        by = yr]
 dev.off()
 
