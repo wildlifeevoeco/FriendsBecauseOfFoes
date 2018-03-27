@@ -86,7 +86,7 @@ kable(coyote[, .N, by = HERD])
 ### Subset ----
 # Thresholds
 stepLengthThreshold <- 7750000
-moveRateThreshold <- 500000
+moveRateThreshold <- 10000
 difTimeThreshold <- 24
 lowJul <- 0
 highJul <- 365
