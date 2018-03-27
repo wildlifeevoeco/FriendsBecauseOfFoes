@@ -104,6 +104,14 @@ elk <- elk[stepLength < stepLengthThreshold &
              moveRate < moveRateThreshold &
              between(julday, lowJul, highJul)]
 
+# Spatially constrain to RMNP bounds
+elkSP <- SpatialPointsDataFrame(elk[, .(get(projXCol), get(projYCol))],
+                                elk,
+                                proj4string = CRS(utm))
+
+elk <- data.table(over(bounds, elkSP, returnList = TRUE)[[1]])
+
+
 ### Output ----
 # Match variables to output variables = consistent variables across species
 source('R/variables/PrepDataOutputVariables.R')
