@@ -16,7 +16,15 @@ lapply(libs, require, character.only = TRUE)
 
 ### Input data ----
 ##animal locations
-locs <- readRDS('output/data-prep/elk.Rds')
+elk <- readRDS('output/data-prep/elk.Rds')
+
+### MCPs ----
+# UTM zone 14N
+utm <- '+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
+
+elkSP <- SpatialPoints(elk[, .(EASTING, NORTHING)], proj4string = CRS(utm))
+
+elkMCP <- mcp(elkSP, 100)
 
 ##covariates
 #Distance
@@ -87,13 +95,13 @@ sample.locs[, wtdist := ExtractPoints(matrix(c(EASTING, NORTHING), ncol = 2), wa
 
 
 ###winter RSF
-winter.locs = subset()
+winter.locs <- sample.locs[season=="winter"]
 
 winterelkrsf <- glm(observed~agprop+bgprop+cnprop+dcprop+grprop+hudist+mrprop+mwprop+odprop+rgdns+wtdist, family = binomial,data=winter.locs)
 
 
 ###spring RSF
-spring.locs = subset()
+spring.locs <- sample.locs[season=="spring"]
 
 springelkrsf <- glm(observed~agprop+bgprop+cnprop+dcprop+grprop+hudist+mrprop+mwprop+odprop+rgdns+wtdist, family = binomial,data=spring.locs)
 
