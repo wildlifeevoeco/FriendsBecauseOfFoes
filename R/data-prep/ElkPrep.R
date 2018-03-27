@@ -33,11 +33,6 @@ idCol <- 'ElkID'
 projXCol <- 'EASTING'
 projYCol <- 'NORTHING'
 
-### Subset ----
-# Subset any NAs in defined cols
-checkCols <- c(xCol, yCol, dateCol)
-elk <- na.omit(elk, cols = checkCols)
-
 ### Add fields ----
 # Missing single time field, we'll combine hour and minute and save as 'time'
 # Combine hour, minute to timeCol
@@ -55,7 +50,21 @@ elk[sample(.N, 5), .(idate, itime, yr, mnth, julday)]
 dropCol <- c('Year', 'Month', 'Day', 'Hour', 'Minute', 'time')
 elk[, (dropCol) := NULL]
 
-## Coordinates already projected, simply rename
+# Season
+source('R/variables/CutOffThresholds.R')
+
+coyote[julday %between% winter, season := 'winter']
+coyote[julday %between% spring, season := 'spring']
+
+
+### Subset ----
+# Subset any NAs in defined cols
+checkCols <- c(xCol, yCol, dateCol, 'season')
+elk <- na.omit(elk, cols = checkCols)
+
+
+### Project + Step Length ----
+# Coordinates already projected, simply rename
 elk[, c(projXCol, projYCol) := .(get(xCol), get(yCol))]
 
 # Step Length
@@ -64,6 +73,12 @@ StepLength(elk, idCol,
            datetimeCol = 'datetime', yrCol = 'yr', 
            xCol = projXCol, yCol = projYCol,
            returnIntermediate = FALSE)
+
+elk[hours %% 2 != 0] 
+elk[yr == 2016, qplot(difdatetime, binwidth = 1)] 
+
+elk[difdatetime == 1 & hr %% 2 == 0] 
+
 
 ### Summary information ----
 # How many unique animals?

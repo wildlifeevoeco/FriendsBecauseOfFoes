@@ -54,19 +54,27 @@ idCol <- 'wolfid'
 projXCol <- 'EASTING'
 projYCol <- 'NORTHING'
 
-### Subset ----
-# Subset any NAs in defined cols
-checkCols <- c(xCol, yCol, timeCol, dateCol)
-wolf <- na.omit(wolf, cols = checkCols)
-
-# Subset any 0 in lat/long and where longitude is positive
-wolf <- wolf[get(xCol) != 0 & get(xCol) < 0]
-
 ### Add fields ----
 # Date time fields
 source('R/functions/DatePrep.R')
 DatePrep(wolf, dateCol, timeCol)
 
+# Season
+source('R/variables/CutOffThresholds.R')
+
+wolf[julday %between% winter, season := 'winter']
+wolf[julday %between% spring, season := 'spring']
+
+### Subset ----
+# Subset any NAs in defined cols
+checkCols <- c(xCol, yCol, timeCol, dateCol, 'season')
+wolf <- na.omit(wolf, cols = checkCols)
+
+# Subset any 0 in lat/long and where longitude is positive
+wolf <- wolf[get(xCol) != 0 & get(xCol) < 0]
+
+
+### Project + Step Length ----
 # Project coordinates to UTM
 wolf[, c(projXCol, projYCol) := as.data.table(project(cbind(get(xCol), get(yCol)), 
                                                       utm))]

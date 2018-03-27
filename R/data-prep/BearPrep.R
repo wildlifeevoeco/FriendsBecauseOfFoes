@@ -38,14 +38,6 @@ idCol <- 'ANIMAL_ID'
 projXCol <- 'EASTING'
 projYCol <- 'NORTHING'
 
-### Subset ----
-# Subset any NAs in defined cols
-checkCols <- c(xCol, yCol, timeCol, dateCol)
-bear <- na.omit(bear, cols = checkCols)
-
-# Subset any 0 in lat/long and where longitude is positive
-bear <- bear[get(xCol) != 0 & get(xCol) < 0]
-
 
 ### Add fields ----
 ## Date time fields
@@ -55,7 +47,22 @@ DatePrep(bear, dateCol, timeCol)
 # Check!
 bear[sample(.N, 5), .(idate, itime, yr, mnth, julday)]
 
-## Project coordinates to UTM
+# Season
+source('R/variables/CutOffThresholds.R')
+
+bear[julday %between% winter, season := 'winter']
+bear[julday %between% spring, season := 'spring']
+
+### Subset ----
+# Subset any NAs in defined cols
+checkCols <- c(xCol, yCol, timeCol, dateCol, 'season')
+bear <- na.omit(bear, cols = checkCols)
+
+# Subset any 0 in lat/long and where longitude is positive
+bear <- bear[get(xCol) != 0 & get(xCol) < 0]
+
+### Project + Step Length ----
+# Project coordinates to UTM
 bear[, c(projXCol, projYCol) := as.data.table(project(cbind(get(xCol), get(yCol)), 
                                                          utm))]
 

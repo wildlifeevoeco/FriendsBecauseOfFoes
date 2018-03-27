@@ -46,8 +46,7 @@ DatePrep(coyote, dateCol, timeCol)
 coyote[sample(.N, 5), .(idate, itime, yr, mnth, julday)]
 
 # Season
-winter <- c(1, 72)
-spring <- c(141, 212)
+source('R/variables/CutOffThresholds.R')
 
 coyote[julday %between% winter, season := 'winter']
 coyote[julday %between% spring, season := 'spring']

@@ -36,26 +36,37 @@ idCol <- 'ANIMAL_ID'
 projXCol <- 'EASTING'
 projYCol <- 'NORTHING'
 
-### Subset ----
-# Subset any NAs in defined cols
-checkCols <- c(xCol, yCol, timeCol, dateCol)
-caribou <- na.omit(caribou, cols = checkCols)
-
-# Subset any 0 in lat/long and where longitude is positive
-caribou <- caribou[get(xCol) != 0 & get(xCol) < 0]
 
 # Drop down to Middle Ridge right away, so subsequent steps are faster
 caribou <- caribou[HERD == 'MIDRIDGE']
 
+
 ### Add fields ----
-## Date time fields
+# Date time fields
 source('R/functions/DatePrep.R')
 DatePrep(caribou, dateCol, timeCol)
 
 # Check!
 caribou[sample(.N, 5), .(idate, itime, yr, mnth, julday)]
 
-## Project coordinates to UTM
+# Season
+source('R/variables/CutOffThresholds.R')
+
+caribou[julday %between% winter, season := 'winter']
+caribou[julday %between% spring, season := 'spring']
+
+### Subset ----
+# Subset any NAs in defined cols
+checkCols <- c(xCol, yCol, timeCol, dateCol, 'season')
+caribou <- na.omit(caribou, cols = checkCols)
+
+# Subset any 0 in lat/long and where longitude is positive
+caribou <- caribou[get(xCol) != 0 & get(xCol) < 0]
+
+
+
+### Project + Step Length ----
+# Project coordinates to UTM
 caribou[, c(projXCol, projYCol) := as.data.table(project(cbind(get(xCol), get(yCol)), 
                                                          utm))]
 
@@ -105,7 +116,7 @@ setnames(caribou, c('ANIMAL_ID', 'SPECIES',
                  'HERD', 'SEX'),
          outputVariables)
 
-saveRDS(caribou[, ..outputVariables], 'output/data-prep/caribou.Rds')
+# saveRDS(caribou[, ..outputVariables], 'output/data-prep/caribou.Rds')
 
 
 ### Plots ----
