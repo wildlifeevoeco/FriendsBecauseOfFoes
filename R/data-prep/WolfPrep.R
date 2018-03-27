@@ -74,7 +74,7 @@ wolf[, c(projXCol, projYCol) := as.data.table(project(cbind(get(xCol), get(yCol)
 # Step Length
 source('R/functions/StepLength.R')
 StepLength(wolf, idCol, 
-           dateCol = 'idate', timeCol = 'itime', yrCol = 'yr', 
+           datetimeCol = 'datetime', yrCol = 'yr', 
            xCol = projXCol, yCol = projYCol,
            returnIntermediate = FALSE)
 
@@ -95,13 +95,45 @@ kable(wolf[, .('N Unique Wolves' = uniqueN(get(idCol))), by = yr])
 kable(wolf[order(mnth), .N, by = mnth])
 kable(wolf[order(yr), .N, by = yr])
 
+### Subset ----
+# Thresholds
+stepLengthThreshold <- 7750000
+moveRateThreshold <- 500000
+difTimeThreshold <- 24
+lowJul <- 0
+highJul <- 365
+
+# Map_Quality, NAV
+
+wolf <- wolf[stepLength < stepLengthThreshold & 
+               moveRate < moveRateThreshold &
+               difdatetime < difTimeThreshold &
+               between(julday, lowJul, highJul)]
+
+### Output ----
+# Match variables to output variables = consistent variables across species
+source('R/variables/PrepDataOutputVariables.R')
+wolf[, SPECIES := 'WOLF']
+
+outputVariables <- c(outputVariables, 'packid')
+
+setnames(wolf, c('wolfid', 'SPECIES',
+                 'idate', 'itime', 'datetime', 
+                 'EASTING', 'NORTHING',
+                 'julday', 'yr', 'mnth', 'stepLength', 'moveRate', 'difdatetime',
+                 'packid'),
+         outputVariables)
+
+saveRDS(wolf[, ..outputVariables], 'output/data-prep/wolf.Rds')
+
+
 ### Plots ----
 # Plot locs by year on RMNP bounds 
 source('R/functions/PlotLocsByFigure.R')
 
 # To PDF 
 pdf('graphics/data-prep/wolf-locs-by-year.pdf')
-wolf[order(yr), PlotLocsBy(.SD, bounds, .BY[[1]], idCol),
+wolf[order(yr), PlotLocsBy(.SD, bounds, .BY[[1]], 'id'),
      by = yr]
 dev.off()
 
