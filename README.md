@@ -52,7 +52,7 @@ Eg: figures, date handling, step length, etc.
 
 script               | output path & name            | description
 ---------------------|-------------------------------|--------------------
-Example.R            | output/example                | example description
+BearPrep.R           | data-prep/bear.Rds            | prepped bear data
                      |                               | 
                      |                               | 
                      |                               | 
