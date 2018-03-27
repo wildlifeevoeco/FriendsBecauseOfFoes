@@ -38,6 +38,15 @@ idCol <- 'ANIMAL_ID'
 projXCol <- 'EASTING'
 projYCol <- 'NORTHING'
 
+### Subset ----
+# Subset any NAs in defined cols
+checkCols <- c(xCol, yCol, timeCol, dateCol)
+bear <- na.omit(bear, cols = checkCols)
+
+# Subset any 0 in lat/long and where longitude is positive
+bear <- bear[get(xCol) != 0 & get(xCol) < 0]
+
+
 ### Add fields ----
 ## Date time fields
 source('R/functions/DatePrep.R')
@@ -78,7 +87,6 @@ herdList <- 'MIDRIDGE'
 
 # Map_Quality, NAV
 
-
 bear <- bear[stepLength < stepLengthThreshold & 
                moveRate < moveRateThreshold &
                difdatetime < difTimeThreshold &
@@ -102,8 +110,8 @@ source('R/functions/PlotLocsByFigure.R')
 
 # To PDF 
 # pdf('graphics/data-prep/bear-locs-by-year.pdf')
-bear[NAV == '3D',
-     PlotLocsBy(.SD, nlBounds, .BY[[1]], idCol),
+bear[,
+     PlotLocsBy(.SD, nlBounds, .BY[[1]], 'id'),
      by = yr]
 # dev.off()
 
