@@ -83,15 +83,13 @@ moveRateThreshold <- 500000
 difTimeThreshold <- 24
 lowJul <- 0
 highJul <- 365
-herdList <- 'MIDRIDGE'
 
 # Map_Quality, NAV
 
-bear <- bear[stepLength < stepLengthThreshold & 
+elk <- elk[stepLength < stepLengthThreshold & 
                moveRate < moveRateThreshold &
                difdatetime < difTimeThreshold &
-               between(julday, lowJul, highJul) & 
-               HERD %in% herdList]
+               between(julday, lowJul, highJul)]
 
 ### Output ----
 # Match variables to output variables = consistent variables across species
