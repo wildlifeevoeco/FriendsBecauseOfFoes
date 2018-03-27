@@ -10,6 +10,22 @@
 # arctan(dif-y, dif-x) * 180 / pi
 
 
+DT <- readRDS('output/data-prep/caribou.Rds')[1:100]
+DT[, rowID := rleid(EASTING)]
+DT[1:5, .(rowID, EASTING, NORTHING, lagEASTING, lagNORTHING, difX, difY, stepLength)]
+qplot(EASTING, NORTHING, color = absAngle, data = DT)
+
+source('R/functions/StepLength.R')
+StepLength(DT, 'id', datetimeCol = 'datetime', yrCol = 'yr',
+           xCol = projXCol, yCol = projYCol,
+           returnIntermediate = TRUE)
+
+DT[, absAngle := atan2(difY, difX) * 180 / pi]
+DT[absAngle < 0, absAngle := absAngle + 360]
+ggplot(DT, aes(EASTING, NORTHING)) + 
+  geom_path(aes(color = absAngle)) #+ 
+  # geom_path()
+DT[, hist(absAngle)]
 # Pseudo code
 
 # Shift points 1 row
