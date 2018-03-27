@@ -73,6 +73,9 @@ kable(coyote[, .('N Unique coyotes' = uniqueN(get(idCol))), by = yr])
 kable(coyote[order(mnth), .N, by = mnth])
 kable(coyote[order(yr), .N, by = yr])
 
+# Herd distribution of coyotes
+kable(coyote[, .N, by = HERD])
+
 ### Subset ----
 # Thresholds
 stepLengthThreshold <- 7750000
