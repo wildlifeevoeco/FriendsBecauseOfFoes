@@ -37,23 +37,31 @@ idCol <- 'ANIMAL_ID'
 projXCol <- 'EASTING'
 projYCol <- 'NORTHING'
 
-### Subset ----
-# Subset any NAs in defined cols
-checkCols <- c(xCol, yCol, timeCol, dateCol)
-coyote <- na.omit(coyote, cols = checkCols)
-
-# Subset any 0 in lat/long and where longitude is positive
-coyote <- coyote[get(xCol) != 0 & get(xCol) < 0]
-
 ### Add fields ----
-## Date time fields
+# Date time fields
 source('R/functions/DatePrep.R')
 DatePrep(coyote, dateCol, timeCol)
 
 # Check!
 coyote[sample(.N, 5), .(idate, itime, yr, mnth, julday)]
 
-## Project coordinates to UTM
+# Season
+winter <- c(1, 72)
+spring <- c(141, 212)
+
+coyote[julday %between% winter, season := 'winter']
+coyote[julday %between% spring, season := 'spring']
+
+### Subset ----
+# Subset any NAs in defined cols
+checkCols <- c(xCol, yCol, timeCol, dateCol, 'season')
+coyote <- na.omit(coyote, cols = checkCols)
+
+# Subset any 0 in lat/long and where longitude is positive
+coyote <- coyote[get(xCol) != 0 & get(xCol) < 0]
+
+### Project Coords, Step length  ----
+# Project coordinates to UTM
 coyote[, c(projXCol, projYCol) := as.data.table(project(cbind(get(xCol), get(yCol)), utm))]
 
 # Step Length
