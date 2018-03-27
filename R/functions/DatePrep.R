@@ -17,6 +17,8 @@ DatePrep <- function(DT, dateCol, timeCol, dateFormat = NULL, timeFormat = NULL)
   DT[, yr := year(idate)]
   DT[, mnth := month(idate)]
   
+  DT[, hr := hour(itime)]
+  
   if(all(c('idate', 'itime', 'datetime', 'julday', 'yr', 'mnth') %in% colnames(DT))){ 
     message('date and time fields added successfully')
   } else {
