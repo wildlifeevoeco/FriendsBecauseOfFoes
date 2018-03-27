@@ -89,7 +89,7 @@ kable(caribou[order(yr), .N, by = yr])
 
 ### Subset ----
 # Thresholds
-stepLengthThreshold <- 7750000
+stepLengthThreshold <- 10000
 moveRateThreshold <- 500000
 difTimeThreshold <- 24
 lowJul <- 0
