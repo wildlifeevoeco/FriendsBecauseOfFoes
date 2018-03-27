@@ -33,24 +33,14 @@ StepLength <- function(DT, idCol, datetimeCol, yrCol, xCol, yCol, returnIntermed
   # difference in time in hours
   DT[, (difDateTimeCol) := as.numeric(difftime(get(datetimeCol), get(lagDateTimeCol), units = 'hours'))]
   
-  # for comparison across days
-  # DT[get(difTimeCol) < 0, (difTimeCol) := get(difTimeCol) + 24]
-  # 
-  # if(DT[get(difTimeCol) > 24, .N] != 0) stop("check difitime, shouldn't be greater than 24")
-  # 
-  # # difference in days 
-  # DT[, (difDateCol) := (as.numeric(difftime(get(dateCol), get(lagDateCol), units = 'days')))]
-  # 
-  # if(DT[get(difDateCol) > 1, .N] != 0) warning("check difidate, some locs are greater than 1 day apart")
-  # 
-  # # Step length divided by time difference
-  # DT[, moveRate := stepLength / (get(difTimeCol))]
+  # Step length divided by time difference
+  DT[, moveRate := stepLength / (get(difDateTimeCol))]
   
-  # if(returnIntermediate) {
-  #   DT
-  # } else {
-  #   DT[, c(lagCols, difCols, lagTimeCol) := NULL]
-  # }
+  if(returnIntermediate) {
+    DT
+  } else {
+    DT[, c(lagCols, difCols, lagDateTimeCol) := NULL]
+  }
 }
 
 
