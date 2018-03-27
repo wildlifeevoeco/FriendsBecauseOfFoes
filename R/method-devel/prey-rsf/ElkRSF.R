@@ -44,8 +44,12 @@ opendec<-raster('input/covariates/RMNP/Opendeciduous100m.tif')
 #Topography
 ruggedness<-raster('input/covariates/RMNP/Ruggedness_test.tif')
 
-###generate regular available 
-##alec
+# Create Regular Grid
+source('R/functions/GenerateGrid.R')
+regGrid <- GenerateGrid(300, mcpExtent = elkMCP, crs = utm)
+
+
+regGrid
 
 
 # and set all elk as observed
