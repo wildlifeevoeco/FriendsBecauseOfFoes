@@ -91,8 +91,8 @@ herdList <- 'MIDRIDGE'
 coyote <- coyote[stepLength < stepLengthThreshold & 
                  moveRate < moveRateThreshold &
                  difdatetime < difTimeThreshold &
-                 between(julday, lowJul, highJul) & 
-                 HERD %in% herdList]
+                 between(julday, lowJul, highJul)]
+                 #$HERD %in% herdList]
 
 ### Output ----
 # Match variables to output variables = consistent variables across species

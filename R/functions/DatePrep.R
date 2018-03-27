@@ -11,7 +11,7 @@ DatePrep <- function(DT, dateCol, timeCol, dateFormat = NULL, timeFormat = NULL)
     DT[, itime := as.ITime(get(timeCol), format = timeFormat)]
   }
   
-  DT[, datetime := as.POSIXct(paste(idate, itime))]
+  DT[, datetime := as.POSIXct(paste(idate, itime), format = '%F %T')]
   
   DT[, julday := yday(idate)]
   DT[, yr := year(idate)]
