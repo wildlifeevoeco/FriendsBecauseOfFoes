@@ -1,6 +1,6 @@
 GenerateGrid <- function(spacing, crs, mcpExtent, DT = NULL, xCol = NULL, yCol = NULL){
   
-  extentDT <- data.table(wolfMCP@bbox, keep.rownames = TRUE)
+  extentDT <- data.table(mcpExtent@bbox, keep.rownames = TRUE)
   
   extentDT[, dif := abs(min - max)]  
   
