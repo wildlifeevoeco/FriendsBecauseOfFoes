@@ -30,28 +30,20 @@ wolfSP <- SpatialPoints(wolf[, .(EASTING, NORTHING)], proj4string = CRS(utm))
 
 wolfMCP <- mcp(wolfSP, 95)
 
-# Create Regular Grid
+### Create Regular Grid of Points ----
 source('R/functions/GenerateGrid.R')
 regGrid <- GenerateGrid(3000, mcpExtent = wolfMCP, crs = utm)
 
 regPts <- data.table(regGrid@coords)[over(bounds, regGrid, returnList = TRUE)[[1]]]
+setnames(regPts, c('EASTING', 'NORTHING'))
+# ggplot(wolfMCP) + 
+#   geom_polygon(aes(long, lat, group = group)) + 
+#   geom_point(aes(x, y), data = regPts)
 
-ggplot(wolfMCP) + 
-  geom_polygon(aes(long, lat, group = group)) + 
-  geom_point(aes(x, y), data = regPts)
 
-### Generate Random Points ----
-# Drop columns leaving only needed
-cols <- c('EASTING', 'NORTHING', 'blockByIDYear', 'ANIMAL_ID', 'block', 'HERD')
+### Combine Observed and Random ----
+regPts[, observed := 0]
+wolf[, observed := 1]
 
-# and set all locs as observed
-observed.locs <- locs[, ..cols][, observed := 1]
+samplePts <- rbindlist(regPts, wolf, use.names = TRUE, fill = TRUE)
 
-# Create identical for random with observed == 0
-random.locs <- locs[, ..cols][, observed := 0]
-
-# Generate an equivalent number of random points in vertices as observed (with encamped state)
-# (updating the observed locs EASTING, NORTHING columns)
-random.locs[, c('EASTING', 'NORTHING') := as.data.table(spsample(vertices.95[vertices.95@data$id == .BY[[1]],],
-                                                                 .N, iter = 100, type = "random")@coords),
-            by = blockByIDYear]
