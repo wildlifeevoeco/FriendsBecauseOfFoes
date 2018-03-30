@@ -45,5 +45,6 @@ setnames(regPts, c('EASTING', 'NORTHING'))
 regPts[, observed := 0]
 wolf[, observed := 1]
 
-samplePts <- rbindlist(regPts, wolf, use.names = TRUE, fill = TRUE)
+samplePts <- rbindlist(list(regPts, wolf), 
+                       use.names = TRUE, fill = TRUE)
 
