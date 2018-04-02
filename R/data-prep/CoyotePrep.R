@@ -114,7 +114,7 @@ source('R/variables/PrepDataOutputVariables.R')
 
 outputVariables <- c(outputVariables, 'herd', 'sex')
 
-setnames(coyote, c('ANIMAL_ID', 'SPECIES',
+setnames(coyote, c('ANIMAL_ID', 'SPECIES', 'season',
                  'idate', 'itime', 'datetime', 
                  'EASTING', 'NORTHING',
                  'julday', 'yr', 'mnth', 'stepLength', 'moveRate', 'difdatetime',
