@@ -122,7 +122,7 @@ source('R/variables/PrepDataOutputVariables.R')
 
 elk[, SPECIES := 'ELK']
 
-setnames(elk, c('ElkID', 'SPECIES',
+setnames(elk, c('ElkID', 'SPECIES', 'season',
                  'idate', 'itime', 'datetime', 
                  'EASTING', 'NORTHING',
                  'julday', 'yr', 'mnth', 'stepLength', 'moveRate', 'difdatetime'),
