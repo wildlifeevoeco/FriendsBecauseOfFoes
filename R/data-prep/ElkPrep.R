@@ -91,9 +91,8 @@ kable(elk[order(yr), .('N Unique Elks' = uniqueN(get(idCol))), by = yr])
 kable(elk[order(mnth), .N, by = mnth])
 kable(elk[order(yr), .N, by = yr])
 
-###check distribution of steplength
-
-
+# Steplength distribution
+elk[, qplot(stepLength)]
 
 ### Subset ----
 # Thresholds
