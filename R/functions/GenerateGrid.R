@@ -22,6 +22,8 @@ GenerateGrid <- function(spacing, crs, mcpExtent, DT = NULL, xCol = NULL, yCol =
   
   projection(ra) <- CRS(crs)
   
-  rasterToPoints(ra, spatial = TRUE)
+  rSP <- rasterToPoints(ra, spatial = TRUE)
+  
+  data.table(rSP@coords, n = 1:length(rSP))[n %in% over(mcpExtent, rSP, returnList = TRUE)[[1]]][, n := NULL]
   
 }
