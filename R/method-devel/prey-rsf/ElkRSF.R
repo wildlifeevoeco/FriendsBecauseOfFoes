@@ -8,7 +8,7 @@
 
 
 ### Packages ----
-libs <- c('data.table', 
+libs <- c('data.table', 'magrittr',
           'adehabitatHR', 'sp', 'rgdal', 'raster', 
           'lme4',
           'ggplot2')
@@ -19,7 +19,7 @@ lapply(libs, require, character.only = TRUE)
 utm <- '+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
 
 # Animal locations
-elk.locs <- readRDS('output/data-prep/elk.Rds')
+elk <- readRDS('output/data-prep/elk.Rds')
 
 # MB Bounds shapefile
 bounds <- rgdal::readOGR('input/etc/RMNP-extent/RMNPextent.shp') %>%
@@ -29,11 +29,9 @@ bounds <- rgdal::readOGR('input/etc/RMNP-extent/RMNPextent.shp') %>%
 lsCovers <- data.table(nm = dir('input/covariates/RMNP', '.tif$'))[, nm := gsub(".tif|100m", "", nm)]
 lsPaths <- data.table(nm = dir('input/covariates/RMNP', '.tif$', full.names = TRUE))
 
-
 ### Processing ----
-
-### MCPs ----
-elkSP <- SpatialPoints(elk.locs[, .(EASTING, NORTHING)],
+# MCPs
+elkSP <- SpatialPoints(elk[, .(EASTING, NORTHING)],
                        proj4string = CRS(utm))
 
 elkMCP <- mcp(elkSP, 100)
@@ -48,26 +46,21 @@ setnames(regPts, c('EASTING', 'NORTHING'))
 # Check that points are within MCP
 ggplot(elkMCP) +
   geom_polygon(aes(long, lat, group = group)) +
-  geom_point(aes(x, y), data = regPts)
+  geom_point(aes(EASTING, NORTHING), data = regPts)
 
 # Combine observed and regular grid points
 regPts[, observed := 0]
 elk[, observed := 1]
 
-samplePts <- rbindlist(list(regPts, wolf), 
+samplePts <- rbindlist(list(regPts, elk), 
                        use.names = TRUE, fill = TRUE)
 
-
-
-##################################################3
+### RSF ----
 # Drop columns leaving only needed
 cols <- c('id','EASTING', 'NORTHING','season')
 
-# and set all elk as observed
-observed.elk <- elk.locs[, ..cols][, observed := 1]
+samplePts <- samplePts[, ..cols]
 
-# Create identical for random with observed == 0
-available.elk <- available.elk.locs[, ..cols][, observed := 0]
 
 # These should also match (they do)
 nrow(available.elk)
