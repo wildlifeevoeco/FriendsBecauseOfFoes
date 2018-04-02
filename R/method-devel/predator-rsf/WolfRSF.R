@@ -37,7 +37,7 @@ regPts <- data.table(regGrid@coords)[over(bounds, regGrid, returnList = TRUE)[[1
 setnames(regPts, c('EASTING', 'NORTHING'))
 # ggplot(wolfMCP) + 
 #   geom_polygon(aes(long, lat, group = group)) + 
-#   geom_point(aes(x, y), data = regPts)
+#   geom_point(aes(EASTING, NORTHING), data = regPts)
 
 
 ### Combine Observed and Random ----

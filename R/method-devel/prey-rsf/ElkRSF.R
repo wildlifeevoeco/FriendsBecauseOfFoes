@@ -42,7 +42,23 @@ elkMCP <- mcp(elkSP, 100)
 source('R/functions/GenerateGrid.R')
 regGrid <- GenerateGrid(3000, mcpExtent = elkMCP, crs = utm)
 
-available.elk.locs <- data.table(regGrid@coords)[over(bounds, regGrid, returnList = TRUE)[[1]]]
+regPts <- data.table(regGrid@coords)[over(elkMCP, regGrid, returnList = TRUE)[[1]]]
+setnames(regPts, c('EASTING', 'NORTHING'))
+
+# Check that points are within MCP
+ggplot(elkMCP) +
+  geom_polygon(aes(long, lat, group = group)) +
+  geom_point(aes(x, y), data = regPts)
+
+# Combine observed and regular grid points
+regPts[, observed := 0]
+elk[, observed := 1]
+
+samplePts <- rbindlist(list(regPts, wolf), 
+                       use.names = TRUE, fill = TRUE)
+
+
+
 ##################################################3
 # Drop columns leaving only needed
 cols <- c('id','EASTING', 'NORTHING','season')
