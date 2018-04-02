@@ -1,5 +1,5 @@
 ### Elk RSF ----
-# Authors: Alec Robitaille, Christina M Prokopenko
+# Authors: Alec Robitaille, Christina M Prokopenko, Sana Zabihi
 # Purpose: 
 # Inputs: Elk relocation data
 # Outputs: 
@@ -18,36 +18,25 @@ lapply(libs, require, character.only = TRUE)
 # UTM zone 14N
 utm <- '+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
 
-## Animal locations
+# Animal locations
 elk.locs <- readRDS('output/data-prep/elk.Rds')
 
 # MB Bounds shapefile
 bounds <- rgdal::readOGR('input/etc/RMNP-extent/RMNPextent.shp') %>%
   spTransform(CRSobj = utm)
 
+# Covariates
+lsCovers <- data.table(nm = dir('input/covariates/RMNP', '.tif$'))[, nm := gsub(".tif|100m", "", nm)]
+lsPaths <- data.table(nm = dir('input/covariates/RMNP', '.tif$', full.names = TRUE))
+
+
+### Processing ----
+
 ### MCPs ----
 elkSP <- SpatialPoints(elk.locs[, .(EASTING, NORTHING)],
                        proj4string = CRS(utm))
 
 elkMCP <- mcp(elkSP, 100)
-
-##covariates
-#Distance
-human <- raster('input/covariates/RMNP/LinFeat_Dist.tif')
-water <- raster('input/covariates/RMNP/Water_Dist.tif')
-
-#Habitat
-agriculture<-raster('input/covariates/RMNP/Agriculture100m.tif')
-bog<-raster('input/covariates/RMNP/Bog100m.tif')
-coniferous<-raster('input/covariates/RMNP/Coniferous100m.tif')
-deciduous<-raster('input/covariates/RMNP/Deciduous100m.tif')
-grassland<-raster('input/covariates/RMNP/Grassland100m.tif')
-marsh<-raster('input/covariates/RMNP/Marsh100m.tif')
-mixedwood<-raster('input/covariates/RMNP/Mixedwood100m.tif')
-opendec<-raster('input/covariates/RMNP/Opendeciduous100m.tif')
-
-#Topography
-ruggedness<-raster('input/covariates/RMNP/Ruggedness_test.tif')
 
 # Create Regular Grid
 source('R/functions/GenerateGrid.R')
