@@ -20,7 +20,6 @@ wolf <- readRDS('output/data-prep/wolf.Rds')
 # UTM zone 14N
 utm <- '+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
 
-
 # MB Bounds shapefile
 bounds <- rgdal::readOGR('input/etc/RMNP-extent/RMNPextent.shp') %>%
   spTransform(CRSobj = utm)

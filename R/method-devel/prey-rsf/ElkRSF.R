@@ -15,14 +15,19 @@ libs <- c('data.table',
 lapply(libs, require, character.only = TRUE)
 
 ### Input data ----
-##animal locations
-#elk.locs <- readRDS('output/data-prep/elk.Rds')
-elk.locs<-elk
-### MCPs ----
 # UTM zone 14N
 utm <- '+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
 
-elkSP <- SpatialPoints(elk.locs[, .(EASTING, NORTHING)], proj4string = CRS(utm))
+## Animal locations
+elk.locs <- readRDS('output/data-prep/elk.Rds')
+
+# MB Bounds shapefile
+bounds <- rgdal::readOGR('input/etc/RMNP-extent/RMNPextent.shp') %>%
+  spTransform(CRSobj = utm)
+
+### MCPs ----
+elkSP <- SpatialPoints(elk.locs[, .(EASTING, NORTHING)],
+                       proj4string = CRS(utm))
 
 elkMCP <- mcp(elkSP, 100)
 
