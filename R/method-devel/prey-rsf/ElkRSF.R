@@ -72,11 +72,16 @@ samplePts[, (lsCovers) := lapply(lsPaths, FUN = function(r){
 # Winter RSF
 winterElk <- samplePts[season == "winter"]
 
-winterelkrsf <- glm(observed~agprop+bgprop+cnprop+dcprop+grprop+hudist+mrprop+mwprop+odprop+rgdns+wtdist, family = binomial,data=winter.elk)
+winterElkRSF <- glm(observed ~ agprop + bgprop + cnprop + dcprop + grprop + 
+                      hudist + mrprop + mwprop + odprop + rgdns  + wtdist,
+                    family = binomial,
+                    data = winterElk)
 
 
 # Spring RSF
 springElk <- samplePts[season == "spring"]
 
-springelkrsf <- glm(observed~agprop+bgprop+cnprop+dcprop+grprop+hudist+mrprop+mwprop+odprop+rgdns+wtdist, family = binomial,data=spring.elk)
-
+springElkRSF <- glm(observed ~ agprop + bgprop + cnprop + dcprop + grprop + 
+                      hudist + mrprop + mwprop + odprop + rgdns  + wtdist, 
+                    family = binomial,
+                    data = springElk)
