@@ -134,7 +134,7 @@ wolf[, SPECIES := 'WOLF']
 
 outputVariables <- c(outputVariables, 'packid')
 
-setnames(wolf, c('wolfid', 'SPECIES',
+setnames(wolf, c('wolfid', 'SPECIES', 'season',
                  'idate', 'itime', 'datetime', 
                  'EASTING', 'NORTHING',
                  'julday', 'yr', 'mnth', 'stepLength', 'moveRate', 'difdatetime',
