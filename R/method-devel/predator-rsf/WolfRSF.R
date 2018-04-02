@@ -29,21 +29,52 @@ wolfSP <- SpatialPoints(wolf[, .(EASTING, NORTHING)], proj4string = CRS(utm))
 
 wolfMCP <- mcp(wolfSP, 95)
 
-### Create Regular Grid of Points ----
+# Create Regular Grid
 source('R/functions/GenerateGrid.R')
-regGrid <- GenerateGrid(3000, mcpExtent = wolfMCP, crs = utm)
+regPts <- GenerateGrid(3000, mcpExtent = wolfMCP, crs = utm)
 
-regPts <- data.table(regGrid@coords)[over(bounds, regGrid, returnList = TRUE)[[1]]]
 setnames(regPts, c('EASTING', 'NORTHING'))
-# ggplot(wolfMCP) + 
-#   geom_polygon(aes(long, lat, group = group)) + 
-#   geom_point(aes(EASTING, NORTHING), data = regPts)
 
 
-### Combine Observed and Random ----
+# Check that points are within MCP
+ggplot(wolfMCP) +
+  geom_polygon(aes(long, lat, group = group)) +
+  geom_point(aes(EASTING, NORTHING), data = regPts)
+
+# Combine observed and regular grid points
 regPts[, observed := 0]
 wolf[, observed := 1]
 
 samplePts <- rbindlist(list(regPts, wolf), 
                        use.names = TRUE, fill = TRUE)
+
+### Sampling ----
+# Drop columns leaving only needed
+cols <- c('id','EASTING', 'NORTHING', 'season', 'observed')
+samplePts <- samplePts[, ..cols]
+
+# Add row ID
+samplePts[, rowID := .I]
+
+# Sample rasters
+samplePts[, (lsCovers) := lapply(lsPaths, FUN = function(r){
+  extract(raster(r), matrix(c(EASTING, NORTHING), ncol = 2))})]
+
+### RSF ====
+# Winter RSF
+winterWolf <- samplePts[season == "winter"]
+
+winterWolfRSF <- glm(observed ~ agprop + bgprop + cnprop + dcprop + grprop + 
+                       hudist + mrprop + mwprop + odprop + rgdns  + wtdist, 
+                     family = binomial,
+                     data = winterWolf)
+
+
+# Spring RSF
+springElk <- samplePts[season == "spring"]
+
+springelkrsf <- glm(observed ~ agprop + bgprop + cnprop + dcprop + grprop + 
+                      hudist + mrprop + mwprop + odprop + rgdns  + wtdist, 
+                    family = binomial,
+                    data = winterWolf)
 
