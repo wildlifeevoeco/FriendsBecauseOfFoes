@@ -56,7 +56,7 @@ elk[julday %between% spring, season := 'spring']
 
 # Group Time - from spatsoc
 source('R/functions/Group-Time-spatsoc.R')
-GroupTimes(bear, 'datetime', '15 minutes')
+GroupTimes(elk, 'datetime', '15 minutes')
 
 ### Subset ----
 # Subset any NAs in defined cols
