@@ -41,13 +41,13 @@ transformed <- lapply(seq_along(namesTransform), FUN = function(x){
 })
 
 
-
 ### Output ----
 outRaster <- c(transformed, cropRasters[!(lapply(cropRasters, names) %in% namesTransform)])
 outNames <- lapply(outRaster, names)
 
 lapply(seq_along(outRaster), FUN = function(r){
   writeRaster(outRaster[[r]], paste0('output/data-prep/cropped-rasters/RMNP/', outNames[[r]]), 
-              format = 'raster',
+              format = 'GTiff', 
               overwrite = T)
 })
+
