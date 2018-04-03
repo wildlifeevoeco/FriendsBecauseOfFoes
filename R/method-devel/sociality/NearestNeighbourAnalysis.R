@@ -42,20 +42,18 @@ nn <- elk[NbyTime > 10, FindMinimumDistance(.SD, coordCols, idCol),
 neighbours <- 1
 neighbourCols <- paste('neighbour', seq(1, neighbours))
 
-source('R/functions/NumbQuadtreeNeighbours.R')
+source('R/functions/NumbQuadTreeNeighbours.R')
 
 # Only running on where there are at least 2 in a timegroup, else ! the bomb !
 elk[NbyTime > 1, 
-    (neighbourCols) := NumbQuadtreeNeighbours(.SD, coordCols,
+    (neighbourCols) := NumbQuadTreeNeighbours(.SD, coordCols,
                                               neighbours, 'id'),
     by = timegroup]
 
 
-
-
 ### Figures ----
 ggplot(aes(EASTING, NORTHING, color = factor(id)), 
-       data = elk) +
+       data = elk[timegroup == 4]) +
   geom_point() + ggthemes::scale_colour_pander() +
   coord_fixed()
 
