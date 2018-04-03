@@ -142,11 +142,17 @@ Roc<-raster('input/Landcover/Reproj/Rocky100.tif')
 Scr<-raster('input/Landcover/Reproj/Scrub100.tif')
 Wat<-raster('input/Landcover/Reproj/Water100.tif')
 Wet<-raster('input/Landcover/Reproj/Wetland100.tif')
-WaD<-raster('input/Landcover/Reproj/WaterDist.tif')
-Lin<-raster('input/Landcover/Reproj/LinearDist.tif')
+WaD1<-raster('input/Landcover/Reproj/WaterDist.tif')
+Lin1<-raster('input/Landcover/Reproj/LinearDist.tif')
+
+WaD<-log(WaD1+1)
+Lin<-log(Lin1+1)
 
 Elev<-raster('input/Landcover/Reproj/NLElev.tif')
 Rug<-terrain(Elev, opt="roughness")
+
+
+
 
 ## Summer
 AntUsedSum<-extract(Ant,sumPoints)
@@ -291,14 +297,50 @@ str(CoySummer)
 CoySummer<-subset(coyRSF2,Season=="Summer")
 CoyWinter<-subset(coyRSF2,Season=="Winter")
 
-RSFCoyoteSum<-glm(use~Ant+Lin+Bro+Con+Lic+Mix+Roc+Scr+WaD+Rug,data=CoySummer, family='binomial')
-RSFCoyoteWin<-glm(use~Ant+Lin+Bro+Con+Lic+Mix+Roc+Scr+WaD+Rug,data=CoyWinter, family='binomial')
+RSFCoyoteSum<-glm(use~Ant+Bro+Con+Lic+Mix+Roc+Scr+WaD+Lin+Rug,data=CoySummer, family='binomial')
+RSFCoyoteWin<-glm(use~Ant+Bro+Con+Lic+Mix+Roc+Scr+WaD+Lin+Rug,data=CoyWinter, family='binomial')
 
 summary(RSFCoyoteSum)
 rsquared(RSFCoyoteSum)
 
 summary(RSFCoyoteWin)
 rsquared(RSFCoyoteWin)
+
+
+AntR<-AntCrop
+BroR<-resample(BroCrop,AntCrop)
+ConR<-resample(ConCrop,AntCrop)
+LicR<-resample(LicCrop,AntCrop)
+MixR<-resample(MixCrop,AntCrop)
+RocR<-resample(RocCrop,AntCrop)
+ScrR<-resample(ScrCrop,AntCrop)
+WaDR<-resample(WaDCrop,AntCrop)
+LinR<-resample(LinCrop,AntCrop)
+RugR<-resample(RugCrop,AntCrop)
+
+SumRSF<-exp(AntR*coef(RSFCoyoteSum)[2]+BroR*coef(RSFCoyoteSum)[3]+ConR*coef(RSFCoyoteSum)[4]+LicR*coef(RSFCoyoteSum)[5]+
+              MixR*coef(RSFCoyoteSum)[6]+RocR*coef(RSFCoyoteSum)[7]+ScrR*coef(RSFCoyoteSum)[8]+WaDR*coef(RSFCoyoteSum)[9]+
+              LinR*coef(RSFCoyoteSum)[10]+RugR*coef(RSFCoyoteSum)[11])
+
+WinRSF<-exp(AntR*coef(RSFCoyoteWin)[2]+BroR*coef(RSFCoyoteWin)[3]+ConR*coef(RSFCoyoteWin)[4]+LicR*coef(RSFCoyoteWin)[5]+
+              MixR*coef(RSFCoyoteWin)[6]+RocR*coef(RSFCoyoteWin)[7]+ScrR*coef(RSFCoyoteWin)[8]+WaDR*coef(RSFCoyoteWin)[9]+
+              LinR*coef(RSFCoyoteWin)[10]+RugR*coef(RSFCoyoteWin)[11])
+
+
+SumRSFsc<-SumRSF/(1+SumRSF)
+WinRSFsc<-WinRSF/(1+WinRSF)
+
+plot(SumRSF)
+plot(WinRSF)
+plot(SumRSFsc)
+plot(WinRSFsc)
+
+writeRaster(SumRSFsc,"output/PredRSFNL/CoyoteSummer.tif")
+writeRaster(WinRSFsc,"output/PredRSFNL/CoyoteWinter.tif")
+
+
+################## Black bears ####################
+
 
 
 
