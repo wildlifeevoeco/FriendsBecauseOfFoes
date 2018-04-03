@@ -40,22 +40,14 @@ transformed <- lapply(seq_along(namesTransform), FUN = function(x){
    r
 })
 
-outRasters <- c(transformed, cropRasters[!(lapply(cropRasters, names) %in% namesTransform)])
-
 
 
 ### Output ----
-ls.rsf <- list('WINTERELK' = winterElkRSF.rstr, 
-               'SPRINGELK' = springElkRSF.rstr)
+outRaster <- c(transformed, cropRasters[!(lapply(cropRasters, names) %in% namesTransform)])
+outNames <- lapply(outRaster, names)
 
-namecropRasters
-
-lapply(seq_along(ls.rsf), FUN = function(r){
-  writeRaster(ls.rsf[[r]], paste0('output/prey-rsf/elkrsf', names(ls.rsf[r])), 
+lapply(seq_along(outRaster), FUN = function(r){
+  writeRaster(outRaster[[r]], paste0('output/data-prep/cropped-rasters/RMNP/', outNames[[r]]), 
               format = 'raster',
               overwrite = T)
 })
-
-
-
-
