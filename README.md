@@ -9,25 +9,51 @@
 ├── graphics
 │   └── data-prep
 ├── input
+│   ├── covariates
+│   │   └── RMNP
 │   ├── etc
+│   │   ├── NL-Bounds
+│   │   └── RMNP-extent
 │   └── locs
+│       ├── RMNP_WolfLocations
+├── output
+│   ├── data-prep
+│   ├── predator-rsf
+│   └── prey-rsf
 ├── R
 │   ├── data-prep
 │   │   ├── BearPrep.R
 │   │   ├── CaribouPrep.R
 │   │   ├── CoyotePrep.R
 │   │   ├── ElkPrep.R
+│   │   ├── RasterPrep.R
+│   │   ├── RuggCalc.R
 │   │   └── WolfPrep.R
-│   └── method-devel
-│       ├── predator-rsf
-│       │   ├── BearRSF.R
-│       │   ├── CoyoteRSF.R
-│       │   └── WolfRSF.R
-│       ├── prey-rsf
-│       │   ├── CaribouRSF.R
-│       │   └── ElkRSF.R
-│       └── sociality
-│           └── AbsoluteTurnAngle.R
+│   ├── functions
+│   │   ├── DatePrep.R
+│   │   ├── FindMinimumDistance.R
+│   │   ├── GenerateGrid.R
+│   │   ├── Group-Time-spatsoc.R
+│   │   ├── NumbQuadTreeNeighbours.R
+│   │   ├── PlotLocsByFigure.R
+│   │   ├── StepLength.R
+│   │   └── TemporalDistributionFigure.R
+│   ├── method-devel
+│   │   ├── predator-rsf
+│   │   │   ├── BearRSF.R
+│   │   │   ├── CoyoteRSF.R
+│   │   │   └── WolfRSF.R
+│   │   ├── prey-rsf
+│   │   │   ├── CaribouRSF.R
+│   │   │   └── ElkRSF.R
+│   │   └── sociality
+│   │       ├── AbsoluteTurnAngle.R
+│   │       └── NearestNeighbourAnalysis.R
+│   ├── RSFs
+│   │   └── NLPredRSFs.R
+│   └── variables
+│       ├── CutOffThresholds.R
+│       └── PrepDataOutputVariables.R
 ├── CONTRIBUTING.md
 ├── ewc.Rproj
 ├── LICENSE
