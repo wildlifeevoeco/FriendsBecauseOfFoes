@@ -17,6 +17,24 @@ lapply(libs, require, character.only = TRUE)
 ### Input data ----
 elk <- readRDS('output/data-prep/elk.Rds')
 
+### Dist ----
+# Apply dist by time step
+MeanPairwiseDists <- function(DT, coordCols, idCol){
+  names <- DT[, get(idCol)]
+  dists <- data.table(dist(DT[, ..coordCols],
+                           method = "euclidean",
+                           diag = FALSE,
+                           upper = TRUE), 
+                      keep.rownames = TRUE)
+  dists#[, lapply(.SD, min), by = rn]
+}
+
+elk[, MeanPairwiseDists(.SD, coordCols, 'id'), by = julday]
+
+data.matrix(dist(elk[julday == 200, ..coordCols],
+     method = "euclidean",
+     diag = FALSE,
+     upper = TRUE), keep.rownames = TRUE)
 
 ### Quadtree ----
 elk[, rowID := .I]
@@ -28,6 +46,6 @@ NumberQuadtreeNeighbors <- function(DT, coordCols, numbNeighbors) {
 
 # Careful - the bomb
 elk[, nearestRowID := NumberQuadtreeNeighbors(.SD, numbNeighbors = 2),
-    by = .(hour(itime), julday),
+    by = .(julday),
     .SDcols = coordCols]
 
