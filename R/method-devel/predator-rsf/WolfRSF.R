@@ -1,5 +1,5 @@
 ### Wolf RSF ----
-# Authors: Alec Robitaille
+# Authors: Alec Robitaille, Christina M Prokopenko, Sana Zabihi
 # Purpose: 
 # Inputs: Wolf relocation data
 # Outputs: 
@@ -8,31 +8,34 @@
 
 
 ### Packages ----
-libs <- c('data.table', 'ggplot2',
-          'sp', 'adehabitatHR', 'raster',
-          'magrittr','piecewiseSEM','car')
+libs <- c('data.table', 'magrittr',
+          'adehabitatHR', 'sp', 'rgdal', 'raster', 
+          'lme4',
+          'ggplot2','car','piecewiseSEM')
 lapply(libs, require, character.only = TRUE)
 
-
 ### Input data ----
-wolf <- readRDS('output/data-prep/wolf.Rds')
-
 # UTM zone 14N
 utm <- '+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
+
+# Animal locations
+wolf <- readRDS('output/data-prep/wolf.Rds')
 
 # MB Bounds shapefile
 bounds <- rgdal::readOGR('input/etc/RMNP-extent/RMNPextent.shp') %>%
   spTransform(CRSobj = utm)
 
 # Covariates
-lsCovers <- data.table(nm = dir('input/covariates/RMNP', '.tif$'))[, 
-                                                                   nm := gsub(".tif|100m", "", nm)]$nm
-lsPaths <- dir('input/covariates/RMNP', '.tif$', full.names = TRUE)
+lsCovers <- data.table(nm = dir('output/data-prep/cropped-rasters/RMNP', '.tif$'))[, 
+                                                                                   nm := gsub(".tif|100m", "", nm)]$nm[-c(1, 4, 5)]
+lsPaths <- dir('output/data-prep/cropped-rasters/RMNP', '.tif$', full.names = TRUE)[-c(1, 4, 5)]
 
-### MCPs ----
-wolfSP <- SpatialPoints(wolf[, .(EASTING, NORTHING)], proj4string = CRS(utm))
+### Processing ----
+# MCPs
+wolfSP <- SpatialPoints(wolf[, .(EASTING, NORTHING)],
+                       proj4string = CRS(utm))
 
-wolfMCP <- mcp(wolfSP, 95)
+wolfMCP <- mcp(wolfSP, 100)
 
 # Create Regular Grid
 source('R/functions/GenerateGrid.R')
@@ -40,13 +43,13 @@ regPts <- GenerateGrid(90, mcpExtent = wolfMCP, crs = utm)
 
 setnames(regPts, c('EASTING', 'NORTHING'))
 
-# saveRDS(regPts, 'output/predator-rsf/wolfRegularPoints.Rds)
-# regPts <- readRDS('output/predator-rsf/wolfRegularPoints.Rds')
+# saveRDS(regPts, 'output/predator-rsf/wolfRegularPoints.Rds')
+#regPts <- readRDS('output/predator-rsf/wolfRegularPoints.Rds')
 
 # Check that points are within MCP
-ggplot(wolfMCP) +
-  geom_polygon(aes(long, lat, group = group)) +
-  geom_point(aes(EASTING, NORTHING), data = regPts)
+# ggplot(wolfMCP) +
+#   geom_polygon(aes(long, lat, group = group), alpha = 0.25) +
+#   geom_point(aes(EASTING, NORTHING), size = 0.1, data = regPts)
 
 # Combine observed and regular grid points
 regPts[, observed := 0]
@@ -68,32 +71,67 @@ samplePts[, (lsCovers) := lapply(lsPaths, FUN = function(r){
   extract(raster(r), matrix(c(EASTING, NORTHING), ncol = 2))})]
 
 # saveRDS(samplePts, 'output/predator-rsf/wolfSamplePoints.Rds')
-#samplePts <- readRDS('output/predator-rsf/wolfSamplePoints.Rds'')
+#samplePts <- readRDS('output/predator-rsf/wolfSamplePoints.Rds')
 
 ### RSF ====
+lsRasters <- lapply(lsPaths, raster)
+
 # Winter RSF
-winterWolf <- samplePts[season == "winter" | is.na(season)]
-winterWolf[observed == 0, season := "winter"]
+winterwolf <- samplePts[season == "winter" | is.na(season)]
+winterwolf[observed == 0, season := "winter"]
 
-winterWolfRSF <- glm(observed ~ Bog + Coniferous + Grassland + log(LinFeat_Dist+1) + 
-                      Marsh + Mixedwood + Opendeciduous + Ruggedness_test  + log(Water_Dist+1),
-                    family = binomial,
-                    data = winterWolf)
+winterwolfRSF <- glm(reformulate(lsCovers, response = 'observed'), #### Dist not logged yet
+                    family = 'binomial',data = winterwolf)
 
-summary(winterWolfRSF)
-vif(winterWolfRSF)
-rsquared(winterWolfRSF)
+summary(winterwolfRSF)
+vif(winterwolfRSF)
+rsquared(winterwolfRSF)
+
+# Pull out the coefficients, dropping the intercept
+winwolf.b <- coef(winterwolfRSF)[-1]
+
+
+# Create the raster matching the first raster layer with the first fixed effect
+winterwolfRSF.rstr <- exp(lsRasters[[1]] * winwolf.b[1] + lsRasters[[2]] * winwolf.b[2] +
+                           lsRasters[[3]] * winwolf.b[3] + lsRasters[[4]] * winwolf.b[4] + 
+                           lsRasters[[5]] * winwolf.b[5]+ lsRasters[[6]] * winwolf.b[6]+ 
+                           lsRasters[[7]] * winwolf.b[7]+ lsRasters[[8]] * winwolf.b[8]+ 
+                           lsRasters[[9]] * winwolf.b[9])
+
+plot(winterwolfRSF.rstr)
+
 
 # Spring RSF
-springWolf <- samplePts[season == "spring" | is.na(season)]
-springWolf[observed == 0, season := "spring"]
+springwolf <- samplePts[season == "spring" | is.na(season)]
+springwolf[observed == 0, season := "spring"]
 
-springWolfRSF <- glm(observed ~ Bog + Coniferous + Grassland + log(LinFeat_Dist+1) + 
-                      Marsh + Mixedwood + Opendeciduous + Ruggedness_test  + log(Water_Dist+1), 
-                    family = binomial,
-                    data = springWolf)
+springwolfRSF <- glm(reformulate(lsCovers, response = 'observed'), 
+                    family = 'binomial',data = springwolf)
 
-summary(springWolfRSF)
-rsquared(springWolfRSF)
+summary(springwolfRSF)
+rsquared(springwolfRSF)
 
+# Pull out the coefficients, dropping the intercept
+sprwolf.b <- coef(springwolfRSF)[-1]
+
+
+# Create the raster matching the first raster layer with the first fixed effect
+springwolfRSF.rstr <- exp(lsRasters[[1]] * sprwolf.b[1] + lsRasters[[2]] * sprwolf.b[2] +
+                           lsRasters[[3]] * sprwolf.b[3] + lsRasters[[4]] * sprwolf.b[4] + 
+                           lsRasters[[5]] * sprwolf.b[5]+ lsRasters[[6]] * sprwolf.b[6]+ 
+                           lsRasters[[7]] * sprwolf.b[7]+ lsRasters[[8]] * sprwolf.b[8]+ 
+                           lsRasters[[9]] * sprwolf.b[9])
+
+plot(springwolfRSF.rstr)
+
+### Save the RSFs ----
+###not standardized
+ls.rsf <- list('WINTERWOLF' = winterwolfRSF.rstr, 
+               'SPRINGWOLF' = springwolfRSF.rstr)
+
+lapply(seq_along(ls.rsf), FUN = function(r){
+  writeRaster(ls.rsf[[r]], paste0('output/predator-rsf/wolfrsf', names(ls.rsf[r])), 
+              format = 'GTiff',
+              overwrite = T)
+})
 

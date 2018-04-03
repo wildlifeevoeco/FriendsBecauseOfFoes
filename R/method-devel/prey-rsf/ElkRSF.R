@@ -89,6 +89,7 @@ winterElkRSF <- glm(reformulate(lsCovers, response = 'observed'), #### Dist not 
         family = 'binomial',data = winterElk)
 
 summary(winterElkRSF)
+vif(winterElkRSF)
 rsquared(winterElkRSF)
 
 # Pull out the coefficients, dropping the intercept
@@ -99,7 +100,7 @@ winElk.b <- coef(winterElkRSF)[-1]
 winterElkRSF.rstr <- exp(lsRasters[[1]] * winElk.b[1] + lsRasters[[2]] * winElk.b[2] +
                         lsRasters[[3]] * winElk.b[3] + lsRasters[[4]] * winElk.b[4] + 
                         lsRasters[[5]] * winElk.b[5]+ lsRasters[[6]] * winElk.b[6]+ 
-                        lsRasters[[7]] * winElk.b[7]+ #lsRasters[[8]] * winElk.b[8]+ 
+                        lsRasters[[7]] * winElk.b[7]+ lsRasters[[8]] * winElk.b[8]+ 
                         lsRasters[[9]] * winElk.b[9])
 
 plot(winterElkRSF.rstr)
@@ -125,24 +126,48 @@ sprElk.b <- coef(springElkRSF)[-1]
 
 
 # Create the raster matching the first raster layer with the first fixed effect
-springElkRSF.rstr <- (lsRasters[[1]] * sprElk.b[1] + lsRasters[[2]] * sprElk.b[2] +
+springElkRSF.rstr <- exp(lsRasters[[1]] * sprElk.b[1] + lsRasters[[2]] * sprElk.b[2] +
                         lsRasters[[3]] * sprElk.b[3] + lsRasters[[4]] * sprElk.b[4] + 
                         lsRasters[[5]] * sprElk.b[5]+ lsRasters[[6]] * sprElk.b[6]+ 
-                        lsRasters[[7]] * sprElk.b[7]+ #lsRasters[[8]] * sprElk.b[8]+ 
+                        lsRasters[[7]] * sprElk.b[7]+ lsRasters[[8]] * sprElk.b[8]+ 
                         lsRasters[[9]] * sprElk.b[9])
 
 plot(springElkRSF.rstr)
 
+####standardize RSFs 
+
+###feature scaling
+#winterElkRSF.stand <- (winterElkRSF.rstr - (cellStats(winterElkRSF.rstr,min)))/(cellStats(winterElkRSF.rstr,max) - (cellStats(winterElkRSF.rstr,min)))
+#plot(winterElkRSF.stand)
+#springElkRSF.stand <- (springElkRSF.rstr - (cellStats(springElkRSF.rstr,min)))/(cellStats(springElkRSF.rstr,max) - (cellStats(springElkRSF.rstr,min)))
+#plot(springElkRSF.stand)
+
+####using z score
+winterElkRSF.z <- (winterElkRSF.rstr - cellStats(winterElkRSF.rstr,stat=mean))/cellStats(winterElkRSF.rstr,stat=sd)
+plot(winterElkRSF.z)
+springElkRSF.z <- (springElkRSF.rstr - cellStats(springElkRSF.rstr,stat=mean))/cellStats(springElkRSF.rstr,stat=sd)
+plot(springElkRSF.z)
+
 
 ### Save the RSFs ----
+###not standardized
 ls.rsf <- list('WINTERELK' = winterElkRSF.rstr, 
                'SPRINGELK' = springElkRSF.rstr)
 
 lapply(seq_along(ls.rsf), FUN = function(r){
   writeRaster(ls.rsf[[r]], paste0('output/prey-rsf/elkrsf', names(ls.rsf[r])), 
-              format = 'raster',
+              format = 'GTiff',
               overwrite = T)
 })
 
 
+### Save the RSFs ----
+#ls.rsf <- list('WINTERELK.z' = winterElkRSF.z, 
+ #              'SPRINGELK.z' = springElkRSF.z)
 
+#lapply(seq_along(ls.rsf), FUN = function(r){
+ #writeRaster(ls.rsf[[r]], paste0('output/prey-rsf/elkrsf.z', names(ls.rsf[r])), 
+#              format = 'GTiff',
+#              overwrite = T)
+#})
+                       
