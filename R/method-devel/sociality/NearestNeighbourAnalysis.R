@@ -23,40 +23,39 @@ idCol <- 'id'
 elks <- elk[timegroup < 4]
 
 ### Find Minimum Distance Neighbor ----
-# Which timegroups have more than one individual?
+# Do any timegroups have the same individual twice?
 all.equal(elk[, .(N = uniqueN(id)), by = timegroup],
           elk[, .N, by = timegroup])
 
+# Which timegroups have more than one individual?
 elk[, NbyTime := .N, by = timegroup]
+elk[, qplot(NbyTime)]
 
+# Calc Nearest Neighbour
 source('R/functions/FindMinimumDistance.R')
 nn <- elk[NbyTime > 10, FindMinimumDistance(.SD, coordCols, idCol),
-    by = timegroup]#[, left := as.integer(left)]
-nn[, .(left, as.numeric(as.character(left)))]
-
-nn
+    by = timegroup]
 
 
-merge(nn, elk, by.x = c('left', 'roundtime'), )
+### Quadtree ----
+# How many neighbors 
+neighbours <- 1
+neighbourCols <- paste('neighbour', seq(1, neighbours))
+
+source('R/functions/NumbQuadtreeNeighbours.R')
+
+# Only running on where there are at least 2 in a timegroup, else ! the bomb !
+elk[NbyTime > 1, 
+    (neighbourCols) := NumbQuadtreeNeighbours(.SD, coordCols,
+                                              neighbours, 'id'),
+    by = timegroup]
+
+
+
+
 ### Figures ----
 ggplot(aes(EASTING, NORTHING, color = factor(id)), 
        data = elk) +
   geom_point() + ggthemes::scale_colour_pander() +
   coord_fixed()
 
-### Quadtree ----
-# elk[, rowID := .I]
-neighbours <- 1
-
-NumbQuadtreeNeighbours <- function(DT, coordCols, numbNeighbors, idCol) {
-  tree <- createTree(DT[, ..coordCols])
-  DT[, get(idCol)[knnLookup(tree, newdat = DT[, ..coordCols], k = numbNeighbors + 1)[, 2]]]
-}
-
-# Careful - the bomb
-elks[NbyTime > 1, nearestRowID := NumbQuadtreeNeighbours(.SD, coordCols,
-                                                         neighbours, 'id'),
-    by = timegroup]
-
-tree <- createTree(elk[timegroup == 3, ..coordCols])
-elk[timegroup == 3, get("id")[knnLookup(tree, newdat = elk[timegroup == 3, ..coordCols], k = 2)[, 2]]]
