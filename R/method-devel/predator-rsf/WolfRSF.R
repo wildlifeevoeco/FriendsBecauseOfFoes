@@ -10,7 +10,7 @@
 ### Packages ----
 libs <- c('data.table', 'ggplot2',
           'sp', 'adehabitatHR', 'raster',
-          'magrittr')
+          'magrittr','piecewiseSEM','car')
 lapply(libs, require, character.only = TRUE)
 
 
@@ -23,6 +23,11 @@ utm <- '+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
 # MB Bounds shapefile
 bounds <- rgdal::readOGR('input/etc/RMNP-extent/RMNPextent.shp') %>%
   spTransform(CRSobj = utm)
+
+# Covariates
+lsCovers <- data.table(nm = dir('input/covariates/RMNP', '.tif$'))[, 
+                                                                   nm := gsub(".tif|100m", "", nm)]$nm
+lsPaths <- dir('input/covariates/RMNP', '.tif$', full.names = TRUE)
 
 ### MCPs ----
 wolfSP <- SpatialPoints(wolf[, .(EASTING, NORTHING)], proj4string = CRS(utm))
@@ -63,7 +68,7 @@ samplePts[, (lsCovers) := lapply(lsPaths, FUN = function(r){
   extract(raster(r), matrix(c(EASTING, NORTHING), ncol = 2))})]
 
 # saveRDS(samplePts, 'output/predator-rsf/wolfSamplePoints.Rds')
-# samplePts <- readRDS('output/predator-rsf/wolfSamplePoints.Rds'')
+#samplePts <- readRDS('output/predator-rsf/wolfSamplePoints.Rds'')
 
 ### RSF ====
 # Winter RSF

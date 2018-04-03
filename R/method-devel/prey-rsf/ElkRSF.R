@@ -11,7 +11,7 @@
 libs <- c('data.table', 'magrittr',
           'adehabitatHR', 'sp', 'rgdal', 'raster', 
           'lme4',
-          'ggplot2')
+          'ggplot2','car','piecewiseSEM')
 lapply(libs, require, character.only = TRUE)
 
 ### Input data ----
@@ -124,6 +124,7 @@ springElkRSF <- glm(reformulate(rsfCovariates, response = 'observed'),  #### Dis
        family = 'binomial',data = springElk)
 
 summary(springElkRSF)
+vif(springElkRSF)
 rsquared(springElkRSF)
 
 ### Save the RSFs ----
