@@ -31,7 +31,7 @@ wolfMCP <- mcp(wolfSP, 95)
 
 # Create Regular Grid
 source('R/functions/GenerateGrid.R')
-regPts <- GenerateGrid(300, mcpExtent = elkMCP, crs = utm)
+regPts <- GenerateGrid(90, mcpExtent = elkMCP, crs = utm)
 
 setnames(regPts, c('EASTING', 'NORTHING'))
 
@@ -67,19 +67,28 @@ samplePts[, (lsCovers) := lapply(lsPaths, FUN = function(r){
 
 ### RSF ====
 # Winter RSF
-winterWolf <- samplePts[season == "winter"]
+winterWolf <- samplePts[season == "winter" | is.na(season)]
+winterWolf[observed == 0, season := "winter"]
 
-winterWolfRSF <- glm(observed ~ agprop + bgprop + cnprop + dcprop + grprop + 
-                       hudist + mrprop + mwprop + odprop + rgdns  + wtdist, 
-                     family = binomial,
-                     data = winterWolf)
-
-
-# Spring RSF
-springElk <- samplePts[season == "spring"]
-
-springelkrsf <- glm(observed ~ agprop + bgprop + cnprop + dcprop + grprop + 
-                      hudist + mrprop + mwprop + odprop + rgdns  + wtdist, 
+winterWolfRSF <- glm(observed ~ Bog + Coniferous + Grassland + log(LinFeat_Dist+1) + 
+                      Marsh + Mixedwood + Opendeciduous + Ruggedness_test  + log(Water_Dist+1),
                     family = binomial,
                     data = winterWolf)
+
+summary(winterWolfRSF)
+vif(winterWolfRSF)
+rsquared(winterWolfRSF)
+
+# Spring RSF
+springWolf <- samplePts[season == "spring" | is.na(season)]
+springWolf[observed == 0, season := "spring"]
+
+springWolfRSF <- glm(observed ~ Bog + Coniferous + Grassland + log(LinFeat_Dist+1) + 
+                      Marsh + Mixedwood + Opendeciduous + Ruggedness_test  + log(Water_Dist+1), 
+                    family = binomial,
+                    data = springWolf)
+
+summary(springWolfRSF)
+rsquared(springWolfRSF)
+
 
