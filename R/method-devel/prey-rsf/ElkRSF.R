@@ -39,15 +39,17 @@ elkMCP <- mcp(elkSP, 100)
 
 # Create Regular Grid
 source('R/functions/GenerateGrid.R')
-regPts <- GenerateGrid(3000, mcpExtent = elkMCP, crs = utm)
+regPts <- GenerateGrid(300, mcpExtent = elkMCP, crs = utm)
 
 setnames(regPts, c('EASTING', 'NORTHING'))
 
+# saveRDS(regPts, 'output/prey-rsf/elkRegularPoints.Rds')
+# regPts <- readRDS('output/prey-rsf/elkRegularPoints.Rds')
 
 # Check that points are within MCP
 ggplot(elkMCP) +
-  geom_polygon(aes(long, lat, group = group)) +
-  geom_point(aes(EASTING, NORTHING), data = regPts)
+  geom_polygon(aes(long, lat, group = group), alpha = 0.25) +
+  geom_point(aes(EASTING, NORTHING), size = 0.1, data = regPts)
 
 # Combine observed and regular grid points
 regPts[, observed := 0]
@@ -68,15 +70,16 @@ samplePts[, rowID := .I]
 samplePts[, (lsCovers) := lapply(lsPaths, FUN = function(r){
   extract(raster(r), matrix(c(EASTING, NORTHING), ncol = 2))})]
 
+# saveRDS(samplePts, 'output/prey-rsf/elkSamplePoints.Rds')
+# samplePts <- readRDS('output/prey-rsf/elkSamplePoints.Rds')
+
 ### RSF ====
 # Winter RSF
 winterElk <- samplePts[season == "winter"]
 
-winterElkRSF <- glm(observed ~ agprop + bgprop + cnprop + dcprop + grprop + 
-                      hudist + mrprop + mwprop + odprop + rgdns  + wtdist,
+winterElkRSF <- glm(reformulate(lsCovers, response = 'observed'),
                     family = binomial,
                     data = winterElk)
-
 
 # Spring RSF
 springElk <- samplePts[season == "spring"]
