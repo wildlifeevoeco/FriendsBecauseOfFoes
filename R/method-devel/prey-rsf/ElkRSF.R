@@ -39,7 +39,7 @@ elkMCP <- mcp(elkSP, 100)
 
 # Create Regular Grid
 source('R/functions/GenerateGrid.R')
-regPts <- GenerateGrid(300, mcpExtent = elkMCP, crs = utm)
+regPts <- GenerateGrid(90, mcpExtent = elkMCP, crs = utm)
 
 setnames(regPts, c('EASTING', 'NORTHING'))
 
@@ -74,17 +74,30 @@ samplePts[, (lsCovers) := lapply(lsPaths, FUN = function(r){
 # samplePts <- readRDS('output/prey-rsf/elkSamplePoints.Rds')
 
 ### RSF ====
-# Winter RSF
-winterElk <- samplePts[season == "winter"]
+rsfCovariates <- lsCovers[-1][-3]
+rsfCovariates
 
-winterElkRSF <- glm(reformulate(lsCovers, response = 'observed'),
+# Winter RSF
+winterElk <- samplePts[season == "winter" | is.na(season)]
+winterElk[observed == 0, season := "winter"]
+
+winterElkRSF <- glm(observed ~ Bog + Coniferous + Grassland + log(LinFeat_Dist+1) + 
+                      Marsh + Mixedwood + Opendeciduous + Ruggedness_test  + log(Water_Dist+1),
                     family = binomial,
                     data = winterElk)
 
-# Spring RSF
-springElk <- samplePts[season == "spring"]
+summary(winterElkRSF)
+vif(winterElkRSF)
+rsquared(winterElkRSF)
 
-springElkRSF <- glm(observed ~ agprop + bgprop + cnprop + dcprop + grprop + 
-                      hudist + mrprop + mwprop + odprop + rgdns  + wtdist, 
+# Spring RSF
+springElk <- samplePts[season == "spring" | is.na(season)]
+springElk[observed == 0, season := "spring"]
+
+springElkRSF <- glm(observed ~ Bog + Coniferous + Grassland + log(LinFeat_Dist+1) + 
+                      Marsh + Mixedwood + Opendeciduous + Ruggedness_test  + log(Water_Dist+1), 
                     family = binomial,
                     data = springElk)
+
+summary(springElkRSF)
+rsquared(springElkRSF)
