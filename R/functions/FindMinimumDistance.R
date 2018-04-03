@@ -12,6 +12,7 @@ FindMinimumDistance = function(DT, coordCols, idCol){
   findMin <- dtA[, lapply(.SD, FUN = function(x) id[which.min(x)]),
                  .SDcols = as.character(lsID)]
   
-  suppressWarnings(melt(findMin, variable.name = 'left',
-                        value.name = 'right'))
+  suppressWarnings(melt(findMin, variable.factor = FALSE, 
+                   variable.name = 'left', 
+                   value.name = 'right')[, left := as.integer(left)])
 }
