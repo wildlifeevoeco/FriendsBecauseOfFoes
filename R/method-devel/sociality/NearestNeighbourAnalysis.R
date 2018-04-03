@@ -36,11 +36,14 @@ source('R/functions/FindMinimumDistance.R')
 nn <- elk[NbyTime > 10, FindMinimumDistance(.SD, coordCols, idCol),
     by = timegroup]
 
+elk <- merge(elk, nn, 
+             by.x = c('id', 'timegroup'),
+             by.y = c('left', 'timegroup'))
 
 ### Quadtree ----
 # How many neighbors 
 neighbours <- 1
-neighbourCols <- paste('neighbour', seq(1, neighbours))
+neighbourCols <- paste0('neighbour', seq(1, neighbours))
 
 source('R/functions/NumbQuadTreeNeighbours.R')
 
@@ -49,6 +52,13 @@ elk[NbyTime > 1,
     (neighbourCols) := NumbQuadTreeNeighbours(.SD, coordCols,
                                               neighbours, 'id'),
     by = timegroup]
+
+
+### Compare methods ----
+elk[!is.na(right)]
+elk[!is.na(neighbour1)]
+elk[neighbour1 == right]
+elk[neighbour1 != right]
 
 
 ### Figures ----
