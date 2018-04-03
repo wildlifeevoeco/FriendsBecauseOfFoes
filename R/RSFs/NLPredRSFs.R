@@ -5,6 +5,14 @@ library(rgeos)
 library(spatstat)
 library(polyCub)
 library(raster)
+library(data.table)
+library(knitr)
+library(magrittr)
+library(piecewiseSEM)
+
+utm <- '+proj=utm +zone=21 ellps=WGS84'
+nlBounds <- rgdal::readOGR('input/etc/NL-Bounds/NL-Bounds.shp') %>% 
+  spTransform(CRSobj = utm)
 
 coyote<-readRDS('output/data-prep/coyote.Rds')
 
@@ -12,8 +20,6 @@ plot(coyote$EASTING,coyote$NORTHING)
 
 head(coyote)
 
-nlBounds <- rgdal::readOGR('input/etc/NL-Bounds/NL-Bounds.shp') %>% 
-  spTransform(CRSobj = utm)
 
 plot(nlBounds)
 points(coyote$EASTING,coyote$NORTHING)
@@ -106,86 +112,133 @@ coyote$STATUS<-ifelse(coyote$id=="co_np1016", "TRANSIENT", coyote$STATUS)
 coyMR<-subset(coyote, herd=="MIDRIDGE")
 coyMRres<-subset(coyMR, STATUS=="RESIDENT" | STATUS=="SUB-TRANSIENT")
 
-plot(nlBounds)
-points(coyMRres$EASTING,coyMRres$NORTHING)
-
-points<-SpatialPoints(data.frame(coyMRres$EASTING,coyMRres$NORTHING))
+points<-SpatialPoints(data.frame(coyMRres$EASTING,coyMRres$NORTHING),proj4string = CRS(utm))
 
 CoyAvail<-mcp(points, percent = 100)
-
-mean(coyMRres$stepLength)
-
-plot(nlBounds)
-plot(CoyAvail,add=T)
 
 ### Buffer by mean step length
 CoyAvailBuf<-gBuffer(CoyAvail,width=mean(coyMRres$stepLength))
 
 clipped<-gIntersection(nlBounds,CoyAvailBuf)
-
-plot(clipped)
-
-plot(nlBounds)
-plot(clipped,add=T)
-
 clipped2<-as.owin.SpatialPolygons(clipped)
-rand<-runifpoint(n=nrow(coyMRres)*10,win=clipped2)
 
-plot(rand)
+winter<-subset(coyMRres,julday<74)
+summer<-subset(coyMRres,julday>106 &julday<214)
+
+randSum<-runifpoint(n=nrow(summer)*10,win=clipped2)
+randWin<-runifpoint(n=nrow(winter)*10,win=clipped2)
+
+sumPoints<-SpatialPoints(data.frame(summer$EASTING,summer$NORTHING),proj4string = CRS(utm))
+winPoints<-SpatialPoints(data.frame(winter$EASTING,winter$NORTHING),proj4string = CRS(utm))
 
 #### Load in habitat layers
 
-Ant<-raster('input/Landcover/Anthro100.tif')
-Bro<-raster('input/Landcover/Broadleaf100.tif')
-Con<-raster('input/Landcover/Conifer100.tif')
-Lic<-raster('input/Landcover/Lichen100.tif')
-Mix<-raster('input/Landcover/MixedWood100.tif')
-Roc<-raster('input/Landcover/Rocky100.tif')
-Scr<-raster('input/Landcover/Scrub100.tif')
-Wat<-raster('input/Landcover/Water100.tif')
-Wet<-raster('input/Landcover/Wetland100.tif')
+Ant<-raster('input/Landcover/Reproj/Anthro100.tif')
+Bro<-raster('input/Landcover/Reproj/Broadleaf100.tif')
+Con<-raster('input/Landcover/Reproj/Conifer100.tif')
+Lic<-raster('input/Landcover/Reproj/Lichen100.tif')
+Mix<-raster('input/Landcover/Reproj/MixedWood100.tif')
+Roc<-raster('input/Landcover/Reproj/Rocky100.tif')
+Scr<-raster('input/Landcover/Reproj/Scrub100.tif')
+Wat<-raster('input/Landcover/Reproj/Water100.tif')
+Wet<-raster('input/Landcover/Reproj/Wetland100.tif')
+WaD<-raster('input/Landcover/Reproj/WaterDist.tif')
+Lin<-raster('input/Landcover/Reproj/LinearDist.tif')
 
-Elev<-raster('input/Landcover/NLElev.tif')
+Elev<-raster('input/Landcover/Reproj/NLElev.tif')
 Rug<-terrain(Elev, opt="roughness")
 
-plot(Elev)
-plot(Rug)
+## Summer
+AntUsedSum<-extract(Ant,sumPoints)
+BroUsedSum<-extract(Bro,sumPoints)
+ConUsedSum<-extract(Con,sumPoints)
+LicUsedSum<-extract(Lic,sumPoints)
+MixUsedSum<-extract(Mix,sumPoints)
+RocUsedSum<-extract(Roc,sumPoints)
+ScrUsedSum<-extract(Scr,sumPoints)
+WatUsedSum<-extract(Wat,sumPoints)
+WetUsedSum<-extract(Wet,sumPoints)
+RugUsedSum<-extract(Rug,sumPoints)
+RugUsedSum<-extract(Rug,sumPoints)
+WaDUsedSum<-extract(WaD,sumPoints)
+LinUsedSum<-extract(Lin,sumPoints)
 
-AntUsed<-extract(Ant,points)
-BroUsed<-extract(Bro,points)
-ConUsed<-extract(Con,points)
-LicUsed<-extract(Lic,points)
-MixUsed<-extract(Mix,points)
-RocUsed<-extract(Roc,points)
-ScrUsed<-extract(Scr,points)
-WatUsed<-extract(Wat,points)
-WetUsed<-extract(Wet,points)
-RugUsed<-extract(Rug,points)
+randCoSum<-coords(randSum)
 
-randCo<-coords(rand)
+xyrSum<-cbind(randCoSum$x,randCoSum$y)
 
-xyr<-cbind(randCo$x,randCo$y)
-
-randPoints<-SpatialPoints(data.frame(xyr[,1],xyr[,2]))
+randPointsSum<-SpatialPoints(data.frame(xyrSum[,1],xyrSum[,2]),proj4string = CRS(utm))
 
 
-AntAvail<-extract(Ant,randPoints)
-BroAvail<-extract(Bro,randPoints)
-ConAvail<-extract(Con,randPoints)
-LicAvail<-extract(Lic,randPoints)
-MixAvail<-extract(Mix,randPoints)
-RocAvail<-extract(Roc,randPoints)
-ScrAvail<-extract(Scr,randPoints)
-WatAvail<-extract(Wat,randPoints)
-WetAvail<-extract(Wet,randPoints)
-RugAvail<-extract(Rug,randPoints)
+AntAvailSum<-extract(Ant,randPointsSum)
+BroAvailSum<-extract(Bro,randPointsSum)
+ConAvailSum<-extract(Con,randPointsSum)
+LicAvailSum<-extract(Lic,randPointsSum)
+MixAvailSum<-extract(Mix,randPointsSum)
+RocAvailSum<-extract(Roc,randPointsSum)
+ScrAvailSum<-extract(Scr,randPointsSum)
+WatAvailSum<-extract(Wat,randPointsSum)
+WetAvailSum<-extract(Wet,randPointsSum)
+RugAvailSum<-extract(Rug,randPointsSum)
+WaDAvailSum<-extract(WaD,randPointsSum)
+LinAvailSum<-extract(Lin,randPointsSum)
 
-UsedData<-data.frame(1,AntUsed,BroUsed,ConUsed,LicUsed,MixUsed,RocUsed,ScrUsed,WatUsed,WetUsed,RugUsed,coyMRres$EASTING,coyMRres$NORTHING)
-colnames(UsedData)<-c("use","Ant","Bro","Con","Lic","Mix","Roc","Scr","Wat","Wet","Rug","x","y")
+CNames<-c("use","Ant","Bro","Con","Lic","Mix","Roc","Scr","Wat","Wet","Rug","WaD","Lin","x","y","Season")
 
-AvailData<-data.frame(0,AntAvail,BroAvail,ConAvail,LicAvail,MixAvail,RocAvail,ScrAvail,WatAvail,WetAvail,RugAvail,xyr)
-colnames(AvailData)<-c("use","Ant","Bro","Con","Lic","Mix","Roc","Scr","Wat","Wet","Rug","x","y")
-coyoteRSF<-rbind(UsedData,AvailData)
+UsedDataSum<-data.frame(1,AntUsedSum,BroUsedSum,ConUsedSum,LicUsedSum,MixUsedSum,RocUsedSum,
+                        ScrUsedSum,WatUsedSum,WetUsedSum,RugUsedSum,WaDUsedSum,LinUsedSum,summer$EASTING,summer$NORTHING,"Summer")
+colnames(UsedDataSum)<-CNames
+
+AvailDataSum<-data.frame(0,AntAvailSum,BroAvailSum,ConAvailSum,LicAvailSum,MixAvailSum,RocAvailSum,ScrAvailSum,
+                      WatAvailSum,WetAvailSum,RugAvailSum,WaDAvailSum,LinAvailSum,xyrSum,"Summer")
+colnames(AvailDataSum)<-CNames
+
+
+
+## Winter
+AntUsedWin<-extract(Ant,winPoints)
+BroUsedWin<-extract(Bro,winPoints)
+ConUsedWin<-extract(Con,winPoints)
+LicUsedWin<-extract(Lic,winPoints)
+MixUsedWin<-extract(Mix,winPoints)
+RocUsedWin<-extract(Roc,winPoints)
+ScrUsedWin<-extract(Scr,winPoints)
+WatUsedWin<-extract(Wat,winPoints)
+WetUsedWin<-extract(Wet,winPoints)
+RugUsedWin<-extract(Rug,winPoints)
+WaDUsedWin<-extract(WaD,winPoints)
+LinUsedWin<-extract(Lin,winPoints)
+
+randCoWin<-coords(randWin)
+
+xyrWin<-cbind(randCoWin$x,randCoWin$y)
+
+randPointsWin<-SpatialPoints(data.frame(xyrWin[,1],xyrWin[,2]),proj4string = CRS(utm))
+
+
+AntAvailWin<-extract(Ant,randPointsWin)
+BroAvailWin<-extract(Bro,randPointsWin)
+ConAvailWin<-extract(Con,randPointsWin)
+LicAvailWin<-extract(Lic,randPointsWin)
+MixAvailWin<-extract(Mix,randPointsWin)
+RocAvailWin<-extract(Roc,randPointsWin)
+ScrAvailWin<-extract(Scr,randPointsWin)
+WatAvailWin<-extract(Wat,randPointsWin)
+WetAvailWin<-extract(Wet,randPointsWin)
+RugAvailWin<-extract(Rug,randPointsWin)
+WaDAvailWin<-extract(WaD,randPointsWin)
+LinAvailWin<-extract(Lin,randPointsWin)
+
+UsedDataWin<-data.frame(1,AntUsedWin,BroUsedWin,ConUsedWin,LicUsedWin,MixUsedWin,RocUsedWin,
+                        ScrUsedWin,WatUsedWin,WetUsedWin,RugUsedWin,WaDUsedWin,LinUsedWin,winter$EASTING,winter$NORTHING,"Winter")
+colnames(UsedDataWin)<-CNames
+
+AvailDataWin<-data.frame(0,AntAvailWin,BroAvailWin,ConAvailWin,LicAvailWin,MixAvailWin,RocAvailWin,ScrAvailWin,
+                         WatAvailWin,WetAvailWin,RugAvailWin,WaDAvailWin,LinAvailWin,xyrWin,"Winter")
+colnames(AvailDataWin)<-CNames
+
+
+coyoteRSF<-rbind(UsedDataSum,AvailDataSum,UsedDataWin,AvailDataWin)
 
 
 ## Remove all points with 50% NA data
@@ -218,24 +271,43 @@ mean(coyRSF2$Scr)
 mean(coyRSF2$Wat)
 mean(coyRSF2$Wet)
 
-### Wetland is the reference
-RSFCoyote<-glm(use~Ant+Bro+Con+Lic+Mix+Roc+Scr+Wat+Rug,data=coyRSF2)
-
-summary(RSFCoyote)
-
 
 AntCrop<-crop(Ant,clipped)
-
+BroCrop<-crop(Bro,clipped)
+ConCrop<-crop(Con,clipped)
 LicCrop<-crop(Lic,clipped)
-LicMask<-mask(LicCrop,clipped)
+MixCrop<-crop(Mix,clipped)
+RocCrop<-crop(Roc,clipped)
+ScrCrop<-crop(Scr,clipped)
+WatCrop<-crop(Wat,clipped)
+WetCrop<-crop(Wet,clipped)
+RugCrop<-crop(Rug,clipped)
+WaDCrop<-crop(WaD,clipped)
+LinCrop<-crop(Lin,clipped)
 
-plot(LicCrop)
+str(CoySummer)
+
+### Wetland is the reference
+CoySummer<-subset(coyRSF2,Season=="Summer")
+CoyWinter<-subset(coyRSF2,Season=="Winter")
+
+RSFCoyoteSum<-glm(use~Ant+Lin+Bro+Con+Lic+Mix+Roc+Scr+WaD+Rug,data=CoySummer, family='binomial')
+RSFCoyoteWin<-glm(use~Ant+Lin+Bro+Con+Lic+Mix+Roc+Scr+WaD+Rug,data=CoyWinter, family='binomial')
+
+summary(RSFCoyoteSum)
+rsquared(RSFCoyoteSum)
+
+summary(RSFCoyoteWin)
+rsquared(RSFCoyoteWin)
 
 
 
-LicCroprp<-projectRaster(LicCrop, crs="+proj=utm +zone=21 ellps=WGS84")
 
-clipped<-spTransform(clipped, CRS("+proj=utm +zone=21 ellps=WGS84"))
+
+
+
+
+
 
 
 ############ caribou
