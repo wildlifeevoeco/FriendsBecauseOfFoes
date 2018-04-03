@@ -40,6 +40,8 @@ transformed <- lapply(seq_along(namesTransform), FUN = function(x){
    r
 })
 
+transformed[[1]] <- resample(transformed[[1]], transformed[[2]])
+
 
 ### Output ----
 outRaster <- c(transformed, cropRasters[!(lapply(cropRasters, names) %in% namesTransform)])
