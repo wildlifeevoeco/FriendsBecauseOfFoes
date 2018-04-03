@@ -23,6 +23,7 @@ bounds <- rgdal::readOGR('input/etc/RMNP-extent/RMNPextent.shp') %>%
 # Covariates
 lsCovers <- data.table(nm = dir('input/covariates/RMNP', '.tif$'))[, nm := gsub(".tif|100m", "", nm)]$nm
 lsPaths <- dir('input/covariates/RMNP', '.tif$', full.names = TRUE)
+names(lsPaths) <- lsCovers
 
 ### Processing ----
 # Crop the rasters, holding as temp files in a list
@@ -39,9 +40,11 @@ transformed <- lapply(seq_along(namesTransform), FUN = function(x){
    names(r) <- namesTransform[[x]]
    r
 })
+names(transformed) <- namesTransform
 
-transformed[[1]] <- resample(transformed[[1]], transformed[[2]])
-
+transformed[['LinFeat_Dist']] <- resample(transformed[['LinFeat_Dist']], transformed[['Water_Dist']])
+cropRasters[['Ruggedness']] <- resample(cropRasters[['Ruggedness']], cropRasters[['Water_Dist']])
+cropRasters[['Elevation']] <- resample(cropRasters[['Elevation']], cropRasters[['Water_Dist']])
 
 ### Output ----
 outRaster <- c(transformed, cropRasters[!(lapply(cropRasters, names) %in% namesTransform)])
