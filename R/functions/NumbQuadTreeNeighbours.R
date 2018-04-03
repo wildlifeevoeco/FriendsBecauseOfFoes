@@ -1,5 +1,7 @@
-NumbQuadTreeNeighbours <- function(DT, coordCols, numbNeighbors, idCol) {
+NumbQuadTreeNeighbours <- function(DT, coordCols, numbNeighbours, idCol) {
   tree <- createTree(DT[, ..coordCols])
-  DT[, get(idCol)[knnLookup(tree, newdat = DT[, ..coordCols], 
-                            k = numbNeighbors + 1)[, 2]]]
+  knn <- DT[, get(idCol)[knnLookup(tree, newdat = DT[, ..coordCols], 
+                                   k = numbNeighbours + 1)[, -1]]]
+  dim(knn) <- c(length(DT[, get(idCol)]), numbNeighbours)
+  as.data.table(knn)
 }

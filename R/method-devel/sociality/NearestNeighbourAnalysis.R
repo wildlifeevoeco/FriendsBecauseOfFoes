@@ -20,8 +20,6 @@ elk <- readRDS('output/data-prep/elk.Rds')
 coordCols <- c('EASTING', 'NORTHING')
 idCol <- 'id'
 
-elks <- elk[timegroup < 4]
-
 ### Find Minimum Distance Neighbor ----
 # Do any timegroups have the same individual twice?
 all.equal(elk[, .(N = uniqueN(id)), by = timegroup],
@@ -33,24 +31,29 @@ elk[, qplot(NbyTime)]
 
 # Calc Nearest Neighbour
 source('R/functions/FindMinimumDistance.R')
-nn <- elk[NbyTime > 10, FindMinimumDistance(.SD, coordCols, idCol),
+nn <- elk[NbyTime > 1, FindMinimumDistance(.SD, coordCols, idCol),
     by = timegroup]
 
-elk <- merge(elk, nn, 
-             by.x = c('id', 'timegroup'),
-             by.y = c('left', 'timegroup'))
+# Merge the nearest neighbors back on
+withNeighbours <- merge(elk, nn, 
+                        by.x = c('id', 'timegroup'),
+                        by.y = c('left', 'timegroup'))
+
+# And row bind those in a timegroup alone
+elk <- rbindlist(list(withNeighbours, elk[NbyTime == 1]), fill = TRUE)
+
 
 ### Quadtree ----
 # How many neighbors 
-neighbours <- 1
+neighbours <- 3
 neighbourCols <- paste0('neighbour', seq(1, neighbours))
 
 source('R/functions/NumbQuadTreeNeighbours.R')
 
 # Only running on where there are at least 2 in a timegroup, else ! the bomb !
-elk[NbyTime > 1, 
+elk[NbyTime > neighbours, 
     (neighbourCols) := NumbQuadTreeNeighbours(.SD, coordCols,
-                                              neighbours, 'id'),
+                                              neighbours, idCol),
     by = timegroup]
 
 
@@ -66,4 +69,3 @@ ggplot(aes(EASTING, NORTHING, color = factor(id)),
        data = elk[timegroup == 4]) +
   geom_point() + ggthemes::scale_colour_pander() +
   coord_fixed()
-
