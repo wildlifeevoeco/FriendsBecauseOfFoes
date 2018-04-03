@@ -31,7 +31,7 @@ wolfMCP <- mcp(wolfSP, 95)
 
 # Create Regular Grid
 source('R/functions/GenerateGrid.R')
-regPts <- GenerateGrid(90, mcpExtent = elkMCP, crs = utm)
+regPts <- GenerateGrid(90, mcpExtent = wolfMCP, crs = utm)
 
 setnames(regPts, c('EASTING', 'NORTHING'))
 
