@@ -1,5 +1,5 @@
 ### Wolf RSF ----
-# Authors: 
+# Authors: Alec Robitaille
 # Purpose: 
 # Inputs: Wolf relocation data
 # Outputs: 
@@ -31,10 +31,12 @@ wolfMCP <- mcp(wolfSP, 95)
 
 # Create Regular Grid
 source('R/functions/GenerateGrid.R')
-regPts <- GenerateGrid(3000, mcpExtent = wolfMCP, crs = utm)
+regPts <- GenerateGrid(300, mcpExtent = elkMCP, crs = utm)
 
 setnames(regPts, c('EASTING', 'NORTHING'))
 
+# saveRDS(regPts, 'output/predator-rsf/wolfRegularPoints.Rds)
+# regPts <- readRDS('output/predator-rsf/wolfRegularPoints.Rds')
 
 # Check that points are within MCP
 ggplot(wolfMCP) +
@@ -59,6 +61,9 @@ samplePts[, rowID := .I]
 # Sample rasters
 samplePts[, (lsCovers) := lapply(lsPaths, FUN = function(r){
   extract(raster(r), matrix(c(EASTING, NORTHING), ncol = 2))})]
+
+# saveRDS(samplePts, 'output/predator-rsf/wolfSamplePoints.Rds')
+# samplePts <- readRDS('output/predator-rsf/wolfSamplePoints.Rds'')
 
 ### RSF ====
 # Winter RSF
