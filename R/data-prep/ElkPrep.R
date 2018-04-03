@@ -54,6 +54,9 @@ source('R/variables/CutOffThresholds.R')
 elk[julday %between% winter, season := 'winter']
 elk[julday %between% spring, season := 'spring']
 
+# Group Time - from spatsoc
+source('R/functions/Group-Time-spatsoc.R')
+GroupTimes(elk, 'datetime', '15 minutes')
 
 ### Subset ----
 # Subset any NAs in defined cols
@@ -121,7 +124,7 @@ source('R/variables/PrepDataOutputVariables.R')
 
 elk[, SPECIES := 'ELK']
 
-setnames(elk, c('ElkID', 'SPECIES', 'season',
+setnames(elk, c('ElkID', 'SPECIES', 'season', 'timegroup',
                  'idate', 'itime', 'datetime', 
                  'EASTING', 'NORTHING',
                  'julday', 'yr', 'mnth', 'stepLength', 'moveRate', 'difdatetime'),

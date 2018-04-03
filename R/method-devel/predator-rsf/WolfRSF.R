@@ -10,7 +10,7 @@
 ### Packages ----
 libs <- c('data.table', 'ggplot2',
           'sp', 'adehabitatHR', 'raster',
-          'magrittr')
+          'magrittr','piecewiseSEM','car')
 lapply(libs, require, character.only = TRUE)
 
 
@@ -24,6 +24,11 @@ utm <- '+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
 bounds <- rgdal::readOGR('input/etc/RMNP-extent/RMNPextent.shp') %>%
   spTransform(CRSobj = utm)
 
+# Covariates
+lsCovers <- data.table(nm = dir('input/covariates/RMNP', '.tif$'))[, 
+                                                                   nm := gsub(".tif|100m", "", nm)]$nm
+lsPaths <- dir('input/covariates/RMNP', '.tif$', full.names = TRUE)
+
 ### MCPs ----
 wolfSP <- SpatialPoints(wolf[, .(EASTING, NORTHING)], proj4string = CRS(utm))
 
@@ -31,7 +36,7 @@ wolfMCP <- mcp(wolfSP, 95)
 
 # Create Regular Grid
 source('R/functions/GenerateGrid.R')
-regPts <- GenerateGrid(300, mcpExtent = elkMCP, crs = utm)
+regPts <- GenerateGrid(90, mcpExtent = wolfMCP, crs = utm)
 
 setnames(regPts, c('EASTING', 'NORTHING'))
 
@@ -63,23 +68,32 @@ samplePts[, (lsCovers) := lapply(lsPaths, FUN = function(r){
   extract(raster(r), matrix(c(EASTING, NORTHING), ncol = 2))})]
 
 # saveRDS(samplePts, 'output/predator-rsf/wolfSamplePoints.Rds')
-# samplePts <- readRDS('output/predator-rsf/wolfSamplePoints.Rds'')
+#samplePts <- readRDS('output/predator-rsf/wolfSamplePoints.Rds'')
 
 ### RSF ====
 # Winter RSF
-winterWolf <- samplePts[season == "winter"]
+winterWolf <- samplePts[season == "winter" | is.na(season)]
+winterWolf[observed == 0, season := "winter"]
 
-winterWolfRSF <- glm(observed ~ agprop + bgprop + cnprop + dcprop + grprop + 
-                       hudist + mrprop + mwprop + odprop + rgdns  + wtdist, 
-                     family = binomial,
-                     data = winterWolf)
-
-
-# Spring RSF
-springElk <- samplePts[season == "spring"]
-
-springelkrsf <- glm(observed ~ agprop + bgprop + cnprop + dcprop + grprop + 
-                      hudist + mrprop + mwprop + odprop + rgdns  + wtdist, 
+winterWolfRSF <- glm(observed ~ Bog + Coniferous + Grassland + log(LinFeat_Dist+1) + 
+                      Marsh + Mixedwood + Opendeciduous + Ruggedness_test  + log(Water_Dist+1),
                     family = binomial,
                     data = winterWolf)
+
+summary(winterWolfRSF)
+vif(winterWolfRSF)
+rsquared(winterWolfRSF)
+
+# Spring RSF
+springWolf <- samplePts[season == "spring" | is.na(season)]
+springWolf[observed == 0, season := "spring"]
+
+springWolfRSF <- glm(observed ~ Bog + Coniferous + Grassland + log(LinFeat_Dist+1) + 
+                      Marsh + Mixedwood + Opendeciduous + Ruggedness_test  + log(Water_Dist+1), 
+                    family = binomial,
+                    data = springWolf)
+
+summary(springWolfRSF)
+rsquared(springWolfRSF)
+
 

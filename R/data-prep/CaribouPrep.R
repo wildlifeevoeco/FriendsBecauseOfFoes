@@ -40,7 +40,6 @@ projYCol <- 'NORTHING'
 # Drop down to Middle Ridge right away, so subsequent steps are faster
 caribou <- caribou[HERD == 'MIDRIDGE']
 
-
 ### Add fields ----
 # Date time fields
 source('R/functions/DatePrep.R')
@@ -54,6 +53,10 @@ source('R/variables/CutOffThresholds.R')
 
 caribou[julday %between% winter, season := 'winter']
 caribou[julday %between% spring, season := 'spring']
+
+# Group Time - from spatsoc
+source('R/functions/Group-Time-spatsoc.R')
+GroupTimes(caribou, 'datetime', '15 minutes')
 
 ### Subset ----
 # Subset any NAs in defined cols
@@ -109,7 +112,7 @@ source('R/variables/PrepDataOutputVariables.R')
 
 outputVariables <- c(outputVariables, 'herd', 'sex')
 
-setnames(caribou, c('ANIMAL_ID', 'SPECIES',
+setnames(caribou, c('ANIMAL_ID', 'SPECIES', 'timegroup',
                  'idate', 'itime', 'datetime', 
                  'EASTING', 'NORTHING',
                  'julday', 'yr', 'mnth', 'stepLength', 'moveRate', 'difdatetime',

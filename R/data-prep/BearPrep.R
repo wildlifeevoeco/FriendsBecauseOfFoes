@@ -53,6 +53,11 @@ source('R/variables/CutOffThresholds.R')
 bear[julday %between% winter, season := 'winter']
 bear[julday %between% spring, season := 'spring']
 
+# Group Time - from spatsoc
+source('R/functions/Group-Time-spatsoc.R')
+GroupTimes(bear, 'datetime', '15 minutes')
+
+
 ### Subset ----
 # Subset any NAs in defined cols
 checkCols <- c(xCol, yCol, timeCol, dateCol, 'season')
@@ -106,7 +111,7 @@ source('R/variables/PrepDataOutputVariables.R')
 
 outputVariables <- c(outputVariables, 'herd', 'sex')
 
-setnames(bear, c('ANIMAL_ID', 'SPECIES', 'season',
+setnames(bear, c('ANIMAL_ID', 'SPECIES', 'season', 'timegroup',
                  'idate', 'itime', 'datetime', 
                  'EASTING', 'NORTHING',
                  'julday', 'yr', 'mnth', 'stepLength', 'moveRate', 'difdatetime',

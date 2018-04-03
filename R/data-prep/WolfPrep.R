@@ -64,6 +64,10 @@ source('R/variables/CutOffThresholds.R')
 wolf[julday %between% winter, season := 'winter']
 wolf[julday %between% spring, season := 'spring']
 
+# Group Time - from spatsoc
+source('R/functions/Group-Time-spatsoc.R')
+GroupTimes(wolf, 'datetime', '15 minutes')
+
 ### Subset ----
 # Subset any NAs in defined cols
 checkCols <- c(xCol, yCol, timeCol, dateCol, 'season')
@@ -134,7 +138,7 @@ wolf[, SPECIES := 'WOLF']
 
 outputVariables <- c(outputVariables, 'packid')
 
-setnames(wolf, c('wolfid', 'SPECIES', 'season',
+setnames(wolf, c('wolfid', 'SPECIES', 'season', 'timegroup',
                  'idate', 'itime', 'datetime', 
                  'EASTING', 'NORTHING',
                  'julday', 'yr', 'mnth', 'stepLength', 'moveRate', 'difdatetime',
