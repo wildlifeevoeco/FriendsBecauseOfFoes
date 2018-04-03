@@ -51,6 +51,11 @@ source('R/variables/CutOffThresholds.R')
 coyote[julday %between% winter, season := 'winter']
 coyote[julday %between% spring, season := 'spring']
 
+# Group Time - from spatsoc
+source('R/functions/Group-Time-spatsoc.R')
+GroupTimes(coyote, 'datetime', '15 minutes')
+
+
 ### Subset ----
 # Subset any NAs in defined cols
 checkCols <- c(xCol, yCol, timeCol, dateCol, 'season')
@@ -114,7 +119,7 @@ source('R/variables/PrepDataOutputVariables.R')
 
 outputVariables <- c(outputVariables, 'herd', 'sex')
 
-setnames(coyote, c('ANIMAL_ID', 'SPECIES', 'season',
+setnames(coyote, c('ANIMAL_ID', 'SPECIES', 'season', 'timegroup',
                  'idate', 'itime', 'datetime', 
                  'EASTING', 'NORTHING',
                  'julday', 'yr', 'mnth', 'stepLength', 'moveRate', 'difdatetime',
