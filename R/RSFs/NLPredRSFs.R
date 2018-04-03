@@ -326,24 +326,275 @@ WinRSF<-exp(AntR*coef(RSFCoyoteWin)[2]+BroR*coef(RSFCoyoteWin)[3]+ConR*coef(RSFC
               MixR*coef(RSFCoyoteWin)[6]+RocR*coef(RSFCoyoteWin)[7]+ScrR*coef(RSFCoyoteWin)[8]+WaDR*coef(RSFCoyoteWin)[9]+
               LinR*coef(RSFCoyoteWin)[10]+RugR*coef(RSFCoyoteWin)[11])
 
+cellStats(SumRSF,min)
 
-SumRSFsc<-SumRSF/(1+SumRSF)
-WinRSFsc<-WinRSF/(1+WinRSF)
+SumRSFsc<-(SumRSF-(cellStats(SumRSF,min)))/(cellStats(SumRSF,max)-cellStats(SumRSF,min))
+WinRSFsc<-(WinRSF-(cellStats(WinRSF,min)))/(cellStats(WinRSF,max)-cellStats(WinRSF,min))
 
-plot(SumRSF)
-plot(WinRSF)
+SumRSFz<-(SumRSF-(cellStats(SumRSF,mean)))/(cellStats(SumRSF,sd))
+WinRSFz<-(WinRSF-(cellStats(WinRSF,mean)))/(cellStats(WinRSF,sd))
+
+?cellStats
+
+hist(log(WinRSFsc))
+
+plot(SumRSFz,zlim=c(0,1))
+plot(WinRSFz)
+
+cellStats(SumRSFsc,max)
+
 plot(SumRSFsc)
 plot(WinRSFsc)
 
-writeRaster(SumRSFsc,"output/PredRSFNL/CoyoteSummer.tif")
-writeRaster(WinRSFsc,"output/PredRSFNL/CoyoteWinter.tif")
+writeRaster(SumRSF,"output/PredRSFNL/CoyoteSummer.tif",overwrite=T)
+writeRaster(WinRSF,"output/PredRSFNL/CoyoteWinter.tif",overwrite=T)
 
 
 ################## Black bears ####################
 
+utm <- '+proj=utm +zone=21 ellps=WGS84'
+nlBounds <- rgdal::readOGR('input/etc/NL-Bounds/NL-Bounds.shp') %>% 
+  spTransform(CRSobj = utm)
+
+bear<-readRDS('output/data-prep/bear.Rds')
+
+head(bear)
+
+plot(nlBounds)
+points(bear$EASTING,bear$NORTHING)
+
+
+points<-SpatialPoints(data.frame(bear$EASTING,bear$NORTHING),proj4string = CRS(utm))
+
+BearAvail<-mcp(points, percent = 100)
+
+### Buffer by mean step length
+BearAvailBuf<-gBuffer(BearAvail,width=mean(bear$stepLength))
+
+clipped<-gIntersection(nlBounds,BearAvailBuf)
+clipped2<-as.owin.SpatialPolygons(clipped)
+
+winter<-subset(bear,julday<74)
+summer<-subset(bear,julday>106 &julday<214)
+
+randSum<-runifpoint(n=nrow(summer)*10,win=clipped2)
+randWin<-runifpoint(n=nrow(winter)*10,win=clipped2)
+
+sumPoints<-SpatialPoints(data.frame(summer$EASTING,summer$NORTHING),proj4string = CRS(utm))
+winPoints<-SpatialPoints(data.frame(winter$EASTING,winter$NORTHING),proj4string = CRS(utm))
+
+#### Load in habitat layers
+
+Ant<-raster('input/Landcover/Reproj/Anthro100.tif')
+Bro<-raster('input/Landcover/Reproj/Broadleaf100.tif')
+Con<-raster('input/Landcover/Reproj/Conifer100.tif')
+Lic<-raster('input/Landcover/Reproj/Lichen100.tif')
+Mix<-raster('input/Landcover/Reproj/MixedWood100.tif')
+Roc<-raster('input/Landcover/Reproj/Rocky100.tif')
+Scr<-raster('input/Landcover/Reproj/Scrub100.tif')
+Wat<-raster('input/Landcover/Reproj/Water100.tif')
+Wet<-raster('input/Landcover/Reproj/Wetland100.tif')
+WaD1<-raster('input/Landcover/Reproj/WaterDist.tif')
+Lin1<-raster('input/Landcover/Reproj/LinearDist.tif')
+
+WaD<-log(WaD1+1)
+Lin<-log(Lin1+1)
+
+Elev<-raster('input/Landcover/Reproj/NLElev.tif')
+Rug<-terrain(Elev, opt="roughness")
 
 
 
+
+## Summer
+AntUsedSum<-extract(Ant,sumPoints)
+BroUsedSum<-extract(Bro,sumPoints)
+ConUsedSum<-extract(Con,sumPoints)
+LicUsedSum<-extract(Lic,sumPoints)
+MixUsedSum<-extract(Mix,sumPoints)
+RocUsedSum<-extract(Roc,sumPoints)
+ScrUsedSum<-extract(Scr,sumPoints)
+WatUsedSum<-extract(Wat,sumPoints)
+WetUsedSum<-extract(Wet,sumPoints)
+RugUsedSum<-extract(Rug,sumPoints)
+RugUsedSum<-extract(Rug,sumPoints)
+WaDUsedSum<-extract(WaD,sumPoints)
+LinUsedSum<-extract(Lin,sumPoints)
+
+randCoSum<-coords(randSum)
+
+xyrSum<-cbind(randCoSum$x,randCoSum$y)
+
+randPointsSum<-SpatialPoints(data.frame(xyrSum[,1],xyrSum[,2]),proj4string = CRS(utm))
+
+
+AntAvailSum<-extract(Ant,randPointsSum)
+BroAvailSum<-extract(Bro,randPointsSum)
+ConAvailSum<-extract(Con,randPointsSum)
+LicAvailSum<-extract(Lic,randPointsSum)
+MixAvailSum<-extract(Mix,randPointsSum)
+RocAvailSum<-extract(Roc,randPointsSum)
+ScrAvailSum<-extract(Scr,randPointsSum)
+WatAvailSum<-extract(Wat,randPointsSum)
+WetAvailSum<-extract(Wet,randPointsSum)
+RugAvailSum<-extract(Rug,randPointsSum)
+WaDAvailSum<-extract(WaD,randPointsSum)
+LinAvailSum<-extract(Lin,randPointsSum)
+
+CNames<-c("use","Ant","Bro","Con","Lic","Mix","Roc","Scr","Wat","Wet","Rug","WaD","Lin","x","y","Season")
+
+UsedDataSum<-data.frame(1,AntUsedSum,BroUsedSum,ConUsedSum,LicUsedSum,MixUsedSum,RocUsedSum,
+                        ScrUsedSum,WatUsedSum,WetUsedSum,RugUsedSum,WaDUsedSum,LinUsedSum,summer$EASTING,summer$NORTHING,"Summer")
+colnames(UsedDataSum)<-CNames
+
+AvailDataSum<-data.frame(0,AntAvailSum,BroAvailSum,ConAvailSum,LicAvailSum,MixAvailSum,RocAvailSum,ScrAvailSum,
+                         WatAvailSum,WetAvailSum,RugAvailSum,WaDAvailSum,LinAvailSum,xyrSum,"Summer")
+colnames(AvailDataSum)<-CNames
+
+
+
+## Winter
+AntUsedWin<-extract(Ant,winPoints)
+BroUsedWin<-extract(Bro,winPoints)
+ConUsedWin<-extract(Con,winPoints)
+LicUsedWin<-extract(Lic,winPoints)
+MixUsedWin<-extract(Mix,winPoints)
+RocUsedWin<-extract(Roc,winPoints)
+ScrUsedWin<-extract(Scr,winPoints)
+WatUsedWin<-extract(Wat,winPoints)
+WetUsedWin<-extract(Wet,winPoints)
+RugUsedWin<-extract(Rug,winPoints)
+WaDUsedWin<-extract(WaD,winPoints)
+LinUsedWin<-extract(Lin,winPoints)
+
+randCoWin<-coords(randWin)
+
+xyrWin<-cbind(randCoWin$x,randCoWin$y)
+
+randPointsWin<-SpatialPoints(data.frame(xyrWin[,1],xyrWin[,2]),proj4string = CRS(utm))
+
+
+AntAvailWin<-extract(Ant,randPointsWin)
+BroAvailWin<-extract(Bro,randPointsWin)
+ConAvailWin<-extract(Con,randPointsWin)
+LicAvailWin<-extract(Lic,randPointsWin)
+MixAvailWin<-extract(Mix,randPointsWin)
+RocAvailWin<-extract(Roc,randPointsWin)
+ScrAvailWin<-extract(Scr,randPointsWin)
+WatAvailWin<-extract(Wat,randPointsWin)
+WetAvailWin<-extract(Wet,randPointsWin)
+RugAvailWin<-extract(Rug,randPointsWin)
+WaDAvailWin<-extract(WaD,randPointsWin)
+LinAvailWin<-extract(Lin,randPointsWin)
+
+UsedDataWin<-data.frame(1,AntUsedWin,BroUsedWin,ConUsedWin,LicUsedWin,MixUsedWin,RocUsedWin,
+                        ScrUsedWin,WatUsedWin,WetUsedWin,RugUsedWin,WaDUsedWin,LinUsedWin,winter$EASTING,winter$NORTHING,"Winter")
+colnames(UsedDataWin)<-CNames
+
+AvailDataWin<-data.frame(0,AntAvailWin,BroAvailWin,ConAvailWin,LicAvailWin,MixAvailWin,RocAvailWin,ScrAvailWin,
+                         WatAvailWin,WetAvailWin,RugAvailWin,WaDAvailWin,LinAvailWin,xyrWin,"Winter")
+colnames(AvailDataWin)<-CNames
+
+
+bearRSF<-rbind(UsedDataSum,AvailDataSum,UsedDataWin,AvailDataWin)
+
+
+## Remove all points with 50% NA data
+bearRSF$rs<-rowSums(bearRSF[2:10])
+bearRSF2<-subset(bearRSF,rs>0.5)
+summary(bearRSF2$rs)
+
+bearRSF2[,2]<-bearRSF2[,2]/bearRSF2$rs
+bearRSF2[,3]<-bearRSF2[,3]/bearRSF2$rs
+bearRSF2[,4]<-bearRSF2[,4]/bearRSF2$rs
+bearRSF2[,5]<-bearRSF2[,5]/bearRSF2$rs
+bearRSF2[,6]<-bearRSF2[,6]/bearRSF2$rs
+bearRSF2[,7]<-bearRSF2[,7]/bearRSF2$rs
+bearRSF2[,8]<-bearRSF2[,8]/bearRSF2$rs
+bearRSF2[,9]<-bearRSF2[,9]/bearRSF2$rs
+bearRSF2[,10]<-bearRSF2[,10]/bearRSF2$rs
+
+## Check to make sure it worked
+bearRSF2$rs2<-rowSums(bearRSF2[2:10])
+
+head(bearRSF2)
+##
+mean(bearRSF2$Ant)
+mean(bearRSF2$Bro)
+mean(bearRSF2$Con)
+mean(bearRSF2$Lic)
+mean(bearRSF2$Mix)
+mean(bearRSF2$Roc)
+mean(bearRSF2$Scr)
+mean(bearRSF2$Wat)
+mean(bearRSF2$Wet)
+
+
+AntCrop<-crop(Ant,clipped)
+BroCrop<-crop(Bro,clipped)
+ConCrop<-crop(Con,clipped)
+LicCrop<-crop(Lic,clipped)
+MixCrop<-crop(Mix,clipped)
+RocCrop<-crop(Roc,clipped)
+ScrCrop<-crop(Scr,clipped)
+WatCrop<-crop(Wat,clipped)
+WetCrop<-crop(Wet,clipped)
+RugCrop<-crop(Rug,clipped)
+WaDCrop<-crop(WaD,clipped)
+LinCrop<-crop(Lin,clipped)
+
+str(BearSummer)
+
+### Wetland is the reference
+bearSummer<-subset(bearRSF2,Season=="Summer")
+bearWinter<-subset(bearRSF2,Season=="Winter")
+
+RSFbearSum<-glm(use~Ant+Bro+Con+Lic+Mix+Roc+Scr+WaD+Lin+Rug,data=bearSummer, family='binomial')
+RSFbearWin<-glm(use~Ant+Bro+Con+Lic+Mix+Roc+Scr+WaD+Lin+Rug,data=bearWinter, family='binomial')
+
+summary(RSFbearSum)
+rsquared(RSFbearSum)
+
+summary(RSFbearWin)
+rsquared(RSFbearWin)
+
+
+AntR<-AntCrop
+BroR<-resample(BroCrop,AntCrop)
+ConR<-resample(ConCrop,AntCrop)
+LicR<-resample(LicCrop,AntCrop)
+MixR<-resample(MixCrop,AntCrop)
+RocR<-resample(RocCrop,AntCrop)
+ScrR<-resample(ScrCrop,AntCrop)
+WaDR<-resample(WaDCrop,AntCrop)
+LinR<-resample(LinCrop,AntCrop)
+RugR<-resample(RugCrop,AntCrop)
+
+SumRSFbear<-exp(AntR*coef(RSFbearSum)[2]+BroR*coef(RSFbearSum)[3]+ConR*coef(RSFbearSum)[4]+LicR*coef(RSFbearSum)[5]+
+              MixR*coef(RSFbearSum)[6]+RocR*coef(RSFbearSum)[7]+ScrR*coef(RSFbearSum)[8]+WaDR*coef(RSFbearSum)[9]+
+              LinR*coef(RSFbearSum)[10]+RugR*coef(RSFbearSum)[11])
+
+#WinRSFbear<-exp(AntR*coef(RSFbearWin)[2]+BroR*coef(RSFbearWin)[3]+ConR*coef(RSFbearWin)[4]+LicR*coef(RSFbearWin)[5]+
+#              MixR*coef(RSFbearWin)[6]+RocR*coef(RSFbearWin)[7]+ScrR*coef(RSFbearWin)[8]+WaDR*coef(RSFbearWin)[9]+
+#              LinR*coef(RSFbearWin)[10]+RugR*coef(RSFbearWin)[11])
+
+cellStats(SumRSFbear,min)
+
+SumRSFbearsc<-(SumRSFbear-(cellStats(SumRSFbear,min)))/(cellStats(SumRSFbear,max)-cellStats(SumRSFbear,min))
+#WinRSFsc<-(WinRSFbear-(cellStats(WinRSFbear,min)))/(cellStats(WinRSFbear,max)-cellStats(WinRSFbear,min))
+
+hist(SumRSFsc)
+
+plot(SumRSFbear)
+plot(WinRSF)
+
+cellStats(SumRSFsc,max)
+
+plot(SumRSFbearsc)
+#plot(WinRSFsc)
+
+writeRaster(SumRSFbear,"output/PredRSFNL/bearSummer.tif",overwrite=T)
+#writeRaster(WinRSF,"output/PredRSFNL/bearWinter.tif",overwrite=T)
 
 
 
