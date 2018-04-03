@@ -26,9 +26,17 @@ bounds <- rgdal::readOGR('input/etc/RMNP-extent/RMNPextent.shp') %>%
   spTransform(CRSobj = utm)
 
 # Covariates
-lsCovers <- data.table(nm = dir('input/covariates/RMNP', '.tif$'))[, 
+lsCovers <- data.table(nm = dir('output/data-prep/cropped-rasters/RMNP/', '.tif$'))[, 
   nm := gsub(".tif|100m", "", nm)]$nm
-lsPaths <- dir('input/covariates/RMNP', '.tif$', full.names = TRUE)
+lsPaths <- dir('output/data-prep/cropped-rasters/RMNP/', '.tif$', full.names = TRUE)
+
+# Crop the rasters, holding as temp files in a list
+rmnp.rstr <- lapply(lsPaths, FUN = function(r){
+  crop(raster(r), bounds)
+})
+
+########how do I know if this worked
+
 
 ### Processing ----
 # MCPs
@@ -74,8 +82,8 @@ samplePts[, (lsCovers) := lapply(lsPaths, FUN = function(r){
 # samplePts <- readRDS('output/prey-rsf/elkSamplePoints.Rds')
 
 ### RSF ====
+# Remove Agriculture and Deciduous
 rsfCovariates <- lsCovers[-1][-3]
-rsfCovariates
 
 # Winter RSF
 winterElk <- samplePts[season == "winter" | is.na(season)]
@@ -86,9 +94,22 @@ winterElkRSF <- glm(observed ~ Bog + Coniferous + Grassland + log(LinFeat_Dist+1
                     family = binomial,
                     data = winterElk)
 
+winterElkRSF <- glm(reformulate(rsfCovariates, response = 'observed'), #### Dist not logged yet
+        family = 'binomial',data = winterElk)
+
 summary(winterElkRSF)
-vif(winterElkRSF)
 rsquared(winterElkRSF)
+
+# Pull out the coefficients, dropping the intercept
+winElk.fix <- coef(winterElkRSF)[-1]
+
+# Create the raster matching the first raster layer with the first fixed effect
+winterElkRSF.rstr <- (rmnp.rstr[[1]] * winElk.fix[1] + rmnp.rstr[[2]] * winElk.fix[2] +
+                        rmnp.rstr[[3]] * winElk.fix[3] + rmnp.rstr[[4]] * winElk.fix[4] + 
+                        rmnp.rstr[[5]] * winElk.fix[5])
+
+plot(winterElkRSF.rstr)
+
 
 # Spring RSF
 springElk <- samplePts[season == "spring" | is.na(season)]
@@ -99,5 +120,21 @@ springElkRSF <- glm(observed ~ Bog + Coniferous + Grassland + log(LinFeat_Dist+1
                     family = binomial,
                     data = springElk)
 
+springElkRSF <- glm(reformulate(rsfCovariates, response = 'observed'),  #### Dist not logged yet
+       family = 'binomial',data = springElk)
+
 summary(springElkRSF)
 rsquared(springElkRSF)
+
+### Save the RSFs ----
+ls.rsf <- list('WINTERELK' = winterElkRSF.rstr, 
+               'SPRINGELK' = springElkRSF.rstr)
+
+lapply(seq_along(ls.rsf), FUN = function(r){
+  writeRaster(ls.rsf[[r]], paste0('output/prey-rsf/elkrsf', names(ls.rsf[r])), 
+              format = 'raster',
+              overwrite = T)
+})
+
+
+
