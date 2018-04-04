@@ -1,8 +1,8 @@
 ### Elk RSF ----
 # Authors: Alec Robitaille, Christina M Prokopenko, Sana Zabihi
-# Purpose: 
-# Inputs: Elk relocation data
-# Outputs: 
+# Purpose: Determine habitat domain for elk using second order RSFs
+# Inputs: Elk relocation data, habitat layers as rasters
+# Outputs: Elk RSF results for global model used to create winter and spring rasters as TIFF
 # Project: Easter Week Challenge 2018
 # Copyright: ./LICENSE.md 
 
@@ -80,11 +80,6 @@ lsRasters <- lapply(lsPaths, raster)
 winterElk <- samplePts[season == "winter" | is.na(season)]
 winterElk[observed == 0, season := "winter"]
 
-#winterElkRSF <- glm(observed ~ Bog + Coniferous + Grassland + log(LinFeat_Dist+1) + 
-#                      Marsh + Mixedwood + Opendeciduous + Ruggedness_test  + log(Water_Dist+1),
-#                    family = binomial,
-#                    data = winterElk)
-
 winterElkRSF <- glm(reformulate(lsCovers, response = 'observed'), #### Dist not logged yet
         family = 'binomial',data = winterElk)
 
@@ -97,7 +92,8 @@ winElk.b <- coef(winterElkRSF)[-1]
 
 
 # Create the raster matching the first raster layer with the first fixed effect
-winterElkRSF.rstr <- exp(lsRasters[[1]] * winElk.b[1] + lsRasters[[2]] * winElk.b[2] +
+###with intercept of -3.242852 ?
+winterElkRSF.rstr <- exp(-3.242852 + lsRasters[[1]] * winElk.b[1] + lsRasters[[2]] * winElk.b[2] +
                         lsRasters[[3]] * winElk.b[3] + lsRasters[[4]] * winElk.b[4] + 
                         lsRasters[[5]] * winElk.b[5]+ lsRasters[[6]] * winElk.b[6]+ 
                         lsRasters[[7]] * winElk.b[7]+ lsRasters[[8]] * winElk.b[8]+ 
@@ -110,10 +106,6 @@ plot(winterElkRSF.rstr)
 springElk <- samplePts[season == "spring" | is.na(season)]
 springElk[observed == 0, season := "spring"]
 
-#springElkRSF <- glm(observed ~ Bog + Coniferous + Grassland + log(LinFeat_Dist+1) + 
-#                     Marsh + Mixedwood + Opendeciduous + Ruggedness_test  + log(Water_Dist+1), 
-#                    family = binomial,
-#                    data = springElk)
 
 springElkRSF <- glm(reformulate(lsCovers, response = 'observed'), 
        family = 'binomial',data = springElk)
@@ -122,11 +114,12 @@ summary(springElkRSF)
 rsquared(springElkRSF)
 
 # Pull out the coefficients, dropping the intercept
-sprElk.b <- coef(springElkRSF)[-1]
+sprElk.b <- coef(springElkRSF)[-1] 
 
 
 # Create the raster matching the first raster layer with the first fixed effect
-springElkRSF.rstr <- exp(lsRasters[[1]] * sprElk.b[1] + lsRasters[[2]] * sprElk.b[2] +
+###with intercept of -2.053773?
+springElkRSF.rstr <- exp(-2.053773 + lsRasters[[1]] * sprElk.b[1] + lsRasters[[2]] * sprElk.b[2] +
                         lsRasters[[3]] * sprElk.b[3] + lsRasters[[4]] * sprElk.b[4] + 
                         lsRasters[[5]] * sprElk.b[5]+ lsRasters[[6]] * sprElk.b[6]+ 
                         lsRasters[[7]] * sprElk.b[7]+ lsRasters[[8]] * sprElk.b[8]+ 
@@ -143,16 +136,16 @@ plot(springElkRSF.rstr)
 #plot(springElkRSF.stand)
 
 ####using z score
-winterElkRSF.z <- (winterElkRSF.rstr - cellStats(winterElkRSF.rstr,stat=mean))/cellStats(winterElkRSF.rstr,stat=sd)
-plot(winterElkRSF.z)
-springElkRSF.z <- (springElkRSF.rstr - cellStats(springElkRSF.rstr,stat=mean))/cellStats(springElkRSF.rstr,stat=sd)
-plot(springElkRSF.z)
+#winterElkRSF.z <- (winterElkRSF.rstr - cellStats(winterElkRSF.rstr,stat=mean))/cellStats(winterElkRSF.rstr,stat=sd)
+#plot(winterElkRSF.z)
+#springElkRSF.z <- (springElkRSF.rstr - cellStats(springElkRSF.rstr,stat=mean))/cellStats(springElkRSF.rstr,stat=sd)
+#plot(springElkRSF.z)
 
 
 ### Save the RSFs ----
 ###not standardized
-ls.rsf <- list('WINTERELK' = winterElkRSF.rstr, 
-               'SPRINGELK' = springElkRSF.rstr)
+ls.rsf <- list('WINTER' = winterElkRSF.rstr, 
+               'SPRING' = springElkRSF.rstr)
 
 lapply(seq_along(ls.rsf), FUN = function(r){
   writeRaster(ls.rsf[[r]], paste0('output/prey-rsf/elkrsf', names(ls.rsf[r])), 
@@ -162,8 +155,8 @@ lapply(seq_along(ls.rsf), FUN = function(r){
 
 
 ### Save the RSFs ----
-#ls.rsf <- list('WINTERELK.z' = winterElkRSF.z, 
- #              'SPRINGELK.z' = springElkRSF.z)
+#ls.rsf <- list('WINTER' = winterElkRSF.z, 
+ #              'SPRING' = springElkRSF.z)
 
 #lapply(seq_along(ls.rsf), FUN = function(r){
  #writeRaster(ls.rsf[[r]], paste0('output/prey-rsf/elkrsf.z', names(ls.rsf[r])), 
