@@ -1,8 +1,8 @@
 ### Wolf RSF ----
 # Authors: Alec Robitaille, Christina M Prokopenko, Sana Zabihi
-# Purpose: 
-# Inputs: Wolf relocation data
-# Outputs: 
+# Purpose: Determine habitat domain for wolves using second order RSFs
+# Inputs: Wolf relocation data, habitat layers as rasters
+# Outputs: Wolf RSF results for global model used to create winter and spring rasters as TIFF
 # Project: Easter Week Challenge 2018
 # Copyright: ./LICENSE.md 
 
@@ -92,7 +92,8 @@ winwolf.b <- coef(winterwolfRSF)[-1]
 
 
 # Create the raster matching the first raster layer with the first fixed effect
-winterwolfRSF.rstr <- exp(lsRasters[[1]] * winwolf.b[1] + lsRasters[[2]] * winwolf.b[2] +
+###### with intercept of -3.044340?
+winterwolfRSF.rstr <- exp(-3.044340 +lsRasters[[1]] * winwolf.b[1] + lsRasters[[2]] * winwolf.b[2] +
                            lsRasters[[3]] * winwolf.b[3] + lsRasters[[4]] * winwolf.b[4] + 
                            lsRasters[[5]] * winwolf.b[5]+ lsRasters[[6]] * winwolf.b[6]+ 
                            lsRasters[[7]] * winwolf.b[7]+ lsRasters[[8]] * winwolf.b[8]+ 
@@ -116,7 +117,8 @@ sprwolf.b <- coef(springwolfRSF)[-1]
 
 
 # Create the raster matching the first raster layer with the first fixed effect
-springwolfRSF.rstr <- exp(lsRasters[[1]] * sprwolf.b[1] + lsRasters[[2]] * sprwolf.b[2] +
+###with intercept of -2.711875?
+springwolfRSF.rstr <- exp(-2.711875 + lsRasters[[1]] * sprwolf.b[1] + lsRasters[[2]] * sprwolf.b[2] +
                            lsRasters[[3]] * sprwolf.b[3] + lsRasters[[4]] * sprwolf.b[4] + 
                            lsRasters[[5]] * sprwolf.b[5]+ lsRasters[[6]] * sprwolf.b[6]+ 
                            lsRasters[[7]] * sprwolf.b[7]+ lsRasters[[8]] * sprwolf.b[8]+ 
@@ -126,8 +128,9 @@ plot(springwolfRSF.rstr)
 
 ### Save the RSFs ----
 ###not standardized
-ls.rsf <- list('WINTERWOLF' = winterwolfRSF.rstr, 
-               'SPRINGWOLF' = springwolfRSF.rstr)
+###currently calculated with intercept
+ls.rsf <- list('WINTER' = winterwolfRSF.rstr, 
+               'SPRING' = springwolfRSF.rstr)
 
 lapply(seq_along(ls.rsf), FUN = function(r){
   writeRaster(ls.rsf[[r]], paste0('output/predator-rsf/wolfrsf', names(ls.rsf[r])), 
