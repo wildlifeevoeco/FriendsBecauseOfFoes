@@ -56,10 +56,16 @@ elk[NbyTime > neighbours,
                                               neighbours, idCol),
     by = timegroup]
 
-elk <- merge(elk, elk,
-                   by.x = c('neighbour1', 'timegroup'),
-                   by.y = c('id', 'timegroup'),
-                   suffixes = c("", "Right"))
+elk
+elk[timegroup == 5, .(id, timegroup, neighbour1, neighbour2, neighbour3)]
+elk[, c(neighbourCols, 'timegroup'), with = FALSE]
+elk[, !c(neighbourCols), with = FALSE]
+
+mergeElk <- merge(elk[, c(neighbourCols, 'timegroup'), with = FALSE], 
+                  elk[, !c(neighbourCols), with = FALSE],
+                  by.x = c('neighbour1', 'timegroup'),
+                  by.y = c('id', 'timegroup'),
+                  suffixes = c("Right", ""), all.y = TRUE)
 
 ### Calculate dyadic distance ----
 source('R/functions/DyadicDistance.R')
