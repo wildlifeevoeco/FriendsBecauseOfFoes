@@ -2,7 +2,8 @@
 
 # Alec Robitaille
 # March 2018
-StepLength <- function(DT, idCol, datetimeCol, yrCol, xCol, yCol, returnIntermediate = FALSE) {
+StepLength <- function(DT, idCol, datetimeCol, yrCol, xCol, yCol, 
+                       returnIntermediate = FALSE) {
   
   coordCols <- c(xCol, yCol)
   
@@ -36,7 +37,9 @@ StepLength <- function(DT, idCol, datetimeCol, yrCol, xCol, yCol, returnIntermed
      by = c(idCol, yrCol), .SDcols = datetimeCol]
 
   # difference in time in hours
-  DT[, (difDateTimeCol) := as.numeric(difftime(get(datetimeCol), get(lagDateTimeCol), units = 'hours'))]
+  DT[, (difDateTimeCol) := as.numeric(difftime(get(datetimeCol), 
+                                               get(lagDateTimeCol), 
+                                               units = 'hours'))]
   
   # Step length divided by time difference
   DT[, moveRate := stepLength / (get(difDateTimeCol))]
