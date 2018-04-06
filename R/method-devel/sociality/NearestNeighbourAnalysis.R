@@ -56,6 +56,21 @@ elk[NbyTime > neighbours,
                                               neighbours, idCol),
     by = timegroup]
 
+elk <- merge(elk, elk,
+                   by.x = c('neighbour1', 'timegroup'),
+                   by.y = c('id', 'timegroup'),
+                   suffixes = c("", "Right"))
+
+### Calculate dyadic distance ----
+source('R/functions/DyadicDistance.R')
+# dyadDistCols <- paste0('dyadDist', seq(1, neighbours))
+
+# TODO flex for multiple neighbors
+# elk[, (dyadDistCols) := DyadicDistance(.SD, coordCols = coordCols,
+#                                        neighbourCoordCols = paste0(coordCols, "Right"))]
+
+DyadicDistance(withRight, coordCols = coordCols,
+               neighbourCoordCols = paste0(coordCols, "Right"))
 
 ### Compare methods ----
 elk[!is.na(right)]
