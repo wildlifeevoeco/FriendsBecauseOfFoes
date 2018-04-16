@@ -323,11 +323,11 @@ WaDR<-resample(WaDCrop,AntCrop)
 LinR<-resample(LinCrop,AntCrop)
 RugR<-resample(RugCrop,AntCrop)
 
-SumRSF<-exp(coef(RSFCoyoteSum)[1]*AntR*coef(RSFCoyoteSum)[2]+BroR*coef(RSFCoyoteSum)[3]+ConR*coef(RSFCoyoteSum)[4]+LicR*coef(RSFCoyoteSum)[5]+
+SumRSF<-exp(coef(RSFCoyoteSum)[1]+AntR*coef(RSFCoyoteSum)[2]+BroR*coef(RSFCoyoteSum)[3]+ConR*coef(RSFCoyoteSum)[4]+LicR*coef(RSFCoyoteSum)[5]+
               MixR*coef(RSFCoyoteSum)[6]+RocR*coef(RSFCoyoteSum)[7]+ScrR*coef(RSFCoyoteSum)[8]+WaDR*coef(RSFCoyoteSum)[9]+
               LinR*coef(RSFCoyoteSum)[10]+RugR*coef(RSFCoyoteSum)[11])
 
-WinRSF<-exp(coef(RSFCoyoteWin)[1]*AntR*coef(RSFCoyoteWin)[2]+BroR*coef(RSFCoyoteWin)[3]+ConR*coef(RSFCoyoteWin)[4]+LicR*coef(RSFCoyoteWin)[5]+
+WinRSF<-exp(coef(RSFCoyoteWin)[1]+AntR*coef(RSFCoyoteWin)[2]+BroR*coef(RSFCoyoteWin)[3]+ConR*coef(RSFCoyoteWin)[4]+LicR*coef(RSFCoyoteWin)[5]+
               MixR*coef(RSFCoyoteWin)[6]+RocR*coef(RSFCoyoteWin)[7]+ScrR*coef(RSFCoyoteWin)[8]+WaDR*coef(RSFCoyoteWin)[9]+
               LinR*coef(RSFCoyoteWin)[10]+RugR*coef(RSFCoyoteWin)[11])
 
@@ -575,7 +575,7 @@ WaDR<-resample(WaDCrop,AntCrop)
 LinR<-resample(LinCrop,AntCrop)
 RugR<-resample(RugCrop,AntCrop)
 
-SumRSFbear<-exp(coef(RSFbearSum)[1]*AntR*coef(RSFbearSum)[2]+BroR*coef(RSFbearSum)[3]+ConR*coef(RSFbearSum)[4]+LicR*coef(RSFbearSum)[5]+
+SumRSFbear<-exp(coef(RSFbearSum)[1]+AntR*coef(RSFbearSum)[2]+BroR*coef(RSFbearSum)[3]+ConR*coef(RSFbearSum)[4]+LicR*coef(RSFbearSum)[5]+
               MixR*coef(RSFbearSum)[6]+RocR*coef(RSFbearSum)[7]+ScrR*coef(RSFbearSum)[8]+WaDR*coef(RSFbearSum)[9]+
               LinR*coef(RSFbearSum)[10]+RugR*coef(RSFbearSum)[11])
 
@@ -806,11 +806,22 @@ LinCrop<-crop(Lin,clipped)
 str(CoySummer)
 
 ### Wetland is the reference
+library(car)
+
 CarSummer<-subset(carRSF2,Season=="Summer")
 CarWinter<-subset(carRSF2,Season=="Winter")
 
 RSFCaribouSum<-glm(use~Ant+Bro+Con+Lic+Mix+Roc+Scr+WaD+Lin+Rug,data=CarSummer, family='binomial')
 RSFCaribouWin<-glm(use~Ant+Bro+Con+Lic+Mix+Roc+Scr+WaD+Lin+Rug,data=CarWinter, family='binomial')
+
+
+RSFCaribouSum<-glm(use~Bro+Con+Lic+Mix+Roc+Scr+WaD+Lin+Rug,data=CarSummer, family='binomial')
+RSFCaribouWin<-glm(use~Bro+Con+Lic+Mix+Roc+Scr+WaD+Lin+Rug,data=CarWinter, family='binomial')
+
+
+
+vif(RSFCaribouSum)
+vif(RSFCaribouWin)
 
 summary(RSFCaribouSum)
 rsquared(RSFCaribouSum)
@@ -830,13 +841,14 @@ WaDR<-resample(WaDCrop,AntCrop)
 LinR<-resample(LinCrop,AntCrop)
 RugR<-resample(RugCrop,AntCrop)
 
-SumRSF<-exp(coef(RSFCoyoteSum)[1]*AntR*coef(RSFCoyoteSum)[2]+BroR*coef(RSFCoyoteSum)[3]+ConR*coef(RSFCoyoteSum)[4]+LicR*coef(RSFCoyoteSum)[5]+
-              MixR*coef(RSFCoyoteSum)[6]+RocR*coef(RSFCoyoteSum)[7]+ScrR*coef(RSFCoyoteSum)[8]+WaDR*coef(RSFCoyoteSum)[9]+
-              LinR*coef(RSFCoyoteSum)[10]+RugR*coef(RSFCoyoteSum)[11])
+SumRSF<-exp(coef(RSFCaribouSum)[1]+AntR*coef(RSFCaribouSum)[2]+BroR*coef(RSFCaribouSum)[3]+ConR*coef(RSFCaribouSum)[4]+LicR*coef(RSFCaribouSum)[5]+
+              MixR*coef(RSFCaribouSum)[6]+RocR*coef(RSFCaribouSum)[7]+ScrR*coef(RSFCaribouSum)[8]+WaDR*coef(RSFCaribouSum)[9]+
+              LinR*coef(RSFCaribouSum)[10]+RugR*coef(RSFCaribouSum)[11])
 
-WinRSF<-exp(coef(RSFCoyoteWin)[1]*AntR*coef(RSFCoyoteWin)[2]+BroR*coef(RSFCoyoteWin)[3]+ConR*coef(RSFCoyoteWin)[4]+LicR*coef(RSFCoyoteWin)[5]+
-              MixR*coef(RSFCoyoteWin)[6]+RocR*coef(RSFCoyoteWin)[7]+ScrR*coef(RSFCoyoteWin)[8]+WaDR*coef(RSFCoyoteWin)[9]+
-              LinR*coef(RSFCoyoteWin)[10]+RugR*coef(RSFCoyoteWin)[11])
+WinRSF<-exp(coef(RSFCaribouWin)[1]+AntR*coef(RSFCaribouWin)[2]+BroR*coef(RSFCaribouWin)[3]+ConR*coef(RSFCaribouWin)[4]+LicR*coef(RSFCaribouWin)[5]+
+              MixR*coef(RSFCaribouWin)[6]+RocR*coef(RSFCaribouWin)[7]+ScrR*coef(RSFCaribouWin)[8]+WaDR*coef(RSFCaribouWin)[9]+
+              LinR*coef(RSFCaribouWin)[10]+RugR*coef(RSFCaribouWin)[11])
+
 
 cellStats(SumRSF,max)
 
@@ -850,7 +862,8 @@ WinRSFz<-(WinRSF-(cellStats(WinRSF,mean)))/(cellStats(WinRSF,sd))
 
 hist(log(WinRSFsc))
 
-plot(SumRSFz,zlim=c(0,1))
+plot(SumRSFsc,zlim=c(0,0.3))
+plot(WinRSFsc,zlim=c(0,0.001))
 plot(WinRSFz)
 
 cellStats(SumRSFsc,max)
@@ -858,7 +871,7 @@ cellStats(SumRSFsc,max)
 plot(SumRSFsc)
 plot(WinRSFsc)
 
-writeRaster(SumRSFsc,"output/PredRSFNL/CoyoteSummer.tif",overwrite=T)
-writeRaster(WinRSFsc,"output/PredRSFNL/CoyoteWinter.tif",overwrite=T)
+writeRaster(SumRSFsc,"output/PredRSFNL/CaribouSummer.tif",overwrite=T)
+writeRaster(WinRSFsc,"output/PredRSFNL/CaribouWinter.tif",overwrite=T)
 
 
