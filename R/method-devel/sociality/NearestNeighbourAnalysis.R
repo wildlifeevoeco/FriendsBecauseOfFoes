@@ -1,8 +1,8 @@
 ### Nearest Neighbour Analysis ----
 # Authors: Alec Robitaille
-# Purpose: 
+# Purpose: Determine number of NN within dist threshold and dist to NN
 # Inputs: Elk, caribou relocation data
-# Outputs: 
+# Outputs: NN data
 # Project: Easter Week Challenge 2018
 # Copyright: ./LICENSE.md 
 
