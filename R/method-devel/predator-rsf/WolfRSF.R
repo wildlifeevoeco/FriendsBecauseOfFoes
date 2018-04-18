@@ -126,15 +126,28 @@ springwolfRSF.rstr <- exp(-2.711875 + lsRasters[[1]] * sprwolf.b[1] + lsRasters[
 
 plot(springwolfRSF.rstr)
 
+####standardize RSFs 
+###using feature scaling
+winterwolfRSF.s <- (winterwolfRSF.rstr - (cellStats(winterwolfRSF.rstr,min)))/(cellStats(winterwolfRSF.rstr,max) - (cellStats(winterwolfRSF.rstr,min)))
+plot(winterwolfRSF.s)
+springwolfRSF.s <- (springwolfRSF.rstr - (cellStats(springwolfRSF.rstr,min)))/(cellStats(springwolfRSF.rstr,max) - (cellStats(springwolfRSF.rstr,min)))
+plot(springwolfRSF.s)
+
+####using z score
+#winterwolfRSF.z <- (winterwolfRSF.rstr - cellStats(winterwolfRSF.rstr,stat=mean))/cellStats(winterwolfRSF.rstr,stat=sd)
+#plot(winterwolfRSF.z)
+#springwolfRSF.z <- (springwolfRSF.rstr - cellStats(springwolfRSF.rstr,stat=mean))/cellStats(springwolfRSF.rstr,stat=sd)
+#plot(springwolfRSF.z)
+
+
 ### Save the RSFs ----
-###not standardized
-###currently calculated with intercept
-ls.rsf <- list('WINTER' = winterwolfRSF.rstr, 
-               'SPRING' = springwolfRSF.rstr)
+ls.rsf <- list('WINTER' = winterwolfRSF.s, 
+               'SPRING' = springwolfRSF.s)
 
 lapply(seq_along(ls.rsf), FUN = function(r){
-  writeRaster(ls.rsf[[r]], paste0('output/predator-rsf/wolfrsf', names(ls.rsf[r])), 
+  writeRaster(ls.rsf[[r]], paste0('output/prey-rsf/wolfrsf', names(ls.rsf[r])), 
               format = 'GTiff',
               overwrite = T)
 })
+
 

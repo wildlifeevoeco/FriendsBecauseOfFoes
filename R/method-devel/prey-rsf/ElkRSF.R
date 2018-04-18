@@ -128,12 +128,11 @@ springElkRSF.rstr <- exp(-2.053773 + lsRasters[[1]] * sprElk.b[1] + lsRasters[[2
 plot(springElkRSF.rstr)
 
 ####standardize RSFs 
-
-###feature scaling
-#winterElkRSF.stand <- (winterElkRSF.rstr - (cellStats(winterElkRSF.rstr,min)))/(cellStats(winterElkRSF.rstr,max) - (cellStats(winterElkRSF.rstr,min)))
-#plot(winterElkRSF.stand)
-#springElkRSF.stand <- (springElkRSF.rstr - (cellStats(springElkRSF.rstr,min)))/(cellStats(springElkRSF.rstr,max) - (cellStats(springElkRSF.rstr,min)))
-#plot(springElkRSF.stand)
+###using feature scaling
+winterElkRSF.s <- (winterElkRSF.rstr - (cellStats(winterElkRSF.rstr,min)))/(cellStats(winterElkRSF.rstr,max) - (cellStats(winterElkRSF.rstr,min)))
+plot(winterElkRSF.s)
+springElkRSF.s <- (springElkRSF.rstr - (cellStats(springElkRSF.rstr,min)))/(cellStats(springElkRSF.rstr,max) - (cellStats(springElkRSF.rstr,min)))
+plot(springElkRSF.s)
 
 ####using z score
 #winterElkRSF.z <- (winterElkRSF.rstr - cellStats(winterElkRSF.rstr,stat=mean))/cellStats(winterElkRSF.rstr,stat=sd)
@@ -143,9 +142,8 @@ plot(springElkRSF.rstr)
 
 
 ### Save the RSFs ----
-###not standardized
-ls.rsf <- list('WINTER' = winterElkRSF.rstr, 
-               'SPRING' = springElkRSF.rstr)
+ls.rsf <- list('WINTER' = winterElkRSF.s, 
+               'SPRING' = springElkRSF.s)
 
 lapply(seq_along(ls.rsf), FUN = function(r){
   writeRaster(ls.rsf[[r]], paste0('output/prey-rsf/elkrsf', names(ls.rsf[r])), 
@@ -154,13 +152,4 @@ lapply(seq_along(ls.rsf), FUN = function(r){
 })
 
 
-### Save the RSFs ----
-#ls.rsf <- list('WINTER' = winterElkRSF.z, 
- #              'SPRING' = springElkRSF.z)
-
-#lapply(seq_along(ls.rsf), FUN = function(r){
- #writeRaster(ls.rsf[[r]], paste0('output/prey-rsf/elkrsf.z', names(ls.rsf[r])), 
-#              format = 'GTiff',
-#              overwrite = T)
-#})
                        
