@@ -9,10 +9,11 @@ FindNumbWithinDist = function(DT, distThreshold, coordCols, idCol){
   
   setnames(dtA, c(lsID, 'id'))
 
-  findWithin <- dtA[, lapply(.SD, FUN = function(x) sum(x < distThreshold, na.rm = TRUE)),
+  findWithin <- dtA[, lapply(.SD, FUN = function(x) sum(x < distThreshold, 
+                                                        na.rm = TRUE)),
                  .SDcols = as.character(lsID)]
   
-  suppressWarnings(melt(findWithin, variable.factor = FALSE,
-                   variable.name = 'left',
-                   value.name = 'right')[, left := as.integer(left)])
+  melt(findWithin, measure.vars = colnames(findWithin), 
+       variable.name = 'id', value.name = 'nWithinDist',
+       variable.factor = FALSE)
 }
