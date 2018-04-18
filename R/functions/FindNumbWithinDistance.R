@@ -1,4 +1,4 @@
-FindMinimumDistance = function(DT, coordCols, idCol){
+FindNumbWithinDist = function(DT, distThreshold, coordCols, idCol){
   a <- as.matrix(dist(DT[, ..coordCols],
                       method = 'euclidean'))
   diag(a) <- NA
@@ -8,11 +8,11 @@ FindMinimumDistance = function(DT, coordCols, idCol){
   dtA <- data.table(a, id = lsID)
   
   setnames(dtA, c(lsID, 'id'))
-  
-  findMin <- dtA[, lapply(.SD, FUN = function(x) id[which.min(x)]),
+
+  findWithin <- dtA[, lapply(.SD, FUN = function(x) sum(x < distThreshold, na.rm = TRUE)),
                  .SDcols = as.character(lsID)]
   
-  suppressWarnings(melt(findMin, variable.factor = FALSE, 
-                   variable.name = 'left', 
+  suppressWarnings(melt(findWithin, variable.factor = FALSE,
+                   variable.name = 'left',
                    value.name = 'right')[, left := as.integer(left)])
 }
