@@ -70,13 +70,17 @@ ltc[rela < 0, relaPl := rela + 360][rela > 0, relaPl := rela]
 
 ltc[, shift(absAngle, 1, type = 'lag') - absAngle]
 ltc[, .(absAngle, absa, absaPl, rela, relaPl)]
-ltc[1:10, .(absAngle, absaPl, rela, relaPl,
+ltc[1:10, .(absAngle, #absaPl, 
+            rela, relaPl,
         shift(absAngle, 1, type = 'lag') - absAngle,
         # abs(shift(absAngle, 1, type = 'lag') - absAngle),
         # ifelse(shift(absAngle, 1, type = 'lag') - absAngle < 0,
         #        shift(absAngle, 1, type = 'lag') - absAngle,
         #        (shift(absAngle, 1, type = 'lag') - absAngle) + 360),
-        (180 - abs(abs(shift(absAngle, 1, type = 'lag') - absAngle) - 180)))]
+        (180 - abs(abs(shift(absAngle, 1, type = 'lag') - absAngle) - 180))
+        )]
+
+
 
 ltc[, shift(absAngle, 1, type = "lag")]
 
