@@ -50,6 +50,9 @@ elkNN <- merge(elk[, .(id, EASTING, NORTHING, neighbour1, timegroup, stepLength)
                        rstepLength = stepLength)],
                all.x = TRUE)
 
+neighbourCols <- c('rEASTING', 'rNORTHING', 'rstepLength')
+elkNN[id == neighbour1, (neighbourCols) := NA]
+
 
 ### Calculate dyadic distance ----
 source('R/functions/DyadicDistance.R')
