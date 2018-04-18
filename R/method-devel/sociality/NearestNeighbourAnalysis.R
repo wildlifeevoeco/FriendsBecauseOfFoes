@@ -64,30 +64,31 @@ source('R/functions/DyadicDistance.R')
 # elk[, (dyadDistCols) := DyadicDistance(.SD, coordCols = coordCols,
 #                                        neighbourCoordCols = paste0(coordCols, "Right"))]
 
-DyadicDistance(elkNN, coordCols = coordCols,
+DyadicDistance(elk, coordCols = coordCols,
                neighbourCoordCols = paste0('r', coordCols),
-               returnIntermediate = TRUE)
+               returnIntermediate = FALSE)
 
 ### Difference in Step length ----
-elkNN[, dSI := abs(stepLength - rstepLength)]
+elk[, dSI := abs(stepLength - rstepLength)]
 
+### Number of neighbours within distance ----
+# Find the number of neighbours within specific distance threshold
+distanceThreshold <- 10000
 
-### Find Minimum Distance Neighbour ----
-# Calc Nearest Neighbour
-source('R/functions/FindMinimumDistance.R')
-nn <- elk[NbyTime > 1, FindMinimumDistance(.SD, coordCols, idCol),
-          by = timegroup]
+source('R/functions/FindNumbWithinDistance.R')
+elk[NbyTime > 1, 
+    nWithinDist := FindNumbWithinDist(.SD, distanceThreshold,
+                                      coordCols, idCol),
+    by = timegroup]
 
-# Merge the nearest neighbours back on
-withNeighbours <- merge(elk, nn, 
-                        by.x = c('id', 'timegroup'),
-                        by.y = c('left', 'timegroup'))
 
 # And row bind those in a timegroup alone
-elk <- rbindlist(list(withNeighbours, elk[NbyTime == 1]), fill = TRUE)
+elk <- rbindlist(list(withNeighbours, 
+                      elk[NbyTime == 1]), fill = TRUE)
 
 
 ### Figures ----
+# Check NN at a timegroup
 ggplot(aes(EASTING, NORTHING, color = factor(id)), 
        data = elk[timegroup == 4]) +
   geom_point() + ggthemes::scale_colour_pander() +
