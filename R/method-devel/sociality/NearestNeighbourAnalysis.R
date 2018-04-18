@@ -45,27 +45,26 @@ elk[NbyTime > neighbours,
 
 
 # NA in neighbour means that there were less than the NbyTime in the timegroup
-elkNN <- merge(elk[, .(id, EASTING, NORTHING, neighbour1, timegroup)],
-               elk[, .(neighbour1 = id, rEASTING = EASTING, rNORTHING = NORTHING, timegroup)],
+elkNN <- merge(elk[, .(id, EASTING, NORTHING, neighbour1, timegroup, stepLength)],
+               elk[, .(neighbour1 = id, rEASTING = EASTING, rNORTHING = NORTHING, timegroup, 
+                       rstepLength = stepLength)],
                all.x = TRUE)
 
 
 ### Calculate dyadic distance ----
 source('R/functions/DyadicDistance.R')
-# dyadDistCols <- paste0('dyadDist', seq(1, neighbours))
 
 # TODO flex for multiple neighbours
 # elk[, (dyadDistCols) := DyadicDistance(.SD, coordCols = coordCols,
 #                                        neighbourCoordCols = paste0(coordCols, "Right"))]
 
 DyadicDistance(elkNN, coordCols = coordCols,
-               neighbourCoordCols = paste0("r", coordCols))
+               neighbourCoordCols = paste0('r', coordCols),
+               returnIntermediate = TRUE)
 
-### Compare methods ----
-elk[!is.na(right)]
-elk[!is.na(neighbour1)]
-elk[neighbour1 == right]
-elk[neighbour1 != right]
+### Difference in Step length ----
+elkNN[, dSI := abs(stepLength - rstepLength)]
+
 
 ### Find Minimum Distance Neighbour ----
 # Calc Nearest Neighbour
