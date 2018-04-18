@@ -73,21 +73,21 @@ elk[, dSI := abs(stepLength - rstepLength)]
 
 ### Number of neighbours within distance ----
 # Find the number of neighbours within specific distance threshold
-distanceThreshold <- 10000
+distanceThreshold <- 5000
+withinCol <- paste0('nWithin', distanceThreshold)
 
 source('R/functions/FindNumbWithinDistance.R')
 elk[NbyTime > 1, 
-    nWithinDist := FindNumbWithinDist(.SD, distanceThreshold,
+    (withinCol) := FindNumbWithinDist(.SD, distanceThreshold,
                                       coordCols, idCol),
     by = timegroup]
 
 
-# And row bind those in a timegroup alone
-elk <- rbindlist(list(withNeighbours, 
-                      elk[NbyTime == 1]), fill = TRUE)
-
-
 ### Figures ----
+qplot(get(withinCol), data = elk, 
+      main = paste('Number of neighbours within', distanceThreshold),
+      xlab = 'Number of Neighbours')
+
 # Check NN at a timegroup
 ggplot(aes(EASTING, NORTHING, color = factor(id)), 
        data = elk[timegroup == 4]) +

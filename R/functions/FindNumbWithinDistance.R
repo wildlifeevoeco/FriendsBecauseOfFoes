@@ -13,7 +13,7 @@ FindNumbWithinDist = function(DT, distThreshold, coordCols, idCol){
                                                         na.rm = TRUE)),
                  .SDcols = as.character(lsID)]
   
-  melt(findWithin, measure.vars = colnames(findWithin), 
+  melt(findWithin, measure.vars = colnames(findWithin),
        variable.name = 'id', value.name = 'nWithinDist',
-       variable.factor = FALSE)
+       variable.factor = FALSE)$nWithinDist
 }
