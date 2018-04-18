@@ -8,9 +8,6 @@ DyadicDistance <- function(DT, coordCols, neighbourCoordCols = NULL,
   # Create and dif column names
   difCols <- c('difX', 'difY')
   
-  # Use shift  to create lagged cols
-  DT[, (neighbourCoordCols) := shift(.SD, 1, NA, 'lag'), .SDcols = coordCols]
-  
   # Find the difference between subsequent points in x,y
   DT[, (difCols) := .((get(coordCols[1]) - get(neighbourCoordCols[1])),
                       (get(coordCols[2]) - get(neighbourCoordCols[2])))]
@@ -26,7 +23,7 @@ DyadicDistance <- function(DT, coordCols, neighbourCoordCols = NULL,
   if(returnIntermediate) {
     DT
   } else {
-    DT[, c(neighbourCoordCols, difCols, difSqCols) := NULL]
+    DT[, c(difCols, difSqCols) := NULL]
   }
 }
 
