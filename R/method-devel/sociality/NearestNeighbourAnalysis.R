@@ -37,39 +37,39 @@ neighbourCols <- paste0('neighbour', seq(1, neighbours))
 # Read in function
 source('R/functions/NumbQuadTreeNeighbours.R')
 # Only running on where there are at least 2 in a timegroup, else the bomb!
-elk[NbyTime > neighbours, 
+DT[NbyTime > neighbours, 
     (neighbourCols) := NumbQuadTreeNeighbours(.SD, coords = coordCols,
                                               neighbours, idCol),
     by = timegroup]
 # TODO: investigate the both coords and ..coords exist in calling scope data.table error
 
 # NA in neighbour means that there were less than the NbyTime in the timegroup
-elk <- merge(elk,
-             elk[, .(neighbour1 = id, rEASTING = EASTING, rNORTHING = NORTHING, 
-                     timegroup, rstepLength = stepLength)],
-             all.x = TRUE)
+DT <- merge(DT,
+            DT[, .(neighbour1 = id, rEASTING = EASTING, rNORTHING = NORTHING, 
+                   timegroup, rstepLength = stepLength)],
+            all.x = TRUE)
 
-
-neighbourCols <- c('rEASTING', 'rNORTHING', 'rstepLength')
-message(paste(elk[id == neighbour1, .N], 
+neighbourValCols <- c('rEASTING', 'rNORTHING', 'rstepLength')
+message(paste(DT[id == neighbour1, .N], 
 "row(s) where id is equal to the NN
 ... replaced with NA"))
-elk[id == neighbour1, (neighbourCols) := NA]
+DT[id == neighbour1, (neighbourValCols) := NA]
 
 
 ### Create Dyadic ID ----
 source('R/functions/DyadicID.R')
-DyadId(elk, idCol, neighbourCols)
+# Since the merge reorders, we have to reassign
+DTs <- DyadId(DT, idCol, neighbourCols)
 
 
 ### Calculate dyadic distance ----
 source('R/functions/DyadicDistance.R')
-DyadicDistance(elk, coordCols = coordCols,
+DyadicDistance(DT, coordCols = coordCols,
                neighbourCoordCols = paste0('r', coordCols),
                returnIntermediate = FALSE)
 
 ### Difference in Step length ----
-elk[, dSI := abs(stepLength - rstepLength)]
+DT[, dSI := abs(stepLength - rstepLength)]
 
 ### Number of neighbours within distance ----
 # Find the number of neighbours within specific distance threshold
