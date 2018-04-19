@@ -17,7 +17,7 @@ lapply(libs, require, character.only = TRUE)
 ### Input data ----
 # Which species would you like to calculate abs and rel TA for?
 species <- 'elk'
-DT <- readRDS(paste0('output/data-prep/', species, '.Rds'))
+DT <- readRDS(paste0('output/angles/', species, 'Angle.Rds'))
 
 coordCols <- c('EASTING', 'NORTHING')
 idCol <- 'id'
@@ -62,7 +62,6 @@ DT[id == neighbour1, (neighbourValCols) := NA]
 source('R/0-functions/DyadicID.R')
 # Since the merge reorders, we have to reassign
 DTs <- DyadId(DT, idCol, neighbourCols)
-
 
 ### Calculate dyadic distance ----
 source('R/0-functions/DyadicDistance.R')
