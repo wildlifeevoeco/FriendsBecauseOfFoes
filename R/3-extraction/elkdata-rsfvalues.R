@@ -36,5 +36,12 @@ lsnames <- c('wolfwinter', 'wolfspring', 'elkwinter', 'elkspring')
 elk[, (lsnames) := lapply(lsrasters, FUN = function(r){
   extract((r), matrix(c(EASTING, NORTHING), ncol = 2))})]
 
+elk[season == 'winter', predatorRSF := wolfwinter]
+elk[season == 'winter', preyRSF := elkwinter]
+elk[season == 'spring', predatorRSF := wolfspring]
+elk[season == 'spring', preyRSF := elkspring]
+
+elk[, (lsnames) := NULL]
+
 ### Save output ----
 saveRDS(elk, 'output/rsfvalues/elkRsfValues.Rds')
