@@ -9,26 +9,27 @@
 
 ### Packages ----
 libs <- c('data.table', 'ggplot2',
-          'SearchTrees',
+          'SearchTrees', 'igraph',
           'magrittr')
 lapply(libs, require, character.only = TRUE)
 
 
 ### Input data ----
-elk <- readRDS('output/data-prep/elk.Rds')
+# Which species would you like to calculate abs and rel TA for?
+species <- 'elk'
+DT <- readRDS(paste0('output/data-prep/', species, '.Rds'))
 
 coordCols <- c('EASTING', 'NORTHING')
 idCol <- 'id'
 
-
 ### Checks ----
 # Do any timegroups have the same individual twice?
-all.equal(elk[, .(N = uniqueN(id)), by = timegroup],
-          elk[, .N, by = timegroup])
+all.equal(DT[, .(N = uniqueN(id)), by = timegroup],
+          DT[, .N, by = timegroup])
 
 # Which timegroups have more than one individual?
-elk[, NbyTime := .N, by = timegroup]
-elk[, qplot(NbyTime)]
+DT[, NbyTime := .N, by = timegroup]
+DT[, qplot(NbyTime)]
 
 ### Quadtree - Find Nearest Neighbour ----
 # How many neighbours 
@@ -38,38 +39,39 @@ neighbourCols <- paste0('neighbour', seq(1, neighbours))
 # Read in function
 source('R/functions/NumbQuadTreeNeighbours.R')
 # Only running on where there are at least 2 in a timegroup, else the bomb!
-elk[NbyTime > neighbours, 
+DT[NbyTime > neighbours, 
     (neighbourCols) := NumbQuadTreeNeighbours(.SD, coords = coordCols,
                                               neighbours, idCol),
     by = timegroup]
 # TODO: investigate the both coords and ..coords exist in calling scope data.table error
 
 # NA in neighbour means that there were less than the NbyTime in the timegroup
-elk <- merge(elk,
-             elk[, .(neighbour1 = id, rEASTING = EASTING, rNORTHING = NORTHING, 
-                     timegroup, rstepLength = stepLength)],
-             all.x = TRUE)
+DT <- merge(DT,
+            DT[, .(neighbour1 = id, rEASTING = EASTING, rNORTHING = NORTHING, 
+                   timegroup, rstepLength = stepLength)],
+            all.x = TRUE)
 
-
-neighbourCols <- c('rEASTING', 'rNORTHING', 'rstepLength')
-message(paste(elk[id == neighbour1, .N], 
+neighbourValCols <- c('rEASTING', 'rNORTHING', 'rstepLength')
+message(paste(DT[id == neighbour1, .N], 
 "row(s) where id is equal to the NN
 ... replaced with NA"))
-elk[id == neighbour1, (neighbourCols) := NA]
+DT[id == neighbour1, (neighbourValCols) := NA]
+
+
+### Create Dyadic ID ----
+source('R/functions/DyadicID.R')
+# Since the merge reorders, we have to reassign
+DTs <- DyadId(DT, idCol, neighbourCols)
+
 
 ### Calculate dyadic distance ----
 source('R/functions/DyadicDistance.R')
-
-# TODO flex for multiple neighbours
-# elk[, (dyadDistCols) := DyadicDistance(.SD, coordCols = coordCols,
-#                                        neighbourCoordCols = paste0(coordCols, "Right"))]
-
-DyadicDistance(elk, coordCols = coordCols,
+DyadicDistance(DT, coordCols = coordCols,
                neighbourCoordCols = paste0('r', coordCols),
                returnIntermediate = FALSE)
 
 ### Difference in Step length ----
-elk[, dSI := abs(stepLength - rstepLength)]
+DT[, dSI := abs(stepLength - rstepLength)]
 
 ### Number of neighbours within distance ----
 # Find the number of neighbours within specific distance threshold
@@ -77,19 +79,22 @@ distanceThreshold <- 5000
 withinCol <- paste0('nWithin', distanceThreshold)
 
 source('R/functions/FindNumbWithinDistance.R')
-elk[NbyTime > 1, 
+DT[NbyTime > 1, 
     (withinCol) := FindNumbWithinDist(.SD, distanceThreshold,
                                       coordCols, idCol),
     by = timegroup]
 
 
+### Output ----
+saveRDS(DT, paste0('output/nna/', species, 'NNA.Rds'))
+
 ### Figures ----
-qplot(get(withinCol), data = elk, 
+qplot(get(withinCol), data = DT, 
       main = paste('Number of neighbours within', distanceThreshold),
       xlab = 'Number of Neighbours')
 
 # Check NN at a timegroup
 ggplot(aes(EASTING, NORTHING, color = factor(id)), 
-       data = elk[timegroup == 4]) +
+       data = DT[timegroup == 4]) +
   geom_point() + ggthemes::scale_colour_pander() +
   coord_fixed()

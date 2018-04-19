@@ -110,6 +110,7 @@ springwolfRSF <- glm(reformulate(lsCovers, response = 'observed'),
                     family = 'binomial',data = springwolf)
 
 summary(springwolfRSF)
+vif(springwolfRSF)
 rsquared(springwolfRSF)
 
 # Pull out the coefficients, dropping the intercept
@@ -145,7 +146,7 @@ ls.rsf <- list('WINTER' = winterwolfRSF.s,
                'SPRING' = springwolfRSF.s)
 
 lapply(seq_along(ls.rsf), FUN = function(r){
-  writeRaster(ls.rsf[[r]], paste0('output/prey-rsf/wolfrsf', names(ls.rsf[r])), 
+  writeRaster(ls.rsf[[r]], paste0('output/predator-rsf/wolfrsf', names(ls.rsf[r])), 
               format = 'GTiff',
               overwrite = T)
 })
