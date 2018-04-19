@@ -78,8 +78,14 @@ DyadicDistance(DT, coordCols = coordCols,
                neighbourCoordCols = paste0('r', coordCols),
                returnIntermediate = FALSE)
 
-### Difference in Step length ----
+### Differences within dyads ----
+# Dif in step length
 DT[, dSI := abs(stepLength - rstepLength)]
+
+# Dif in abs Angle
+DT[, dAbsAng := abs(absAngle - rabsAngle)]
+
+
 
 ### Number of neighbours within distance ----
 # Find the number of neighbours within specific distance threshold
