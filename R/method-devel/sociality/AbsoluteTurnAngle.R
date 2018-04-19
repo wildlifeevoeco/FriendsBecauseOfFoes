@@ -1,7 +1,8 @@
-### Absolute Turn Angle ----
+### Calculate Turn Angles ----
 # Authors: Alec Robitaille
 # Started: March 15 2018
-# Purpose: Calculate absolute turn angle between locs of an individual
+# Purpose: Calculate absolute and relative turn angle 
+#          between locs of an individual
 # Inputs: Elk, caribou relocation data
 # Outputs: Abs TA data
 # Project: Easter Week Challenge 2018
@@ -35,7 +36,10 @@ elk[, rowID := rleid(EASTING)]
 ### Calculate Absolute Angle ----
 source('R/functions/AbsoluteAngle.R')
 AbsoluteAngle(elk, coordCols, datetimeCol, idCol, yrCol, FALSE, FALSE)
+RelativeAngle(elk, coordCols, datetimeCol, idCol, yrCol, FALSE, FALSE)
 
+### Output ----
+saveRDS('output/angleDT.Rds')
 
 ### Figures ----
 qplot(absAngle, data = elk)
