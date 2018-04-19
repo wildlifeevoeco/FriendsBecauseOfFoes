@@ -29,7 +29,7 @@
 │   │   ├── RasterPrep.R
 │   │   ├── RuggCalc.R
 │   │   └── WolfPrep.R
-│   ├── functions
+│   ├── 0-functions
 │   │   ├── DatePrep.R
 │   │   ├── FindMinimumDistance.R
 │   │   ├── GenerateGrid.R
@@ -66,8 +66,8 @@
 ### /R/method-devel
 Method development folder, to isolate development of methods from reproducible analysis. 
 
-### /R/functions
-Standalone functions for DRY (don't repeat yourself).
+### /R/0-functions
+Standalone 0-functions for DRY (don't repeat yourself).
 
 Eg: figures, date handling, step length, etc. 
 

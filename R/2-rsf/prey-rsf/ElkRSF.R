@@ -38,7 +38,7 @@ elkSP <- SpatialPoints(elk[, .(EASTING, NORTHING)],
 elkMCP <- mcp(elkSP, 100)
 
 # Create Regular Grid
-source('R/functions/GenerateGrid.R')
+source('R/0-functions/GenerateGrid.R')
 regPts <- GenerateGrid(90, mcpExtent = elkMCP, crs = utm)
 
 setnames(regPts, c('EASTING', 'NORTHING'))

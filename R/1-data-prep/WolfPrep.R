@@ -56,16 +56,16 @@ projYCol <- 'NORTHING'
 
 ### Add fields ----
 # Date time fields
-source('R/functions/DatePrep.R')
+source('R/0-functions/DatePrep.R')
 DatePrep(wolf, dateCol, timeCol)
 
 # Season
-source('R/variables/CutOffThresholds.R')
+source('R/0-variabless/CutOffThresholds.R')
 wolf[julday %between% winter, season := 'winter']
 wolf[julday %between% spring, season := 'spring']
 
 # Group Time - from spatsoc
-source('R/functions/Group-Time-spatsoc.R')
+source('R/0-functions/Group-Time-spatsoc.R')
 GroupTimes(wolf, 'datetime', '15 minutes')
 
 ### Subset ----
@@ -82,7 +82,7 @@ wolf[, c(projXCol, projYCol) := as.data.table(project(cbind(get(xCol), get(yCol)
                                                       utm))]
 
 # Step Length
-source('R/functions/StepLength.R')
+source('R/0-functions/StepLength.R')
 StepLength(wolf, idCol, 
            datetimeCol = 'datetime', yrCol = 'yr', 
            xCol = projXCol, yCol = projYCol,
@@ -141,7 +141,7 @@ wolf<-wolf[!(inrange(EASTING, minOfficeX, maxOfficeX) &
 
 ### Output ----
 # Match variables to output variables = consistent variables across species
-source('R/variables/PrepDataOutputVariables.R')
+source('R/0-variabless/PrepDataOutputVariables.R')
 wolf[, SPECIES := 'WOLF']
 
 outputVariables <- c(outputVariables, 'packid')
@@ -158,7 +158,7 @@ saveRDS(wolf[, ..outputVariables], 'output/data-prep/wolf.Rds')
 
 ### Plots ----
 # Plot locs by year on RMNP bounds 
-source('R/functions/PlotLocsByFigure.R')
+source('R/0-functions/PlotLocsByFigure.R')
 
 # To PDF 
 # pdf('graphics/data-prep/wolf-locs-by-year.pdf')
@@ -167,7 +167,7 @@ wolf[order(yr), PlotLocsBy(.SD, bounds, .BY[[1]], 'id'),
 # dev.off()
 
 # Temporal distribution of locs
-source('R/functions/TemporalDistributionFigure.R')
+source('R/0-functions/TemporalDistributionFigure.R')
 TempDistFig(wolf)
 
 # ggsave('graphics/data-prep/wolf-temp-dist.png', TempDistFig(wolf), 'png')

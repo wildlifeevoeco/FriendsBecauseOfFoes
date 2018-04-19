@@ -17,7 +17,7 @@ lapply(libs, require, character.only = TRUE)
 ### Input data ----
 # Which species would you like to calculate abs and rel TA for?
 species <- 'elk'
-DT <- readRDS(paste0('output/data-prep/', species, '.Rds'))
+DT <- readRDS(paste0('output/angles/', species, 'Angle.Rds'))
 
 coordCols <- c('EASTING', 'NORTHING')
 idCol <- 'id'
@@ -37,7 +37,7 @@ neighbours <- 1
 neighbourCols <- paste0('neighbour', seq(1, neighbours))
 
 # Read in function
-source('R/functions/NumbQuadTreeNeighbours.R')
+source('R/0-functions/NumbQuadTreeNeighbours.R')
 # Only running on where there are at least 2 in a timegroup, else the bomb!
 DT[NbyTime > neighbours, 
     (neighbourCols) := NumbQuadTreeNeighbours(.SD, coords = coordCols,
@@ -46,12 +46,21 @@ DT[NbyTime > neighbours,
 # TODO: investigate the both coords and ..coords exist in calling scope data.table error
 
 # NA in neighbour means that there were less than the NbyTime in the timegroup
-DT <- merge(DT,
-            DT[, .(neighbour1 = id, rEASTING = EASTING, rNORTHING = NORTHING, 
-                   timegroup, rstepLength = stepLength)],
-            all.x = TRUE)
+# Careful with the columns selected in the second argument and 
+#  subsequent neighbourValCols
+DT <- merge(DT, 
+            DT[, .(neighbour1 = id, timegroup,
+                   rEASTING = EASTING, rNORTHING = NORTHING,
+                   rstepLength = stepLength,
+                   rpredatorRSF = predatorRSF, rpreyRSF = preyRSF,
+                   rabsAngle = absAngle, rrelAngle = relAngle)],
+            all.x = TRUE,
+            suffixes = c('', 'r'))
 
-neighbourValCols <- c('rEASTING', 'rNORTHING', 'rstepLength')
+
+neighbourValCols <- c('rEASTING', 'rNORTHING', 'rstepLength',
+                      'rpredatorRSF', 'rpreyRSF',
+                      'rabsAngle', 'rrelAngle')
 message(paste(DT[id == neighbour1, .N], 
 "row(s) where id is equal to the NN
 ... replaced with NA"))
@@ -59,26 +68,34 @@ DT[id == neighbour1, (neighbourValCols) := NA]
 
 
 ### Create Dyadic ID ----
-source('R/functions/DyadicID.R')
+source('R/0-functions/DyadicID.R')
 # Since the merge reorders, we have to reassign
-DTs <- DyadId(DT, idCol, neighbourCols)
-
+DT <- DyadId(DT, idCol, neighbourCols)
 
 ### Calculate dyadic distance ----
-source('R/functions/DyadicDistance.R')
+source('R/0-functions/DyadicDistance.R')
 DyadicDistance(DT, coordCols = coordCols,
                neighbourCoordCols = paste0('r', coordCols),
                returnIntermediate = FALSE)
 
-### Difference in Step length ----
+### Differences within dyads ----
+# Dif in step length
 DT[, dSI := abs(stepLength - rstepLength)]
+
+# Dif in abs Angle
+DT[, dAbsAng := abs(absAngle - rabsAngle)]
+
+# Dif in RSF
+DT[, dPredRSF := abs(predatorRSF - rpredatorRSF)]
+DT[, dPreyRSF := abs(preyRSF - rpreyRSF)]
+
 
 ### Number of neighbours within distance ----
 # Find the number of neighbours within specific distance threshold
-distanceThreshold <- 5000
+distanceThreshold <- 500
 withinCol <- paste0('nWithin', distanceThreshold)
 
-source('R/functions/FindNumbWithinDistance.R')
+source('R/0-functions/FindNumbWithinDistance.R')
 DT[NbyTime > 1, 
     (withinCol) := FindNumbWithinDist(.SD, distanceThreshold,
                                       coordCols, idCol),
