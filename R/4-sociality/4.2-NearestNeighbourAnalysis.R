@@ -46,12 +46,21 @@ DT[NbyTime > neighbours,
 # TODO: investigate the both coords and ..coords exist in calling scope data.table error
 
 # NA in neighbour means that there were less than the NbyTime in the timegroup
-DT <- merge(DT,
-            DT[, .(neighbour1 = id, rEASTING = EASTING, rNORTHING = NORTHING, 
-                   timegroup, rstepLength = stepLength)],
-            all.x = TRUE)
+# Careful with the columns selected in the second argument and 
+#  subsequent neighbourValCols
+DT <- merge(DT, 
+            DT[, .(neighbour1 = id, timegroup,
+                   rEASTING = EASTING, rNORTHING = NORTHING,
+                   rstepLength = stepLength,
+                   rpredatorRSF = predatorRSF, rpreyRSF = preyRSF,
+                   rabsAngle = absAngle, rrelAngle = relAngle)],
+            all.x = TRUE,
+            suffixes = c('', 'r'))
 
-neighbourValCols <- c('rEASTING', 'rNORTHING', 'rstepLength')
+
+neighbourValCols <- c('rEASTING', 'rNORTHING', 'rstepLength',
+                      'rpredatorRSF', 'rpreyRSF',
+                      'rabsAngle', 'rrelAngle')
 message(paste(DT[id == neighbour1, .N], 
 "row(s) where id is equal to the NN
 ... replaced with NA"))
