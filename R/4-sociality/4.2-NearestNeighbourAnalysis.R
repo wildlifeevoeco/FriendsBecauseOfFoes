@@ -85,11 +85,14 @@ DT[, dSI := abs(stepLength - rstepLength)]
 # Dif in abs Angle
 DT[, dAbsAng := abs(absAngle - rabsAngle)]
 
+# Dif in RSF
+DT[, dPredRSF := abs(predatorRSF - rpredatorRSF)]
+DT[, dPreyRSF := abs(preyRSF - rpreyRSF)]
 
 
 ### Number of neighbours within distance ----
 # Find the number of neighbours within specific distance threshold
-distanceThreshold <- 5000
+distanceThreshold <- 500
 withinCol <- paste0('nWithin', distanceThreshold)
 
 source('R/0-functions/FindNumbWithinDistance.R')
