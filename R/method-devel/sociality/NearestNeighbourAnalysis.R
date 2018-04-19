@@ -15,19 +15,21 @@ lapply(libs, require, character.only = TRUE)
 
 
 ### Input data ----
-elk <- readRDS('output/data-prep/elk.Rds')
+# Which species would you like to calculate abs and rel TA for?
+species <- 'elk'
+DT <- readRDS(paste0('output/data-prep/', species, '.Rds'))
 
 coordCols <- c('EASTING', 'NORTHING')
 idCol <- 'id'
 
 ### Checks ----
 # Do any timegroups have the same individual twice?
-all.equal(elk[, .(N = uniqueN(id)), by = timegroup],
-          elk[, .N, by = timegroup])
+all.equal(DT[, .(N = uniqueN(id)), by = timegroup],
+          DT[, .N, by = timegroup])
 
 # Which timegroups have more than one individual?
-elk[, NbyTime := .N, by = timegroup]
-elk[, qplot(NbyTime)]
+DT[, NbyTime := .N, by = timegroup]
+DT[, qplot(NbyTime)]
 
 ### Quadtree - Find Nearest Neighbour ----
 # How many neighbours 
@@ -77,19 +79,22 @@ distanceThreshold <- 5000
 withinCol <- paste0('nWithin', distanceThreshold)
 
 source('R/functions/FindNumbWithinDistance.R')
-elk[NbyTime > 1, 
+DT[NbyTime > 1, 
     (withinCol) := FindNumbWithinDist(.SD, distanceThreshold,
                                       coordCols, idCol),
     by = timegroup]
 
 
+### Output ----
+saveRDS(DT, paste0('output/nna/', species, 'NNA.Rds'))
+
 ### Figures ----
-qplot(get(withinCol), data = elk, 
+qplot(get(withinCol), data = DT, 
       main = paste('Number of neighbours within', distanceThreshold),
       xlab = 'Number of Neighbours')
 
 # Check NN at a timegroup
 ggplot(aes(EASTING, NORTHING, color = factor(id)), 
-       data = elk[timegroup == 4]) +
+       data = DT[timegroup == 4]) +
   geom_point() + ggthemes::scale_colour_pander() +
   coord_fixed()
