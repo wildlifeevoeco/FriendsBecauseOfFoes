@@ -110,6 +110,7 @@ springwolfRSF <- glm(reformulate(lsCovers, response = 'observed'),
                     family = 'binomial',data = springwolf)
 
 summary(springwolfRSF)
+vif(springwolfRSF)
 rsquared(springwolfRSF)
 
 # Pull out the coefficients, dropping the intercept
