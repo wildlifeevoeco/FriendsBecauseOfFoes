@@ -1,4 +1,3 @@
-
 ### SOCIALITY ~ DOMAIN MODEL ----
 # Authors: Alec Robitaille, Christina M Prokopenko
 # Purpose: 
@@ -10,20 +9,25 @@
 libs <- c('data.table',  
           'lme4',
           'ggplot2')
+lapply(libs, require, character.only = TRUE)
 
 ### Input data ----
 
 #RMNP file
-rmnp <-
+rmnp <- readRDS('output/nna/elkNNA.Rds')
 #NL file
-nl <- 
-
+# nl <- 
 
 ###GLM
 #nearest neighbour 
+# rmNN <- glm(TurnAngle ~ PreyHD + PredHD + PreyHD:PredHD, data = rmnp)
+rmNNWinter <-
+  glm(absAngle ~ elkwinter + wolfwinter + elkwinter:wolfwinter,
+      data = rmnp[season == 'winter'])
 
-rmNN <- glm(TurnAngle ~ PreyHD + PredHD + PreyHD:PredHD, data = rmnp)
-
+rmNNSpring <-
+  glm(absAngle ~ elkspring + wolfspring + elkspring:wolfspring,
+      data = rmnp[season == 'spring'])
 
 #turning angle
 
