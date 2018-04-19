@@ -12,7 +12,8 @@ libs <- c('data.table', 'ggplot2',
 lapply(libs, require, character.only = TRUE)
 
 ### Input data ----
-dropCols <- c('V1','FIX_ID','EPSG_CODE','Fix_Time_Delta','COLLAR_FILE_ID',
+dropCols <- c('V1','FIX_ID','EPSG_CODE','Fix_Time_Delta',
+              'COLLAR_FILE_ID',
               'COLLAR_ID','COLLAR_TYPE_CL',
               'EXCLUDE','VENDOR_CL','AGE','DOP','VALIDATED')
 
@@ -49,7 +50,7 @@ DatePrep(caribou, dateCol, timeCol)
 caribou[sample(.N, 5), .(idate, itime, yr, mnth, julday)]
 
 # Season
-source('R/0-variabless/CutOffThresholds.R')
+source('R/0-variables/CutOffThresholds.R')
 
 caribou[julday %between% winter, season := 'winter']
 caribou[julday %between% spring, season := 'spring']
@@ -66,12 +67,10 @@ caribou <- na.omit(caribou, cols = checkCols)
 # Subset any 0 in lat/long and where longitude is positive
 caribou <- caribou[get(xCol) != 0 & get(xCol) < 0]
 
-
-
 ### Project + Step Length ----
 # Project coordinates to UTM
-caribou[, c(projXCol, projYCol) := as.data.table(project(cbind(get(xCol), get(yCol)), 
-                                                         utm))]
+caribou[, c(projXCol, projYCol) := as.data.table(
+  project(cbind(get(xCol), get(yCol)), utm))]
 
 # Step Length
 source('R/0-functions/StepLength.R')
@@ -108,18 +107,20 @@ caribou <- caribou[stepLength < stepLengthThreshold &
 
 ### Output ----
 # Match variables to output variables = consistent variables across species
-source('R/0-variabless/PrepDataOutputVariables.R')
+source('R/0-variables/PrepDataOutputVariables.R')
 
 outputVariables <- c(outputVariables, 'herd', 'sex')
 
-setnames(caribou, c('ANIMAL_ID', 'SPECIES', 'timegroup',
+setnames(caribou, c('ANIMAL_ID', 'SPECIES', 'season', 'timegroup',
                  'idate', 'itime', 'datetime', 
                  'EASTING', 'NORTHING',
-                 'julday', 'yr', 'mnth', 'stepLength', 'moveRate', 'difdatetime',
+                 'julday', 'yr', 'mnth', 'stepLength', 
+                 'moveRate', 'difdatetime',
                  'HERD', 'SEX'),
          outputVariables)
 
-# saveRDS(caribou[, ..outputVariables], 'output/data-prep/caribou.Rds')
+saveRDS(caribou[, ..outputVariables], 
+        'output/data-prep/caribou.Rds')
 
 
 ### Plots ----
