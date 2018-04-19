@@ -19,6 +19,7 @@ nlBounds <- rgdal::readOGR('input/etc/NL-Bounds/NL-Bounds.shp') %>%
 
 
 caribou<-readRDS('output/data-prep/caribou.Rds')
+#!! this shouldn't be necessary given prep script !!#
 MRcar<-subset(caribou,herd=="MIDRIDGE")
 
 plot(nlBounds)
@@ -41,9 +42,14 @@ CarAvailBuf<-gBuffer(CarAvail,width=mean(MRcar$stepLength))
 Carclipped<-gIntersection(nlBounds,CarAvailBuf)
 Carclipped2<-as.owin.SpatialPolygons(Carclipped)
 
+#!! season is calculated in prep script !!# 
+#!! these dates are not the same as RMNP !!#
 CarWinter<-subset(MRcar,julday<74)
+#!! season is calculated in prep script !!# 
 CarSummer<-subset(MRcar,julday>106 &julday<214)
 
+
+#!! the elk + wolf rsf use a regular grid !!#
 CarRandSum<-runifpoint(n=nrow(CarSummer)*10,win=Carclipped2)
 CarRandWin<-runifpoint(n=nrow(CarWinter)*10,win=Carclipped2)
 
@@ -180,6 +186,7 @@ caribouRSF<-read.csv("output/CaribouRSFdata.csv")
 head(caribouRSF)
 
 ## Remove all points with 50% NA data
+#!! no data is removed for RMNP !!#
 caribouRSF$rs<-rowSums(caribouRSF[2:10])
 carRSF2<-subset(caribouRSF,rs>0.5)
 summary(carRSF2$rs)
