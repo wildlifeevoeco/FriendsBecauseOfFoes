@@ -26,12 +26,10 @@ points(MRcar$EASTING,MRcar$NORTHING)
 
 CarPoints<-SpatialPoints(data.frame(MRcar$EASTING,MRcar$NORTHING),proj4string = CRS(utm))
 
-carMCP<-mcp(CarPoints, percent=99.9)
 
 plot(nlBounds)
-plot(carMCP,add=T)
+plot(CarAvail,add=T)
 points(CarPoints)
-
 
 CarAvail<-mcp(CarPoints, percent = 100)
 
