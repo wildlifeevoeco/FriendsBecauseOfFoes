@@ -15,6 +15,7 @@ lapply(libs, require, character.only = TRUE)
 
 #RMNP file
 rmnp <- readRDS('output/nna/elkNNA.Rds')
+
 #NL file
 # nl <- 
 dd <- data.table(sapply(seq(0, 1000, by = 50), function(x){
@@ -35,6 +36,11 @@ rmnp[dyadDist < 500, qplot()
      ###GLM
 #nearest neighbour 
 # rmNN <- glm(TurnAngle ~ PreyHD + PredHD + PreyHD:PredHD, data = rmnp)
+###GLM
+ 
+# SA <- glm(SocialMeasure ~ PreyHD + PredHD + PreyHD:PredHD, data = rmnp)
+## social measures are: dSI, nWithin5000,
+
 rmNNWinter <-
   glm(absAngle ~ elkwinter + wolfwinter + elkwinter:wolfwinter,
       data = rmnp[season == 'winter'])
@@ -46,6 +52,13 @@ rmNNSpring <-
 #turning angle
 
 #movement rate
+
+
+# potential subsets of SA data:
+## time: winter/spring
+## cover: open/closed
+## predator: bear/coyote
+
 
 
 ###Plot
