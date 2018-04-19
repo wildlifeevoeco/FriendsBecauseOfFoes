@@ -32,5 +32,5 @@ AllData<-rbind(Summer,Winter)
 
 head(AllData)
 
-write.csv(AllData,"output/NLRSFdata.csv")
+saveRDS(AllData,"output/rsf-values/caribouRsfValues.Rds")
 
