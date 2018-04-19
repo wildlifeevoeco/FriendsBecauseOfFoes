@@ -39,7 +39,7 @@ elk[, time := paste0(get(hourCol), ':', sprintf('%02d', get(minCol)))]
 timeCol <- 'time'
 
 ## Date time fields
-source('R/functions/DatePrep.R')
+source('R/0-functions/DatePrep.R')
 DatePrep(elk, dateCol, timeCol, dateFormat = '%d/%m/%Y')
 
 # Check!
@@ -50,12 +50,12 @@ dropCol <- c('Year', 'Month', 'Day', 'Hour', 'Minute', 'time')
 elk[, (dropCol) := NULL]
 
 # Season
-source('R/variables/CutOffThresholds.R')
+source('R/0-variabless/CutOffThresholds.R')
 elk[julday %between% winter, season := 'winter']
 elk[julday %between% spring, season := 'spring']
 
 # Group Time - from spatsoc
-source('R/functions/Group-Time-spatsoc.R')
+source('R/0-functions/Group-Time-spatsoc.R')
 GroupTimes(elk, 'datetime', '15 minutes')
 
 ### Subset ----
@@ -69,7 +69,7 @@ elk <- na.omit(elk, cols = checkCols)
 elk[, c(projXCol, projYCol) := .(get(xCol), get(yCol))]
 
 # Step Length
-source('R/functions/StepLength.R')
+source('R/0-functions/StepLength.R')
 StepLength(elk, idCol, 
            datetimeCol = 'datetime', yrCol = 'yr', 
            xCol = projXCol, yCol = projYCol,
@@ -120,7 +120,7 @@ elk <- data.table(over(bounds, elkSP, returnList = TRUE)[[1]])
 
 ### Output ----
 # Match variables to output variables = consistent variables across species
-source('R/variables/PrepDataOutputVariables.R')
+source('R/0-variabless/PrepDataOutputVariables.R')
 
 elk[, SPECIES := 'ELK']
 
@@ -134,7 +134,7 @@ saveRDS(elk[, ..outputVariables], 'output/data-prep/elk.Rds')
 
 ### Plots ----
 # Plot locs by year on RMNP bounds 
-source('R/functions/PlotLocsByFigure.R')
+source('R/0-functions/PlotLocsByFigure.R')
 
 # To PDF 
 # pdf('graphics/data-prep/elk-locs-by-year.pdf')
@@ -144,7 +144,7 @@ elk[order(yr),
 # dev.off()
 
 # Temporal distribution of locs
-source('R/functions/TemporalDistributionFigure.R')
+source('R/0-functions/TemporalDistributionFigure.R')
 TempDistFig(elk)
 
 # ggsave('graphics/data-prep/elk-temp-dist.png', TempDistFig(elk), 'png')

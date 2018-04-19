@@ -37,4 +37,4 @@ elk[, (lsnames) := lapply(lsrasters, FUN = function(r){
   extract((r), matrix(c(EASTING, NORTHING), ncol = 2))})]
 
 ### Save output ----
-saveRDS(elk, 'output/data-prep/rsfvalues/elkData.Rds')
+saveRDS(elk, 'output/rsfvalues/elkRsfValues.Rds')

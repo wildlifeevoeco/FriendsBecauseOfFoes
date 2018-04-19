@@ -37,7 +37,7 @@ neighbours <- 1
 neighbourCols <- paste0('neighbour', seq(1, neighbours))
 
 # Read in function
-source('R/functions/NumbQuadTreeNeighbours.R')
+source('R/0-functions/NumbQuadTreeNeighbours.R')
 # Only running on where there are at least 2 in a timegroup, else the bomb!
 DT[NbyTime > neighbours, 
     (neighbourCols) := NumbQuadTreeNeighbours(.SD, coords = coordCols,
@@ -59,13 +59,13 @@ DT[id == neighbour1, (neighbourValCols) := NA]
 
 
 ### Create Dyadic ID ----
-source('R/functions/DyadicID.R')
+source('R/0-functions/DyadicID.R')
 # Since the merge reorders, we have to reassign
 DTs <- DyadId(DT, idCol, neighbourCols)
 
 
 ### Calculate dyadic distance ----
-source('R/functions/DyadicDistance.R')
+source('R/0-functions/DyadicDistance.R')
 DyadicDistance(DT, coordCols = coordCols,
                neighbourCoordCols = paste0('r', coordCols),
                returnIntermediate = FALSE)
@@ -78,7 +78,7 @@ DT[, dSI := abs(stepLength - rstepLength)]
 distanceThreshold <- 5000
 withinCol <- paste0('nWithin', distanceThreshold)
 
-source('R/functions/FindNumbWithinDistance.R')
+source('R/0-functions/FindNumbWithinDistance.R')
 DT[NbyTime > 1, 
     (withinCol) := FindNumbWithinDist(.SD, distanceThreshold,
                                       coordCols, idCol),

@@ -22,8 +22,8 @@ lapply(libs, require, character.only = TRUE)
 
 ### Input data ----
 # Which species would you like to calculate abs and rel TA for?
-species <- 'caribou'
-DT <- readRDS(paste0('output/data-prep/', species, '.Rds'))
+species <- 'elk'
+DT <- readRDS(paste0('output/rsf-values/', species, 'RsfValues.Rds'))
 
 # List relevant column names
 coordCols <- c('EASTING', 'NORTHING')
@@ -31,15 +31,14 @@ idCol <- 'id'
 datetimeCol <- 'datetime' 
 yrCol <- 'yr'
 
-
 ### Variables ----
 DT[, rowID := rleid(EASTING)]
 
 ### Calculate Absolute Angle ----
-source('R/functions/AbsoluteAngle.R')
+source('R/0-functions/AbsoluteAngle.R')
 AbsoluteAngle(DT, coordCols, datetimeCol, idCol, yrCol, FALSE, FALSE)
 
-source('R/functions/RelativeAngle.R')
+source('R/0-functions/RelativeAngle.R')
 RelativeAngle(DT, coordCols, datetimeCol, idCol, yrCol, FALSE, FALSE)
 
 ### Output ----

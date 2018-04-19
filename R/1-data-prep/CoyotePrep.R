@@ -39,20 +39,20 @@ projYCol <- 'NORTHING'
 
 ### Add fields ----
 # Date time fields
-source('R/functions/DatePrep.R')
+source('R/0-functions/DatePrep.R')
 DatePrep(coyote, dateCol, timeCol)
 
 # Check!
 coyote[sample(.N, 5), .(idate, itime, yr, mnth, julday)]
 
 # Season
-source('R/variables/CutOffThresholds.R')
+source('R/0-variabless/CutOffThresholds.R')
 
 coyote[julday %between% winter, season := 'winter']
 coyote[julday %between% spring, season := 'spring']
 
 # Group Time - from spatsoc
-source('R/functions/Group-Time-spatsoc.R')
+source('R/0-functions/Group-Time-spatsoc.R')
 GroupTimes(coyote, 'datetime', '15 minutes')
 
 
@@ -69,7 +69,7 @@ coyote <- coyote[get(xCol) != 0 & get(xCol) < 0]
 coyote[, c(projXCol, projYCol) := as.data.table(project(cbind(get(xCol), get(yCol)), utm))]
 
 # Step Length
-source('R/functions/StepLength.R')
+source('R/0-functions/StepLength.R')
 StepLength(coyote, idCol, datetimeCol = 'datetime', yrCol = 'yr',
            xCol = projXCol, yCol = projYCol,
            returnIntermediate = FALSE)
@@ -115,7 +115,7 @@ coyote <- coyote[stepLength < stepLengthThreshold &
 
 ### Output ----
 # Match variables to output variables = consistent variables across species
-source('R/variables/PrepDataOutputVariables.R')
+source('R/0-variabless/PrepDataOutputVariables.R')
 
 outputVariables <- c(outputVariables, 'herd', 'sex')
 
@@ -131,7 +131,7 @@ saveRDS(coyote[, ..outputVariables], 'output/data-prep/coyote.Rds')
 
 ### Plots ----
 # Plot locs by year on NL bounds 
-source('R/functions/PlotLocsByFigure.R')
+source('R/0-functions/PlotLocsByFigure.R')
 
 # To PDF 
 # pdf('graphics/data-prep/coyote-locs-by-year.pdf')
@@ -141,7 +141,7 @@ coyote[, PlotLocsBy(.SD, nlBounds, .BY[[1]], 'id'),
 
 
 # Temporal distribution of locs
-source('R/functions/TemporalDistributionFigure.R')
+source('R/0-functions/TemporalDistributionFigure.R')
 TempDistFig(coyote)
 
 # ggsave('graphics/data-prep/coyote-temp-dist.png', TempDistFig(coyote), 'png')

@@ -41,20 +41,20 @@ projYCol <- 'NORTHING'
 
 ### Add fields ----
 ## Date time fields
-source('R/functions/DatePrep.R')
+source('R/0-functions/DatePrep.R')
 DatePrep(bear, dateCol, timeCol)
 
 # Check!
 bear[sample(.N, 5), .(idate, itime, yr, mnth, julday)]
 
 # Season
-source('R/variables/CutOffThresholds.R')
+source('R/0-variabless/CutOffThresholds.R')
 
 bear[julday %between% winter, season := 'winter']
 bear[julday %between% spring, season := 'spring']
 
 # Group Time - from spatsoc
-source('R/functions/Group-Time-spatsoc.R')
+source('R/0-functions/Group-Time-spatsoc.R')
 GroupTimes(bear, 'datetime', '15 minutes')
 
 
@@ -72,7 +72,7 @@ bear[, c(projXCol, projYCol) := as.data.table(project(cbind(get(xCol), get(yCol)
                                                          utm))]
 
 # Step Length
-source('R/functions/StepLength.R')
+source('R/0-functions/StepLength.R')
 StepLength(bear, idCol, datetimeCol = 'datetime', yrCol = 'yr',
            xCol = projXCol, yCol = projYCol,
            returnIntermediate = FALSE)
@@ -107,7 +107,7 @@ bear <- bear[stepLength < stepLengthThreshold &
 
 ### Output ----
 # Match variables to output variables = consistent variables across species
-source('R/variables/PrepDataOutputVariables.R')
+source('R/0-variabless/PrepDataOutputVariables.R')
 
 outputVariables <- c(outputVariables, 'herd', 'sex')
 
@@ -122,7 +122,7 @@ saveRDS(bear[, ..outputVariables], 'output/data-prep/bear.Rds')
 
 ### Figures ----
 # Plot locs by year on NL bounds 
-source('R/functions/PlotLocsByFigure.R')
+source('R/0-functions/PlotLocsByFigure.R')
 
 # To PDF 
 # pdf('graphics/data-prep/bear-locs-by-year.pdf')
@@ -132,7 +132,7 @@ bear[,
 # dev.off()
 
 # Temporal distribution of locs
-source('R/functions/TemporalDistributionFigure.R')
+source('R/0-functions/TemporalDistributionFigure.R')
 TempDistFig(bear)
 
 # ggsave('graphics/data-prep/bear-temp-dist.png', TempDistFig(bear), 'png')
