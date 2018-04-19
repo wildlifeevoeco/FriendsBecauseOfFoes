@@ -9,7 +9,7 @@
 
 ### Packages ----
 libs <- c('data.table', 'ggplot2',
-          'SearchTrees',
+          'SearchTrees', 'igraph',
           'magrittr')
 lapply(libs, require, character.only = TRUE)
 
@@ -19,7 +19,6 @@ elk <- readRDS('output/data-prep/elk.Rds')
 
 coordCols <- c('EASTING', 'NORTHING')
 idCol <- 'id'
-
 
 ### Checks ----
 # Do any timegroups have the same individual twice?
@@ -57,13 +56,14 @@ message(paste(elk[id == neighbour1, .N],
 ... replaced with NA"))
 elk[id == neighbour1, (neighbourCols) := NA]
 
+
+### Create Dyadic ID ----
+source('R/functions/DyadicID.R')
+DyadId(elk, idCol, neighbourCols)
+
+
 ### Calculate dyadic distance ----
 source('R/functions/DyadicDistance.R')
-
-# TODO flex for multiple neighbours
-# elk[, (dyadDistCols) := DyadicDistance(.SD, coordCols = coordCols,
-#                                        neighbourCoordCols = paste0(coordCols, "Right"))]
-
 DyadicDistance(elk, coordCols = coordCols,
                neighbourCoordCols = paste0('r', coordCols),
                returnIntermediate = FALSE)
