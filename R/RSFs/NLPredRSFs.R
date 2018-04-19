@@ -32,6 +32,8 @@ plot(CarAvail,add=T)
 points(CarPoints)
 
 CarAvail<-mcp(CarPoints, percent = 100)
+shapefile(CarAvail,"Output/caribouMCP,shp")
+
 
 ### Buffer by mean step length
 CarAvailBuf<-gBuffer(CarAvail,width=mean(MRcar$stepLength))
@@ -109,6 +111,11 @@ CNames<-c("use","Ant","Bro","Con","Lic","Mix","Roc","Scr","Wat","Wet","Rug","WaD
 
 CarUsedDataSum<-data.frame(1,CarAntUsedSum,CarBroUsedSum,CarConUsedSum,CarLicUsedSum,CarMixUsedSum,CarRocUsedSum,
                            CarScrUsedSum,CarWatUsedSum,CarWetUsedSum,CarRugUsedSum,CarWaDUsedSum,CarLinUsedSum,CarSummer$EASTING,CarSummer$NORTHING,"Summer")
+
+CarUsedDataSum<-data.frame(1,CarAntUsedSum,CarBroUsedSum,CarConUsedSum,CarLicUsedSum,CarMixUsedSum,CarRocUsedSum,
+                           CarScrUsedSum,CarWatUsedSum,CarWetUsedSum,CarRugUsedSum,CarWaDUsedSum,CarLinUsedSum,CarSummer$EASTING,CarSummer$NORTHING,"Summer")
+
+
 colnames(CarUsedDataSum)<-CNames
 
 CarAvailDataSum<-data.frame(0,CarAntAvailSum,CarBroAvailSum,CarConAvailSum,CarLicAvailSum,CarMixAvailSum,CarRocAvailSum,CarScrAvailSum,
@@ -155,16 +162,22 @@ CarLinAvailWin<-extract(Lin,CarRandPointsWin)
 CNames<-c("use","Ant","Bro","Con","Lic","Mix","Roc","Scr","Wat","Wet","Rug","WaD","Lin","x","y","Season")
 
 CarUsedDataWin<-data.frame(1,CarAntUsedWin,CarBroUsedWin,CarConUsedWin,CarLicUsedWin,CarMixUsedWin,CarRocUsedWin,
-                           CarScrUsedWin,CarWatUsedWin,CarWetUsedWin,CarRugUsedWin,CarWaDUsedWin,CarLinUsedWin,CarWinter$EASTING,CarWinter$NORTHING,"Winmer")
+                           CarScrUsedWin,CarWatUsedWin,CarWetUsedWin,CarRugUsedWin,CarWaDUsedWin,CarLinUsedWin,CarWinter$EASTING,CarWinter$NORTHING,"Winter")
 colnames(CarUsedDataWin)<-CNames
 
 CarAvailDataWin<-data.frame(0,CarAntAvailWin,CarBroAvailWin,CarConAvailWin,CarLicAvailWin,CarMixAvailWin,CarRocAvailWin,CarScrAvailWin,
-                            CarWatAvailWin,CarWetAvailWin,CarRugAvailWin,CarWaDAvailWin,CarLinAvailWin,CarxyrWin,"Winmer")
+                            CarWatAvailWin,CarWetAvailWin,CarRugAvailWin,CarWaDAvailWin,CarLinAvailWin,CarxyrWin,"Winter")
 colnames(CarAvailDataWin)<-CNames
 
 caribouRSF<-rbind(CarUsedDataSum,CarAvailDataSum,CarUsedDataWin,CarAvailDataWin)
 
+summary(caribouRSF)
+
 write.csv(caribouRSF,"output/CaribouRSFdata.csv")
+
+caribouRSF<-read.csv("output/CaribouRSFdata.csv")
+
+head(caribouRSF)
 
 ## Remove all points with 50% NA data
 caribouRSF$rs<-rowSums(caribouRSF[2:10])
@@ -210,22 +223,15 @@ RugCrop<-crop(Rug,Carclipped)
 WaDCrop<-crop(WaD,Carclipped)
 LinCrop<-crop(Lin,Carclipped)
 
-str(CoySummer)
 
 ### Wetland is the reference
 library(car)
 
-CarSummer<-subset(carRSF2,Season=="Summer")
-CarWinter<-subset(carRSF2,Season=="Winter")
+CarSummerRSF<-subset(carRSF2,Season=="Summer")
+CarWinterRSF<-subset(carRSF2,Season=="Winter")
 
-RSFCaribouSum<-glm(use~Ant+Bro+Con+Lic+Mix+Roc+Scr+WaD+Lin+Rug,data=CarSummer, family='binomial')
-RSFCaribouWin<-glm(use~Ant+Bro+Con+Lic+Mix+Roc+Scr+WaD+Lin+Rug,data=CarWinter, family='binomial')
-
-
-RSFCaribouSum<-glm(use~Bro+Con+Lic+Mix+Roc+Scr+WaD+Lin+Rug,data=CarSummer, family='binomial')
-RSFCaribouWin<-glm(use~Bro+Con+Lic+Mix+Roc+Scr+WaD+Lin+Rug,data=CarWinter, family='binomial')
-
-
+RSFCaribouSum<-glm(use~Ant+Bro+Con+Lic+Mix+Roc+Scr+WaD+Lin+Rug,data=CarSummerRSF, family='binomial')
+RSFCaribouWin<-glm(use~Ant+Bro+Con+Lic+Mix+Roc+Scr+WaD+Lin+Rug,data=CarWinterRSF, family='binomial')
 
 vif(RSFCaribouSum)
 vif(RSFCaribouWin)
@@ -262,14 +268,8 @@ cellStats(SumRSF,max)
 SumRSFsc<-(SumRSF-(cellStats(SumRSF,min)))/(cellStats(SumRSF,max)-cellStats(SumRSF,min))
 WinRSFsc<-(WinRSF-(cellStats(WinRSF,min)))/(cellStats(WinRSF,max)-cellStats(WinRSF,min))
 
-SumRSFz<-(SumRSF-(cellStats(SumRSF,mean)))/(cellStats(SumRSF,sd))
-WinRSFz<-(WinRSF-(cellStats(WinRSF,mean)))/(cellStats(WinRSF,sd))
-
-hist(log(WinRSFsc))
-
 plot(SumRSFsc,zlim=c(0,0.3))
 plot(WinRSFsc,zlim=c(0,0.001))
-plot(WinRSFz)
 
 cellStats(SumRSFsc,max)
 
@@ -384,6 +384,7 @@ coyMRres<-subset(coyMR, STATUS=="RESIDENT" | STATUS=="SUB-TRANSIENT")
 points<-SpatialPoints(data.frame(coyMRres$EASTING,coyMRres$NORTHING),proj4string = CRS(utm))
 
 CoyAvail<-mcp(points, percent = 100)
+shapefile(CoyAvail,"output/coyoteMCP.shp")
 
 ### Buffer by mean step length
 CoyAvailBuf<-gBuffer(CoyAvail,width=mean(coyMRres$stepLength))
@@ -494,6 +495,8 @@ colnames(AvailDataWin)<-CNames
 
 coyoteRSF<-rbind(UsedDataSum,AvailDataSum,UsedDataWin,AvailDataWin)
 
+summary(coyoteRSF)
+write.csv(coyoteRSF,"output/coyoteRSFdata.csv")
 
 ## Remove all points with 50% NA data
 coyoteRSF$rs<-rowSums(coyoteRSF[2:10])
@@ -541,12 +544,6 @@ cellStats(SumRSF,max)
 SumRSFsc<-(SumRSF-(cellStats(SumRSF,min)))/(cellStats(SumRSF,max)-cellStats(SumRSF,min))
 WinRSFsc<-(WinRSF-(cellStats(WinRSF,min)))/(cellStats(WinRSF,max)-cellStats(WinRSF,min))
 
-SumRSFz<-(SumRSF-(cellStats(SumRSF,mean)))/(cellStats(SumRSF,sd))
-WinRSFz<-(WinRSF-(cellStats(WinRSF,mean)))/(cellStats(WinRSF,sd))
-
-plot(SumRSFz,zlim=c(0,1))
-plot(WinRSFz)
-
 plot(SumRSFsc)
 plot(WinRSFsc)
 
@@ -567,6 +564,7 @@ points(bear$EASTING,bear$NORTHING)
 points<-SpatialPoints(data.frame(bear$EASTING,bear$NORTHING),proj4string = CRS(utm))
 
 BearAvail<-mcp(points, percent = 100)
+shapefile(BearAvail, "output/BearMCP.shp")
 
 ### Buffer by mean step length
 BearAvailBuf<-gBuffer(BearAvail,width=mean(bear$stepLength))
@@ -677,6 +675,9 @@ colnames(AvailDataWin)<-CNames
 
 bearRSF<-rbind(UsedDataSum,AvailDataSum,UsedDataWin,AvailDataWin)
 
+write.csv(bearRSF,"output/bearRSF.csv")
+
+bearRSF<-read.csv("output/bearRSF.csv")
 
 ## Remove all points with 50% NA data
 bearRSF$rs<-rowSums(bearRSF[2:10])
@@ -713,16 +714,12 @@ str(BearSummer)
 
 ### Wetland is the reference
 bearSummer<-subset(bearRSF2,Season=="Summer")
-bearWinter<-subset(bearRSF2,Season=="Winter")
 
 RSFbearSum<-glm(use~Ant+Bro+Con+Lic+Mix+Roc+Scr+WaD+Lin+Rug,data=bearSummer, family='binomial')
-RSFbearWin<-glm(use~Ant+Bro+Con+Lic+Mix+Roc+Scr+WaD+Lin+Rug,data=bearWinter, family='binomial')
 
 summary(RSFbearSum)
 rsquared(RSFbearSum)
 
-summary(RSFbearWin)
-rsquared(RSFbearWin)
 
 SumRSFbear<-exp(coef(RSFbearSum)[1]+AntR*coef(RSFbearSum)[2]+BroR*coef(RSFbearSum)[3]+ConR*coef(RSFbearSum)[4]+LicR*coef(RSFbearSum)[5]+
               MixR*coef(RSFbearSum)[6]+RocR*coef(RSFbearSum)[7]+ScrR*coef(RSFbearSum)[8]+WaDR*coef(RSFbearSum)[9]+
