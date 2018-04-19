@@ -1,20 +1,3 @@
-pairs <- unique(elk[!is.na(neighbour1), .(id, id2 = neighbour1)])
-
-ids <- unique(c(pairs$id, pairs$id2))
-
-a <- pairs[id %in% c(93, 210, 146)]
-a[, pasted := paste0(id, '-', id2)]
-a[, tstrsplit(pasted, '-')]
-
-a[, lapply(id2, function(x) grepl(x, pasted)),
-  by = .(id)]
-
-
-combn(ids[1:5], 2)
-#
-
-
-
 library(igraph)
 
 g <- igraph::graph_from_edgelist(
@@ -22,26 +5,25 @@ g <- igraph::graph_from_edgelist(
   directed = FALSE
 )
 
-as.matrix(unique(elk[!is.na(neighbour1), .(id, neighbour1)]))
-E(g)
-V(g)
+edgeDT <- data.table(get.edgelist(simplify(g)),
+                     E(simplify(g)))
 
+setnames(edgeDT, c('id1', 'id2', 'dyadID'))
 
+b <- merge(
+  merge(elk, 
+        edgeDT,
+        by.x = c('id', 'neighbour1'),
+        by.y = c('id1', 'id2'),
+        all.x = TRUE),
+  edgeDT[, .(id1, id2, dyadID2=dyadID)],
+  by.x = c('id', 'neighbour1'),
+  by.y = c('id2', 'id1'),
+  all.x = TRUE)
 
-data.table(E(g), V(g))
+b[id == 97 | id == 247 | neighbour1 == 97][
+  sample(.N, 10), .(id, neighbour1, dyadID, dyadID2)]
 
-get.edgelist((simplify(g)))
-E(simplify(g))
-get.edgelist(g)
-
-
-
-V(g)$name
-get.edgelist(g)
-V(g)
-
-edge_attr_names(g)
-data.table(V(g))
-
-
-edge_attr_names(g)
+b[is.na(dyadID), dyadID := dyadID2]
+b[id == 97 | id == 247 | neighbour1 == 97][
+  sample(.N, 10), .(id, neighbour1, dyadID, dyadID2)]
