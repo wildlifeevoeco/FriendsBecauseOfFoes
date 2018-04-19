@@ -130,6 +130,14 @@ wolfSP <- SpatialPointsDataFrame(wolf[, .(get(projXCol), get(projYCol))],
 
 wolf <- data.table(over(bounds, wolfSP, returnList = TRUE)[[1]])
 
+# Remove points at the office (le::crop)
+minOfficeX <-
+maxOfficeX <-
+minOfficeY <-
+maxOfficeY <-
+wolf[!(inrange(EASTING, minOfficeX, maxOfficeX) & 
+         inrange(NORTHING, minOfficeY, maxOfficeY))]
+
 
 ### Output ----
 # Match variables to output variables = consistent variables across species
