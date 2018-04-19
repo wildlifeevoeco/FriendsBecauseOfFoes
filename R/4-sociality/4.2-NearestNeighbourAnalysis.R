@@ -61,7 +61,7 @@ DT[id == neighbour1, (neighbourValCols) := NA]
 ### Create Dyadic ID ----
 source('R/0-functions/DyadicID.R')
 # Since the merge reorders, we have to reassign
-DTs <- DyadId(DT, idCol, neighbourCols)
+DT <- DyadId(DT, idCol, neighbourCols)
 
 ### Calculate dyadic distance ----
 source('R/0-functions/DyadicDistance.R')
