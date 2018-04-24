@@ -75,6 +75,12 @@ StepLength(coyote, idCol, datetimeCol = 'datetime', yrCol = 'yr',
            returnIntermediate = FALSE)
 
 difTimeThreshold <- 2
+# Number of locs by id with rounded fixrate..
+fr <- coyote[, .N, by = .(ANIMAL_ID, round(difdatetime))]
+# subset < 12, which is rounded bin has the most locs by id, histo it
+fr[round < 12][, .SD[which.max(N)], by = ANIMAL_ID][, qplot(round, binwidth = 1, xlab = 'fix rate (rounded)')]
+
+
 coyote <- coyote[round(difdatetime) == difTimeThreshold]
 
 StepLength(coyote, idCol, 
