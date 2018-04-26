@@ -20,8 +20,8 @@ StepLength <- function(DT, idCol, datetimeCol, yrCol, xCol, yCol,
      by = c(idCol, yrCol), .SDcols = coordCols]
   
   # Find the difference between subsequent points in x,y
-  DT[, (difCols) := .((get(coordCols[1]) - get(lagCols[1])),
-                      (get(coordCols[2]) - get(lagCols[2])))]
+  DT[, (difCols) := .((get(lagCols[1]) - get(coordCols[1])),
+                      (get(lagCols[2]) - get(coordCols[2])))]
 
   difSqCols <- paste0('sq', difCols)
   
@@ -37,8 +37,8 @@ StepLength <- function(DT, idCol, datetimeCol, yrCol, xCol, yCol,
      by = c(idCol, yrCol), .SDcols = datetimeCol]
 
   # difference in time in hours
-  DT[, (difDateTimeCol) := as.numeric(difftime(get(datetimeCol), 
-                                               get(lagDateTimeCol), 
+  DT[, (difDateTimeCol) := as.numeric(difftime(get(lagDateTimeCol), 
+                                               get(datetimeCol),
                                                units = 'hours'))]
   
   # Step length divided by time difference

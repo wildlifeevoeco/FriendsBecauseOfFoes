@@ -9,8 +9,8 @@ AbsoluteAngle <- function(DT, coords, datetime, id, yr,
       by = c(id, yr), .SDcols = coords]
   
   # Find the difference between subsequent points in x,y
-  DT[, (difCols) := .((get(coords[1]) - get(lagCols[1])),
-                       (get(coords[2]) - get(lagCols[2])))]
+  DT[, (difCols) := .((get(lagCols[1]) - get(coords[1])),
+                       (get(lagCols[2]) - get(coords[2])))]
   
   DT[, absAngle := atan2(difY, difX) * 180 / pi]
   
