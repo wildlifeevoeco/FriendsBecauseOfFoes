@@ -5,7 +5,7 @@ AbsoluteAngle <- function(DT, coords, datetime, id, yr,
   difCols <- c('difX', 'difY')
   
   DT[order(datetime), 
-      (lagCols) := shift(.SD, 1, NA, 'lead'),
+      (lagCols) := data.table::shift(.SD, 1, NA, 'lead'),
       by = c(id, yr), .SDcols = coords]
   
   # Find the difference between subsequent points in x,y
