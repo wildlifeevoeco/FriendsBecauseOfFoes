@@ -15,22 +15,15 @@ lapply(libs, require, character.only = TRUE)
 
 #RMNP file
 
-setwd("C:/Users/ehanc/Desktop/GitLab/ewc/output/nna")
-
-rmnp <- readRDS('elkNNA.Rds')
-
-### creating average RSF values for each dyad
-### Alec you might want to put this in your data prep code
-
-rmnp$avg.PredRSF<-rowMeans(matrix(c(rmnp$preyRSF,rmnp$rpreyRSF),ncol=2))
-rmnp$avg.PreyRSF<-rowMeans(matrix(c(rmnp$preyRSF,rmnp$rpreyRSF),ncol=2))
+rmnp <- readRDS('output/nna/elkNNA.Rds')
 
 ### one case where dyad is just i-i, instead of i-j
-### this needs to be addressed, why did this occur
+### Alec has satisfied Hance that this error is okay and driven by the way QuadTree extracts nearest dyads
 
 rmnp$bad.neighbor<-ifelse(rmnp$id==rmnp$neighbour1,1,0)
-
-### removing this case for now, plus just extracting dyads
+summary(rmnp$bad.neighbor)
+        
+### removing this case plus just extracting dyads
 
 rmnp.dyad1<-subset(rmnp, rmnp$bad.neighbor==0)
 
@@ -57,8 +50,9 @@ unique(rmnp[dyadDist < 150, .(dyadID, timegroup)])
 
 # round(cor(rmnp.dyad1[,c(17,18,26,27,14,25,32,31,34,35,37,38)]),2)
 
+#dsl
 rmNN.dsl.avg.d500<-
-  glm(dSI ~ avg.PreyRSF*avg.PredRSF,
+  glm(dSI ~ avgPreyRSF*avgPredRSF,
       data = rmnp.dyad1[dyadDist < 500])
 
 rmNN.dsl.id1.d500<-
@@ -74,7 +68,7 @@ summary(rmNN.dsl.id1.d500)
 summary(rmNN.dsl.id2.d500)
 
 rmNN.dsl.avg.d50<-
-  glm(dSI ~ avg.PreyRSF*avg.PredRSF,
+  glm(dSI ~ avgPreyRSF*avgPredRSF,
       data = rmnp.dyad1[dyadDist < 50])
 
 rmNN.dsl.id1.d50<-
@@ -90,7 +84,7 @@ summary(rmNN.dsl.id1.d50)
 summary(rmNN.dsl.id2.d50)
 
 rmNN.dsl.avg.d100<-
-  glm(dSI ~ avg.PreyRSF*avg.PredRSF,
+  glm(dSI ~ avgPreyRSF*avgPredRSF,
       data = rmnp.dyad1[dyadDist < 100])
 
 rmNN.dsl.id1.d100<-
@@ -107,8 +101,9 @@ summary(rmNN.dsl.id2.d100)
 
 ### interesting results disappear at 150m
 
+### DyadDist
 rmNN.dyadDist.avg.d500<-
-  glm(dyadDist ~ avg.PreyRSF*avg.PredRSF,
+  glm(dyadDist ~ avgPreyRSF*avgPredRSF,
       data = rmnp.dyad1[dyadDist < 500])
 
 rmNN.dyadDist.id1.d500<-
@@ -124,7 +119,7 @@ summary(rmNN.dyadDist.id1.d500)
 summary(rmNN.dyadDist.id2.d500)
 
 rmNN.dyadDist.avg.d500to1000<-
-  glm(dyadDist ~ avg.PreyRSF*avg.PredRSF,
+  glm(dyadDist ~ avgPreyRSF*avgPredRSF,
       data = rmnp.dyad1[dyadDist > 500 & dyadDist < 1000])
 
 rmNN.dyadDist.id1.d500to1000<-
@@ -140,7 +135,7 @@ summary(rmNN.dyadDist.id1.d500to1000)
 summary(rmNN.dyadDist.id2.d500to1000)
 
 rmNN.dyadDist.avg.d50<-
-  glm(dyadDist ~ avg.PreyRSF*avg.PredRSF,
+  glm(dyadDist ~ avgPreyRSF*avgPredRSF,
       data = rmnp.dyad1[dyadDist < 50])
 
 rmNN.dyadDist.id1.d50<-
@@ -155,24 +150,29 @@ summary(rmNN.dyadDist.avg.d50)
 summary(rmNN.dyadDist.id1.d50)
 summary(rmNN.dyadDist.id2.d50)
 
-rmNN.dyadDist.avg.d250<-
-  glm(dyadDist ~ avg.PreyRSF*avg.PredRSF,
-      data = rmnp.dyad1[dyadDist < 250])
+rmNN.dyadDist.avg.d300<-
+  glm(dyadDist ~ avgPreyRSF*avgPredRSF,
+      data = rmnp.dyad1[dyadDist < 300])
 
-rmNN.dyadDist.id1.d250<-
+rmNN.dyadDist.id1.d300<-
   glm(dyadDist ~ preyRSF*predatorRSF,
-      data = rmnp.dyad1[dyadDist < 250])
+      data = rmnp.dyad1[dyadDist < 300])
 
-rmNN.dyadDist.id2.d250<-
+rmNN.dyadDist.id2.d300<-
   glm(dyadDist ~ rpreyRSF*rpredatorRSF,
-      data = rmnp.dyad1[dyadDist < 250])
+      data = rmnp.dyad1[dyadDist < 300])
 
-summary(rmNN.dyadDist.avg.d250)
-summary(rmNN.dyadDist.id1.d250)
-summary(rmNN.dyadDist.id2.d250)
+summary(rmNN.dyadDist.avg.d300)
+summary(rmNN.dyadDist.id1.d300)
+summary(rmNN.dyadDist.id2.d300)
+
+# predator rsf significance disappears at 500-1000m and below 300m
+# prey rsf is only significant at 500m
+
+#turning angle
 
 rmNN.dAbsAng.avg.d500<-
-  glm(dAbsAng ~ avg.PreyRSF*avg.PredRSF,
+  glm(dAbsAng ~ avgPreyRSF*avgPredRSF,
       data = rmnp.dyad1[dyadDist < 500])
 
 rmNN.dAbsAng.id1.d500<-
@@ -188,7 +188,7 @@ summary(rmNN.dAbsAng.id1.d500)
 summary(rmNN.dAbsAng.id2.d500)
 
 rmNN.dAbsAng.avg.d50<-
-  glm(dAbsAng ~ avg.PreyRSF*avg.PredRSF,
+  glm(dAbsAng ~ avgPreyRSF*avgPredRSF,
       data = rmnp.dyad1[dyadDist < 50])
 
 rmNN.dAbsAng.id1.d50<-
@@ -203,20 +203,64 @@ summary(rmNN.dAbsAng.avg.d50)
 summary(rmNN.dAbsAng.id1.d50)
 summary(rmNN.dAbsAng.id2.d50)
 
-rmNNSpring <-
-  glm(dSI ~ elkspring + wolfspring + elkspring:wolfspring,
-      data = rmnp[season == 'spring'])
+rmNN.dAbsAng.avg.d250<-
+  glm(dAbsAng ~ avgPreyRSF*avgPredRSF,
+      data = rmnp.dyad1[dyadDist < 250])
 
-#turning angle
+rmNN.dAbsAng.id1.d250<-
+  glm(dAbsAng ~ preyRSF*predatorRSF,
+      data = rmnp.dyad1[dyadDist < 250])
 
-#movement rate
+rmNN.dAbsAng.id2.d250<-
+  glm(dAbsAng ~ rpreyRSF*rpredatorRSF,
+      data = rmnp.dyad1[dyadDist < 250])
 
+summary(rmNN.dAbsAng.avg.d250)
+summary(rmNN.dAbsAng.id1.d250)
+summary(rmNN.dAbsAng.id2.d250)
+
+rmNN.dAbsAng.avg.d100<-
+  glm(dAbsAng ~ avgPreyRSF*avgPredRSF,
+      data = rmnp.dyad1[dyadDist < 100])
+
+rmNN.dAbsAng.id1.d100<-
+  glm(dAbsAng ~ preyRSF*predatorRSF,
+      data = rmnp.dyad1[dyadDist < 100])
+
+rmNN.dAbsAng.id2.d100<-
+  glm(dAbsAng ~ rpreyRSF*rpredatorRSF,
+      data = rmnp.dyad1[dyadDist < 100])
+
+summary(rmNN.dAbsAng.avg.d100)
+summary(rmNN.dAbsAng.id1.d100)
+summary(rmNN.dAbsAng.id2.d100)
+
+rmNN.dAbsAng.avg.d150<-
+  glm(dAbsAng ~ avgPreyRSF*avgPredRSF,
+      data = rmnp.dyad1[dyadDist < 150])
+
+rmNN.dAbsAng.id1.d150<-
+  glm(dAbsAng ~ preyRSF*predatorRSF,
+      data = rmnp.dyad1[dyadDist < 150])
+
+rmNN.dAbsAng.id2.d150<-
+  glm(dAbsAng ~ rpreyRSF*rpredatorRSF,
+      data = rmnp.dyad1[dyadDist < 150])
+
+summary(rmNN.dAbsAng.avg.d150)
+summary(rmNN.dAbsAng.id1.d150)
+summary(rmNN.dAbsAng.id2.d150)
 
 # potential subsets of SA data:
 ## time: winter/spring
 ## cover: open/closed
 ## predator: bear/coyote
 
+
+
+rmNNSpring <-
+  glm(dSI ~ elkspring + wolfspring + elkspring:wolfspring,
+      data = rmnp[season == 'spring'])
 
 
 ###Plot
