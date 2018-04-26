@@ -1,4 +1,5 @@
 DyadId <- function(inDT, idcol, neighbour) {
+  if('dyadID' %in% colnames(inDT)) warning('dropping dyadID from inDT'); inDT[, dyadID := NULL]
   g <- igraph::graph_from_edgelist(
     as.matrix(unique(inDT[!is.na(get(neighbour)), 
                           .(get(idcol), get(neighbour))])),
