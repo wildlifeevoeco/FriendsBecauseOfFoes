@@ -17,6 +17,8 @@ lapply(libs, require, character.only = TRUE)
 
 rmnp <- readRDS('output/nna/elkNNA.Rds')
 
+nl <- readRDS('output/nna/caribouNNA.Rds')
+
 ### one case where dyad is just i-i, instead of i-j
 ### Alec has satisfied Hance that this error is okay and driven by the way QuadTree extracts nearest dyads
 
@@ -25,35 +27,49 @@ summary(rmnp$bad.neighbor)
         
 rmnp$bin500m<-ifelse(rmnp$dyadDist>500,0,1) ## dyad within 500m or not
 
+nl$bad.neighbor<-ifelse(nl$id==nl$neighbour1,1,0)
+summary(nl$bad.neighbor)
+
+nl$bin500m<-ifelse(nl$dyadDist>500,0,1) ## dyad within 500m or not
 
 ### removing this case plus just extracting dyads
 
 rmnp.dyad1<-subset(rmnp, rmnp$bad.neighbor==0)
+nl.dyad1<-subset(nl, nl$bad.neighbor==0)
 
+### removing duplicate dyad,times
+
+rmnp.dyad1$dyad.time<-paste(rmnp.dyad1$dyadID,rmnp.dyad1$timegroup,sep="_")
+
+rmnp.dyad2<-rmnp.dyad1[!duplicated(rmnp.dyad1$dyad.time),]
+
+nl.dyad1$dyad.time<-paste(nl.dyad1$dyadID,nl.dyad1$timegroup,sep="_")
+
+nl.dyad2<-nl.dyad1[!duplicated(nl.dyad1$dyad.time),]
 
 
 ### testing correlation
 ### we should test for correlation at any other levels we make thresholds
 ### we need to test for correlation with angles but there are NAs
 
-summary(rmnp.dyad1[,c(14,17,18,20,25:28,31:37)])
+summary(rmnp.dyad2[,c(14,17,18,20,25:28,31:37)])
 
-round(cor(rmnp.dyad1[,c(14,17,18,25:27,31,32,34:37)]),2)
+round(cor(rmnp.dyad2[,c(14,17,18,25:27,31,32,34:37)]),2)
 
-summary(rmnp.dyad1[dyadDist < 500][,c(14,17,18,20,25:28,31:37)])
+summary(rmnp.dyad2[dyadDist < 500][,c(14,17,18,20,25:28,31:37)])
 
-round(cor(rmnp.dyad1[dyadDist < 500][,c(14,17,18,25:27,31,32,34:37)]),2)
+round(cor(rmnp.dyad2[dyadDist < 500][,c(14,17,18,25:27,31,32,34:37)]),2)
 
-summary(rmnp.dyad1[dyadDist < 50][,c(14,17,18,20,25:28,31:37)])
+summary(rmnp.dyad2[dyadDist < 50][,c(14,17,18,20,25:28,31:37)])
 
-round(cor(rmnp.dyad1[dyadDist < 50][,c(14,17,18,25:27,31,32,34:37)]),2)
+round(cor(rmnp.dyad2[dyadDist < 50][,c(14,17,18,25:27,31,32,34:37)]),2)
 
 
 ### sample sizes
 
-nrow(rmnp.dyad1)
-nrow(rmnp.dyad1[dyadDist < 500])
-nrow(rmnp.dyad1[dyadDist < 50])
+nrow(rmnp.dyad2)
+nrow(rmnp.dyad2[dyadDist < 500])
+nrow(rmnp.dyad2[dyadDist < 50])
 
 
 
@@ -77,7 +93,7 @@ unique(rmnp[dyadDist < 150, .(dyadID, timegroup)])
 
 
 
-
+rmnp.dyad3<-rmnp.dyad2[dSI<1000]
 
 
 
@@ -90,27 +106,28 @@ unique(rmnp[dyadDist < 150, .(dyadID, timegroup)])
 
 #dsl
 rmNN.ln.dsl.avg.d500<-
-  glm(log(dSI) ~ avgPreyRSF*avgPredRSF,
-      data = rmnp.dyad1[dyadDist < 500])
+  glm(log(dSI+0.0001) ~ avgPreyRSF*avgPredRSF,
+      data = rmnp.dyad2[dyadDist < 500])
 
 rmNN.dsl.avg.d500<-
   glm(dSI ~ avgPreyRSF*avgPredRSF,
-      data = rmnp.dyad1[dyadDist < 500])
+      data = rmnp.dyad2[dyadDist < 500])
 
 rmNN.dsl.id1.d500<-
   glm(dSI ~ preyRSF*predatorRSF,
-      data = rmnp.dyad1[dyadDist < 500])
+      data = rmnp.dyad2[dyadDist < 500])
 
 rmNN.dsl.id2.d500<-
   glm(dSI ~ rpreyRSF*rpredatorRSF,
-      data = rmnp.dyad1[dyadDist < 500])
+      data = rmnp.dyad2[dyadDist < 500])
 
+summary(rmNN.ln.dsl.avg.d500)
 summary(rmNN.dsl.avg.d500)
 summary(rmNN.dsl.id1.d500)
 summary(rmNN.dsl.id2.d500)
 
 rmNN.ln.dsl.avg.d50<-
-  glm(log(dSI) ~ avgPreyRSF*avgPredRSF,
+  glm(log(dSI+0.0001) ~ avgPreyRSF*avgPredRSF,
       data = rmnp.dyad1[dyadDist < 50])
 
 rmNN.dsl.avg.d50<-
@@ -126,44 +143,36 @@ rmNN.dsl.id2.d50<-
   glm(dSI ~ rpreyRSF*rpredatorRSF,
       data = rmnp.dyad1[dyadDist < 50])
 
+summary(rmNN.ln.dsl.avg.d50)
 summary(rmNN.dsl.avg.d50)
 summary(rmNN.dsl.id1.d50)
 summary(rmNN.dsl.id2.d50)
 
-rmNN.dsl.avg.d100<-
-  glm(dSI ~ avgPreyRSF*avgPredRSF,
-      data = rmnp.dyad1[dyadDist < 100])
-
-rmNN.dsl.id1.d100<-
-  glm(dSI ~ preyRSF*predatorRSF,
-      data = rmnp.dyad1[dyadDist < 100])
-
-rmNN.dsl.id2.d100<-
-  glm(dSI ~ rpreyRSF*rpredatorRSF,
-      data = rmnp.dyad1[dyadDist < 100])
-
-summary(rmNN.dsl.avg.d100)
-summary(rmNN.dsl.id1.d100)
-summary(rmNN.dsl.id2.d100)
-
-### interesting results disappear at 150m
-
 ### DyadDist
+rmNN.ln.dyadDist.avg.d500<-
+  glm(log(dyadDist+0.0001) ~ avgPreyRSF*avgPredRSF,
+      data = rmnp.dyad2[dyadDist < 500])
+
 rmNN.dyadDist.avg.d500<-
   glm(dyadDist ~ avgPreyRSF*avgPredRSF,
-      data = rmnp.dyad1[dyadDist < 500])
+      data = rmnp.dyad2[dyadDist < 500])
 
 rmNN.dyadDist.id1.d500<-
   glm(dyadDist ~ preyRSF*predatorRSF,
-      data = rmnp.dyad1[dyadDist < 500])
+      data = rmnp.dyad2[dyadDist < 500])
 
 rmNN.dyadDist.id2.d500<-
   glm(dyadDist ~ rpreyRSF*rpredatorRSF,
-      data = rmnp.dyad1[dyadDist < 500])
+      data = rmnp.dyad2[dyadDist < 500])
 
+summary(rmNN.ln.dyadDist.avg.d500)
 summary(rmNN.dyadDist.avg.d500)
 summary(rmNN.dyadDist.id1.d500)
 summary(rmNN.dyadDist.id2.d500)
+
+rmNN.ln.dyadDist.avg.d500to1000<-
+  glm(log(dyadDist+0.0001) ~ avgPreyRSF*avgPredRSF,
+      data = rmnp.dyad1[dyadDist > 500 & dyadDist < 1000])
 
 rmNN.dyadDist.avg.d500to1000<-
   glm(dyadDist ~ avgPreyRSF*avgPredRSF,
@@ -177,9 +186,14 @@ rmNN.dyadDist.id2.d500to1000<-
   glm(dyadDist ~ rpreyRSF*rpredatorRSF,
       data = rmnp.dyad1[dyadDist > 500 & dyadDist < 1000])
 
+summary(rmNN.ln.dyadDist.avg.d500to1000)
 summary(rmNN.dyadDist.avg.d500to1000)
 summary(rmNN.dyadDist.id1.d500to1000)
 summary(rmNN.dyadDist.id2.d500to1000)
+
+rmNN.ln.dyadDist.avg.d50<-
+  glm(log(dyadDist+0.0001) ~ avgPreyRSF*avgPredRSF,
+      data = rmnp.dyad1[dyadDist < 50])
 
 rmNN.dyadDist.avg.d50<-
   glm(dyadDist ~ avgPreyRSF*avgPredRSF,
@@ -193,42 +207,24 @@ rmNN.dyadDist.id2.d50<-
   glm(dyadDist ~ rpreyRSF*rpredatorRSF,
       data = rmnp.dyad1[dyadDist < 50])
 
+summary(rmNN.ln.dyadDist.avg.d50)
 summary(rmNN.dyadDist.avg.d50)
 summary(rmNN.dyadDist.id1.d50)
 summary(rmNN.dyadDist.id2.d50)
-
-rmNN.dyadDist.avg.d300<-
-  glm(dyadDist ~ avgPreyRSF*avgPredRSF,
-      data = rmnp.dyad1[dyadDist < 300])
-
-rmNN.dyadDist.id1.d300<-
-  glm(dyadDist ~ preyRSF*predatorRSF,
-      data = rmnp.dyad1[dyadDist < 300])
-
-rmNN.dyadDist.id2.d300<-
-  glm(dyadDist ~ rpreyRSF*rpredatorRSF,
-      data = rmnp.dyad1[dyadDist < 300])
-
-summary(rmNN.dyadDist.avg.d300)
-summary(rmNN.dyadDist.id1.d300)
-summary(rmNN.dyadDist.id2.d300)
-
-# predator rsf significance disappears at 500-1000m and below 300m
-# prey rsf is only significant at 500m
 
 # bin500m
 
 rmNN.bin500m.avg<-
   glm(bin500m ~ avgPreyRSF*avgPredRSF,
-      data = rmnp.dyad1)
+      data = rmnp.dyad2)
 
 rmNN.bin500m.id1<-
   glm(bin500m ~ preyRSF*predatorRSF,
-      data = rmnp.dyad1)
+      data = rmnp.dyad2)
 
 rmNN.bin500m.id2<-
   glm(bin500m ~ rpreyRSF*rpredatorRSF,
-      data = rmnp.dyad1)
+      data = rmnp.dyad2)
 
 summary(rmNN.bin500m.avg)
 summary(rmNN.bin500m.id1)
