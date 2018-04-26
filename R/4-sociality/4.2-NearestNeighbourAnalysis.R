@@ -90,8 +90,8 @@ DT[, dPredRSF := abs(predatorRSF - rpredatorRSF)]
 DT[, dPreyRSF := abs(preyRSF - rpreyRSF)]
 
 # Avg RSF
-DT[, avgPredRSF := mean(predatorRSF, rpredatorRSF)]
-DT[, avgPreyRSF := mean(preyRSF, rpreyRSF)]
+DT[, avgPredRSF := rowMeans(.SD), .SDcols = c('predatorRSF', 'rpredatorRSF')]
+DT[, avgPreyRSF := rowMeans(.SD), .SDcols = c('preyRSF', 'rpreyRSF')]
 
 ### End RSF values ----
 DT[, endPredRSF := shift(predatorRSF, 1, NA, 'lead')]
@@ -107,7 +107,6 @@ DT[NbyTime > 1,
     (withinCol) := FindNumbWithinDist(.SD, distanceThreshold,
                                       coordCols, idCol),
     by = timegroup]
-
 
 ### Output ----
 saveRDS(DT, paste0('output/nna/', species, 'NNA.Rds'))
