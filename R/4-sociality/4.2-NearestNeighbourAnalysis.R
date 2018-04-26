@@ -93,6 +93,10 @@ DT[, dPreyRSF := abs(preyRSF - rpreyRSF)]
 DT[, avgPredRSF := mean(predatorRSF, rpredatorRSF)]
 DT[, avgPreyRSF := mean(preyRSF, rpreyRSF)]
 
+### End RSF values ----
+DT[, endPredRSF := shift(predatorRSF, 1, NA, 'lead')]
+DT[, endPreyRSF := shift(preyRSF, 1, NA, 'lead')]
+
 ### Number of neighbours within distance ----
 # Find the number of neighbours within specific distance threshold
 distanceThreshold <- 500
