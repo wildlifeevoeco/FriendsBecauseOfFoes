@@ -23,10 +23,42 @@ rmnp <- readRDS('output/nna/elkNNA.Rds')
 rmnp$bad.neighbor<-ifelse(rmnp$id==rmnp$neighbour1,1,0)
 summary(rmnp$bad.neighbor)
         
+rmnp$bin500m<-ifelse(rmnp$dyadDist>500,0,1) ## dyad within 500m or not
+
+
 ### removing this case plus just extracting dyads
 
 rmnp.dyad1<-subset(rmnp, rmnp$bad.neighbor==0)
 
+
+
+### testing correlation
+### we should test for correlation at any other levels we make thresholds
+### we need to test for correlation with angles but there are NAs
+
+summary(rmnp.dyad1[,c(14,17,18,20,25:28,31:37)])
+
+round(cor(rmnp.dyad1[,c(14,17,18,25:27,31,32,34:37)]),2)
+
+summary(rmnp.dyad1[dyadDist < 500][,c(14,17,18,20,25:28,31:37)])
+
+round(cor(rmnp.dyad1[dyadDist < 500][,c(14,17,18,25:27,31,32,34:37)]),2)
+
+summary(rmnp.dyad1[dyadDist < 50][,c(14,17,18,20,25:28,31:37)])
+
+round(cor(rmnp.dyad1[dyadDist < 50][,c(14,17,18,25:27,31,32,34:37)]),2)
+
+
+### sample sizes
+
+nrow(rmnp.dyad1)
+nrow(rmnp.dyad1[dyadDist < 500])
+nrow(rmnp.dyad1[dyadDist < 50])
+
+
+
+
+### what is this???
 #NL file
 # nl <- 
 dd <- data.table(sapply(seq(0, 1000, by = 50), function(x){
@@ -43,14 +75,24 @@ unique(rmnp[dyadDist < 150, .(dyadID, timegroup)])
 
 #rmnp[dyadDist < 500, qplot()
 
+
+
+
+
+
+
      
 ###GLM
 # SA <- glm(SocialMeasure ~ PreyHD*PredHD, data = rmnp)
-## social measures are: dSI, dyadDist, dAbsAng, nWithin5000
+## social measures are: dSI, dyadDist, dAbsAng, bin500m, nWithin5000
 
 # round(cor(rmnp.dyad1[,c(17,18,26,27,14,25,32,31,34,35,37,38)]),2)
 
 #dsl
+rmNN.ln.dsl.avg.d500<-
+  glm(log(dSI) ~ avgPreyRSF*avgPredRSF,
+      data = rmnp.dyad1[dyadDist < 500])
+
 rmNN.dsl.avg.d500<-
   glm(dSI ~ avgPreyRSF*avgPredRSF,
       data = rmnp.dyad1[dyadDist < 500])
@@ -67,9 +109,14 @@ summary(rmNN.dsl.avg.d500)
 summary(rmNN.dsl.id1.d500)
 summary(rmNN.dsl.id2.d500)
 
+rmNN.ln.dsl.avg.d50<-
+  glm(log(dSI) ~ avgPreyRSF*avgPredRSF,
+      data = rmnp.dyad1[dyadDist < 50])
+
 rmNN.dsl.avg.d50<-
   glm(dSI ~ avgPreyRSF*avgPredRSF,
       data = rmnp.dyad1[dyadDist < 50])
+
 
 rmNN.dsl.id1.d50<-
   glm(dSI ~ preyRSF*predatorRSF,
@@ -169,6 +216,26 @@ summary(rmNN.dyadDist.id2.d300)
 # predator rsf significance disappears at 500-1000m and below 300m
 # prey rsf is only significant at 500m
 
+# bin500m
+
+rmNN.bin500m.avg<-
+  glm(bin500m ~ avgPreyRSF*avgPredRSF,
+      data = rmnp.dyad1)
+
+rmNN.bin500m.id1<-
+  glm(bin500m ~ preyRSF*predatorRSF,
+      data = rmnp.dyad1)
+
+rmNN.bin500m.id2<-
+  glm(bin500m ~ rpreyRSF*rpredatorRSF,
+      data = rmnp.dyad1)
+
+summary(rmNN.bin500m.avg)
+summary(rmNN.bin500m.id1)
+summary(rmNN.bin500m.id2)
+
+
+
 #turning angle
 
 rmNN.dAbsAng.avg.d500<-
@@ -251,6 +318,16 @@ summary(rmNN.dAbsAng.avg.d150)
 summary(rmNN.dAbsAng.id1.d150)
 summary(rmNN.dAbsAng.id2.d150)
 
+
+
+
+
+
+
+
+
+
+
 # potential subsets of SA data:
 ## time: winter/spring
 ## cover: open/closed
@@ -267,8 +344,25 @@ rmNNSpring <-
 #heatmap of social response across domains 
 #prey on Y, predator on X, hot colours is positive social response, cold is negative
 
+library(visreg)
+library(rgl)
+
+visreg2d(rmNN.dsl.avg.d500, "avgPreyRSF", "avgPredRSF", plot.type="image")
+visreg2d(rmNN.dsl.avg.d500, "avgPreyRSF", "avgPredRSF", plot.type="persp")
+
+visreg2d(rmNN.dsl.avg.d500, "avgPreyRSF", "avgPredRSF", plot.type="rgl")
+
+
+visreg2d(rmNN.dsl.avg.d50, "avgPreyRSF", "avgPredRSF", plot.type="image")
+visreg2d(rmNN.dsl.avg.d50, "avgPreyRSF", "avgPredRSF", plot.type="persp")
+
+visreg2d(rmNN.dsl.avg.d50, "avgPreyRSF", "avgPredRSF", plot.type="rgl")
 
 
 
 
+visreg2d(rmNN.ln.dsl.avg.d50, "avgPreyRSF", "avgPredRSF", plot.type="image")
+visreg2d(rmNN.dsl.avg.d50, "avgPreyRSF", "avgPredRSF", plot.type="persp")
+
+visreg2d(rmNN.dsl.avg.d50, "avgPreyRSF", "avgPredRSF", plot.type="rgl")
 
