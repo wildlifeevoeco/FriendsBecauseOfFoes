@@ -216,5 +216,5 @@ plot(WinRSFsc)
 writeRaster(SumRSFsc,"output/PredRSFNL/CaribouSummer.tif",overwrite=T)
 writeRaster(WinRSFsc,"output/PredRSFNL/CaribouWinter.tif",overwrite=T)
 
-saveRDS(SumRSF,"output/PredRSFNL/CaribouSummerRSF.RDS")
-saveRDS(WinRSF,"output/PredRSFNL/CaribouWinterRSF.RDS")
+saveRDS(RSFCaribouSum,"output/PredRSFNL/CaribouSummerRSF.RDS")
+saveRDS(RSFCaribouWin,"output/PredRSFNL/CaribouWinterRSF.RDS")

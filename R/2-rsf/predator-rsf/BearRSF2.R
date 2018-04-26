@@ -212,7 +212,7 @@ plot(SumRSFsc)
 
 writeRaster(SumRSFsc,"output/PredRSFNL/bearSummer.tif",overwrite=T)
 
-saveRDS(SumRSF, "output/PredRSFNL/BearsSummerRSF.RDS")
+saveRDS(RSFbearsSum, "output/PredRSFNL/BearsSummerRSF.RDS")
 
 
 

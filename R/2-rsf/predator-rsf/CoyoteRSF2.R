@@ -98,8 +98,6 @@ head(coyote)
 plot(nlBounds)
 points(coyote$EASTING,coyote$NORTHING)
 
-MRcoy<-subset(coyote,herd=="MIDRIDGE")
-
 unique(MRcoy$herd)
 str(coyote)
 
@@ -185,6 +183,9 @@ coyote$STATUS<-ifelse(coyote$id=="co_np1016", "TRANSIENT", coyote$STATUS)
 
 coyMR<-subset(coyote, herd=="MIDRIDGE")
 coyMRres<-subset(coyMR, STATUS=="RESIDENT" | STATUS=="SUB-TRANSIENT")
+
+saveRDS(coyMRres,"output/ResidentCoyotes.RDS")
+
 nrow(coyMRres)
 CoyPoints<-SpatialPoints(data.frame(coyMRres$EASTING,coyMRres$NORTHING),proj4string = CRS(utm))
 
@@ -309,7 +310,7 @@ plot(WinRSFsc)
 writeRaster(SumRSFsc,"output/PredRSFNL/CoyoteSummer.tif",overwrite=T)
 writeRaster(WinRSFsc,"output/PredRSFNL/CoyoteWinter.tif",overwrite=T)
 
-saveRDS(SumRSF, "output/PredRSFNL/CoyoteSummerRSF.RDS")
-saveRDS(WinRSF, "output/PredRSFNL/CoyoteWinterRSF.RDS")
+saveRDS(RSFCoyoteSum, "output/PredRSFNL/CoyoteSummerRSF.RDS")
+saveRDS(RSFCoyoteWin, "output/PredRSFNL/CoyoteWinterRSF.RDS")
 
 
