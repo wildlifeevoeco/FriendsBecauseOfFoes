@@ -60,7 +60,7 @@ source('R/0-functions/DatePrep.R')
 DatePrep(wolf, dateCol, timeCol)
 
 # Season
-source('R/0-variabless/CutOffThresholds.R')
+source('R/0-variables/CutOffThresholds.R')
 wolf[julday %between% winter, season := 'winter']
 wolf[julday %between% spring, season := 'spring']
 
