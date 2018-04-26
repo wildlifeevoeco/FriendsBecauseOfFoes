@@ -50,7 +50,7 @@ dropCol <- c('Year', 'Month', 'Day', 'Hour', 'Minute', 'time')
 elk[, (dropCol) := NULL]
 
 # Season
-source('R/0-variabless/CutOffThresholds.R')
+source('R/0-variables/CutOffThresholds.R')
 elk[julday %between% winter, season := 'winter']
 elk[julday %between% spring, season := 'spring']
 
@@ -120,7 +120,7 @@ elk <- data.table(over(bounds, elkSP, returnList = TRUE)[[1]])
 
 ### Output ----
 # Match variables to output variables = consistent variables across species
-source('R/0-variabless/PrepDataOutputVariables.R')
+source('R/0-variables/PrepDataOutputVariables.R')
 
 elk[, SPECIES := 'ELK']
 
