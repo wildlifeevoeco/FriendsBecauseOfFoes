@@ -16,7 +16,7 @@ StepLength <- function(DT, idCol, datetimeCol, yrCol, xCol, yCol,
   
   # Use shift  to create lagged cols
   DT[order(get(datetimeCol)), 
-     (lagCols) := shift(.SD, 1, NA, 'lead'),
+     (lagCols) := data.table::shift(.SD, 1, NA, 'lead'),
      by = c(idCol, yrCol), .SDcols = coordCols]
   
   # Find the difference between subsequent points in x,y
@@ -33,7 +33,7 @@ StepLength <- function(DT, idCol, datetimeCol, yrCol, xCol, yCol,
 
   ## Delta Time
   DT[order(get(datetimeCol)),
-     (lagDateTimeCol) := shift(.SD, 1, NA, 'lead'),
+     (lagDateTimeCol) := data.table::shift(.SD, 1, NA, 'lead'),
      by = c(idCol, yrCol), .SDcols = datetimeCol]
 
   # difference in time in hours
