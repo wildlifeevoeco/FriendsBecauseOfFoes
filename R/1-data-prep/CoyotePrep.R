@@ -46,7 +46,7 @@ DatePrep(coyote, dateCol, timeCol)
 coyote[sample(.N, 5), .(idate, itime, yr, mnth, julday)]
 
 # Season
-source('R/0-variabless/CutOffThresholds.R')
+source('R/0-variables/CutOffThresholds.R')
 
 coyote[julday %between% winter, season := 'winter']
 coyote[julday %between% spring, season := 'spring']
@@ -54,7 +54,6 @@ coyote[julday %between% spring, season := 'spring']
 # Group Time - from spatsoc
 source('R/0-functions/Group-Time-spatsoc.R')
 GroupTimes(coyote, 'datetime', '15 minutes')
-
 
 ### Subset ----
 # Subset any NAs in defined cols
@@ -121,7 +120,7 @@ coyote <- coyote[stepLength < stepLengthThreshold &
 
 ### Output ----
 # Match variables to output variables = consistent variables across species
-source('R/0-variabless/PrepDataOutputVariables.R')
+source('R/0-variables/PrepDataOutputVariables.R')
 
 outputVariables <- c(outputVariables, 'herd', 'sex')
 

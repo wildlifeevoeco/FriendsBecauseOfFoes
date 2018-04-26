@@ -18,23 +18,20 @@ nlBounds <- rgdal::readOGR('input/etc/NL-Bounds/NL-Bounds.shp') %>%
 ############ caribou
 
 
-caribou<-readRDS('output/data-prep/caribou.Rds')
-#!! this shouldn't be necessary given prep script !!#
-MRcar<-subset(caribou,herd=="MIDRIDGE")
+MRcar<-readRDS('output/data-prep/caribou.Rds')
+
 
 plot(nlBounds)
 points(MRcar$EASTING,MRcar$NORTHING)
 
 CarPoints<-SpatialPoints(data.frame(MRcar$EASTING,MRcar$NORTHING),proj4string = CRS(utm))
 
+CarAvail<-mcp(CarPoints, percent = 100)
+shapefile(CarAvail,"Output/caribouMCP,shp")
 
 plot(nlBounds)
 plot(CarAvail,add=T)
 points(CarPoints)
-
-CarAvail<-mcp(CarPoints, percent = 100)
-shapefile(CarAvail,"Output/caribouMCP,shp")
-
 
 ### Buffer by mean step length
 CarAvailBuf<-gBuffer(CarAvail,width=mean(MRcar$stepLength))
@@ -42,19 +39,19 @@ CarAvailBuf<-gBuffer(CarAvail,width=mean(MRcar$stepLength))
 Carclipped<-gIntersection(nlBounds,CarAvailBuf)
 Carclipped2<-as.owin.SpatialPolygons(Carclipped)
 
-#!! season is calculated in prep script !!# 
-#!! these dates are not the same as RMNP !!#
-CarWinter<-subset(MRcar,julday<74)
-#!! season is calculated in prep script !!# 
-CarSummer<-subset(MRcar,julday>106 &julday<214)
 
 
 #!! the elk + wolf rsf use a regular grid !!#
-CarRandSum<-runifpoint(n=nrow(CarSummer)*10,win=Carclipped2)
-CarRandWin<-runifpoint(n=nrow(CarWinter)*10,win=Carclipped2)
 
-CarSumPoints<-SpatialPoints(data.frame(CarSummer$EASTING,CarSummer$NORTHING),proj4string = CRS(utm))
-CarWinPoints<-SpatialPoints(data.frame(CarWinter$EASTING,CarWinter$NORTHING),proj4string = CRS(utm))
+# Create Regular Grid
+source('R/0-functions/GenerateGrid.R')
+regPts <- GenerateGrid(90, mcpExtent = Carclipped, crs = utm)
+
+#CarRandSum<-runifpoint(n=nrow(CarSummer)*10,win=Carclipped2)
+#CarRandWin<-runifpoint(n=nrow(CarWinter)*10,win=Carclipped2)
+
+#CarSumPoints<-SpatialPoints(data.frame(CarSummer$EASTING,CarSummer$NORTHING),proj4string = CRS(utm))
+#CarWinPoints<-SpatialPoints(data.frame(CarWinter$EASTING,CarWinter$NORTHING),proj4string = CRS(utm))
 
 #### Load in habitat layers
 
@@ -78,112 +75,59 @@ Rug<-terrain(Elev, opt="roughness")
 
 
 
+CarAntUsed<-extract(Ant,CarPoints)
+CarBroUsed<-extract(Bro,CarPoints)
+CarConUsed<-extract(Con,CarPoints)
+CarLicUsed<-extract(Lic,CarPoints)
+CarMixUsed<-extract(Mix,CarPoints)
+CarRocUsed<-extract(Roc,CarPoints)
+CarScrUsed<-extract(Scr,CarPoints)
+CarWatUsed<-extract(Wat,CarPoints)
+CarWetUsed<-extract(Wet,CarPoints)
+CarRugUsed<-extract(Rug,CarPoints)
+CarWaDUsed<-extract(WaD,CarPoints)
+CarLinUsed<-extract(Lin,CarPoints)
 
-## Summer
-CarAntUsedSum<-extract(Ant,CarSumPoints)
-CarBroUsedSum<-extract(Bro,CarSumPoints)
-CarConUsedSum<-extract(Con,CarSumPoints)
-CarLicUsedSum<-extract(Lic,CarSumPoints)
-CarMixUsedSum<-extract(Mix,CarSumPoints)
-CarRocUsedSum<-extract(Roc,CarSumPoints)
-CarScrUsedSum<-extract(Scr,CarSumPoints)
-CarWatUsedSum<-extract(Wat,CarSumPoints)
-CarWetUsedSum<-extract(Wet,CarSumPoints)
-CarRugUsedSum<-extract(Rug,CarSumPoints)
-CarWaDUsedSum<-extract(WaD,CarSumPoints)
-CarLinUsedSum<-extract(Lin,CarSumPoints)
-
-CarRandCoSum<-coords(CarRandSum)
-
-CarxyrSum<-cbind(CarRandCoSum$x,CarRandCoSum$y)
-
-CarRandPointsSum<-SpatialPoints(data.frame(CarxyrSum[,1],CarxyrSum[,2]),proj4string = CRS(utm))
+CarRandPoints<-SpatialPoints(data.frame(regPts[,1],regPts[,2]),proj4string = CRS(utm))
 
 
-CarAntAvailSum<-extract(Ant,CarRandPointsSum)
-CarBroAvailSum<-extract(Bro,CarRandPointsSum)
-CarConAvailSum<-extract(Con,CarRandPointsSum)
-CarLicAvailSum<-extract(Lic,CarRandPointsSum)
-CarMixAvailSum<-extract(Mix,CarRandPointsSum)
-CarRocAvailSum<-extract(Roc,CarRandPointsSum)
-CarScrAvailSum<-extract(Scr,CarRandPointsSum)
-CarWatAvailSum<-extract(Wat,CarRandPointsSum)
-CarWetAvailSum<-extract(Wet,CarRandPointsSum)
-CarRugAvailSum<-extract(Rug,CarRandPointsSum)
-CarWaDAvailSum<-extract(WaD,CarRandPointsSum)
-CarLinAvailSum<-extract(Lin,CarRandPointsSum)
+CarAntAvail<-extract(Ant,CarRandPoints)
+CarBroAvail<-extract(Bro,CarRandPoints)
+CarConAvail<-extract(Con,CarRandPoints)
+CarLicAvail<-extract(Lic,CarRandPoints)
+CarMixAvail<-extract(Mix,CarRandPoints)
+CarRocAvail<-extract(Roc,CarRandPoints)
+CarScrAvail<-extract(Scr,CarRandPoints)
+CarWatAvail<-extract(Wat,CarRandPoints)
+CarWetAvail<-extract(Wet,CarRandPoints)
+CarRugAvail<-extract(Rug,CarRandPoints)
+CarWaDAvail<-extract(WaD,CarRandPoints)
+CarLinAvail<-extract(Lin,CarRandPoints)
 
 CNames<-c("use","Ant","Bro","Con","Lic","Mix","Roc","Scr","Wat","Wet","Rug","WaD","Lin","x","y","Season")
 
-CarUsedDataSum<-data.frame(1,CarAntUsedSum,CarBroUsedSum,CarConUsedSum,CarLicUsedSum,CarMixUsedSum,CarRocUsedSum,
-                           CarScrUsedSum,CarWatUsedSum,CarWetUsedSum,CarRugUsedSum,CarWaDUsedSum,CarLinUsedSum,CarSummer$EASTING,CarSummer$NORTHING,"Summer")
+CarUsedData<-data.frame(1,CarAntUsed,CarBroUsed,CarConUsed,CarLicUsed,CarMixUsed,CarRocUsed,
+                           CarScrUsed,CarWatUsed,CarWetUsed,CarRugUsed,CarWaDUsed,CarLinUsed,MRcar$EASTING,MRcar$NORTHING,MRcar$season)
 
-CarUsedDataSum<-data.frame(1,CarAntUsedSum,CarBroUsedSum,CarConUsedSum,CarLicUsedSum,CarMixUsedSum,CarRocUsedSum,
-                           CarScrUsedSum,CarWatUsedSum,CarWetUsedSum,CarRugUsedSum,CarWaDUsedSum,CarLinUsedSum,CarSummer$EASTING,CarSummer$NORTHING,"Summer")
+colnames(CarUsedData)<-CNames
 
+CarAvailData<-data.frame(0,CarAntAvail,CarBroAvail,CarConAvail,CarLicAvail,CarMixAvail,CarRocAvail,CarScrAvail,
+                            CarWatAvail,CarWetAvail,CarRugAvail,CarWaDAvail,CarLinAvail,regPts[,1],regPts[,2],"Avail")
 
-colnames(CarUsedDataSum)<-CNames
+colnames(CarAvailData)<-CNames
 
-CarAvailDataSum<-data.frame(0,CarAntAvailSum,CarBroAvailSum,CarConAvailSum,CarLicAvailSum,CarMixAvailSum,CarRocAvailSum,CarScrAvailSum,
-                            CarWatAvailSum,CarWetAvailSum,CarRugAvailSum,CarWaDAvailSum,CarLinAvailSum,CarxyrSum,"Summer")
-colnames(CarAvailDataSum)<-CNames
+caribouRSF<-rbind(CarUsedData,CarAvailData)
 
+summary(CaribouRSF)
 
-
-## Winter
-
-CarAntUsedWin<-extract(Ant,CarWinPoints)
-CarBroUsedWin<-extract(Bro,CarWinPoints)
-CarConUsedWin<-extract(Con,CarWinPoints)
-CarLicUsedWin<-extract(Lic,CarWinPoints)
-CarMixUsedWin<-extract(Mix,CarWinPoints)
-CarRocUsedWin<-extract(Roc,CarWinPoints)
-CarScrUsedWin<-extract(Scr,CarWinPoints)
-CarWatUsedWin<-extract(Wat,CarWinPoints)
-CarWetUsedWin<-extract(Wet,CarWinPoints)
-CarRugUsedWin<-extract(Rug,CarWinPoints)
-CarWaDUsedWin<-extract(WaD,CarWinPoints)
-CarLinUsedWin<-extract(Lin,CarWinPoints)
-
-CarRandCoWin<-coords(CarRandWin)
-
-CarxyrWin<-cbind(CarRandCoWin$x,CarRandCoWin$y)
-
-CarRandPointsWin<-SpatialPoints(data.frame(CarxyrWin[,1],CarxyrWin[,2]),proj4string = CRS(utm))
-
-
-CarAntAvailWin<-extract(Ant,CarRandPointsWin)
-CarBroAvailWin<-extract(Bro,CarRandPointsWin)
-CarConAvailWin<-extract(Con,CarRandPointsWin)
-CarLicAvailWin<-extract(Lic,CarRandPointsWin)
-CarMixAvailWin<-extract(Mix,CarRandPointsWin)
-CarRocAvailWin<-extract(Roc,CarRandPointsWin)
-CarScrAvailWin<-extract(Scr,CarRandPointsWin)
-CarWatAvailWin<-extract(Wat,CarRandPointsWin)
-CarWetAvailWin<-extract(Wet,CarRandPointsWin)
-CarRugAvailWin<-extract(Rug,CarRandPointsWin)
-CarWaDAvailWin<-extract(WaD,CarRandPointsWin)
-CarLinAvailWin<-extract(Lin,CarRandPointsWin)
-
-CNames<-c("use","Ant","Bro","Con","Lic","Mix","Roc","Scr","Wat","Wet","Rug","WaD","Lin","x","y","Season")
-
-CarUsedDataWin<-data.frame(1,CarAntUsedWin,CarBroUsedWin,CarConUsedWin,CarLicUsedWin,CarMixUsedWin,CarRocUsedWin,
-                           CarScrUsedWin,CarWatUsedWin,CarWetUsedWin,CarRugUsedWin,CarWaDUsedWin,CarLinUsedWin,CarWinter$EASTING,CarWinter$NORTHING,"Winter")
-colnames(CarUsedDataWin)<-CNames
-
-CarAvailDataWin<-data.frame(0,CarAntAvailWin,CarBroAvailWin,CarConAvailWin,CarLicAvailWin,CarMixAvailWin,CarRocAvailWin,CarScrAvailWin,
-                            CarWatAvailWin,CarWetAvailWin,CarRugAvailWin,CarWaDAvailWin,CarLinAvailWin,CarxyrWin,"Winter")
-colnames(CarAvailDataWin)<-CNames
-
-caribouRSF<-rbind(CarUsedDataSum,CarAvailDataSum,CarUsedDataWin,CarAvailDataWin)
-
-summary(caribouRSF)
 
 write.csv(caribouRSF,"output/CaribouRSFdata.csv")
 
 caribouRSF<-read.csv("output/CaribouRSFdata.csv")
 
+caribouRSF$X<-NULL
 head(caribouRSF)
+
 
 ## Remove all points with 50% NA data
 #!! no data is removed for RMNP !!#
@@ -233,9 +177,11 @@ LinCrop<-crop(Lin,Carclipped)
 
 ### Wetland is the reference
 library(car)
+summary(carRSF2)
 
-CarSummerRSF<-subset(carRSF2,Season=="Summer")
-CarWinterRSF<-subset(carRSF2,Season=="Winter")
+CarSummerRSF<-subset(carRSF2,Season=="spring"|Season=="Avail")
+CarWinterRSF<-subset(carRSF2,Season=="winter"|Season=="Avail")
+summary(CarWinterRSF)
 
 RSFCaribouSum<-glm(use~Ant+Bro+Con+Lic+Mix+Roc+Scr+WaD+Lin+Rug,data=CarSummerRSF, family='binomial')
 RSFCaribouWin<-glm(use~Ant+Bro+Con+Lic+Mix+Roc+Scr+WaD+Lin+Rug,data=CarWinterRSF, family='binomial')
@@ -275,9 +221,6 @@ cellStats(SumRSF,max)
 SumRSFsc<-(SumRSF-(cellStats(SumRSF,min)))/(cellStats(SumRSF,max)-cellStats(SumRSF,min))
 WinRSFsc<-(WinRSF-(cellStats(WinRSF,min)))/(cellStats(WinRSF,max)-cellStats(WinRSF,min))
 
-plot(SumRSFsc,zlim=c(0,0.3))
-plot(WinRSFsc,zlim=c(0,0.001))
-
 cellStats(SumRSFsc,max)
 
 plot(SumRSFsc)
@@ -286,6 +229,8 @@ plot(WinRSFsc)
 writeRaster(SumRSFsc,"output/PredRSFNL/CaribouSummer.tif",overwrite=T)
 writeRaster(WinRSFsc,"output/PredRSFNL/CaribouWinter.tif",overwrite=T)
 
+saveRDS(SumRSF,"output/PredRSFNL/CaribouSummerRSF.RDS")
+saveRDS(WinRSF,"output/PredRSFNL/CaribouWinterRSF.RDS")
 
 ######## coyotes ##########
 
