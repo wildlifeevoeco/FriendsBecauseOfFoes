@@ -89,6 +89,9 @@ DT[, dAbsAng := abs(absAngle - rabsAngle)]
 DT[, dPredRSF := abs(predatorRSF - rpredatorRSF)]
 DT[, dPreyRSF := abs(preyRSF - rpreyRSF)]
 
+# Avg RSF
+DT[, avgPredRSF := mean(predatorRSF, rpredatorRSF)]
+DT[, avgPreyRSF := mean(preyRSF, rpreyRSF)]
 
 ### Number of neighbours within distance ----
 # Find the number of neighbours within specific distance threshold
