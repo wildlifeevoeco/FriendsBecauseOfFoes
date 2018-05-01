@@ -209,7 +209,8 @@ boxplot(nl.dyad3$avgCarRSF)
 hist(nl.dyad3$avgCarRSF)
 
 
-
+plot(nl.dyad3$season)
+plot(rmnp.dyad3$season)
 
 ## 500m DyadDist threshold
 ## RMNP
@@ -257,8 +258,20 @@ hist(nl.dyad3[dyadDist < 500]$avgCarRSF)
 ### Issue: Extremely long tail distribution in DSI for RMNP and NL
 ### Issue: Coy & Bear RSFs are an order of magnitude smaller than Car RSFs in NL but not RMNP
     
+plot(nl.dyad3[dyadDist < 500]$season)
+plot(rmnp.dyad3[dyadDist < 500]$season)
 
+plot(nl.dyad3[dyadDist < 500]$julday)
+plot(rmnp.dyad3[dyadDist < 500]$julday)
 
+plot(nl.dyad3[dyadDist < 500]$dyadID)
+plot(rmnp.dyad3[dyadDist < 500]$dyadID)
+
+plot(nl.dyad3[dyadDist < 500]$yr)
+plot(rmnp.dyad3[dyadDist < 500]$yr)
+
+# plot(nl.dyad3[dyadDist < 500]$nWithin500) # update when nwithin500 is added
+plot(rmnp.dyad3[dyadDist < 500]$nWithin500)
 
 ## 50m DyadDist threshold
 ## RMNP
@@ -305,6 +318,20 @@ hist(nl.dyad3[dyadDist < 50]$avgCarRSF)
 ### Issue: Extremely long tail distribution in DSI for RMNP and NL
 ### Issue: Coy & Bear RSFs are an order of magnitude smaller than Car RSFs in NL but not RMNP
 
+plot(nl.dyad3[dyadDist < 50]$season)
+plot(rmnp.dyad3[dyadDist < 50]$season)
+
+plot(nl.dyad3[dyadDist < 50]$julday)
+plot(rmnp.dyad3[dyadDist < 50]$julday)
+
+plot(nl.dyad3[dyadDist < 50]$dyadID)
+plot(rmnp.dyad3[dyadDist < 50]$dyadID)
+
+plot(nl.dyad3[dyadDist < 50]$yr)
+plot(rmnp.dyad3[dyadDist < 50]$yr)
+
+# plot(nl.dyad3[dyadDist < 50]$nWithin500) # update when nwithin500 is added
+plot(rmnp.dyad3[dyadDist < 50]$nWithin500)
 
 ###GLM
 # SA <- glm(SocialMeasure ~ PreyHD*PredHD, data = rmnp)
