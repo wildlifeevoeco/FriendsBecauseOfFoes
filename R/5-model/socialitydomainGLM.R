@@ -8,7 +8,8 @@
 
 libs <- c('data.table',  
           'lme4',
-          'ggplot2')
+          'ggplot2',
+          'Hmsic')
 lapply(libs, require, character.only = TRUE)
 
 ### Input data ----
@@ -47,10 +48,10 @@ nl.dyad1$dyad.time<-paste(nl.dyad1$dyadID,nl.dyad1$timegroup,sep="_")
 
 nl.dyad2<-nl.dyad1[!duplicated(nl.dyad1$dyad.time),]
 
-nl.dyad2$predatorRSF<-nl.dyad2$CoyRSF+nl.dyad2$BearRSF
-nl.dyad2$rpredatorRSF<-nl.dyad2$rCoyRSF+nl.dyad2$rBearRSF
-nl.dyad2$dPredRSF<-nl.dyad2$dCoyRSF+nl.dyad2$dBearRSF
-nl.dyad2$avgPredRSF<-(nl.dyad2$predatorRSF+nl.dyad2$rpredatorRSF)/2
+nl.dyad2$predatorRSF<-ifelse(nl.dyad2$season=="spring", nl.dyad2$CoyRSF+nl.dyad2$BearRSF, nl.dyad2$CoyRSF)
+nl.dyad2$rpredatorRSF<-ifelse(nl.dyad2$season=="spring", nl.dyad2$rCoyRSF+nl.dyad2$rBearRSF, nl.dyad2$rCoyRSF)
+nl.dyad2$dPredRSF<-ifelse(nl.dyad2$season=="spring", nl.dyad2$dCoyRSF+nl.dyad2$dBearRSF, nl.dyad2$dCoyRSF)
+nl.dyad2$avgPredRSF<-ifelse(nl.dyad2$season=="spring", (nl.dyad2$predatorRSF+nl.dyad2$rpredatorRSF)/2, nl.dyad2$avgCoyRSF)
 
 ### data to summarize, test for correlation, etc.
 
@@ -66,31 +67,91 @@ rmnp.dyad3<-rmnp.dyad2[, c("absAngle","relAngle","stepLength","predatorRSF","pre
                            "rabsAngle","rrelAngle","rstepLength","rpredatorRSF","rpreyRSF",
                            "dPredRSF","dPreyRSF","avgPredRSF","avgPreyRSF"), with=FALSE]
 
+rmnp.dyad3$season <- as.factor(rmnp.dyad3$season)
+rmnp.dyad3$dyadID <- as.factor(rmnp.dyad3$dyadID)
+rmnp.dyad3$julday <- as.factor(rmnp.dyad3$julday)
+rmnp.dyad3$yr <- as.factor(rmnp.dyad3$yr)
+rmnp.dyad3$bin500m <- as.factor(rmnp.dyad3$bin500m)
+rmnp.dyad3$nWithin500 <- as.factor(rmnp.dyad3$nWithin500)
+
+nl.dyad3$season <- as.factor(nl.dyad3$season)
+nl.dyad3$dyadID <- as.factor(nl.dyad3$dyadID)
+nl.dyad3$julday <- as.factor(nl.dyad3$julday)
+nl.dyad3$yr <- as.factor(nl.dyad3$yr)
+nl.dyad3$bin500m <- as.factor(nl.dyad3$bin500m)
+#nl.dyad3$nWithin500 <- as.factor(nl.dyad3$nWithin500) ### update after adding niwthin500
+
+thresh<-seq(50,500,50) ### sequence of threshold values
+
 ### testing correlation
 ### we should test for correlation at any other levels we make thresholds
 ### we need to test for correlation with angles but there are NAs
+RMNP.COR_LIST<-list()
+RMNP.CORn_LIST<-list()
+RMNP.CORp_LIST<-list()
+RMNP.SUM_LIST<-list()
 
-summary(rmnp.dyad3)
-round(cor(rmnp.dyad3),2)
+for(i in 1:length(thresh)){
+  
+  RMNP.SUM_LIST[[1]]<-summary(rmnp.dyad3)
+  RMNP.COR_LIST[[1]]<-rcorr(as.matrix(rmnp.dyad3[,c(1:5,10:12,15:23)]))[[1]]
+  RMNP.CORn_LIST[[1]]<-rcorr(as.matrix(rmnp.dyad3[,c(1:5,10:12,15:23)]))[[2]]
+  RMNP.CORp_LIST[[1]]<-rcorr(as.matrix(rmnp.dyad3[,c(1:5,10:12,15:23)]))[[3]]
+  
+  RMNP.SUM_LIST[[i+1]]<-summary(rmnp.dyad3[dyadDist < thresh[i]])
+  RMNP.COR_LIST[[i+1]]<-rcorr(as.matrix(rmnp.dyad3[dyadDist < thresh[i]][,c(1:5,10:12,15:23)]))[[1]] 
+  RMNP.CORn_LIST[[i+1]]<-rcorr(as.matrix(rmnp.dyad3[dyadDist < thresh[i]][,c(1:5,10:12,15:23)]))[[2]]
+  RMNP.CORp_LIST[[i+1]]<-rcorr(as.matrix(rmnp.dyad3[dyadDist < thresh[i]][,c(1:5,10:12,15:23)]))[[3]]
+  
+}
 
-#### Edit below
+NL.COR_LIST<-list()
+NL.CORn_LIST<-list()
+NL.CORp_LIST<-list()
+NL.SUM_LIST<-list()
 
-summary(rmnp.dyad2[dyadDist < 500][,c(14,17,18,20,25:28,31:37)])
-
-round(cor(rmnp.dyad2[dyadDist < 500][,c(14,17,18,25:27,31,32,34:37)]),2)
-
-summary(rmnp.dyad2[dyadDist < 50][,c(14,17,18,20,25:28,31:37)])
-
-round(cor(rmnp.dyad2[dyadDist < 50][,c(14,17,18,25:27,31,32,34:37)]),2)
-
+for(i in 1:length(thresh)){
+  
+  NL.SUM_LIST[[1]]<-summary(nl.dyad3)
+  NL.COR_LIST[[1]]<-rcorr(as.matrix(nl.dyad3[,c(1:7,12:14,16:30)]))[[1]]
+  NL.CORn_LIST[[1]]<-rcorr(as.matrix(nl.dyad3[,c(1:7,12:14,16:30)]))[[2]]
+  NL.CORp_LIST[[1]]<-rcorr(as.matrix(nl.dyad3[,c(1:7,12:14,16:30)]))[[3]]
+  
+  NL.SUM_LIST[[i+1]]<-summary(nl.dyad3[dyadDist < thresh[i]])
+  NL.COR_LIST[[i+1]]<-rcorr(as.matrix(nl.dyad3[dyadDist < thresh[i]][,c(1:7,12:14,16:30)]))[[1]] 
+  NL.CORn_LIST[[i+1]]<-rcorr(as.matrix(nl.dyad3[dyadDist < thresh[i]][,c(1:7,12:14,16:30)]))[[2]]
+  NL.CORp_LIST[[i+1]]<-rcorr(as.matrix(nl.dyad3[dyadDist < thresh[i]][,c(1:7,12:14,16:30)]))[[3]]
+  
+}
 
 ### sample sizes
 
-nrow(rmnp.dyad2)
-nrow(rmnp.dyad2[dyadDist < 500])
-nrow(rmnp.dyad2[dyadDist < 50])
+sum_rmnp<-as.data.frame(matrix(ncol=3, nrow=11))
+colnames(sum_rmnp)<-c("dataset","n","NA_dAbsAng")
+
+sum_rmnp$dataset<-c("full",thresh)
+sum_rmnp$n[1]<-nrow(rmnp.dyad3)
+sum_rmnp$NA_dAbsAng[1]<-length(subset(rmnp.dyad3$dAbsAng, is.na(rmnp.dyad3$dAbsAng)))
+
+for(i in 1:length(thresh)){
+  
+  sum_rmnp$n[i+1]<-nrow(rmnp.dyad3[dyadDist < thresh[i]])
+  sum_rmnp$NA_dAbsAng[i+1]<-length(subset(rmnp.dyad3[dyadDist < thresh[i]]$dAbsAng, is.na(rmnp.dyad3[dyadDist < thresh[i]]$dAbsAng)))
+}
 
 
+sum_nl<-as.data.frame(matrix(ncol=3, nrow=11))
+colnames(sum_nl)<-c("dataset","n","NA_dAbsAng")
+
+sum_nl$dataset<-c("full",thresh)
+sum_nl$n[1]<-nrow(nl.dyad3)
+sum_nl$NA_dAbsAng[1]<-length(subset(nl.dyad3$dAbsAng, is.na(nl.dyad3$dAbsAng)))
+
+for(i in 1:length(thresh)){
+  
+  sum_nl$n[i+1]<-nrow(nl.dyad3[dyadDist < thresh[i]])
+  sum_nl$NA_dAbsAng[i+1]<-length(subset(nl.dyad3[dyadDist < thresh[i]]$dAbsAng, is.na(nl.dyad3[dyadDist < thresh[i]]$dAbsAng)))
+}
 
 
 ### what is this???
@@ -109,10 +170,6 @@ unique(rmnp[dyadDist < 150, .(dyadID, timegroup)])
 
 
 #rmnp[dyadDist < 500, qplot()
-
-
-
-rmnp.dyad3<-rmnp.dyad2[dSI<1000]
 
 
 
