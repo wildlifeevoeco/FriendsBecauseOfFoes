@@ -47,14 +47,33 @@ nl.dyad1$dyad.time<-paste(nl.dyad1$dyadID,nl.dyad1$timegroup,sep="_")
 
 nl.dyad2<-nl.dyad1[!duplicated(nl.dyad1$dyad.time),]
 
+nl.dyad2$predatorRSF<-nl.dyad2$CoyRSF+nl.dyad2$BearRSF
+nl.dyad2$rpredatorRSF<-nl.dyad2$rCoyRSF+nl.dyad2$rBearRSF
+nl.dyad2$dPredRSF<-nl.dyad2$dCoyRSF+nl.dyad2$dBearRSF
+nl.dyad2$avgPredRSF<-(nl.dyad2$predatorRSF+nl.dyad2$rpredatorRSF)/2
+
+### data to summarize, test for correlation, etc.
+
+### need to add nWithin500
+nl.dyad3<-nl.dyad2[, c("CarRSF","CoyRSF","BearRSF","absAngle","relAngle","stepLength","predatorRSF","season","dyadID",
+       "julday","yr","dyadDist","dSI","dAbsAng","bin500m",
+       "rCarRSF","rCoyRSF","rBearRSF","rabsAngle","rrelAngle","rstepLength","rpredatorRSF",
+       "dCarRSF","dCoyRSF","dBearRSF","dPredRSF",
+       "avgCarRSF","avgCoyRSF","avgBearRSF","avgPredRSF"), with=FALSE]
+
+rmnp.dyad3<-rmnp.dyad2[, c("absAngle","relAngle","stepLength","predatorRSF","preyRSF","season","dyadID",
+                           "julday","yr","dyadDist","dSI","dAbsAng","bin500m","nWithin500",
+                           "rabsAngle","rrelAngle","rstepLength","rpredatorRSF","rpreyRSF",
+                           "dPredRSF","dPreyRSF","avgPredRSF","avgPreyRSF"), with=FALSE]
 
 ### testing correlation
 ### we should test for correlation at any other levels we make thresholds
 ### we need to test for correlation with angles but there are NAs
 
-summary(rmnp.dyad2[,c(14,17,18,20,25:28,31:37)])
+summary(rmnp.dyad3)
+round(cor(rmnp.dyad3),2)
 
-round(cor(rmnp.dyad2[,c(14,17,18,25:27,31,32,34:37)]),2)
+#### Edit below
 
 summary(rmnp.dyad2[dyadDist < 500][,c(14,17,18,20,25:28,31:37)])
 
