@@ -124,56 +124,188 @@ for(i in 1:length(thresh)){
   
 }
 
-### sample sizes
+### sample sizes by threshold
 
-sum_rmnp<-as.data.frame(matrix(ncol=3, nrow=11))
+thresh1nl<-seq(50,max(nl.dyad3$dyadDist),50) ### sequence of threshold values
+thresh1rmnp<-seq(50,max(rmnp.dyad3$dyadDist),50) ### sequence of threshold values
+
+
+sum_rmnp<-as.data.frame(matrix(ncol=3, nrow=(1+length(thresh1rmnp))))
 colnames(sum_rmnp)<-c("dataset","n","NA_dAbsAng")
 
-sum_rmnp$dataset<-c("full",thresh)
+sum_rmnp$dataset<-c(max(rmnp.dyad3$dyadDist),thresh1rmnp)
 sum_rmnp$n[1]<-nrow(rmnp.dyad3)
 sum_rmnp$NA_dAbsAng[1]<-length(subset(rmnp.dyad3$dAbsAng, is.na(rmnp.dyad3$dAbsAng)))
 
-for(i in 1:length(thresh)){
+for(i in 1:length(thresh1rmnp)){
   
-  sum_rmnp$n[i+1]<-nrow(rmnp.dyad3[dyadDist < thresh[i]])
-  sum_rmnp$NA_dAbsAng[i+1]<-length(subset(rmnp.dyad3[dyadDist < thresh[i]]$dAbsAng, is.na(rmnp.dyad3[dyadDist < thresh[i]]$dAbsAng)))
+  sum_rmnp$n[i+1]<-nrow(rmnp.dyad3[dyadDist < thresh1rmnp[i]])
+  sum_rmnp$NA_dAbsAng[i+1]<-length(subset(rmnp.dyad3[dyadDist < thresh1rmnp[i]]$dAbsAng, is.na(rmnp.dyad3[dyadDist < thresh1rmnp[i]]$dAbsAng)))
 }
 
 
-sum_nl<-as.data.frame(matrix(ncol=3, nrow=11))
+sum_nl<-as.data.frame(matrix(ncol=3, nrow=(1+length(thresh1nl))))
 colnames(sum_nl)<-c("dataset","n","NA_dAbsAng")
 
-sum_nl$dataset<-c("full",thresh)
+sum_nl$dataset<-c(max(nl.dyad3$dyadDist),thresh1nl)
 sum_nl$n[1]<-nrow(nl.dyad3)
 sum_nl$NA_dAbsAng[1]<-length(subset(nl.dyad3$dAbsAng, is.na(nl.dyad3$dAbsAng)))
 
-for(i in 1:length(thresh)){
+for(i in 1:length(thresh1nl)){
   
-  sum_nl$n[i+1]<-nrow(nl.dyad3[dyadDist < thresh[i]])
-  sum_nl$NA_dAbsAng[i+1]<-length(subset(nl.dyad3[dyadDist < thresh[i]]$dAbsAng, is.na(nl.dyad3[dyadDist < thresh[i]]$dAbsAng)))
+  sum_nl$n[i+1]<-nrow(nl.dyad3[dyadDist < thresh1nl[i]])
+  sum_nl$NA_dAbsAng[i+1]<-length(subset(nl.dyad3[dyadDist < thresh1nl[i]]$dAbsAng, is.na(nl.dyad3[dyadDist < thresh1nl[i]]$dAbsAng)))
 }
 
+### visual of sample size by threshold
 
-### what is this???
-#NL file
-# nl <- 
-dd <- data.table(sapply(seq(0, 1000, by = 50), function(x){
-  nrow(unique(rmnp[dyadDist < x, .(dyadID, timegroup, dSI)]))
-  }), 
-  seq(0,1000,by = 50))
-
-ggplot(dd) + 
-  geom_line(aes(V2, V1)) + 
-  labs(x = 'dyadDist', y = 'n rows')
-
-unique(rmnp[dyadDist < 150, .(dyadID, timegroup)])
-
-
-#rmnp[dyadDist < 500, qplot()
+plot(sum_nl$dataset,sum_nl$n)  
+plot(sum_rmnp$dataset,sum_rmnp$n)
 
 
 
-     
+
+### plots of data
+
+## FULL
+## RMNP
+
+boxplot(rmnp.dyad3$dyadDist)
+hist(rmnp.dyad3$dyadDist)
+
+boxplot(rmnp.dyad3$dSI)
+hist(rmnp.dyad3$dSI)
+
+boxplot(rmnp.dyad3$dAbsAng)
+hist(rmnp.dyad3$dAbsAng)
+
+boxplot(rmnp.dyad3$avgPredRSF)
+hist(rmnp.dyad3$avgPredRSF)
+
+boxplot(rmnp.dyad3$avgPreyRSF)
+hist(rmnp.dyad3$avgPreyRSF)
+
+## NL
+
+boxplot(nl.dyad3$dyadDist)
+hist(nl.dyad3$dyadDist)
+
+boxplot(nl.dyad3$dSI)
+hist(nl.dyad3$dSI)
+
+boxplot(nl.dyad3$dAbsAng)
+hist(nl.dyad3$dAbsAng)
+
+boxplot(nl.dyad3$avgPredRSF)
+hist(nl.dyad3$avgPredRSF)
+
+boxplot(nl.dyad3$avgCoyRSF)
+hist(nl.dyad3$avgCoyRSF)
+
+boxplot(nl.dyad3$avgBearRSF)
+hist(nl.dyad3$avgBearRSF)
+
+boxplot(nl.dyad3$avgCarRSF)
+hist(nl.dyad3$avgCarRSF)
+
+
+
+
+## 500m DyadDist threshold
+## RMNP
+
+boxplot(rmnp.dyad3[dyadDist < 500]$dyadDist)
+hist(rmnp.dyad3[dyadDist < 500]$dyadDist)
+
+boxplot(rmnp.dyad3[dyadDist < 500]$dSI)
+hist(rmnp.dyad3[dyadDist < 500]$dSI)
+
+boxplot(rmnp.dyad3[dyadDist < 500]$dAbsAng)
+hist(rmnp.dyad3[dyadDist < 500]$dAbsAng)
+
+boxplot(rmnp.dyad3[dyadDist < 500]$avgPredRSF)
+hist(rmnp.dyad3[dyadDist < 500]$avgPredRSF)
+
+boxplot(rmnp.dyad3[dyadDist < 500]$avgPreyRSF)
+hist(rmnp.dyad3[dyadDist < 500]$avgPreyRSF)
+
+## NL
+
+boxplot(nl.dyad3[dyadDist < 500]$dyadDist)
+hist(nl.dyad3[dyadDist < 500]$dyadDist)
+
+boxplot(nl.dyad3[dyadDist < 500]$dSI)
+hist(nl.dyad3[dyadDist < 500]$dSI)
+
+boxplot(nl.dyad3[dyadDist < 500]$dAbsAng)
+hist(nl.dyad3[dyadDist < 500]$dAbsAng)
+
+boxplot(nl.dyad3[dyadDist < 500]$avgPredRSF)
+hist(nl.dyad3[dyadDist < 500]$avgPredRSF)
+
+boxplot(nl.dyad3[dyadDist < 500]$avgCoyRSF)
+hist(nl.dyad3[dyadDist < 500]$avgCoyRSF)
+
+boxplot(nl.dyad3[dyadDist < 500]$avgBearRSF)
+hist(nl.dyad3[dyadDist < 500]$avgBearRSF)
+
+boxplot(nl.dyad3[dyadDist < 500]$avgCarRSF)
+hist(nl.dyad3[dyadDist < 500]$avgCarRSF)
+
+## At threshold 500m
+### Issue: Long tail distribution in dyadDist for RMNP but not NL
+### Issue: Extremely long tail distribution in DSI for RMNP and NL
+### Issue: Coy & Bear RSFs are an order of magnitude smaller than Car RSFs in NL but not RMNP
+    
+
+
+
+## 50m DyadDist threshold
+## RMNP
+
+boxplot(rmnp.dyad3[dyadDist < 50]$dyadDist)
+hist(rmnp.dyad3[dyadDist < 50]$dyadDist)
+
+boxplot(rmnp.dyad3[dyadDist < 50]$dSI)
+hist(rmnp.dyad3[dyadDist < 50]$dSI)
+
+boxplot(rmnp.dyad3[dyadDist < 50]$dAbsAng)
+hist(rmnp.dyad3[dyadDist < 50]$dAbsAng)
+
+boxplot(rmnp.dyad3[dyadDist < 50]$avgPredRSF)
+hist(rmnp.dyad3[dyadDist < 50]$avgPredRSF)
+
+boxplot(rmnp.dyad3[dyadDist < 50]$avgPreyRSF)
+hist(rmnp.dyad3[dyadDist < 50]$avgPreyRSF)
+
+## NL
+
+boxplot(nl.dyad3[dyadDist < 50]$dyadDist)
+hist(nl.dyad3[dyadDist < 50]$dyadDist)
+
+boxplot(nl.dyad3[dyadDist < 50]$dSI)
+hist(nl.dyad3[dyadDist < 50]$dSI)
+
+boxplot(nl.dyad3[dyadDist < 50]$dAbsAng)
+hist(nl.dyad3[dyadDist < 50]$dAbsAng)
+
+boxplot(nl.dyad3[dyadDist < 50]$avgPredRSF)
+hist(nl.dyad3[dyadDist < 50]$avgPredRSF)
+
+boxplot(nl.dyad3[dyadDist < 50]$avgCoyRSF)
+hist(nl.dyad3[dyadDist < 50]$avgCoyRSF)
+
+boxplot(nl.dyad3[dyadDist < 50]$avgBearRSF)
+hist(nl.dyad3[dyadDist < 50]$avgBearRSF)
+
+boxplot(nl.dyad3[dyadDist < 50]$avgCarRSF)
+hist(nl.dyad3[dyadDist < 50]$avgCarRSF)
+
+## At threshold 50m
+### Issue: Extremely long tail distribution in DSI for RMNP and NL
+### Issue: Coy & Bear RSFs are an order of magnitude smaller than Car RSFs in NL but not RMNP
+
+
 ###GLM
 # SA <- glm(SocialMeasure ~ PreyHD*PredHD, data = rmnp)
 ## social measures are: dSI, dyadDist, dAbsAng, bin500m, nWithin5000
@@ -438,3 +570,45 @@ visreg2d(rmNN.dsl.avg.d50, "avgPreyRSF", "avgPredRSF", plot.type="persp")
 
 visreg2d(rmNN.dsl.avg.d50, "avgPreyRSF", "avgPredRSF", plot.type="rgl")
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### what is this???
+#NL file
+# nl <- 
+dd <- data.table(sapply(seq(0, 1000, by = 50), function(x){
+  nrow(unique(rmnp[dyadDist < x, .(dyadID, timegroup, dSI)]))
+}), 
+seq(0,1000,by = 50))
+
+ggplot(dd) + 
+  geom_line(aes(V2, V1)) + 
+  labs(x = 'dyadDist', y = 'n rows')
+
+unique(rmnp[dyadDist < 150, .(dyadID, timegroup)])
+
+
+#rmnp[dyadDist < 500, qplot()
