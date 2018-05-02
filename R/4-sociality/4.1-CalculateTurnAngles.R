@@ -32,7 +32,7 @@ datetimeCol <- 'datetime'
 yrCol <- 'yr'
 
 ### Variables ----
-DT[, rowID := rleid(EASTING)]
+DT[, rowID := rleid(EASTING), by = c(idCol, yrCol)]
 
 ### Calculate Absolute Angle ----
 source('R/0-functions/AbsoluteAngle.R')
@@ -46,33 +46,3 @@ saveRDS(DT, paste0('output/angles/', species, 'Angle.Rds'))
 
 ### Figures ----
 qplot(absAngle, data = DT)
-
-
-
-### Input data ----
-# Which species would you like to calculate abs and rel TA for?
-species <- 'caribou'
-DT <- readRDS(paste0('output/rsf-values/', species, 'RsfValues.Rds'))
-
-# List relevant column names
-coordCols <- c('EASTING', 'NORTHING')
-idCol <- 'id'
-datetimeCol <- 'datetime' 
-yrCol <- 'yr'
-
-### Variables ----
-DT[, rowID := rleid(EASTING)]
-
-### Calculate Absolute Angle ----
-source('R/0-functions/AbsoluteAngle.R')
-AbsoluteAngle(DT, coordCols, datetimeCol, idCol, yrCol, FALSE, FALSE)
-
-source('R/0-functions/RelativeAngle.R')
-RelativeAngle(DT, coordCols, datetimeCol, idCol, yrCol, FALSE, FALSE)
-
-### Output ----
-saveRDS(DT, paste0('output/angles/', species, 'Angle.Rds'))
-
-### Figures ----
-qplot(absAngle, data = DT)
-
