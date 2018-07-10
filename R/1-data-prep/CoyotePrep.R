@@ -8,9 +8,13 @@
 
 
 ### Packages ----
-libs <- c('data.table', 'ggplot2', 
+libs <- c('data.table', 'ggplot2', 'spatsoc',
           'knitr', 'sp', 'rgdal', 'magrittr')
 lapply(libs, require, character.only = TRUE)
+
+# Note: if spatsoc is not installed, uncomment and run these lines:
+# drat::addRepo('LocalRepo', 'https://spatsoc.gitlab.io')
+# install.packages('spatsoc')
 
 ### Input data ----
 dropCols <- c('FIX_ID','VENDOR_CL','AGE','COLLAR_FILE_ID','EXCLUDE','DOP','LOCQUAL',
@@ -51,9 +55,8 @@ source('R/0-variables/CutOffThresholds.R')
 coyote[julday %between% winter, season := 'winter']
 coyote[julday %between% spring, season := 'spring']
 
-# Group Time - from spatsoc
-source('R/0-functions/Group-Time-spatsoc.R')
-GroupTimes(coyote, 'datetime', '15 minutes')
+# group_times from spatsoc
+group_times(coyote, 'datetime', '15 minutes')
 
 ### Subset ----
 # Subset any NAs in defined cols
