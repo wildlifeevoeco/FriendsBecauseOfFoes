@@ -172,7 +172,7 @@ herdList <- 'MIDRIDGE'
 
 # Map_Quality, NAV
 
-coyote5 <- coyote[stepLength < stepLengthThreshold & 
+coyote <- coyote[stepLength < stepLengthThreshold & 
                    moveRate < moveRateThreshold &
                    between(julday, lowJul, highJul)]
                   #HERD %in% herdList]
