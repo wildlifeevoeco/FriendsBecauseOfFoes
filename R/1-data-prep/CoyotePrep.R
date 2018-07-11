@@ -46,6 +46,14 @@ projYCol <- 'NORTHING'
 source('R/0-functions/DatePrep.R')
 DatePrep(coyote, dateCol, timeCol)
 
+# What is the difference in hours between fixes
+coyote[order(datetime), 
+       difdatetime := 
+         difftime(datetime, 
+                  shift(datetime, 1), 
+                  units = 'hours'),
+       by = idCol]
+
 # Check!
 coyote[sample(.N, 5), .(idate, itime, yr, mnth, julday)]
 
