@@ -9,7 +9,7 @@
 libs <- c('data.table',  
           'lme4',
           'ggplot2',
-          'Hmsic')
+          'Hmisc')
 lapply(libs, require, character.only = TRUE)
 
 ### Input data ----
@@ -53,116 +53,103 @@ nl.dyad2$rpredatorRSF<-ifelse(nl.dyad2$season=="spring", nl.dyad2$rCoyRSF+nl.dya
 nl.dyad2$dPredRSF<-ifelse(nl.dyad2$season=="spring", nl.dyad2$dCoyRSF+nl.dyad2$dBearRSF, nl.dyad2$dCoyRSF)
 nl.dyad2$avgPredRSF<-ifelse(nl.dyad2$season=="spring", (nl.dyad2$predatorRSF+nl.dyad2$rpredatorRSF)/2, nl.dyad2$avgCoyRSF)
 
+
+
+#### Because we are focused on sociality, we only want to look at animals that:
+### 1) had potential to be social (dyads within 500m)
+### 2) dyads that choose to be social (dSl less 500m)
+
+### we might be interested in the conditions that result in a dyad that had the potential to be social but choose to not be social
+
+nl.dyad3<-nl.dyad2[dyadDist<=500 & dSI<=500] #choose to be social (7637/9049; 84.4% of potential to be social were)
+nl.dyad4<-nl.dyad2[dyadDist<=500 & dSI>=500] #choose not to be social (1412/9049; 15.6% of potentail to be social choose not to be)
+nl.dyad5<-nl.dyad2[dyadDist>500] # did not have potential to be social (112159/121208; 92.5%)
+
+rmnp.dyad3<-rmnp.dyad2[dyadDist<=500 & dSI<=500] #choose to be social (2147/2291; 93.7% of potential to be social were)
+rmnp.dyad4<-rmnp.dyad2[dyadDist<=500 & dSI>=500] #choose not to be social (144/2291; 6.3% of potentail to be social choose not to be)
+rmnp.dyad5<-rmnp.dyad2[dyadDist>500] # did not have potential to be social (14477/16768; 86.3%)
+
 ### data to summarize, test for correlation, etc.
 
 ### need to add nWithin500
-nl.dyad3<-nl.dyad2[, c("CarRSF","CoyRSF","BearRSF","absAngle","relAngle","stepLength","predatorRSF","season","dyadID",
+nl.dyad3.1<-nl.dyad3[, c("CarRSF","CoyRSF","BearRSF","absAngle","relAngle","stepLength","predatorRSF","season","dyadID",
        "julday","yr","dyadDist","dSI","dAbsAng","bin500m",
        "rCarRSF","rCoyRSF","rBearRSF","rabsAngle","rrelAngle","rstepLength","rpredatorRSF",
        "dCarRSF","dCoyRSF","dBearRSF","dPredRSF",
        "avgCarRSF","avgCoyRSF","avgBearRSF","avgPredRSF"), with=FALSE]
 
-rmnp.dyad3<-rmnp.dyad2[, c("absAngle","relAngle","stepLength","predatorRSF","preyRSF","season","dyadID",
+rmnp.dyad3.1<-rmnp.dyad3[, c("absAngle","relAngle","stepLength","predatorRSF","preyRSF","season","dyadID",
                            "julday","yr","dyadDist","dSI","dAbsAng","bin500m","nWithin500",
                            "rabsAngle","rrelAngle","rstepLength","rpredatorRSF","rpreyRSF",
                            "dPredRSF","dPreyRSF","avgPredRSF","avgPreyRSF"), with=FALSE]
 
-rmnp.dyad3$season <- as.factor(rmnp.dyad3$season)
-rmnp.dyad3$dyadID <- as.factor(rmnp.dyad3$dyadID)
-rmnp.dyad3$julday <- as.factor(rmnp.dyad3$julday)
-rmnp.dyad3$yr <- as.factor(rmnp.dyad3$yr)
-rmnp.dyad3$bin500m <- as.factor(rmnp.dyad3$bin500m)
-rmnp.dyad3$nWithin500 <- as.factor(rmnp.dyad3$nWithin500)
+rmnp.dyad3.1$season <- as.factor(rmnp.dyad3.1$season)
+rmnp.dyad3.1$dyadID <- as.factor(rmnp.dyad3.1$dyadID)
+rmnp.dyad3.1$julday <- as.factor(rmnp.dyad3.1$julday)
+rmnp.dyad3.1$yr <- as.factor(rmnp.dyad3.1$yr)
+rmnp.dyad3.1$bin500m <- as.factor(rmnp.dyad3.1$bin500m)
+rmnp.dyad3.1$nWithin500 <- as.factor(rmnp.dyad3.1$nWithin500)
 
-nl.dyad3$season <- as.factor(nl.dyad3$season)
-nl.dyad3$dyadID <- as.factor(nl.dyad3$dyadID)
-nl.dyad3$julday <- as.factor(nl.dyad3$julday)
-nl.dyad3$yr <- as.factor(nl.dyad3$yr)
-nl.dyad3$bin500m <- as.factor(nl.dyad3$bin500m)
-#nl.dyad3$nWithin500 <- as.factor(nl.dyad3$nWithin500) ### update after adding niwthin500
-
-thresh<-seq(50,500,50) ### sequence of threshold values
-
-### testing correlation
-### we should test for correlation at any other levels we make thresholds
-### we need to test for correlation with angles but there are NAs
-RMNP.COR_LIST<-list()
-RMNP.CORn_LIST<-list()
-RMNP.CORp_LIST<-list()
-RMNP.SUM_LIST<-list()
-
-for(i in 1:length(thresh)){
-  
-  RMNP.SUM_LIST[[1]]<-summary(rmnp.dyad3)
-  RMNP.COR_LIST[[1]]<-rcorr(as.matrix(rmnp.dyad3[,c(1:5,10:12,15:23)]))[[1]]
-  RMNP.CORn_LIST[[1]]<-rcorr(as.matrix(rmnp.dyad3[,c(1:5,10:12,15:23)]))[[2]]
-  RMNP.CORp_LIST[[1]]<-rcorr(as.matrix(rmnp.dyad3[,c(1:5,10:12,15:23)]))[[3]]
-  
-  RMNP.SUM_LIST[[i+1]]<-summary(rmnp.dyad3[dyadDist < thresh[i]])
-  RMNP.COR_LIST[[i+1]]<-rcorr(as.matrix(rmnp.dyad3[dyadDist < thresh[i]][,c(1:5,10:12,15:23)]))[[1]] 
-  RMNP.CORn_LIST[[i+1]]<-rcorr(as.matrix(rmnp.dyad3[dyadDist < thresh[i]][,c(1:5,10:12,15:23)]))[[2]]
-  RMNP.CORp_LIST[[i+1]]<-rcorr(as.matrix(rmnp.dyad3[dyadDist < thresh[i]][,c(1:5,10:12,15:23)]))[[3]]
-  
-}
-
-NL.COR_LIST<-list()
-NL.CORn_LIST<-list()
-NL.CORp_LIST<-list()
-NL.SUM_LIST<-list()
-
-for(i in 1:length(thresh)){
-  
-  NL.SUM_LIST[[1]]<-summary(nl.dyad3)
-  NL.COR_LIST[[1]]<-rcorr(as.matrix(nl.dyad3[,c(1:7,12:14,16:30)]))[[1]]
-  NL.CORn_LIST[[1]]<-rcorr(as.matrix(nl.dyad3[,c(1:7,12:14,16:30)]))[[2]]
-  NL.CORp_LIST[[1]]<-rcorr(as.matrix(nl.dyad3[,c(1:7,12:14,16:30)]))[[3]]
-  
-  NL.SUM_LIST[[i+1]]<-summary(nl.dyad3[dyadDist < thresh[i]])
-  NL.COR_LIST[[i+1]]<-rcorr(as.matrix(nl.dyad3[dyadDist < thresh[i]][,c(1:7,12:14,16:30)]))[[1]] 
-  NL.CORn_LIST[[i+1]]<-rcorr(as.matrix(nl.dyad3[dyadDist < thresh[i]][,c(1:7,12:14,16:30)]))[[2]]
-  NL.CORp_LIST[[i+1]]<-rcorr(as.matrix(nl.dyad3[dyadDist < thresh[i]][,c(1:7,12:14,16:30)]))[[3]]
-  
-}
-
-### sample sizes by threshold
-
-thresh1nl<-seq(50,max(nl.dyad3$dyadDist),50) ### sequence of threshold values
-thresh1rmnp<-seq(50,max(rmnp.dyad3$dyadDist),50) ### sequence of threshold values
+nl.dyad3.1$season <- as.factor(nl.dyad3.1$season)
+nl.dyad3.1$dyadID <- as.factor(nl.dyad3.1$dyadID)
+nl.dyad3.1$julday <- as.factor(nl.dyad3.1$julday)
+nl.dyad3.1$yr <- as.factor(nl.dyad3.1$yr)
+nl.dyad3.1$bin500m <- as.factor(nl.dyad3.1$bin500m)
+#nl.dyad3.1$nWithin500 <- as.factor(nl.dyad3.1$nWithin500) ### update after adding niwthin500
 
 
-sum_rmnp<-as.data.frame(matrix(ncol=3, nrow=(1+length(thresh1rmnp))))
-colnames(sum_rmnp)<-c("dataset","n","NA_dAbsAng")
 
-sum_rmnp$dataset<-c(max(rmnp.dyad3$dyadDist),thresh1rmnp)
-sum_rmnp$n[1]<-nrow(rmnp.dyad3)
-sum_rmnp$NA_dAbsAng[1]<-length(subset(rmnp.dyad3$dAbsAng, is.na(rmnp.dyad3$dAbsAng)))
+RMNP_cor<-c("predatorRSF","preyRSF","dPredRSF","dPreyRSF","dSI","dAbsAng","avgPredRSF","avgPreyRSF","dyadDist")
+NL_cor<-c("predatorRSF","CarRSF","CoyRSF","BearRSF","dPredRSF","dCarRSF","dCoyRSF","dBearRSF","dSI","dAbsAng","avgPredRSF","avgCarRSF","avgCoyRSF","avgBearRSF","dyadDist")
 
-for(i in 1:length(thresh1rmnp)){
-  
-  sum_rmnp$n[i+1]<-nrow(rmnp.dyad3[dyadDist < thresh1rmnp[i]])
-  sum_rmnp$NA_dAbsAng[i+1]<-length(subset(rmnp.dyad3[dyadDist < thresh1rmnp[i]]$dAbsAng, is.na(rmnp.dyad3[dyadDist < thresh1rmnp[i]]$dAbsAng)))
-}
+summary(rmnp.dyad3.1[,RMNP_cor, with=FALSE])
+summary(nl.dyad3.1[,NL_cor, with=FALSE])
+
+### PredRSF and PreyRSF values are not quite on the same scale, going to standardize them at the 'd' and 'avg' stages, also including transformation to proportion
+
+rmnp.dyad3.1$sc_dPreyRSF<-scale(rmnp.dyad3.1$dPreyRSF, center=T, scale=T)
+rmnp.dyad3.1$sc_dPredRSF<-scale(rmnp.dyad3.1$dPredRSF, center=T, scale=T)
+
+rmnp.dyad3.1$pr_dPreyRSF<-rmnp.dyad3.1$dPreyRSF/max(rmnp.dyad3.1$dPreyRSF)
+rmnp.dyad3.1$pr_dPredRSF<-rmnp.dyad3.1$dPredRSF/max(rmnp.dyad3.1$dPredRSF)
+
+rmnp.dyad3.1$sc_avgPreyRSF<-scale(rmnp.dyad3.1$avgPreyRSF, center=T, scale=T)
+rmnp.dyad3.1$sc_avgPredRSF<-scale(rmnp.dyad3.1$avgPredRSF, center=T, scale=T)
+
+rmnp.dyad3.1$pr_avgPreyRSF<-rmnp.dyad3.1$avgPreyRSF/max(rmnp.dyad3.1$avgPreyRSF)
+rmnp.dyad3.1$pr_avgPredRSF<-rmnp.dyad3.1$avgPredRSF/max(rmnp.dyad3.1$avgPredRSF)
+
+nl.dyad3.1$sc_dCarRSF<-scale(nl.dyad3.1$dCarRSF, center=T, scale=T)
+nl.dyad3.1$sc_dPredRSF<-scale(nl.dyad3.1$dPredRSF, center=T, scale=T)
+
+nl.dyad3.1$pr_dCarRSF<-nl.dyad3.1$dCarRSF/max(nl.dyad3.1$dCarRSF)
+nl.dyad3.1$pr_dPredRSF<-nl.dyad3.1$dPredRSF/max(nl.dyad3.1$dPredRSF)
+
+nl.dyad3.1$sc_avgCarRSF<-scale(nl.dyad3.1$avgCarRSF, center=T, scale=T)
+nl.dyad3.1$sc_avgPredRSF<-scale(nl.dyad3.1$avgPredRSF, center=T, scale=T)
+
+nl.dyad3.1$pr_avgCarRSF<-nl.dyad3.1$avgCarRSF/max(nl.dyad3.1$avgCarRSF)
+nl.dyad3.1$pr_avgPredRSF<-nl.dyad3.1$avgPredRSF/max(nl.dyad3.1$avgPredRSF)
+
+nl.dyad3.1$sc_dCoyRSF<-scale(nl.dyad3.1$dCoyRSF, center=T, scale=T)
+nl.dyad3.1$sc_dBearRSF<-scale(nl.dyad3.1$dBearRSF, center=T, scale=T)
+
+nl.dyad3.1$pr_dCoyRSF<-nl.dyad3.1$dCoyRSF/max(nl.dyad3.1$dCoyRSF)
+nl.dyad3.1$pr_dBearRSF<-nl.dyad3.1$dBearRSF/max(nl.dyad3.1$dBearRSF, na.rm=T)
+
+nl.dyad3.1$sc_avgCoyRSF<-scale(nl.dyad3.1$avgCoyRSF, center=T, scale=T)
+nl.dyad3.1$sc_avgBearRSF<-scale(nl.dyad3.1$avgBearRSF, center=T, scale=T)
+
+nl.dyad3.1$pr_avgCoyRSF<-nl.dyad3.1$avgCoyRSF/max(nl.dyad3.1$avgCoyRSF)
+nl.dyad3.1$pr_avgBearRSF<-nl.dyad3.1$avgBearRSF/max(nl.dyad3.1$avgBearRSF, na.rm=T)
 
 
-sum_nl<-as.data.frame(matrix(ncol=3, nrow=(1+length(thresh1nl))))
-colnames(sum_nl)<-c("dataset","n","NA_dAbsAng")
+#### Testing for correlations in the data
 
-sum_nl$dataset<-c(max(nl.dyad3$dyadDist),thresh1nl)
-sum_nl$n[1]<-nrow(nl.dyad3)
-sum_nl$NA_dAbsAng[1]<-length(subset(nl.dyad3$dAbsAng, is.na(nl.dyad3$dAbsAng)))
+rcorr(as.matrix(rmnp.dyad3.1[,RMNP_cor, with=FALSE])) 
+rcorr(as.matrix(nl.dyad3.1[,NL_cor, with=FALSE]))
 
-for(i in 1:length(thresh1nl)){
-  
-  sum_nl$n[i+1]<-nrow(nl.dyad3[dyadDist < thresh1nl[i]])
-  sum_nl$NA_dAbsAng[i+1]<-length(subset(nl.dyad3[dyadDist < thresh1nl[i]]$dAbsAng, is.na(nl.dyad3[dyadDist < thresh1nl[i]]$dAbsAng)))
-}
-
-### visual of sample size by threshold
-
-plot(sum_nl$dataset,sum_nl$n)  
-plot(sum_rmnp$dataset,sum_rmnp$n)
-
-
+### No unexpected correlations
 
 
 ### plots of data
@@ -170,392 +157,128 @@ plot(sum_rmnp$dataset,sum_rmnp$n)
 ## FULL
 ## RMNP
 
-boxplot(rmnp.dyad3$dyadDist)
-hist(rmnp.dyad3$dyadDist)
+boxplot(rmnp.dyad3.1$dyadDist)
+hist(rmnp.dyad3.1$dyadDist)
 
-boxplot(rmnp.dyad3$dSI)
-hist(rmnp.dyad3$dSI)
+boxplot(rmnp.dyad3.1$dSI)
+hist(rmnp.dyad3.1$dSI)
 
-boxplot(rmnp.dyad3$dAbsAng)
-hist(rmnp.dyad3$dAbsAng)
+boxplot(rmnp.dyad3.1$dAbsAng)
+hist(rmnp.dyad3.1$dAbsAng)
 
-boxplot(rmnp.dyad3$avgPredRSF)
-hist(rmnp.dyad3$avgPredRSF)
+boxplot(rmnp.dyad3.1$avgPredRSF)
+hist(rmnp.dyad3.1$avgPredRSF)
 
-boxplot(rmnp.dyad3$avgPreyRSF)
-hist(rmnp.dyad3$avgPreyRSF)
+boxplot(rmnp.dyad3.1$avgPreyRSF)
+hist(rmnp.dyad3.1$avgPreyRSF)
 
-## NL
+boxplot(rmnp.dyad3.1$sc_avgPredRSF)
+hist(rmnp.dyad3.1$sc_avgPredRSF)
 
-boxplot(nl.dyad3$dyadDist)
-hist(nl.dyad3$dyadDist)
+boxplot(rmnp.dyad3.1$sc_avgPreyRSF)
+hist(rmnp.dyad3.1$sc_avgPreyRSF)
 
-boxplot(nl.dyad3$dSI)
-hist(nl.dyad3$dSI)
+boxplot(rmnp.dyad3.1$pr_avgPredRSF)
+hist(rmnp.dyad3.1$pr_avgPredRSF)
 
-boxplot(nl.dyad3$dAbsAng)
-hist(nl.dyad3$dAbsAng)
-
-boxplot(nl.dyad3$avgPredRSF)
-hist(nl.dyad3$avgPredRSF)
-
-boxplot(nl.dyad3$avgCoyRSF)
-hist(nl.dyad3$avgCoyRSF)
-
-boxplot(nl.dyad3$avgBearRSF)
-hist(nl.dyad3$avgBearRSF)
-
-boxplot(nl.dyad3$avgCarRSF)
-hist(nl.dyad3$avgCarRSF)
-
-
-plot(nl.dyad3$season)
-plot(rmnp.dyad3$season)
-
-## 500m DyadDist threshold
-## RMNP
-
-boxplot(rmnp.dyad3[dyadDist < 500]$dyadDist)
-hist(rmnp.dyad3[dyadDist < 500]$dyadDist)
-
-boxplot(rmnp.dyad3[dyadDist < 500]$dSI)
-hist(rmnp.dyad3[dyadDist < 500]$dSI)
-
-boxplot(rmnp.dyad3[dyadDist < 500]$dAbsAng)
-hist(rmnp.dyad3[dyadDist < 500]$dAbsAng)
-
-boxplot(rmnp.dyad3[dyadDist < 500]$avgPredRSF)
-hist(rmnp.dyad3[dyadDist < 500]$avgPredRSF)
-
-boxplot(rmnp.dyad3[dyadDist < 500]$avgPreyRSF)
-hist(rmnp.dyad3[dyadDist < 500]$avgPreyRSF)
+boxplot(rmnp.dyad3.1$pr_avgPreyRSF)
+hist(rmnp.dyad3.1$pr_avgPreyRSF)
 
 ## NL
 
-boxplot(nl.dyad3[dyadDist < 500]$dyadDist)
-hist(nl.dyad3[dyadDist < 500]$dyadDist)
+boxplot(nl.dyad3.1$dyadDist)
+hist(nl.dyad3.1$dyadDist)
 
-boxplot(nl.dyad3[dyadDist < 500]$dSI)
-hist(nl.dyad3[dyadDist < 500]$dSI)
+boxplot(nl.dyad3.1$dSI)
+hist(nl.dyad3.1$dSI)
 
-boxplot(nl.dyad3[dyadDist < 500]$dAbsAng)
-hist(nl.dyad3[dyadDist < 500]$dAbsAng)
+boxplot(nl.dyad3.1$dAbsAng)
+hist(nl.dyad3.1$dAbsAng)
 
-boxplot(nl.dyad3[dyadDist < 500]$avgPredRSF)
-hist(nl.dyad3[dyadDist < 500]$avgPredRSF)
+boxplot(nl.dyad3.1$avgCoyRSF)
+hist(nl.dyad3.1$avgCoyRSF)
 
-boxplot(nl.dyad3[dyadDist < 500]$avgCoyRSF)
-hist(nl.dyad3[dyadDist < 500]$avgCoyRSF)
+boxplot(nl.dyad3.1$avgBearRSF)
+hist(nl.dyad3.1$avgBearRSF)
 
-boxplot(nl.dyad3[dyadDist < 500]$avgBearRSF)
-hist(nl.dyad3[dyadDist < 500]$avgBearRSF)
+boxplot(nl.dyad3.1$avgPredRSF)
+hist(nl.dyad3.1$avgPredRSF)
 
-boxplot(nl.dyad3[dyadDist < 500]$avgCarRSF)
-hist(nl.dyad3[dyadDist < 500]$avgCarRSF)
+boxplot(nl.dyad3.1$avgCarRSF)
+hist(nl.dyad3.1$avgCarRSF)
 
-## At threshold 500m
-### Issue: Long tail distribution in dyadDist for RMNP but not NL
-### Issue: Extremely long tail distribution in DSI for RMNP and NL
-### Issue: Coy & Bear RSFs are an order of magnitude smaller than Car RSFs in NL but not RMNP
-    
-plot(nl.dyad3[dyadDist < 500]$season)
-plot(rmnp.dyad3[dyadDist < 500]$season)
 
-plot(nl.dyad3[dyadDist < 500]$julday)
-plot(rmnp.dyad3[dyadDist < 500]$julday)
+boxplot(nl.dyad3.1$sc_avgCoyRSF)
+hist(nl.dyad3.1$sc_avgCoyRSF)
 
-plot(nl.dyad3[dyadDist < 500]$dyadID)
-plot(rmnp.dyad3[dyadDist < 500]$dyadID)
+boxplot(nl.dyad3.1$sc_avgBearRSF)
+hist(nl.dyad3.1$sc_avgBearRSF)
 
-plot(nl.dyad3[dyadDist < 500]$yr)
-plot(rmnp.dyad3[dyadDist < 500]$yr)
+boxplot(nl.dyad3.1$sc_avgPredRSF)
+hist(nl.dyad3.1$sc_avgPredRSF)
 
-# plot(nl.dyad3[dyadDist < 500]$nWithin500) # update when nwithin500 is added
-plot(rmnp.dyad3[dyadDist < 500]$nWithin500)
+boxplot(nl.dyad3.1$sc_avgCarRSF)
+hist(nl.dyad3.1$sc_avgCarRSF)
 
-## 50m DyadDist threshold
-## RMNP
 
-boxplot(rmnp.dyad3[dyadDist < 50]$dyadDist)
-hist(rmnp.dyad3[dyadDist < 50]$dyadDist)
+boxplot(nl.dyad3.1$pr_avgCoyRSF)
+hist(nl.dyad3.1$pr_avgCoyRSF)
 
-boxplot(rmnp.dyad3[dyadDist < 50]$dSI)
-hist(rmnp.dyad3[dyadDist < 50]$dSI)
+boxplot(nl.dyad3.1$pr_avgBearRSF)
+hist(nl.dyad3.1$pr_avgBearRSF)
 
-boxplot(rmnp.dyad3[dyadDist < 50]$dAbsAng)
-hist(rmnp.dyad3[dyadDist < 50]$dAbsAng)
+boxplot(nl.dyad3.1$pr_avgPredRSF)
+hist(nl.dyad3.1$pr_avgPredRSF)
 
-boxplot(rmnp.dyad3[dyadDist < 50]$avgPredRSF)
-hist(rmnp.dyad3[dyadDist < 50]$avgPredRSF)
+boxplot(nl.dyad3.1$pr_avgCarRSF)
+hist(nl.dyad3.1$pr_avgCarRSF)
 
-boxplot(rmnp.dyad3[dyadDist < 50]$avgPreyRSF)
-hist(rmnp.dyad3[dyadDist < 50]$avgPreyRSF)
 
-## NL
+plot(nl.dyad3.1$season)
+plot(rmnp.dyad3.1$season)
 
-boxplot(nl.dyad3[dyadDist < 50]$dyadDist)
-hist(nl.dyad3[dyadDist < 50]$dyadDist)
+### pratically no spring RMNP data
 
-boxplot(nl.dyad3[dyadDist < 50]$dSI)
-hist(nl.dyad3[dyadDist < 50]$dSI)
+plot(nl.dyad3.1$julday)
+plot(rmnp.dyad3.1$julday)
 
-boxplot(nl.dyad3[dyadDist < 50]$dAbsAng)
-hist(nl.dyad3[dyadDist < 50]$dAbsAng)
+plot(nl.dyad3.1$dyadID)
+plot(rmnp.dyad3.1$dyadID)
 
-boxplot(nl.dyad3[dyadDist < 50]$avgPredRSF)
-hist(nl.dyad3[dyadDist < 50]$avgPredRSF)
+plot(nl.dyad3.1$yr)
+plot(rmnp.dyad3.1$yr)
 
-boxplot(nl.dyad3[dyadDist < 50]$avgCoyRSF)
-hist(nl.dyad3[dyadDist < 50]$avgCoyRSF)
+### only 2016 for RMNP
 
-boxplot(nl.dyad3[dyadDist < 50]$avgBearRSF)
-hist(nl.dyad3[dyadDist < 50]$avgBearRSF)
+# update NL when nwithin500 is added
+plot(nl.dyad3.1$nWithin500)
+plot(rmnp.dyad3.1$nWithin500)
 
-boxplot(nl.dyad3[dyadDist < 50]$avgCarRSF)
-hist(nl.dyad3[dyadDist < 50]$avgCarRSF)
 
-## At threshold 50m
-### Issue: Extremely long tail distribution in DSI for RMNP and NL
-### Issue: Coy & Bear RSFs are an order of magnitude smaller than Car RSFs in NL but not RMNP
-
-plot(nl.dyad3[dyadDist < 50]$season)
-plot(rmnp.dyad3[dyadDist < 50]$season)
-
-plot(nl.dyad3[dyadDist < 50]$julday)
-plot(rmnp.dyad3[dyadDist < 50]$julday)
-
-plot(nl.dyad3[dyadDist < 50]$dyadID)
-plot(rmnp.dyad3[dyadDist < 50]$dyadID)
-
-plot(nl.dyad3[dyadDist < 50]$yr)
-plot(rmnp.dyad3[dyadDist < 50]$yr)
-
-# plot(nl.dyad3[dyadDist < 50]$nWithin500) # update when nwithin500 is added
-plot(rmnp.dyad3[dyadDist < 50]$nWithin500)
 
 ###GLM
-# SA <- glm(SocialMeasure ~ PreyHD*PredHD, data = rmnp)
+# general form SA <- glm(SocialMeasure ~ PreyHD*PredHD, data = rmnp)
 ## social measures are: dSI, dyadDist, dAbsAng, bin500m, nWithin5000
 
 # round(cor(rmnp.dyad1[,c(17,18,26,27,14,25,32,31,34,35,37,38)]),2)
 
 #dsl
-rmNN.ln.dsl.avg.d500<-
-  glm(log(dSI+0.0001) ~ avgPreyRSF*avgPredRSF,
-      data = rmnp.dyad2[dyadDist < 500])
+rmNN.dsl_scd<-
+  glm(dSI ~ sc_dPreyRSF*sc_dPredRSF,
+      data = rmnp.dyad3.1)
 
-rmNN.dsl.avg.d500<-
-  glm(dSI ~ avgPreyRSF*avgPredRSF,
-      data = rmnp.dyad2[dyadDist < 500])
-
-rmNN.dsl.id1.d500<-
-  glm(dSI ~ preyRSF*predatorRSF,
-      data = rmnp.dyad2[dyadDist < 500])
-
-rmNN.dsl.id2.d500<-
-  glm(dSI ~ rpreyRSF*rpredatorRSF,
-      data = rmnp.dyad2[dyadDist < 500])
-
-summary(rmNN.ln.dsl.avg.d500)
-summary(rmNN.dsl.avg.d500)
-summary(rmNN.dsl.id1.d500)
-summary(rmNN.dsl.id2.d500)
-
-rmNN.ln.dsl.avg.d50<-
-  glm(log(dSI+0.0001) ~ avgPreyRSF*avgPredRSF,
-      data = rmnp.dyad1[dyadDist < 50])
-
-rmNN.dsl.avg.d50<-
-  glm(dSI ~ avgPreyRSF*avgPredRSF,
-      data = rmnp.dyad1[dyadDist < 50])
+rmNN.dsl_scavg<-
+  glm(dSI ~ sc_avgPreyRSF*sc_avgPredRSF,
+      data = rmnp.dyad3.1)
 
 
-rmNN.dsl.id1.d50<-
-  glm(dSI ~ preyRSF*predatorRSF,
-      data = rmnp.dyad1[dyadDist < 50])
+rmNN.dsl_prd<-
+  glm(dSI ~ pr_dPreyRSF*pr_dPredRSF,
+      data = rmnp.dyad3.1)
 
-rmNN.dsl.id2.d50<-
-  glm(dSI ~ rpreyRSF*rpredatorRSF,
-      data = rmnp.dyad1[dyadDist < 50])
-
-summary(rmNN.ln.dsl.avg.d50)
-summary(rmNN.dsl.avg.d50)
-summary(rmNN.dsl.id1.d50)
-summary(rmNN.dsl.id2.d50)
-
-### DyadDist
-rmNN.ln.dyadDist.avg.d500<-
-  glm(log(dyadDist+0.0001) ~ avgPreyRSF*avgPredRSF,
-      data = rmnp.dyad2[dyadDist < 500])
-
-rmNN.dyadDist.avg.d500<-
-  glm(dyadDist ~ avgPreyRSF*avgPredRSF,
-      data = rmnp.dyad2[dyadDist < 500])
-
-rmNN.dyadDist.id1.d500<-
-  glm(dyadDist ~ preyRSF*predatorRSF,
-      data = rmnp.dyad2[dyadDist < 500])
-
-rmNN.dyadDist.id2.d500<-
-  glm(dyadDist ~ rpreyRSF*rpredatorRSF,
-      data = rmnp.dyad2[dyadDist < 500])
-
-summary(rmNN.ln.dyadDist.avg.d500)
-summary(rmNN.dyadDist.avg.d500)
-summary(rmNN.dyadDist.id1.d500)
-summary(rmNN.dyadDist.id2.d500)
-
-rmNN.ln.dyadDist.avg.d500to1000<-
-  glm(log(dyadDist+0.0001) ~ avgPreyRSF*avgPredRSF,
-      data = rmnp.dyad1[dyadDist > 500 & dyadDist < 1000])
-
-rmNN.dyadDist.avg.d500to1000<-
-  glm(dyadDist ~ avgPreyRSF*avgPredRSF,
-      data = rmnp.dyad1[dyadDist > 500 & dyadDist < 1000])
-
-rmNN.dyadDist.id1.d500to1000<-
-  glm(dyadDist ~ preyRSF*predatorRSF,
-      data = rmnp.dyad1[dyadDist > 500 & dyadDist < 1000])
-
-rmNN.dyadDist.id2.d500to1000<-
-  glm(dyadDist ~ rpreyRSF*rpredatorRSF,
-      data = rmnp.dyad1[dyadDist > 500 & dyadDist < 1000])
-
-summary(rmNN.ln.dyadDist.avg.d500to1000)
-summary(rmNN.dyadDist.avg.d500to1000)
-summary(rmNN.dyadDist.id1.d500to1000)
-summary(rmNN.dyadDist.id2.d500to1000)
-
-rmNN.ln.dyadDist.avg.d50<-
-  glm(log(dyadDist+0.0001) ~ avgPreyRSF*avgPredRSF,
-      data = rmnp.dyad1[dyadDist < 50])
-
-rmNN.dyadDist.avg.d50<-
-  glm(dyadDist ~ avgPreyRSF*avgPredRSF,
-      data = rmnp.dyad1[dyadDist < 50])
-
-rmNN.dyadDist.id1.d50<-
-  glm(dyadDist ~ preyRSF*predatorRSF,
-      data = rmnp.dyad1[dyadDist < 50])
-
-rmNN.dyadDist.id2.d50<-
-  glm(dyadDist ~ rpreyRSF*rpredatorRSF,
-      data = rmnp.dyad1[dyadDist < 50])
-
-summary(rmNN.ln.dyadDist.avg.d50)
-summary(rmNN.dyadDist.avg.d50)
-summary(rmNN.dyadDist.id1.d50)
-summary(rmNN.dyadDist.id2.d50)
-
-# bin500m
-
-rmNN.bin500m.avg<-
-  glm(bin500m ~ avgPreyRSF*avgPredRSF,
-      data = rmnp.dyad2)
-
-rmNN.bin500m.id1<-
-  glm(bin500m ~ preyRSF*predatorRSF,
-      data = rmnp.dyad2)
-
-rmNN.bin500m.id2<-
-  glm(bin500m ~ rpreyRSF*rpredatorRSF,
-      data = rmnp.dyad2)
-
-summary(rmNN.bin500m.avg)
-summary(rmNN.bin500m.id1)
-summary(rmNN.bin500m.id2)
-
-
-
-#turning angle
-
-rmNN.dAbsAng.avg.d500<-
-  glm(dAbsAng ~ avgPreyRSF*avgPredRSF,
-      data = rmnp.dyad1[dyadDist < 500])
-
-rmNN.dAbsAng.id1.d500<-
-  glm(dAbsAng ~ preyRSF*predatorRSF,
-      data = rmnp.dyad1[dyadDist < 500])
-
-rmNN.dAbsAng.id2.d500<-
-  glm(dAbsAng ~ rpreyRSF*rpredatorRSF,
-      data = rmnp.dyad1[dyadDist < 500])
-
-summary(rmNN.dAbsAng.avg.d500)
-summary(rmNN.dAbsAng.id1.d500)
-summary(rmNN.dAbsAng.id2.d500)
-
-rmNN.dAbsAng.avg.d50<-
-  glm(dAbsAng ~ avgPreyRSF*avgPredRSF,
-      data = rmnp.dyad1[dyadDist < 50])
-
-rmNN.dAbsAng.id1.d50<-
-  glm(dAbsAng ~ preyRSF*predatorRSF,
-      data = rmnp.dyad1[dyadDist < 50])
-
-rmNN.dAbsAng.id2.d50<-
-  glm(dAbsAng ~ rpreyRSF*rpredatorRSF,
-      data = rmnp.dyad1[dyadDist < 50])
-
-summary(rmNN.dAbsAng.avg.d50)
-summary(rmNN.dAbsAng.id1.d50)
-summary(rmNN.dAbsAng.id2.d50)
-
-rmNN.dAbsAng.avg.d250<-
-  glm(dAbsAng ~ avgPreyRSF*avgPredRSF,
-      data = rmnp.dyad1[dyadDist < 250])
-
-rmNN.dAbsAng.id1.d250<-
-  glm(dAbsAng ~ preyRSF*predatorRSF,
-      data = rmnp.dyad1[dyadDist < 250])
-
-rmNN.dAbsAng.id2.d250<-
-  glm(dAbsAng ~ rpreyRSF*rpredatorRSF,
-      data = rmnp.dyad1[dyadDist < 250])
-
-summary(rmNN.dAbsAng.avg.d250)
-summary(rmNN.dAbsAng.id1.d250)
-summary(rmNN.dAbsAng.id2.d250)
-
-rmNN.dAbsAng.avg.d100<-
-  glm(dAbsAng ~ avgPreyRSF*avgPredRSF,
-      data = rmnp.dyad1[dyadDist < 100])
-
-rmNN.dAbsAng.id1.d100<-
-  glm(dAbsAng ~ preyRSF*predatorRSF,
-      data = rmnp.dyad1[dyadDist < 100])
-
-rmNN.dAbsAng.id2.d100<-
-  glm(dAbsAng ~ rpreyRSF*rpredatorRSF,
-      data = rmnp.dyad1[dyadDist < 100])
-
-summary(rmNN.dAbsAng.avg.d100)
-summary(rmNN.dAbsAng.id1.d100)
-summary(rmNN.dAbsAng.id2.d100)
-
-rmNN.dAbsAng.avg.d150<-
-  glm(dAbsAng ~ avgPreyRSF*avgPredRSF,
-      data = rmnp.dyad1[dyadDist < 150])
-
-rmNN.dAbsAng.id1.d150<-
-  glm(dAbsAng ~ preyRSF*predatorRSF,
-      data = rmnp.dyad1[dyadDist < 150])
-
-rmNN.dAbsAng.id2.d150<-
-  glm(dAbsAng ~ rpreyRSF*rpredatorRSF,
-      data = rmnp.dyad1[dyadDist < 150])
-
-summary(rmNN.dAbsAng.avg.d150)
-summary(rmNN.dAbsAng.id1.d150)
-summary(rmNN.dAbsAng.id2.d150)
-
-
-
-
-
-
-
-
+rmNN.dsl_pravg<-
+  glm(dSI ~ pr_avgPreyRSF*pr_avgPredRSF,
+      data = rmnp.dyad3.1)
 
 
 
@@ -610,7 +333,94 @@ visreg2d(rmNN.dsl.avg.d50, "avgPreyRSF", "avgPredRSF", plot.type="rgl")
 
 
 
+### old code playing around with thresholds and correlations
 
+
+thresh<-seq(50,500,50) ### sequence of threshold values
+
+### testing correlation
+### we should test for correlation at any other levels we make thresholds
+### we need to test for correlation with angles but there are NAs
+RMNP.COR_LIST<-list()
+RMNP.CORn_LIST<-list()
+RMNP.CORp_LIST<-list()
+RMNP.SUM_LIST<-list()
+
+for(i in 1:length(thresh)){
+  
+  RMNP.SUM_LIST[[1]]<-summary(rmnp.dyad3)
+  RMNP.COR_LIST[[1]]<-rcorr(as.matrix(rmnp.dyad3[,c(1:5,10:12,15:23)]))[[1]]
+  RMNP.CORn_LIST[[1]]<-rcorr(as.matrix(rmnp.dyad3[,c(1:5,10:12,15:23)]))[[2]]
+  RMNP.CORp_LIST[[1]]<-rcorr(as.matrix(rmnp.dyad3[,c(1:5,10:12,15:23)]))[[3]]
+  
+  RMNP.SUM_LIST[[i+1]]<-summary(rmnp.dyad3[dyadDist < thresh[i]])
+  RMNP.COR_LIST[[i+1]]<-rcorr(as.matrix(rmnp.dyad3[dyadDist < thresh[i]][,c(1:5,10:12,15:23)]))[[1]] 
+  RMNP.CORn_LIST[[i+1]]<-rcorr(as.matrix(rmnp.dyad3[dyadDist < thresh[i]][,c(1:5,10:12,15:23)]))[[2]]
+  RMNP.CORp_LIST[[i+1]]<-rcorr(as.matrix(rmnp.dyad3[dyadDist < thresh[i]][,c(1:5,10:12,15:23)]))[[3]]
+  
+}
+
+NL.COR_LIST<-list()
+NL.CORn_LIST<-list()
+NL.CORp_LIST<-list()
+NL.SUM_LIST<-list()
+
+for(i in 1:length(thresh)){
+  
+  NL.SUM_LIST[[1]]<-summary(nl.dyad3)
+  NL.COR_LIST[[1]]<-rcorr(as.matrix(nl.dyad3[,c(1:7,12:14,16:30)]))[[1]]
+  NL.CORn_LIST[[1]]<-rcorr(as.matrix(nl.dyad3[,c(1:7,12:14,16:30)]))[[2]]
+  NL.CORp_LIST[[1]]<-rcorr(as.matrix(nl.dyad3[,c(1:7,12:14,16:30)]))[[3]]
+  
+  NL.SUM_LIST[[i+1]]<-summary(nl.dyad3[dyadDist < thresh[i]])
+  NL.COR_LIST[[i+1]]<-rcorr(as.matrix(nl.dyad3[dyadDist < thresh[i]][,c(1:7,12:14,16:30)]))[[1]] 
+  NL.CORn_LIST[[i+1]]<-rcorr(as.matrix(nl.dyad3[dyadDist < thresh[i]][,c(1:7,12:14,16:30)]))[[2]]
+  NL.CORp_LIST[[i+1]]<-rcorr(as.matrix(nl.dyad3[dyadDist < thresh[i]][,c(1:7,12:14,16:30)]))[[3]]
+  
+}
+
+
+
+
+
+
+### sample sizes by threshold
+
+thresh1nl<-seq(50,max(nl.dyad3$dyadDist),50) ### sequence of threshold values
+thresh1rmnp<-seq(50,max(rmnp.dyad3$dyadDist),50) ### sequence of threshold values
+
+
+sum_rmnp<-as.data.frame(matrix(ncol=3, nrow=(1+length(thresh1rmnp))))
+colnames(sum_rmnp)<-c("dataset","n","NA_dAbsAng")
+
+sum_rmnp$dataset<-c(max(rmnp.dyad3$dyadDist),thresh1rmnp)
+sum_rmnp$n[1]<-nrow(rmnp.dyad3)
+sum_rmnp$NA_dAbsAng[1]<-length(subset(rmnp.dyad3$dAbsAng, is.na(rmnp.dyad3$dAbsAng)))
+
+for(i in 1:length(thresh1rmnp)){
+  
+  sum_rmnp$n[i+1]<-nrow(rmnp.dyad3[dyadDist < thresh1rmnp[i]])
+  sum_rmnp$NA_dAbsAng[i+1]<-length(subset(rmnp.dyad3[dyadDist < thresh1rmnp[i]]$dAbsAng, is.na(rmnp.dyad3[dyadDist < thresh1rmnp[i]]$dAbsAng)))
+}
+
+
+sum_nl<-as.data.frame(matrix(ncol=3, nrow=(1+length(thresh1nl))))
+colnames(sum_nl)<-c("dataset","n","NA_dAbsAng")
+
+sum_nl$dataset<-c(max(nl.dyad3$dyadDist),thresh1nl)
+sum_nl$n[1]<-nrow(nl.dyad3)
+sum_nl$NA_dAbsAng[1]<-length(subset(nl.dyad3$dAbsAng, is.na(nl.dyad3$dAbsAng)))
+
+for(i in 1:length(thresh1nl)){
+  
+  sum_nl$n[i+1]<-nrow(nl.dyad3[dyadDist < thresh1nl[i]])
+  sum_nl$NA_dAbsAng[i+1]<-length(subset(nl.dyad3[dyadDist < thresh1nl[i]]$dAbsAng, is.na(nl.dyad3[dyadDist < thresh1nl[i]]$dAbsAng)))
+}
+
+### visual of sample size by threshold
+
+plot(sum_nl$dataset,sum_nl$n)  
+plot(sum_rmnp$dataset,sum_rmnp$n)
 
 
 
