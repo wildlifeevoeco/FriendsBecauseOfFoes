@@ -9,7 +9,8 @@
 
 ### Packages ----
 libs <- c('data.table', 'ggplot2', 'spatsoc',
-          'knitr', 'sp', 'rgdal', 'magrittr')
+          'knitr', 'sp', 'rgdal', 'magrittr',
+          'adehabitatLT')
 lapply(libs, require, character.only = TRUE)
 
 # Note: if spatsoc is not installed, uncomment and run these lines:
@@ -63,9 +64,6 @@ source('R/0-variables/CutOffThresholds.R')
 coyote[julday %between% winter, season := 'winter']
 coyote[julday %between% spring, season := 'spring']
 
-# group_times from spatsoc
-group_times(coyote, 'datetime', '15 minutes')
-
 ### Subset ----
 # Subset any NAs in defined cols
 checkCols <- c(xCol, yCol, timeCol, dateCol, 'season')
@@ -74,24 +72,89 @@ coyote <- na.omit(coyote, cols = checkCols)
 # Subset any 0 in lat/long and where longitude is positive
 coyote <- coyote[get(xCol) != 0 & get(xCol) < 0]
 
+# Drop any rows that have identical fix times as previous
+coyote <- coyote[difdatetime != 0]
+
 ### Project Coords, Step length  ----
 # Project coordinates to UTM
-coyote[, c(projXCol, projYCol) := as.data.table(project(cbind(get(xCol), get(yCol)), utm))]
+coyote[, c(projXCol, projYCol) := 
+         as.data.table(
+           project(cbind(get(xCol), get(yCol)), utm))]
 
 # Step Length
 source('R/0-functions/StepLength.R')
-StepLength(coyote, idCol, datetimeCol = 'datetime', yrCol = 'yr',
-           xCol = projXCol, yCol = projYCol,
-           returnIntermediate = FALSE)
+StepLength(
+  coyote,
+  idCol,
+  datetimeCol = 'datetime',
+  yrCol = 'yr',
+  xCol = projXCol,
+  yCol = projYCol,
+  returnIntermediate = FALSE
+)
 
-difTimeThreshold <- 2
-# Number of locs by id with rounded fixrate..
-fr <- coyote[, .N, by = .(ANIMAL_ID, round(difdatetime), season)]
-# subset < 12, which is rounded bin has the most locs by id, histo it
-fr[round < 12][, .SD[which.max(N)], by = ANIMAL_ID][, qplot(round, binwidth = 1, xlab = 'fix rate (rounded)', facets = ~season)]
+### Rarify locs ----
+fixrateSpring <- 4
+fixrateWinter <- 8
 
+###########################
+##### scrap trying to get fix rate fixed #####
+coyoteSpringTraj <- as.ltraj(
+  coyote[season == 'spring', 
+         .SD, .SDcols = c(projXCol, projYCol)],
+  coyote[season == 'spring', datetime],
+  coyote[season == 'spring', ANIMAL_ID]
+)
 
-coyote <- coyote[round(difdatetime) == difTimeThreshold]
+subsample(coyoteSpringTraj,
+          4,
+          units = 'hours')
+
+length(coyote$datetime)
+length(coyote$projXCol)
+coyote <- coyote[!is.na(season)]
+
+coyote[, difdatetime := 
+         difftime(datetime, shift(datetime, 1), units = 'hours'),
+       by = c(idCol)]
+
+# group_times from spatsoc
+coyote[, nMinutes := minute(datetime)]
+group_times(coyote, 'datetime', paste0(fixrateSpring, ' hours'))
+coyote[, .(difdatetime,
+           difdatetime %% 0.5)]
+
+coyote[nMinutes > 30, nearestDif := ceiling(difdatetime)]
+coyote[nMinutes <= 30, nearestDif := floor(difdatetime)]
+
+coyote[, .N, by = .(yday(datetime),
+                    year(datetime),
+                    nearestDif,
+                    get(idCol),
+                    timegroup)]
+coyote[yr == '2009' & get(idCol) == 'co_lp0803' & timegroup == 3] 
+coyote[season == 'spring' &
+         difdatetime == fixrateSpring,
+       keep := 1]
+
+coyote[season == 'spring' & 
+         is.na(keep)]
+
+coyote[season == 'spring' & 
+         keep == 1]
+
+coyote[between(timegroup, 500, 502), .(datetime, difdatetime, hours, timegroup, get(idCol))][order(datetime)]
+
+coyote[order(datetime)][between(timegroup, 500, 502),
+       .(datetime, hour(datetime),
+         round(hour(datetime)),
+         hours,
+         timegroup)]
+
+coyote[, .SD[1], by = c(idCol, 'timegroup')]
+#####################
+
+# coyote <- coyote[round(difdatetime) == difTimeThreshold]
 
 StepLength(coyote, idCol, 
            datetimeCol = 'datetime', yrCol = 'yr', 
