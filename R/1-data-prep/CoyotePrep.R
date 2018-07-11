@@ -93,18 +93,134 @@ StepLength(
   returnIntermediate = FALSE
 )
 
+
+
 ### Rarify locs ----
 fixrateSpring <- 4
 fixrateWinter <- 8
 
 ###########################
-##### scrap trying to get fix rate fixed #####
-coyoteSpringTraj <- as.ltraj(
-  coyote[season == 'spring', 
-         .SD, .SDcols = c(projXCol, projYCol)],
-  coyote[season == 'spring', datetime],
-  coyote[season == 'spring', ANIMAL_ID]
-)
+##### Hance's attempt at rounding fixes to nearest 4 and 8 fix rate #####
+
+coyote$idtime<-paste(coyote$ANIMAL_ID, coyote$datetime, sep=" ")
+
+CoySpr<-coyote[season == 'spring']
+CoyWin<-coyote[season == 'winter']
+
+coyoteSpringTraj <- as.ltraj(CoySpr[,c("EASTING","NORTHING")], date=CoySpr$datetime, id=CoySpr$ANIMAL_ID, infolocs=CoySpr[,c("idtime")])
+coyoteWinterTraj <- as.ltraj(CoyWin[,c("EASTING","NORTHING")], date=CoyWin$datetime, id=CoyWin$ANIMAL_ID, infolocs=CoyWin[,c("idtime")])
+
+refSprda<-round(min(coyote[season=="spring"]$datetime), "hour")
+refWinda<-round(min(coyote[season=="winter"]$datetime), "hour")
+
+CoySpr1<-setNA(coyoteSpringTraj, refSprda, fixrateSpring, units="hour")
+CoyWin1<-setNA(coyoteWinterTraj, refWinda, fixrateWinter, units="hour")
+
+CoySpr2<-sett0(CoySpr1, refSprda, fixrateSpring, units="hour")
+CoyWin2<-sett0(CoyWin1, refWinda, fixrateWinter, units="hour")
+
+CoySpr3<-ld(CoySpr2)
+CoyWin3<-ld(CoyWin2)
+
+coyote2<-rbind(CoySpr3,CoyWin3)
+
+coyote3<-merge(coyote,coyote2,by="idtime")
+
+coyote3$RTIME<-coyote3$date
+coyote4<-coyote3[,c(1:24,27)]
+
+
+
+
+#### Back to orginal flow of code #####
+
+
+StepLength(coyote4, idCol, 
+           datetimeCol = 'datetime', yrCol = 'yr', 
+           xCol = projXCol, yCol = projYCol,
+           returnIntermediate = FALSE)
+
+### Summary information ----
+# How many unique animals?
+coyote4[, uniqueN(get(idCol))]
+
+# How many unique animals per year?
+kable(coyote4[, .('N Unique coyotes' = uniqueN(get(idCol))), by = yr])
+
+# Temporal distribution of locs
+kable(coyote4[order(mnth), .N, by = mnth])
+kable(coyote4[order(yr), .N, by = yr])
+
+# Herd distribution of coyotes
+kable(coyote4[, .N, by = HERD])
+
+### Subset ----
+# Thresholds
+stepLengthThreshold <- 7750000
+moveRateThreshold <- 10000
+difTimeThreshold <- 24
+lowJul <- 0
+highJul <- 365
+herdList <- 'MIDRIDGE'
+
+# Map_Quality, NAV
+
+coyote5 <- coyote4[stepLength < stepLengthThreshold & 
+                   moveRate < moveRateThreshold &
+                   between(julday, lowJul, highJul)]
+
+
+#### STOPPED HERE #####
+
+
+
+
+
+#$HERD %in% herdList]
+
+### Output ----
+# Match variables to output variables = consistent variables across species
+source('R/0-variables/PrepDataOutputVariables.R')
+
+outputVariables <- c(outputVariables, 'herd', 'sex')
+
+setnames(coyote, c('ANIMAL_ID', 'SPECIES', 'season', 'timegroup',
+                   'idate', 'itime', 'datetime', 
+                   'EASTING', 'NORTHING',
+                   'julday', 'yr', 'mnth', 'stepLength', 'moveRate', 'difdatetime',
+                   'HERD', 'SEX'),
+         outputVariables)
+
+saveRDS(coyote[, ..outputVariables], 'output/data-prep/coyote.Rds')
+
+
+### Plots ----
+# Plot locs by year on NL bounds 
+source('R/0-functions/PlotLocsByFigure.R')
+
+# To PDF 
+# pdf('graphics/data-prep/coyote-locs-by-year.pdf')
+coyote5[, PlotLocsBy(.SD, nlBounds, .BY[[1]], 'id'),
+       by = yr]
+# dev.off()
+
+
+# Temporal distribution of locs
+source('R/0-functions/TemporalDistributionFigure.R')
+TempDistFig(coyote5)
+
+# ggsave('graphics/data-prep/coyote-temp-dist.png', TempDistFig(coyote), 'png')
+
+
+
+
+
+
+
+
+
+
+### Alec's rounding fix rate code ####
 
 subsample(coyoteSpringTraj,
           4,
@@ -155,71 +271,3 @@ coyote[, .SD[1], by = c(idCol, 'timegroup')]
 #####################
 
 # coyote <- coyote[round(difdatetime) == difTimeThreshold]
-
-StepLength(coyote, idCol, 
-           datetimeCol = 'datetime', yrCol = 'yr', 
-           xCol = projXCol, yCol = projYCol,
-           returnIntermediate = FALSE)
-
-### Summary information ----
-# How many unique animals?
-coyote[, uniqueN(get(idCol))]
-
-# How many unique animals per year?
-kable(coyote[, .('N Unique coyotes' = uniqueN(get(idCol))), by = yr])
-
-# Temporal distribution of locs
-kable(coyote[order(mnth), .N, by = mnth])
-kable(coyote[order(yr), .N, by = yr])
-
-# Herd distribution of coyotes
-kable(coyote[, .N, by = HERD])
-
-### Subset ----
-# Thresholds
-stepLengthThreshold <- 7750000
-moveRateThreshold <- 10000
-difTimeThreshold <- 24
-lowJul <- 0
-highJul <- 365
-herdList <- 'MIDRIDGE'
-
-# Map_Quality, NAV
-
-coyote <- coyote[stepLength < stepLengthThreshold & 
-                 moveRate < moveRateThreshold &
-                 between(julday, lowJul, highJul)]
-                 #$HERD %in% herdList]
-
-### Output ----
-# Match variables to output variables = consistent variables across species
-source('R/0-variables/PrepDataOutputVariables.R')
-
-outputVariables <- c(outputVariables, 'herd', 'sex')
-
-setnames(coyote, c('ANIMAL_ID', 'SPECIES', 'season', 'timegroup',
-                 'idate', 'itime', 'datetime', 
-                 'EASTING', 'NORTHING',
-                 'julday', 'yr', 'mnth', 'stepLength', 'moveRate', 'difdatetime',
-                 'HERD', 'SEX'),
-         outputVariables)
-
-saveRDS(coyote[, ..outputVariables], 'output/data-prep/coyote.Rds')
-
-
-### Plots ----
-# Plot locs by year on NL bounds 
-source('R/0-functions/PlotLocsByFigure.R')
-
-# To PDF 
-# pdf('graphics/data-prep/coyote-locs-by-year.pdf')
-coyote[, PlotLocsBy(.SD, nlBounds, .BY[[1]], 'id'),
-       by = yr]
-# dev.off()
-
-
-# Temporal distribution of locs
-source('R/0-functions/TemporalDistributionFigure.R')
-TempDistFig(coyote)
-
-# ggsave('graphics/data-prep/coyote-temp-dist.png', TempDistFig(coyote), 'png')
