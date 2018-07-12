@@ -110,38 +110,20 @@ summary(nl.dyad3.1[,NL_cor, with=FALSE])
 rmnp.dyad3.1$sc_dPreyRSF<-scale(rmnp.dyad3.1$dPreyRSF, center=T, scale=T)
 rmnp.dyad3.1$sc_dPredRSF<-scale(rmnp.dyad3.1$dPredRSF, center=T, scale=T)
 
-rmnp.dyad3.1$pr_dPreyRSF<-rmnp.dyad3.1$dPreyRSF/max(rmnp.dyad3.1$dPreyRSF)
-rmnp.dyad3.1$pr_dPredRSF<-rmnp.dyad3.1$dPredRSF/max(rmnp.dyad3.1$dPredRSF)
-
 rmnp.dyad3.1$sc_avgPreyRSF<-scale(rmnp.dyad3.1$avgPreyRSF, center=T, scale=T)
 rmnp.dyad3.1$sc_avgPredRSF<-scale(rmnp.dyad3.1$avgPredRSF, center=T, scale=T)
-
-rmnp.dyad3.1$pr_avgPreyRSF<-rmnp.dyad3.1$avgPreyRSF/max(rmnp.dyad3.1$avgPreyRSF)
-rmnp.dyad3.1$pr_avgPredRSF<-rmnp.dyad3.1$avgPredRSF/max(rmnp.dyad3.1$avgPredRSF)
 
 nl.dyad3.1$sc_dCarRSF<-scale(nl.dyad3.1$dCarRSF, center=T, scale=T)
 nl.dyad3.1$sc_dPredRSF<-scale(nl.dyad3.1$dPredRSF, center=T, scale=T)
 
-nl.dyad3.1$pr_dCarRSF<-nl.dyad3.1$dCarRSF/max(nl.dyad3.1$dCarRSF)
-nl.dyad3.1$pr_dPredRSF<-nl.dyad3.1$dPredRSF/max(nl.dyad3.1$dPredRSF)
-
 nl.dyad3.1$sc_avgCarRSF<-scale(nl.dyad3.1$avgCarRSF, center=T, scale=T)
 nl.dyad3.1$sc_avgPredRSF<-scale(nl.dyad3.1$avgPredRSF, center=T, scale=T)
-
-nl.dyad3.1$pr_avgCarRSF<-nl.dyad3.1$avgCarRSF/max(nl.dyad3.1$avgCarRSF)
-nl.dyad3.1$pr_avgPredRSF<-nl.dyad3.1$avgPredRSF/max(nl.dyad3.1$avgPredRSF)
 
 nl.dyad3.1$sc_dCoyRSF<-scale(nl.dyad3.1$dCoyRSF, center=T, scale=T)
 nl.dyad3.1$sc_dBearRSF<-scale(nl.dyad3.1$dBearRSF, center=T, scale=T)
 
-nl.dyad3.1$pr_dCoyRSF<-nl.dyad3.1$dCoyRSF/max(nl.dyad3.1$dCoyRSF)
-nl.dyad3.1$pr_dBearRSF<-nl.dyad3.1$dBearRSF/max(nl.dyad3.1$dBearRSF, na.rm=T)
-
 nl.dyad3.1$sc_avgCoyRSF<-scale(nl.dyad3.1$avgCoyRSF, center=T, scale=T)
 nl.dyad3.1$sc_avgBearRSF<-scale(nl.dyad3.1$avgBearRSF, center=T, scale=T)
-
-nl.dyad3.1$pr_avgCoyRSF<-nl.dyad3.1$avgCoyRSF/max(nl.dyad3.1$avgCoyRSF)
-nl.dyad3.1$pr_avgBearRSF<-nl.dyad3.1$avgBearRSF/max(nl.dyad3.1$avgBearRSF, na.rm=T)
 
 
 #### Testing for correlations in the data
@@ -177,12 +159,6 @@ hist(rmnp.dyad3.1$sc_avgPredRSF)
 
 boxplot(rmnp.dyad3.1$sc_avgPreyRSF)
 hist(rmnp.dyad3.1$sc_avgPreyRSF)
-
-boxplot(rmnp.dyad3.1$pr_avgPredRSF)
-hist(rmnp.dyad3.1$pr_avgPredRSF)
-
-boxplot(rmnp.dyad3.1$pr_avgPreyRSF)
-hist(rmnp.dyad3.1$pr_avgPreyRSF)
 
 ## NL
 
@@ -221,19 +197,6 @@ boxplot(nl.dyad3.1$sc_avgCarRSF)
 hist(nl.dyad3.1$sc_avgCarRSF)
 
 
-boxplot(nl.dyad3.1$pr_avgCoyRSF)
-hist(nl.dyad3.1$pr_avgCoyRSF)
-
-boxplot(nl.dyad3.1$pr_avgBearRSF)
-hist(nl.dyad3.1$pr_avgBearRSF)
-
-boxplot(nl.dyad3.1$pr_avgPredRSF)
-hist(nl.dyad3.1$pr_avgPredRSF)
-
-boxplot(nl.dyad3.1$pr_avgCarRSF)
-hist(nl.dyad3.1$pr_avgCarRSF)
-
-
 plot(nl.dyad3.1$season)
 plot(rmnp.dyad3.1$season)
 
@@ -250,6 +213,7 @@ plot(rmnp.dyad3.1$yr)
 
 ### only 2016 for RMNP
 
+#### nwithin is special needs a different subset of data
 # update NL when nwithin500 is added
 plot(nl.dyad3.1$nWithin500)
 plot(rmnp.dyad3.1$nWithin500)
@@ -258,27 +222,222 @@ plot(rmnp.dyad3.1$nWithin500)
 
 ###GLM
 # general form SA <- glm(SocialMeasure ~ PreyHD*PredHD, data = rmnp)
-## social measures are: dSI, dyadDist, dAbsAng, bin500m, nWithin5000
+## social measures are: dSI, dyadDist, dAbsAng
 
-# round(cor(rmnp.dyad1[,c(17,18,26,27,14,25,32,31,34,35,37,38)]),2)
+### nWithin5000 is a special social measure that will use a different dataset
 
+## RMNP
 #dsl
-rmNN.dsl_scd<-
-  glm(dSI ~ sc_dPreyRSF*sc_dPredRSF,
+rmNN.dsl_avg<-
+  glm(dSI ~ avgPreyRSF*avgPredRSF,
       data = rmnp.dyad3.1)
+
 
 rmNN.dsl_scavg<-
   glm(dSI ~ sc_avgPreyRSF*sc_avgPredRSF,
       data = rmnp.dyad3.1)
 
-
-rmNN.dsl_prd<-
-  glm(dSI ~ pr_dPreyRSF*pr_dPredRSF,
+#dyadDist
+rmNN.dd_avg<-
+  glm(dyadDist ~ avgPreyRSF*avgPredRSF,
       data = rmnp.dyad3.1)
 
-rmNN.dsl_pravg<-
-  glm(dSI ~ pr_avgPreyRSF*pr_avgPredRSF,
+
+rmNN.dd_scavg<-
+  glm(dyadDist ~ sc_avgPreyRSF*sc_avgPredRSF,
       data = rmnp.dyad3.1)
+
+
+#dAbsAng
+rmNN.dAA_avg<-
+  glm(dAbsAng ~ avgPreyRSF*avgPredRSF,
+      data = rmnp.dyad3.1)
+
+
+rmNN.dAA_scavg<-
+  glm(dAbsAng ~ sc_avgPreyRSF*sc_avgPredRSF,
+      data = rmnp.dyad3.1)
+
+### RMNP is mostly winter data
+
+RMNP_win<-rmnp.dyad3.1[season=="winter"]
+RMNP_spr<-rmnp.dyad3.1[season=="spring"]
+
+
+## WINTER
+#dsl
+rm_winNN.dsl_avg<-
+  glm(dSI ~ avgPreyRSF*avgPredRSF,
+      data = RMNP_win)
+
+
+rm_winNN.dsl_scavg<-
+  glm(dSI ~ sc_avgPreyRSF*sc_avgPredRSF,
+      data = RMNP_win)
+
+#dyadDist
+rm_winNN.dd_avg<-
+  glm(dyadDist ~ avgPreyRSF*avgPredRSF,
+      data = RMNP_win)
+
+
+rm_winNN.dd_scavg<-
+  glm(dyadDist ~ sc_avgPreyRSF*sc_avgPredRSF,
+      data = RMNP_win)
+
+
+#dAbsAng
+rm_winNN.dAA_avg<-
+  glm(dAbsAng ~ avgPreyRSF*avgPredRSF,
+      data = RMNP_win)
+
+
+rm_winNN.dAA_scavg<-
+  glm(dAbsAng ~ sc_avgPreyRSF*sc_avgPredRSF,
+      data = RMNP_win)
+
+
+## SPRING
+#dsl
+rm_sprNN.dsl_avg<-
+  glm(dSI ~ avgPreyRSF*avgPredRSF,
+      data = RMNP_spr)
+
+
+rm_sprNN.dsl_scavg<-
+  glm(dSI ~ sc_avgPreyRSF*sc_avgPredRSF,
+      data = RMNP_spr)
+
+#dyadDist
+rm_sprNN.dd_avg<-
+  glm(dyadDist ~ avgPreyRSF*avgPredRSF,
+      data = RMNP_spr)
+
+
+rm_sprNN.dd_scavg<-
+  glm(dyadDist ~ sc_avgPreyRSF*sc_avgPredRSF,
+      data = RMNP_spr)
+
+
+#dAbsAng
+rm_sprNN.dAA_avg<-
+  glm(dAbsAng ~ avgPreyRSF*avgPredRSF,
+      data = RMNP_spr)
+
+
+rm_sprNN.dAA_scavg<-
+  glm(dAbsAng ~ sc_avgPreyRSF*sc_avgPredRSF,
+      data = RMNP_spr)
+
+
+
+
+
+## NL
+#dsl
+nlNN.dsl_avg<-
+  glm(dSI ~ avgCarRSF*avgPredRSF,
+      data = nl.dyad3.1)
+
+
+nlNN.dsl_scavg<-
+  glm(dSI ~ sc_avgCarRSF*sc_avgPredRSF,
+      data = nl.dyad3.1)
+
+#dyadDist
+nlNN.dd_avg<-
+  glm(dyadDist ~ avgCarRSF*avgPredRSF,
+      data = nl.dyad3.1)
+
+
+nlNN.dd_scavg<-
+  glm(dyadDist ~ sc_avgCarRSF*sc_avgPredRSF,
+      data = nl.dyad3.1)
+
+
+#dAbsAng
+nlNN.dAA_avg<-
+  glm(dAbsAng ~ avgCarRSF*avgPredRSF,
+      data = nl.dyad3.1)
+
+
+nlNN.dAA_scavg<-
+  glm(dAbsAng ~ sc_avgCarRSF*sc_avgPredRSF,
+      data = nl.dyad3.1)
+
+
+### NL is mostly evenly split between winter and spring
+
+NL_win<-nl.dyad3.1[season=="winter"]
+NL_spr<-nl.dyad3.1[season=="spring"]
+
+
+## WINTER
+#dsl
+nl_winNN.dsl_avg<-
+  glm(dSI ~ avgCarRSF*avgPredRSF,
+      data = NL_win)
+
+
+nl_winNN.dsl_scavg<-
+  glm(dSI ~ sc_avgCarRSF*sc_avgPredRSF,
+      data = NL_win)
+
+#dyadDist
+nl_winNN.dd_avg<-
+  glm(dyadDist ~ avgCarRSF*avgPredRSF,
+      data = NL_win)
+
+
+nl_winNN.dd_scavg<-
+  glm(dyadDist ~ sc_avgCarRSF*sc_avgPredRSF,
+      data = NL_win)
+
+
+#dAbsAng
+nl_winNN.dAA_avg<-
+  glm(dAbsAng ~ avgCarRSF*avgPredRSF,
+      data = NL_win)
+
+
+nl_winNN.dAA_scavg<-
+  glm(dAbsAng ~ sc_avgCarRSF*sc_avgPredRSF,
+      data = NL_win)
+
+
+## SPRING
+#dsl
+nl_sprNN.dsl_avg<-
+  glm(dSI ~ avgCarRSF*avgPredRSF,
+      data = NL_spr)
+
+
+nl_sprNN.dsl_scavg<-
+  glm(dSI ~ sc_avgCarRSF*sc_avgPredRSF,
+      data = NL_spr)
+
+#dyadDist
+nl_sprNN.dd_avg<-
+  glm(dyadDist ~ avgCarRSF*avgPredRSF,
+      data = NL_spr)
+
+
+nl_sprNN.dd_scavg<-
+  glm(dyadDist ~ sc_avgCarRSF*sc_avgPredRSF,
+      data = NL_spr)
+
+
+#dAbsAng
+nl_sprNN.dAA_avg<-
+  glm(dAbsAng ~ avgCarRSF*avgPredRSF,
+      data = NL_spr)
+
+
+nl_sprNN.dAA_scavg<-
+  glm(dAbsAng ~ sc_avgCarRSF*sc_avgPredRSF,
+      data = NL_spr)
+
+
 
 
 
@@ -427,6 +586,32 @@ plot(sum_rmnp$dataset,sum_rmnp$n)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+rmNN.dsl_scd<-
+  glm(dSI ~ sc_dPreyRSF*sc_dPredRSF,
+      data = rmnp.dyad3.1)
+
+rmNN.dsl_prd<-
+  glm(dSI ~ pr_dPreyRSF*pr_dPredRSF,
+      data = rmnp.dyad3.1)
 
 
 
