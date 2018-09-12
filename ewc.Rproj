@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 Version: 1.0
 
 RestoreWorkspace: No
@@ -13,3 +14,18 @@ RnwWeave: knitr
 LaTeX: pdfLaTeX
 
 LineEndingConversion: Windows
+=======
+Version: 1.0
+
+RestoreWorkspace: No
+SaveWorkspace: No
+AlwaysSaveHistory: Yes
+
+EnableCodeIndexing: Yes
+UseSpacesForTab: Yes
+NumSpacesForTab: 2
+Encoding: UTF-8
+
+RnwWeave: knitr
+LaTeX: pdfLaTeX
+>>>>>>> Stashed changes
