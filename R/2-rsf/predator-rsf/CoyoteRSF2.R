@@ -31,7 +31,7 @@ points(MRcar$EASTING,MRcar$NORTHING)
 CarPoints<-SpatialPoints(data.frame(MRcar$EASTING,MRcar$NORTHING),proj4string = CRS(utm))
 
 CarAvail<-mcp(CarPoints, percent = 100)
-shapefile(CarAvail,"Output/caribouMCP,shp")
+shapefile(CarAvail,"Output/caribouMCP.shp")
 
 plot(nlBounds)
 plot(CarAvail,add=T)
@@ -190,7 +190,7 @@ nrow(coyMRres)
 CoyPoints<-SpatialPoints(data.frame(coyMRres$EASTING,coyMRres$NORTHING),proj4string = CRS(utm))
 
 CoyAvail<-mcp(CoyPoints, percent = 100)
-shapefile(CoyAvail,"output/coyoteMCP.shp")
+shapefile(CoyAvail,"output/coyoteMCP.shp",overwrite=T)
 
 ### Buffer by mean step length
 CoyAvailBuf<-gBuffer(CoyAvail,width=mean(coyMRres$stepLength))
