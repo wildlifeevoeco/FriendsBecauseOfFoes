@@ -132,8 +132,8 @@ ggplot(aes(EASTING, NORTHING, color = factor(id)),
 
 ### Input data ----
 # Which species would you like to calculate abs and rel TA for?
-species <- 'caribou'
-DT <- readRDS(paste0('output/angles/', species, 'Angle.Rds'))
+species <- 'Caribou'
+DT <- readRDS(paste0('output/angles/', species, 'AngleNEW.Rds')) ### new coyote RSF data
 
 coordCols <- c('EASTING', 'NORTHING')
 idCol <- 'id'
@@ -235,7 +235,7 @@ DT[NbyTime > 1,
 
 
 ### Output ----
-saveRDS(DT, paste0('output/nna/', species, 'NNA.Rds'))
+saveRDS(DT, paste0('output/nna/', species, 'NNANEW.Rds')) ### New coyote RSF values
 
 ### Figures ----
 qplot(get(withinCol), data = DT, 
