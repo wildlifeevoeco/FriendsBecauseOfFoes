@@ -40,3 +40,31 @@ head(AllData)
 
 saveRDS(AllData,"output/PredRSFNL/CaribouRSFVals.RDS")
 
+
+
+#### extracting new coyote RSF values
+
+
+library(raster)
+
+CoySum<-raster("output/PredRSFNL/CoyoteSummer.tif")
+CoyWin<-raster("output/PredRSFNL/CoyoteWinter.tif")
+
+caribou <- readRDS(paste0('output/rsf-values/caribouRsfValues.RDS'))
+
+Summer<-subset(caribou,season=='spring')
+Winter<-subset(caribou,season=='winter')
+
+CarSumPoints<-SpatialPoints(data.frame(Summer$EASTING,Summer$NORTHING),proj4string = CRS(utm))
+CarWinPoints<-SpatialPoints(data.frame(Winter$EASTING,Winter$NORTHING),proj4string = CRS(utm))
+
+Summer$CoyRSF<-extract(CoySum,CarSumPoints)
+Winter$CoyRSF<-extract(CoyWin,CarWinPoints)
+
+Summer$Season<-"Summer"
+Winter$Season<-"Winter"
+
+AllData<-rbind(Summer,Winter)
+
+
+saveRDS(AllData,"output/PredRSFNL/CaribouRSFVals.RDS")
