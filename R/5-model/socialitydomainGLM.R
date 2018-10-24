@@ -18,8 +18,8 @@ lapply(libs, require, character.only = TRUE)
 
 rmnp <- readRDS('output/nna/elkNNA.Rds')
 
-nl <- readRDS('output/nna/caribouNNA.Rds')
-
+nlold <- readRDS('output/nna/caribouNNA.Rds')
+nl <- readRDS('output/nna/CaribouNNANEW.Rds')
 
 ### one case where dyad is just i-i, instead of i-j
 ### Alec has satisfied Hance that this error is okay and driven by the way QuadTree extracts nearest dyads
@@ -599,9 +599,16 @@ nlNN.DI_Bear_spr<-
 ### NL
 
 summary(nlNN.dsl)  ### caribou more social where good caribou and predator habitat & in good predator habitat; weak trend for more social in good caribou habitat
+                    #### new results caribou more in good caribou habitat and where caribou and pred habitat is good
+
 summary(nlNN.dd)   ### caribou less social in good caribou habitat and in good predator habitat but caribou more social where good caribou and predator habitat
+                    #### new results caribou less social in good predator habitat but more social where good caribou and predator habitat
+
 summary(nlNN.dAA)  ### caribou less social in good predator habitat
+                    #### new results caribou less social in good caribou and good predator habitat and weak trend for less social in good caribou and predator habitat
+
 summary(nlNN.DI)   ### caribou less social in good predator habitat and weak trend for less social in caribou-predator domain
+                       #### new results caribou less social in good caribou and good predator habitat and weak trend for less social in good caribou and predator habitat
 
 visreg2d(nlNN.DI, "z.avgCarRSF", "z.avgPredRSF", plot.type="image")
 
@@ -615,8 +622,10 @@ visreg2d(nl_winNN.DI, "z.avgCarRSF", "z.avgPredRSF", plot.type="image")
 
 #### spring
 summary(nl_sprNN.dsl)  ### weak trend for more social in good caribou habitat
+#### new results nothing significant
 summary(nl_sprNN.dd)   ### caribou more social in good caribou habitat but less social in good predator habitat and where good caribou and predator habitat
 summary(nl_sprNN.dAA)  ### caribou less social in good predator habitat and weak trend for less social where good caribou and predator habitat 
+#### new results nothing significant
 summary(nl_sprNN.DI)   ### no trends in spring
 
 ### more social in winter than spring
@@ -637,7 +646,9 @@ visreg2d(nlNN.DI_Bear_spr, "z.avgCarRSF", "z.avgBearRSF", plot.type="image")
 summary(nlNN.dsl_coy_spr)  ### weak trend for more social in good caribou habitat
 summary(nlNN.dd_coy_spr)   ### caribou more social in good caribou habitat but less social in good coyote habitat and where good caribou and coyote habitat
 summary(nlNN.dAA_coy_spr)  ### caribou less social where good caribou and good coyote habitat
+#### new results nothing significant
 summary(nlNN.DI_coy_spr)   ### weak trend for less social in good caribou habitat
+#### new results nothing significant
 
 visreg2d(nlNN.DI_coy_spr, "z.avgCarRSF", "z.avgCoyRSF", plot.type="image")
 
@@ -645,9 +656,14 @@ visreg2d(nlNN.DI_coy_spr, "z.avgCarRSF", "z.avgCoyRSF", plot.type="image")
 
 ### coyote (year-round)
 summary(nlNN.dsl_coy)  ### caribou more social where good coyote habitat and weak trend for more social where caribou and coyote habitat good
+### new results caribou more social where good coyote habitat and more social where caribou and coyote habitat good
+
 summary(nlNN.dd_coy)   ### caribou less social in good coyote habitat but more social where good caribou and coyote habitat and weak trend for less social in good caribou habitat
 summary(nlNN.dAA_coy)  ### caribou less social in good coyote habitat but weak trend for more social in good caribou habitat
+### new results caribou less social in good caribou habitat, good coyote habitat and less social where caribou and coyote habitat good
+
 summary(nlNN.DI_coy)   ### caribou less social in good coyote habitat and weak trend for less social in caribou-coyote domain
+### new results caribou less social in good caribou habitat, good coyote habitat and less social where caribou and coyote habitat good
 
 visreg2d(nlNN.DI_coy, "z.avgCarRSF", "z.avgCoyRSF", plot.type="image")
 
