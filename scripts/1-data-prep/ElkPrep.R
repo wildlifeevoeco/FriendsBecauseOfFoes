@@ -122,7 +122,6 @@ elkSP <- SpatialPointsDataFrame(elk[, .(get(projXCol), get(projYCol))],
 
 elk <- data.table(over(bounds, elkSP, returnList = TRUE)[[1]])
 
-
 ### Output ----
 # Match variables to output variables = consistent variables across species
 source('scripts/0-variables/PrepDataOutputVariables.R')
