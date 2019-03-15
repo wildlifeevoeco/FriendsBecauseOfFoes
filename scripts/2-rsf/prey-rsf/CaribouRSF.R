@@ -6,7 +6,7 @@
 
 ### Packages ----
 libs <- c('adehabitatHR', 'rgeos', 'spatstat', 'polyCub', 
-          'raster', 'data.table', 
+          'raster', 'data.table', 'ewc',
           'piecewiseSEM', 'rgdal')
 lapply(libs, require, character.only = TRUE)
 
