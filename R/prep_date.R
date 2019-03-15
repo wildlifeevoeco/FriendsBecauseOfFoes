@@ -6,6 +6,8 @@
 #' @param dateFormat 
 #' @param timeFormat 
 #'
+#' @import data.table
+#'
 #' @return
 #' @export
 #'
