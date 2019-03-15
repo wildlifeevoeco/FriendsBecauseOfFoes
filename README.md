@@ -42,7 +42,7 @@ grep -rni 'R/' -e 'TODO';
     │   │   ├── DyadicDistance.R
     │   │   ├── DyadicID.R
     │   │   ├── FindNumbWithinDistance.R
-    │   │   ├── GenerateGrid.R
+    │   │   ├── generate_grid.R
     │   │   ├── NumbQuadTreeNeighbours.R
     │   │   ├── PlotLocsByFigure.R
     │   │   ├── calc_rel_angle.R
@@ -88,16 +88,3 @@ grep -rni 'R/' -e 'TODO';
     ├── Spring NL Dyad Distance.jpeg
     ├── TODO.md
     └── Winter NL DI.jpeg
-
-## Output metadata
-
-| script     | output path & name | description       |
-| ---------- | ------------------ | ----------------- |
-| BearPrep.R | data-prep/bear.Rds | prepped bear data |
-|            |                    |                   |
-|            |                    |                   |
-|            |                    |                   |
-|            |                    |                   |
-|            |                    |                   |
-|            |                    |                   |
-|            |                    |                   |

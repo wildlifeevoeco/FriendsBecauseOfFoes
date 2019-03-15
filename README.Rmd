@@ -19,7 +19,7 @@ grep -rni 'R/' -e 'TODO';
 ```
 
 ## Project structure
-```
+```{}
 .
 ├── graphics
 │   ├── data-model-prep
@@ -50,7 +50,7 @@ grep -rni 'R/' -e 'TODO';
 │   │   ├── DyadicDistance.R
 │   │   ├── DyadicID.R
 │   │   ├── FindNumbWithinDistance.R
-│   │   ├── GenerateGrid.R
+│   │   ├── generate_grid.R
 │   │   ├── NumbQuadTreeNeighbours.R
 │   │   ├── PlotLocsByFigure.R
 │   │   ├── calc_rel_angle.R
