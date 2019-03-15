@@ -8,8 +8,7 @@
 
 
 ### Packages ----
-libs <- c('data.table', 'ggplot2',
-          'ewc',
+libs <- c('data.table', 'ewc',
           'adehabitatHR', 'sp', 'rgdal', 'raster', 
           'lme4', 'car','piecewiseSEM')
 lapply(libs, require, character.only = TRUE)
@@ -137,6 +136,7 @@ springElkRSF.s <-
 plot(springElkRSF.s)
 
 # Using z score
+# TODO: can this be dropped then?
 #winterElkRSF.z <- (winterElkRSF.rstr - cellStats(winterElkRSF.rstr,stat=mean))/cellStats(winterElkRSF.rstr,stat=sd)
 #plot(winterElkRSF.z)
 #springElkRSF.z <- (springElkRSF.rstr - cellStats(springElkRSF.rstr,stat=mean))/cellStats(springElkRSF.rstr,stat=sd)
