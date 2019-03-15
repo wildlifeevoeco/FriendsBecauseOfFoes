@@ -7,7 +7,7 @@
 
 ``` bash
 grep -rni 'R/' -e 'TODO';
-#> R/AbsoluteAngle.R:41:  # TODO: what did this mean? .. my poor code commenting
+#> R/calc_abs_angle.R:41:  # TODO: what did this mean? .. my poor code commenting
 ```
 
 ## Project structure
@@ -37,15 +37,15 @@ grep -rni 'R/' -e 'TODO';
     │   └── rsf-values
     ├── R
     │   ├── 0-functions
-    │   │   ├── AbsoluteAngle.R
-    │   │   ├── DatePrep.R
+    │   │   ├── calc_abs_angle.R
+    │   │   ├── prep_date.R
     │   │   ├── DyadicDistance.R
     │   │   ├── DyadicID.R
     │   │   ├── FindNumbWithinDistance.R
     │   │   ├── GenerateGrid.R
     │   │   ├── NumbQuadTreeNeighbours.R
     │   │   ├── PlotLocsByFigure.R
-    │   │   ├── RelativeAngle.R
+    │   │   ├── calc_rel_angle.R
     │   │   ├── StepLength.R
     │   │   └── TemporalDistributionFigure.R
     │   ├── 0-variables
