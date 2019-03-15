@@ -39,8 +39,8 @@ elk[, time := paste0(get(hourCol), ':', sprintf('%02d', get(minCol)))]
 timeCol <- 'time'
 
 ## Date time fields
-source('R/0-functions/DatePrep.R')
-DatePrep(elk, dateCol, timeCol, dateFormat = '%d/%m/%Y')
+source('R/0-functions/prep_date.R')
+prep_date(elk, dateCol, timeCol, dateFormat = '%d/%m/%Y')
 
 # Check!
 elk[sample(.N, 5), .(idate, itime, yr, mnth, julday)]
@@ -68,8 +68,8 @@ elk <- na.omit(elk, cols = checkCols)
 elk[, c(projXCol, projYCol) := .(get(xCol), get(yCol))]
 
 # Step Length
-source('R/0-functions/StepLength.R')
-StepLength(elk, idCol, 
+
+step_length(elk, idCol, 
            datetimeCol = 'datetime', yrCol = 'yr', 
            xCol = projXCol, yCol = projYCol,
            returnIntermediate = FALSE)
@@ -77,7 +77,7 @@ StepLength(elk, idCol,
 difTimeThreshold <- 2
 elk <- elk[round(difdatetime) == difTimeThreshold]
 
-StepLength(elk, idCol, 
+step_length(elk, idCol, 
            datetimeCol = 'datetime', yrCol = 'yr', 
            xCol = projXCol, yCol = projYCol,
            returnIntermediate = FALSE)

@@ -43,8 +43,8 @@ caribou <- caribou[HERD == 'MIDRIDGE']
 
 ### Add fields ----
 # Date time fields
-source('R/0-functions/DatePrep.R')
-DatePrep(caribou, dateCol, timeCol)
+source('R/0-functions/prep_date.R')
+prep_date(caribou, dateCol, timeCol)
 
 # Check!
 caribou[sample(.N, 5), .(idate, itime, yr, mnth, julday)]
@@ -72,8 +72,8 @@ caribou[, c(projXCol, projYCol) := as.data.table(
   project(cbind(get(xCol), get(yCol)), utm))]
 
 # Step Length
-source('R/0-functions/StepLength.R')
-StepLength(caribou, idCol, datetimeCol = 'datetime', yrCol = 'yr',
+
+step_length(caribou, idCol, datetimeCol = 'datetime', yrCol = 'yr',
            xCol = projXCol, yCol = projYCol,
            returnIntermediate = FALSE)
 

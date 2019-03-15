@@ -8,16 +8,28 @@
 
  
 ### Packages ----
-libs <- c('data.table', 'ggplot2', 'gridExtra', 
-          'spatsoc',
-          'knitr', 'sp', 'rgdal', 'magrittr')
+libs <- c('data.table', 'ggplot2', 
+          'spatsoc', 'ewc',
+          'sp', 'rgdal')
 lapply(libs, require, character.only = TRUE)
 
 
 ### Input data ----
-dropCols <- c('FIX_ID','VENDOR_CL','AGE','COLLAR_FILE_ID','EXCLUDE','DOP','LOCQUAL',
-              'VALIDATED','COLLAR_TYPE_CL','COLLAR_ID','Fix_Time_Delta','EPSG_CODE')
-              #'Map_Quality','NAV')
+dropCols <-
+  c(
+    'FIX_ID',
+    'VENDOR_CL',
+    'AGE',
+    'COLLAR_FILE_ID',
+    'EXCLUDE',
+    'DOP',
+    'LOCQUAL',
+    'VALIDATED',
+    'COLLAR_TYPE_CL',
+    'COLLAR_ID',
+    'Fix_Time_Delta',
+    'EPSG_CODE'
+  )
 
 # Read in bear data, dropping above columns
 bear <- fread('input/locs/Bears.csv',
@@ -27,8 +39,8 @@ bear <- fread('input/locs/Bears.csv',
 utm <- '+proj=utm +zone=21 ellps=WGS84'
 
 # NL Bounds shapefile
-nlBounds <- rgdal::readOGR('input/etc/NL-Bounds/NL-Bounds.shp') %>% 
-  spTransform(CRSobj = utm)
+nlBounds <- spTransform(rgdal::readOGR('input/etc/NL-Bounds/NL-Bounds.shp'),
+                        CRSobj = utm)
 
 ### Variables ----
 xCol <- 'X_COORD'
@@ -42,8 +54,7 @@ projYCol <- 'NORTHING'
 
 ### Add fields ----
 ## Date time fields
-source('R/0-functions/DatePrep.R')
-DatePrep(bear, dateCol, timeCol)
+prep_date(bear, dateCol, timeCol)
 
 # Check!
 bear[sample(.N, 5), .(idate, itime, yr, mnth, julday)]
@@ -72,7 +83,7 @@ bear[, c(projXCol, projYCol) := as.data.table(project(cbind(get(xCol), get(yCol)
 
 # Step Length
 source('R/0-functions/StepLength.R')
-StepLength(bear, idCol, datetimeCol = 'datetime', yrCol = 'yr',
+step_length(bear, idCol, datetimeCol = 'datetime', yrCol = 'yr',
            xCol = projXCol, yCol = projYCol,
            returnIntermediate = FALSE)
 

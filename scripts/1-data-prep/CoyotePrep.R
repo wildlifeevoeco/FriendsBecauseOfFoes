@@ -53,8 +53,8 @@ projYCol <- 'NORTHING'
 
 ### Add fields ----
 # Date time fields
-source('R/0-functions/DatePrep.R')
-DatePrep(coyote, dateCol, timeCol)
+source('R/0-functions/prep_date.R')
+prep_date(coyote, dateCol, timeCol)
 
 # What is the difference in hours between fixes
 coyote[order(datetime), 
@@ -91,8 +91,8 @@ coyote[, c(projXCol, projYCol) :=
            project(cbind(get(xCol), get(yCol)), utm))]
 
 # Step Length
-source('R/0-functions/StepLength.R')
-StepLength(
+
+step_length(
   coyote,
   idCol,
   datetimeCol = 'datetime',
@@ -135,7 +135,7 @@ collect <- rbindlist(lapply(
 coyote <- merge(collect, coyote, by = 'idtime')
 
 # Recalculate step length
-StepLength(coyote, idCol, 
+step_length(coyote, idCol, 
            datetimeCol = 'datetime', yrCol = 'yr', 
            xCol = projXCol, yCol = projYCol,
            returnIntermediate = FALSE)
