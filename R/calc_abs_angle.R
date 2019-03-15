@@ -13,7 +13,7 @@
 #' @export
 #'
 #' @examples
-AbsoluteAngle <- function(DT,
+calc_abs_angle <- function(DT,
                           coords,
                           datetime,
                           id,
