@@ -3,9 +3,6 @@
 #' @param spacing
 #' @param crs
 #' @param mcpExtent
-#' @param DT
-#' @param xCol
-#' @param yCol
 #'
 #' @return
 #' @export
@@ -14,12 +11,18 @@
 generate_grid <-
   function(spacing,
            crs,
-           mcpExtent,
-           DT = NULL,
-           xCol = NULL,
-           yCol = NULL) {
+           mcpExtent) {
     rn <- n <- NULL
-    extentDT <- data.table::data.table(mcpExtent@bbox, keep.rownames = TRUE)
+    
+    if (missing(spacing))
+      stop('spacing is missing')
+    if (missing(crs))
+      stop('crs is missing')
+    if (missing(mcpExtent))
+      stop('mcpExtent is missing')
+    
+    extentDT <-
+      data.table::data.table(mcpExtent@bbox, keep.rownames = TRUE)
     
     extentDT[, dif := abs(min - max)]
     
@@ -47,7 +50,5 @@ generate_grid <-
     
     rSP <- raster::rasterToPoints(ra, spatial = TRUE)
     
-    data.table::data.table(
-      rSP@coords, n = 1:length(rSP))[
-        n %in% sp::over(mcpExtent, rSP, returnList = TRUE)[[1]]][, n := NULL]
+    data.table::data.table(rSP@coords, n = 1:length(rSP))[n %in% sp::over(mcpExtent, rSP, returnList = TRUE)[[1]]][, n := NULL]
   }
