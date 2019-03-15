@@ -108,7 +108,7 @@ Bearclipped<-gIntersection(nlBounds,BearAvailBuf)
 
 # Create Regular Grid
 
-regPts <- GenerateGrid(90, mcpExtent = Bearclipped, crs = utm)
+regPts <- generate_grid(Bearclipped, 90, crs = utm)
 
 
 
