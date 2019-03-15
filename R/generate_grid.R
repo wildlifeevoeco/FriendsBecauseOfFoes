@@ -14,7 +14,7 @@ GenerateGrid <- function(spacing, crs, mcpExtent, DT = NULL, xCol = NULL, yCol =
     xSeq <- extentDT[rn == "x", seq(min, min + (spacing * (length(ySeq) - 1)),
                                     by = spacing)]
   }
-
+  
   r <- raster::extent(head(xSeq, n = 1), tail(xSeq, n = 1), 
                       head(ySeq, n = 1), tail(ySeq, n = 1))
   ra <- raster(r)
