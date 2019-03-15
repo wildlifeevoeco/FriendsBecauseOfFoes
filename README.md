@@ -1,78 +1,85 @@
 # Easter Week Challenge
 
-
-
-
+ 
 ## Project structure
 ```
 .
 ├── graphics
-│   └── data-prep
+│   ├── data-model-prep
+│   └── data-prep
 ├── input
-│   ├── covariates
-│   │   └── RMNP
-│   ├── etc
-│   │   ├── NL-Bounds
-│   │   └── RMNP-extent
-│   └── locs
-│       ├── RMNP_WolfLocations
+│   ├── covariates
+│   │   └── RMNP
+│   ├── etc
+│   │   ├── NL-Bounds
+│   │   └── RMNP-extent
+│   └── locs
+│       ├── RMNP_WolfLocations
+│       ├── AllCaribouDataRaw.csv
+│       ├── Bears.csv
+│       ├── Coyote.csv
+│       └── RMNP_ElkData_clean.csv
 ├── output
-│   ├── data-prep
-│   ├── predator-rsf
-│   └── prey-rsf
+│   ├── angles
+│   ├── data-prep
+│   ├── nna
+│   ├── predator-rsf
+│   ├── prey-rsf
+│   └── rsf-values
 ├── R
-│   ├── data-prep
-│   │   ├── BearPrep.R
-│   │   ├── CaribouPrep.R
-│   │   ├── CoyotePrep.R
-│   │   ├── ElkPrep.R
-│   │   ├── RasterPrep.R
-│   │   ├── RuggCalc.R
-│   │   └── WolfPrep.R
-│   ├── 0-functions
-│   │   ├── DatePrep.R
-│   │   ├── FindMinimumDistance.R
-│   │   ├── GenerateGrid.R
-│   │   ├── Group-Time-spatsoc.R
-│   │   ├── NumbQuadTreeNeighbours.R
-│   │   ├── PlotLocsByFigure.R
-│   │   ├── StepLength.R
-│   │   └── TemporalDistributionFigure.R
-│   ├── method-devel
-│   │   ├── predator-rsf
-│   │   │   ├── BearRSF.R
-│   │   │   ├── CoyoteRSF.R
-│   │   │   └── WolfRSF.R
-│   │   ├── prey-rsf
-│   │   │   ├── CaribouRSF.R
-│   │   │   └── ElkRSF.R
-│   │   └── sociality
-│   │       ├── AbsoluteTurnAngle.R
-│   │       └── NearestNeighbourAnalysis.R
-│   ├── RSFs
-│   │   └── NLPredRSFs.R
-│   └── variables
-│       ├── CutOffThresholds.R
-│       └── PrepDataOutputVariables.R
+│   ├── 0-functions
+│   │   ├── AbsoluteAngle.R
+│   │   ├── DatePrep.R
+│   │   ├── DyadicDistance.R
+│   │   ├── DyadicID.R
+│   │   ├── FindNumbWithinDistance.R
+│   │   ├── GenerateGrid.R
+│   │   ├── NumbQuadTreeNeighbours.R
+│   │   ├── PlotLocsByFigure.R
+│   │   ├── RelativeAngle.R
+│   │   ├── StepLength.R
+│   │   └── TemporalDistributionFigure.R
+│   ├── 0-variables
+│   │   ├── CutOffThresholds.R
+│   │   └── PrepDataOutputVariables.R
+│   ├── 1-data-prep
+│   │   ├── BearPrep.R
+│   │   ├── CaribouPrep.R
+│   │   ├── CoyotePrep.R
+│   │   ├── ElkPrep.R
+│   │   ├── RasterPrep.R
+│   │   ├── RuggCalc.R
+│   │   └── WolfPrep.R
+│   ├── 2-rsf
+│   │   ├── predator-rsf
+│   │   │   ├── BearRSF2.R
+│   │   │   ├── BearRSF.R
+│   │   │   ├── CoyoteRSF2.R
+│   │   │   ├── CoyoteRSF.R
+│   │   │   └── WolfRSF.R
+│   │   ├── prey-rsf
+│   │   │   ├── CaribouRSF2.R
+│   │   │   ├── CaribouRSF.R
+│   │   │   └── ElkRSF.R
+│   │   └── NLPredRSFs.R
+│   ├── 3-extraction
+│   │   ├── cariboudata-rsfvalues.R
+│   │   └── elkdata-rsfvalues.R
+│   ├── 4-sociality
+│   │   ├── 4.1-CalculateTurnAngles.R
+│   │   └── 4.2-NearestNeighbourAnalysis.R
+│   ├── 5-model
+│   │   └── socialitydomainGLM.R
+│   └── Generating summary tables for RSFs.R
 ├── CONTRIBUTING.md
 ├── ewc.Rproj
 ├── LICENSE
 ├── NOTES.md
 ├── README.md
-└── TODO.md
+├── Spring NL Dyad Distance.jpeg
+├── TODO.md
+└── Winter NL DI.jpeg
 ```
-
-
-### /R/method-devel
-Method development folder, to isolate development of methods from reproducible analysis. 
-
-### /R/0-functions
-Standalone 0-functions for DRY (don't repeat yourself).
-
-Eg: figures, date handling, step length, etc. 
-
-*Ideally, these will be written defensively with tests*
-
 
 ## Output metadata
 
