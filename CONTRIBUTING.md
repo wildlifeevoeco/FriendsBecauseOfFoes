@@ -40,8 +40,7 @@ Use the [Issues](https://gitlab.com/WEEL_grp/ewc/issues) to discuss decisions, p
 
 <!-- labels, separate boards --> 
 
-If you'd to like include a table, use `knitr::kable` and copy+paste the 
-output. 
+If you'd to like include a table, use `knitr::kable` and copy+paste the output. 
 
 # Documentation
 ## CONTRIBUTING
@@ -68,4 +67,4 @@ See README.md and [Standard Project Structure](https://gitlab.com/WEEL_grp/core/
 
 Use sub-folders in `/input`, `/output`, and `/R` to organize. 
 
-No need to put dates in any file names, that's what Git is for. 
+No need to put dates or version numbers in any file names, that's what Git is for. 
