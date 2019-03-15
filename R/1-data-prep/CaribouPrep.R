@@ -7,7 +7,7 @@
 # Copyright: ./LICENSE.md 
 
 ### Packages ----
-libs <- c('data.table', 'ggplot2', 
+libs <- c('data.table', 'ggplot2', 'spatsoc',
           'knitr', 'sp', 'rgdal', 'magrittr')
 lapply(libs, require, character.only = TRUE)
 
@@ -55,9 +55,8 @@ source('R/0-variables/CutOffThresholds.R')
 caribou[julday %between% winter, season := 'winter']
 caribou[julday %between% spring, season := 'spring']
 
-# Group Time - from spatsoc
-source('R/0-functions/Group-Time-spatsoc.R')
-GroupTimes(caribou, 'datetime', '15 minutes')
+# Temporal grouping
+group_times(caribou, 'datetime', '15 minutes')
 
 ### Subset ----
 # Subset any NAs in defined cols
@@ -66,7 +65,7 @@ caribou <- na.omit(caribou, cols = checkCols)
 
 # Subset any 0 in lat/long and where longitude is positive
 caribou <- caribou[get(xCol) != 0 & get(xCol) < 0]
-
+ 
 ### Project + Step Length ----
 # Project coordinates to UTM
 caribou[, c(projXCol, projYCol) := as.data.table(

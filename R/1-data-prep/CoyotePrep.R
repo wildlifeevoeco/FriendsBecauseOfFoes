@@ -13,10 +13,6 @@ libs <- c('data.table', 'ggplot2', 'spatsoc',
           'adehabitatLT')
 lapply(libs, require, character.only = TRUE)
 
-# Note: if spatsoc is not installed, uncomment and run these lines:
-# drat::addRepo('LocalRepo', 'https://spatsoc.gitlab.io')
-# install.packages('spatsoc')
-
 ### Input data ----
 dropCols <-
   c(

@@ -8,7 +8,7 @@
 
 
 ### Packages ----
-libs <- c('data.table', 'ggplot2', 
+libs <- c('data.table', 'ggplot2',  'spatsoc',
           'knitr', 'sp', 'rgdal', 'magrittr')
 lapply(libs, require, character.only = TRUE)
 
@@ -65,8 +65,7 @@ wolf[julday %between% winter, season := 'winter']
 wolf[julday %between% spring, season := 'spring']
 
 # Group Time - from spatsoc
-source('R/0-functions/Group-Time-spatsoc.R')
-GroupTimes(wolf, 'datetime', '15 minutes')
+group_times(wolf, 'datetime', '15 minutes')
 
 ### Subset ----
 # Subset any NAs in defined cols

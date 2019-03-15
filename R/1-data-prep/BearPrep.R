@@ -6,9 +6,10 @@
 # Project: Easter Week Challenge 2018
 # Copyright: ./LICENSE.md 
 
-
+ 
 ### Packages ----
 libs <- c('data.table', 'ggplot2', 'gridExtra', 
+          'spatsoc',
           'knitr', 'sp', 'rgdal', 'magrittr')
 lapply(libs, require, character.only = TRUE)
 
@@ -53,9 +54,7 @@ source('R/0-variables/CutOffThresholds.R')
 bear[julday %between% winter, season := 'winter']
 bear[julday %between% spring, season := 'spring']
 
-# Group Time - from spatsoc
-source('R/0-functions/Group-Time-spatsoc.R')
-GroupTimes(bear, 'datetime', '15 minutes')
+group_times(bear, 'datetime', '15 minutes')
 
 
 ### Subset ----

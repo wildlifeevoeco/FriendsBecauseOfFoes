@@ -7,7 +7,7 @@
 # Copyright: ./LICENSE.md 
 
 ### Packages ----
-libs <- c('data.table', 'ggplot2', 
+libs <- c('data.table', 'ggplot2', 'spatsoc',
           'knitr', 'sp', 'rgdal', 'magrittr')
 lapply(libs, require, character.only = TRUE)
 
@@ -54,9 +54,8 @@ source('R/0-variables/CutOffThresholds.R')
 elk[julday %between% winter, season := 'winter']
 elk[julday %between% spring, season := 'spring']
 
-# Group Time - from spatsoc
-source('R/0-functions/Group-Time-spatsoc.R')
-GroupTimes(elk, 'datetime', '15 minutes')
+# Temporal grouping
+group_times(elk, 'datetime', '15 minutes')
 
 ### Subset ----
 # Subset any NAs in defined cols
