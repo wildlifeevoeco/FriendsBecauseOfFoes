@@ -9,6 +9,7 @@
 
 ### Packages ----
 libs <- c('data.table', 'ggplot2',
+          'ewc',
           'adehabitatHR', 'sp', 'rgdal', 'raster', 
           'lme4', 'car','piecewiseSEM')
 lapply(libs, require, character.only = TRUE)
@@ -37,13 +38,10 @@ elkSP <- SpatialPoints(elk[, .(EASTING, NORTHING)],
 elkMCP <- mcp(elkSP, 100)
 
 # Create Regular Grid
-
-regPts <- GenerateGrid(90, mcpExtent = elkMCP, crs = utm)
-
+regPts <- generate_grid(pol = elkMCP, spacing = 90, crs = utm)
 setnames(regPts, c('EASTING', 'NORTHING'))
 
-# saveRDS(regPts, 'output/prey-rsf/elkRegularPoints.Rds')
-#regPts <- readRDS('output/prey-rsf/elkRegularPoints.Rds')
+saveRDS(regPts, 'output/prey-rsf/elkRegularPoints.Rds')
 
 # Check that points are within MCP
 # ggplot(elkMCP) +

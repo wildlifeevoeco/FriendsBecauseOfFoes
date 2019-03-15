@@ -48,5 +48,5 @@ generate_grid <- function(pol, spacing, crs) {
   
   rSP <- raster::rasterToPoints(ra, spatial = TRUE)
   
-  data.table::data.table(rSP@coords, n = 1:length(rSP))[n %in% sp::over(pol, rSP, returnList = TRUE)[[1]]][, n := NULL]
+  data.table::data.table(rSP@coords, n = 1:length(rSP))[n %in% sp::over(pol, rSP, returnList = TRUE)[[1]]][, n := NULL][]
 }

@@ -4,11 +4,15 @@
 \alias{generate_grid}
 \title{Generate grid}
 \usage{
-generate_grid(spacing, crs, mcpExtent)
+generate_grid(pol, spacing, crs)
 }
 \arguments{
-\item{mcpExtent}{}
+\item{pol}{mcp or other SpatialPolygons object within which the grid will be generated.}
+
+\item{spacing}{distance between points in grid. units of the projection.}
+
+\item{crs}{proj4string of coordinate reference system for pol.}
 }
 \description{
-Generate grid
+Generate a regular grid within a polygon object.
 }
