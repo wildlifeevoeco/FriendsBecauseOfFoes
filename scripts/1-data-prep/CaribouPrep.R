@@ -38,8 +38,7 @@ idCol <- 'ANIMAL_ID'
 projXCol <- 'EASTING'
 projYCol <- 'NORTHING'
 
-
-# Drop down to Middle Ridge right away, so subsequent steps are faster
+# Subset to Middle Ridge right away, so subsequent steps are faster
 caribou <- caribou[HERD == 'MIDRIDGE']
 
 ### Add fields ----
@@ -51,7 +50,6 @@ caribou[sample(.N, 5), .(idate, itime, yr, mnth, julday)]
 
 # Season
 source('scripts/0-variables/CutOffThresholds.R')
-
 caribou[julday %between% winter, season := 'winter']
 caribou[julday %between% spring, season := 'spring']
 
@@ -81,6 +79,7 @@ step_length(
   moverate = TRUE,
   preserve = FALSE
 )
+
 ### Summary information ----
 # How many unique animals?
 caribou[, uniqueN(get(idCol))]
@@ -100,13 +99,10 @@ difTimeThreshold <- 24
 lowJul <- 0
 highJul <- 365
 
-# Map_Quality, NAV
-
 caribou <- caribou[stepLength < stepLengthThreshold & 
                    moveRate < moveRateThreshold &
                    difdatetime < difTimeThreshold &
                    between(julday, lowJul, highJul)]
-
 
 ### Output ----
 # Match variables to output variables = consistent variables across species
