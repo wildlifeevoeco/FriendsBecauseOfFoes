@@ -104,7 +104,7 @@ fixrate <- data.table(
   season = c('spring', 'winter'),
   rate = c(4, 8)
 ) 
-coyote[, idtime := paste(coyote$ANIMAL_ID, coyote$datetime, sep=" ")]
+coyote[, idtime := paste(coyote$ANIMAL_ID, coyote$datetime, sep = " ")]
 
 collect <- rbindlist(lapply(
   1:nrow(fixrate),
@@ -187,4 +187,3 @@ setnames(coyote, c('ANIMAL_ID', 'SPECIES', 'season', 'timegroup',
          outputVariables)
 
 saveRDS(coyote[, ..outputVariables], 'output/data-prep/coyote.Rds')
-
