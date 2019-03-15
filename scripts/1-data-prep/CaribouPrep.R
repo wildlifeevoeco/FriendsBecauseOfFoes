@@ -50,7 +50,7 @@ prep_date(caribou, dateCol, timeCol)
 caribou[sample(.N, 5), .(idate, itime, yr, mnth, julday)]
 
 # Season
-source('R/0-variables/CutOffThresholds.R')
+source('scripts/0-variables/CutOffThresholds.R')
 
 caribou[julday %between% winter, season := 'winter']
 caribou[julday %between% spring, season := 'spring']
@@ -106,7 +106,7 @@ caribou <- caribou[stepLength < stepLengthThreshold &
 
 ### Output ----
 # Match variables to output variables = consistent variables across species
-source('R/0-variables/PrepDataOutputVariables.R')
+source('scripts/0-variables/PrepDataOutputVariables.R')
 
 outputVariables <- c(outputVariables, 'herd', 'sex')
 

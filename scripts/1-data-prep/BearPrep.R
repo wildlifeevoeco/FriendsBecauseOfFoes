@@ -60,7 +60,7 @@ prep_date(bear, dateCol, timeCol)
 bear[sample(.N, 5), .(idate, itime, yr, mnth, julday)]
 
 # Season
-source('R/0-variables/CutOffThresholds.R')
+source('scripts/0-variables/CutOffThresholds.R')
 
 bear[julday %between% winter, season := 'winter']
 bear[julday %between% spring, season := 'spring']
@@ -117,7 +117,7 @@ bear <- bear[stepLength < stepLengthThreshold &
 
 ### Output ----
 # Match variables to output variables = consistent variables across species
-source('R/0-variables/PrepDataOutputVariables.R')
+source('scripts/0-variables/PrepDataOutputVariables.R')
 
 outputVariables <- c(outputVariables, 'herd', 'sex')
 
