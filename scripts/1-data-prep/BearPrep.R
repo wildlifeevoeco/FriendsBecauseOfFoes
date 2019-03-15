@@ -114,7 +114,6 @@ highJul <- 365
 herdList <- 'MIDRIDGE'
 
 # TODO: do we ever need Map_Quality, NAV?
-
 bear <- bear[stepLength < stepLengthThreshold & 
                moveRate < moveRateThreshold &
                difdatetime < difTimeThreshold &

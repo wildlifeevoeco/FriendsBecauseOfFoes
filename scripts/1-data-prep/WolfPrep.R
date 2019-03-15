@@ -105,26 +105,24 @@ step_length(
 
 ### Subset by collar fields ----
 # N by fix quality
-kable(wolf[, .N, by = info])
-kable(wolf[, .N, by = Fix2d3d])
-kable(wolf[, .N, by = fixstatus])
+wolf[, .N, by = info]
+wolf[, .N, by = Fix2d3d]
+wolf[, .N, by = fixstatus]
 
 ### Summary information ----
 # How many unique animals?
 wolf[, uniqueN(get(idCol))]
 
 # How many unique animals per year?
-kable(wolf[, .('N Unique Wolves' = uniqueN(get(idCol))), by = yr])
+wolf[, .('N Unique Wolves' = uniqueN(get(idCol))), by = yr])
 
 # Temporal distribution of locs
-kable(wolf[order(mnth), .N, by = mnth])
-kable(wolf[order(yr), .N, by = yr])
+wolf[order(mnth), .N, by = mnth]
+wolf[order(yr), .N, by = yr]
 
 ### Subset ----
 # Thresholds
 moveRateThreshold <- 20000
-
-# Map_Quality, NAV
 
 wolf <- wolf[moveRate < moveRateThreshold]
 
@@ -137,12 +135,12 @@ wolfSP <- SpatialPointsDataFrame(wolf[, .(get(projXCol), get(projYCol))],
 wolf <- data.table(over(bounds, wolfSP, returnList = TRUE)[[1]])
 
 # Remove points at the office (le::crop)
-minOfficeX <-432969
-maxOfficeX <-433579
-minOfficeY <-5611525
-maxOfficeY <-5612110
-wolf<-wolf[!(inrange(EASTING, minOfficeX, maxOfficeX) & 
-         inrange(NORTHING, minOfficeY, maxOfficeY))]
+minOfficeX <- 432969
+maxOfficeX <- 433579
+minOfficeY <- 5611525
+maxOfficeY <- 5612110
+wolf <- wolf[!(inrange(EASTING, minOfficeX, maxOfficeX) &
+                 inrange(NORTHING, minOfficeY, maxOfficeY))]
 
 
 ### Output ----

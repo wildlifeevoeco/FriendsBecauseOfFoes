@@ -86,11 +86,11 @@ step_length(
 caribou[, uniqueN(get(idCol))]
 
 # How many unique animals per year?
-kable(caribou[order(yr), .('N Unique Caribou' = uniqueN(get(idCol))), by = yr])
+caribou[order(yr), .('N Unique Caribou' = uniqueN(get(idCol))), by = yr]
 
 # Temporal distribution of locs
-kable(caribou[order(mnth), .N, by = mnth])
-kable(caribou[order(yr), .N, by = yr])
+caribou[order(mnth), .N, by = mnth]
+caribou[order(yr), .N, by = yr]
 
 ### Subset ----
 # Thresholds

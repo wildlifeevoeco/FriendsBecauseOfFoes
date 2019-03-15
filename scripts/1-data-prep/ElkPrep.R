@@ -80,21 +80,26 @@ step_length(
 difTimeThreshold <- 2
 elk <- elk[round(difdatetime) == difTimeThreshold]
 
-step_length(elk, idCol, 
-           datetimeCol = 'datetime', yrCol = 'yr', 
-           xCol = projXCol, yCol = projYCol,
-           returnIntermediate = FALSE)
-  
+step_length(
+  elk,
+  coords = c(projXCol, projYCol),
+  time = 'datetime',
+  splitBy = c(idCol, 'yr'),
+  type = 'lead',
+  moverate = TRUE,
+  preserve = FALSE
+)
+
 ### Summary information ----
 # How many unique animals?
 elk[, uniqueN(get(idCol))]
 
 # How many unique animals per year?
-kable(elk[order(yr), .('N Unique Elks' = uniqueN(get(idCol))), by = yr])
+elk[order(yr), .('N Unique Elks' = uniqueN(get(idCol))), by = yr]
 
 # Temporal distribution of locs
-kable(elk[order(mnth), .N, by = mnth])
-kable(elk[order(yr), .N, by = yr])
+elk[order(mnth), .N, by = mnth]
+elk[order(yr), .N, by = yr]
 
 # Steplength distribution
 elk[, qplot(stepLength)]

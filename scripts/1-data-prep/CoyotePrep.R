@@ -132,10 +132,15 @@ collect <- rbindlist(lapply(
 coyote <- merge(collect, coyote, by = 'idtime')
 
 # Recalculate step length
-step_length(coyote, idCol, 
-           datetimeCol = 'datetime', yrCol = 'yr', 
-           xCol = projXCol, yCol = projYCol,
-           returnIntermediate = FALSE)
+step_length(
+  coyote,
+  coords = c(projXCol, projYCol),
+  time = 'datetime',
+  splitBy = c(idCol, 'yr'),
+  type = 'lead',
+  moverate = TRUE,
+  preserve = FALSE
+)
 
 # group_times from spatsoc
 group_times(coyote, 'datetime', '15 minutes')
@@ -145,14 +150,14 @@ group_times(coyote, 'datetime', '15 minutes')
 coyote[, uniqueN(get(idCol))]
 
 # How many unique animals per year?
-kable(coyote[, .('N Unique coyotes' = uniqueN(get(idCol))), by = yr])
+coyote[, .('N Unique coyotes' = uniqueN(get(idCol))), by = yr]
 
 # Temporal distribution of locs
-kable(coyote[order(mnth), .N, by = mnth])
-kable(coyote[order(yr), .N, by = yr])
+coyote[order(mnth), .N, by = mnth]
+coyote[order(yr), .N, by = yr]
 
 # Herd distribution of coyotes
-kable(coyote[, .N, by = HERD])
+coyote[, .N, by = HERD]
 
 ### Subset ----
 # Thresholds
@@ -163,12 +168,9 @@ lowJul <- 0
 highJul <- 365
 herdList <- 'MIDRIDGE'
 
-# Map_Quality, NAV
-
 coyote <- coyote[stepLength < stepLengthThreshold & 
                    moveRate < moveRateThreshold &
                    between(julday, lowJul, highJul)]
-                  #HERD %in% herdList]
 
 ### Output ----
 # Match variables to output variables = consistent variables across species
