@@ -2,6 +2,7 @@
 
 export(calc_abs_angle)
 export(calc_rel_angle)
+export(generate_grid)
 export(prep_date)
 export(step_length)
 import(data.table)

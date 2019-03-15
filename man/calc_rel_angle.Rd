@@ -4,23 +4,23 @@
 \alias{calc_rel_angle}
 \title{Relative Angles}
 \usage{
-calc_rel_angle(DT, abs = NULL, coord = NULL, datetime = NULL,
-  id = NULL, allCW = FALSE, returnIntermediate = FALSE)
+calc_rel_angle(DT, coords = NULL, datetime = NULL, id = NULL,
+  yr = NULL, allCW = FALSE, returnIntermediate = FALSE)
 }
 \arguments{
-\item{DT}{}
+\item{DT}{data.table}
 
-\item{abs}{}
+\item{coords}{character vector; coordinate columns}
 
-\item{coord}{}
+\item{datetime}{character; datetime column}
 
-\item{datetime}{}
+\item{id}{character; id column}
 
-\item{id}{}
+\item{yr}{character; year column}
 
-\item{allCW}{}
+\item{allCW}{boolean; all clockwise}
 
-\item{returnIntermediate}{}
+\item{returnIntermediate}{boolean; return intermediate columns}
 }
 \description{
 Relative Angles
