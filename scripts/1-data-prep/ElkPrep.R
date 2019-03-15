@@ -111,8 +111,6 @@ moveRateThreshold <- 2000
 lowJul <- 0
 highJul <- 365
 
-# Map_Quality, NAV
-
 elk <- elk[stepLength < stepLengthThreshold & 
              moveRate < moveRateThreshold &
              between(julday, lowJul, highJul)]
@@ -138,20 +136,3 @@ setnames(elk, c('ElkID', 'SPECIES', 'season', 'timegroup',
          outputVariables)
 
 saveRDS(elk[, ..outputVariables], 'output/data-prep/elk.Rds')
-
-### Plots ----
-# Plot locs by year on RMNP bounds 
-source('R/0-functions/PlotLocsByFigure.R')
-
-# To PDF 
-# pdf('graphics/data-prep/elk-locs-by-year.pdf')
-elk[order(yr),
-    PlotLocsBy(.SD, bounds, .BY[[1]], 'id'),
-    by = yr]
-# dev.off()
-
-# Temporal distribution of locs
-source('R/0-functions/TemporalDistributionFigure.R')
-TempDistFig(elk)
-
-# ggsave('graphics/data-prep/elk-temp-dist.png', TempDistFig(elk), 'png')

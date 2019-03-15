@@ -158,20 +158,3 @@ setnames(wolf, c('wolfid', 'SPECIES', 'season', 'timegroup',
          outputVariables)
 
 saveRDS(wolf[, ..outputVariables], 'output/data-prep/wolf.Rds')
-
-
-### Plots ----
-# Plot locs by year on RMNP bounds 
-source('R/0-functions/PlotLocsByFigure.R')
-
-# To PDF 
-# pdf('graphics/data-prep/wolf-locs-by-year.pdf')
-wolf[order(yr), PlotLocsBy(.SD, bounds, .BY[[1]], 'id'),
-     by = yr]
-# dev.off()
-
-# Temporal distribution of locs
-source('R/0-functions/TemporalDistributionFigure.R')
-TempDistFig(wolf)
-
-# ggsave('graphics/data-prep/wolf-temp-dist.png', TempDistFig(wolf), 'png')

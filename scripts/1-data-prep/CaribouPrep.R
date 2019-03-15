@@ -124,21 +124,3 @@ setnames(caribou, c('ANIMAL_ID', 'SPECIES', 'season', 'timegroup',
 
 saveRDS(caribou[, ..outputVariables], 
         'output/data-prep/caribou.Rds')
-
-
-### Plots ----
-# Plot locs by year on NL bounds 
-source('R/0-functions/PlotLocsByFigure.R')
-
-# To PDF 
-pdf('graphics/data-prep/caribou-locs-by-year.pdf')
-caribou[, PlotLocsBy(.SD, nlBounds, .BY[[1]], 'id'),
-        by = yr]
-dev.off()
-
-
-# Temporal distribution of locs
-source('R/0-functions/TemporalDistributionFigure.R')
-TempDistFig(caribou)
-
-ggsave('graphics/data-prep/caribou-temp-dist.png', TempDistFig(caribou), 'png')

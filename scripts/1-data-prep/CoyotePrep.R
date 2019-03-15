@@ -189,23 +189,6 @@ setnames(coyote, c('ANIMAL_ID', 'SPECIES', 'season', 'timegroup',
 saveRDS(coyote[, ..outputVariables], 'output/data-prep/coyote.Rds')
 
 
-### Plots ----
-# Plot locs by year on NL bounds 
-source('R/0-functions/PlotLocsByFigure.R')
-
-# To PDF 
-# pdf('graphics/data-prep/coyote-locs-by-year.pdf')
-coyote[, PlotLocsBy(.SD, nlBounds, .BY[[1]], 'id'),
-       by = yr]
-# dev.off()
-
-
-# Temporal distribution of locs
-source('R/0-functions/TemporalDistributionFigure.R')
-TempDistFig(coyote)
-
-# ggsave('graphics/data-prep/coyote-temp-dist.png', TempDistFig(coyote), 'png')
-
 
 
 
