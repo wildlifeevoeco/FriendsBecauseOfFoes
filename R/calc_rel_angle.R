@@ -1,9 +1,6 @@
 #' Relative Angles
 #'
 #' @inheritParams calc_abs_angle
-#' @param abs
-#' @param allCW
-#' @param returnIntermediate
 #'
 #' @return
 #' @export
@@ -11,7 +8,6 @@
 #' @examples
 calc_rel_angle <-
   function(DT,
-           abs = NULL,
            coords = NULL,
            datetime = NULL,
            id = NULL,
@@ -26,7 +22,7 @@ calc_rel_angle <-
       
     } else {
       
-      calc_abs_angle(DT, coord, datetime, id, yr, allCW, returnIntermediate)
+      calc_abs_angle(DT, coords, datetime, id, yr, allCW, returnIntermediate)
       
       DT[, relAngle := 
            data.table::shift(absAngle, 1, type = 'lead') - absAngle]
