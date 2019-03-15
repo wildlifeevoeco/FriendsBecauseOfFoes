@@ -1,5 +1,4 @@
 ### Nearest Neighbour Analysis ----
-# Authors: Alec Robitaille
 # Purpose: Determine number of NN within dist threshold and dist to NN
 # Inputs: Elk, caribou relocation data
 # Outputs: NN data
@@ -7,10 +6,11 @@
 # Copyright: ./LICENSE.md 
 
 #TODO: Grab Hance's updated social metrics from modeling script
+
 ### Packages ----
-libs <- c('data.table', 'ggplot2',
-          'SearchTrees', 'igraph',
-          'magrittr')
+libs <- c('data.table', 
+          'ewc',
+          'SearchTrees', 'igraph')
 lapply(libs, require, character.only = TRUE)
 
 
@@ -110,25 +110,6 @@ DT[NbyTime > 1,
 
 ### Output ----
 saveRDS(DT, paste0('output/nna/', species, 'NNA.Rds'))
-
-### Figures ----
-qplot(get(withinCol), data = DT, 
-      main = paste('Number of neighbours within', distanceThreshold),
-      xlab = 'Number of Neighbours')
-
-# Check NN at a timegroup
-ggplot(aes(EASTING, NORTHING, color = factor(id)), 
-       data = DT[timegroup == 4]) +
-  geom_point() + ggthemes::scale_colour_pander() +
-  coord_fixed()
-
-
-
-
-
-
-
-
 
 ### Input data ----
 # Which species would you like to calculate abs and rel TA for?
