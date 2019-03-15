@@ -45,7 +45,7 @@ Carclipped2<-as.owin.SpatialPolygons(Carclipped)
 
 # Create Regular Grid
 
-regPts <- GenerateGrid(90, mcpExtent = Carclipped, crs = utm)
+regPts <- generate_grid(Carclipped, 90, crs = utm)
 
 #CarRandSum<-runifpoint(n=nrow(CarSummer)*10,win=Carclipped2)
 #CarRandWin<-runifpoint(n=nrow(CarWinter)*10,win=Carclipped2)

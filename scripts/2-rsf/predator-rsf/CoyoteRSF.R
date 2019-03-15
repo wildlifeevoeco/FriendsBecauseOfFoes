@@ -16,8 +16,8 @@ lapply(libs, require, character.only = TRUE)
 ### Input data ----
 
 utm <- '+proj=utm +zone=21 ellps=WGS84'
-nlBounds <- rgdal::readOGR('input/etc/NL-Bounds/NL-Bounds.shp') %>% 
-  spTransform(CRSobj = utm)
+nlBounds <- spTransform(readOGR('input/etc/NL-Bounds/NL-Bounds.shp'),
+                        CRSobj = utm)
 
 ############ caribou
 
@@ -200,7 +200,7 @@ Coyclipped<-gIntersection(nlBounds,CoyAvailBuf)
 
 # Create Regular Grid
 
-regPts <- GenerateGrid(90, mcpExtent = Coyclipped, crs = utm)
+regPts <- generate_grid(Coyclipped, 90, crs = utm)
 
 
 
