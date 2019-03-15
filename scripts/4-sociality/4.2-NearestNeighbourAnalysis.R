@@ -6,7 +6,7 @@
 # Project: Easter Week Challenge 2018
 # Copyright: ./LICENSE.md 
 
-
+#TODO: Grab Hance's updated social metrics from modeling script
 ### Packages ----
 libs <- c('data.table', 'ggplot2',
           'SearchTrees', 'igraph',

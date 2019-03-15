@@ -8,10 +8,7 @@
 # Project: Easter Week Challenge 2018
 # Copyright: ./LICENSE.md 
 
-
-### Theory ====
-# Math:
-# arctan(dif-y, dif-x) * 180 / pi
+#TODO: Grab Hance's updated social metrics from modeling script
 
 ### Packages ----
 libs <- c('data.table', 'ggplot2',
