@@ -6,7 +6,7 @@
 # Project: Easter Week Challenge 2018
 # Copyright: ./LICENSE.md 
 
- 
+
 ### Packages ----
 libs <- c('data.table', 'ggplot2', 
           'spatsoc', 'ewc',
@@ -78,25 +78,31 @@ bear <- bear[get(xCol) != 0 & get(xCol) < 0]
 
 ### Project + Step Length ----
 # Project coordinates to UTM
-bear[, c(projXCol, projYCol) := as.data.table(project(cbind(get(xCol), get(yCol)), 
-                                                         utm))]
+bear[, c(projXCol, projYCol) := 
+       as.data.table(project(cbind(get(xCol), get(yCol)), utm))]
 
 # Step Length
-source('R/0-functions/StepLength.R')
-step_length(bear, idCol, datetimeCol = 'datetime', yrCol = 'yr',
-           xCol = projXCol, yCol = projYCol,
-           returnIntermediate = FALSE)
+# TODO: double check type of step_length
+step_length(
+  bear,
+  coords = c(projXCol, projYCol),
+  time = 'datetime',
+  splitBy = c(idCol, 'yr'),
+  type = 'lead',
+  moverate = TRUE,
+  preserve = FALSE
+)
 
 ### Summary information ----
 # How many unique animals?
 bear[, uniqueN(get(idCol))]
 
 # How many unique animals per year?
-kable(bear[, .('N Unique Bears' = uniqueN(get(idCol))), by = yr])
+bear[, .('N Unique Bears' = uniqueN(get(idCol))), by = yr]
 
 # Temporal distribution of locs
-kable(bear[order(mnth), .N, by = mnth])
-kable(bear[order(yr), .N, by = yr])
+bear[order(mnth), .N, by = mnth]
+bear[order(yr), .N, by = yr]
 
 ### Subset ----
 # Thresholds
@@ -124,25 +130,8 @@ outputVariables <- c(outputVariables, 'herd', 'sex')
 setnames(bear, c('ANIMAL_ID', 'SPECIES', 'season', 'timegroup',
                  'idate', 'itime', 'datetime', 
                  'EASTING', 'NORTHING',
-                 'julday', 'yr', 'mnth', 'stepLength', 'moveRate', 'difdatetime',
-                 'HERD', 'SEX'),
+                 'julday', 'yr', 'mnth', 'stepLength', 'moveRate', 
+                 'difdatetime', 'HERD', 'SEX'),
          outputVariables)
 
 saveRDS(bear[, ..outputVariables], 'output/data-prep/bear.Rds')
-
-### Figures ----
-# Plot locs by year on NL bounds 
-source('R/0-functions/PlotLocsByFigure.R')
-
-# To PDF 
-# pdf('graphics/data-prep/bear-locs-by-year.pdf')
-bear[,
-     PlotLocsBy(.SD, nlBounds, .BY[[1]], 'id'),
-     by = yr]
-# dev.off()
-
-# Temporal distribution of locs
-source('R/0-functions/TemporalDistributionFigure.R')
-TempDistFig(bear)
-
-# ggsave('graphics/data-prep/bear-temp-dist.png', TempDistFig(bear), 'png')
