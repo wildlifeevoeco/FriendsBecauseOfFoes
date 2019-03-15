@@ -35,11 +35,11 @@ yrCol <- 'yr'
 DT[, rowID := rleid(EASTING), by = c("id", "yr")]
 
 ### Calculate Absolute Angle ----
-source('R/0-functions/AbsoluteAngle.R')
-AbsoluteAngle(DT, coordCols, datetimeCol, idCol, yrCol, FALSE, FALSE)
 
-source('R/0-functions/RelativeAngle.R')
-RelativeAngle(DT, coordCols, datetimeCol, idCol, yrCol, FALSE, FALSE)
+calc_abs_angle(DT, coordCols, datetimeCol, idCol, yrCol, FALSE, FALSE)
+
+
+calc_rel_angle(DT, coordCols, datetimeCol, idCol, yrCol, FALSE, FALSE)
 
 ### Output ----
 saveRDS(DT, paste0('output/angles/', species, 'Angle.Rds'))
@@ -67,11 +67,11 @@ yrCol <- 'yr'
 DT[, rowID := rleid(EASTING), by = c(idCol, yrCol)]
 
 ### Calculate Absolute Angle ----
-source('R/0-functions/AbsoluteAngle.R')
-AbsoluteAngle(DT, coordCols, datetimeCol, idCol, yrCol, FALSE, FALSE)
 
-source('R/0-functions/RelativeAngle.R')
-RelativeAngle(DT, coordCols, datetimeCol, idCol, yrCol, FALSE, FALSE)
+calc_abs_angle(DT, coordCols, datetimeCol, idCol, yrCol, FALSE, FALSE)
+
+
+calc_rel_angle(DT, coordCols, datetimeCol, idCol, yrCol, FALSE, FALSE)
 
 ### Output ----
 saveRDS(DT, paste0('output/angles/', species, 'AngleNEW.Rds')) ### New coyote RSF
