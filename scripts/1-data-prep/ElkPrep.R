@@ -7,8 +7,9 @@
 # Copyright: ./LICENSE.md 
 
 ### Packages ----
-libs <- c('data.table', 'ggplot2', 'spatsoc',
-          'knitr', 'sp', 'rgdal', 'magrittr')
+libs <- c('data.table', 'ggplot2', 
+          'spatsoc', 'ewc',
+          'sp', 'rgdal')
 lapply(libs, require, character.only = TRUE)
 
 ### Input data ----
