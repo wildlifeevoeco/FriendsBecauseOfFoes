@@ -62,17 +62,20 @@ group_times(elk, 'datetime', '15 minutes')
 checkCols <- c(xCol, yCol, dateCol, 'season')
 elk <- na.omit(elk, cols = checkCols)
 
-
 ### Project + Step Length ----
 # Coordinates already projected, simply rename
 elk[, c(projXCol, projYCol) := .(get(xCol), get(yCol))]
 
 # Step Length
-
-step_length(elk, idCol, 
-           datetimeCol = 'datetime', yrCol = 'yr', 
-           xCol = projXCol, yCol = projYCol,
-           returnIntermediate = FALSE)
+step_length(
+  elk,
+  coords = c(projXCol, projYCol),
+  time = 'datetime',
+  splitBy = c(idCol, 'yr'),
+  type = 'lead',
+  moverate = TRUE,
+  preserve = FALSE
+)
 
 difTimeThreshold <- 2
 elk <- elk[round(difdatetime) == difTimeThreshold]

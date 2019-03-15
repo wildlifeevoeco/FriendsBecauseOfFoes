@@ -72,11 +72,15 @@ caribou[, c(projXCol, projYCol) := as.data.table(
   project(cbind(get(xCol), get(yCol)), utm))]
 
 # Step Length
-
-step_length(caribou, idCol, datetimeCol = 'datetime', yrCol = 'yr',
-           xCol = projXCol, yCol = projYCol,
-           returnIntermediate = FALSE)
-
+step_length(
+  caribou,
+  coords = c(projXCol, projYCol),
+  time = 'datetime',
+  splitBy = c(idCol, 'yr'),
+  type = 'lead',
+  moverate = TRUE,
+  preserve = FALSE
+)
 ### Summary information ----
 # How many unique animals?
 caribou[, uniqueN(get(idCol))]

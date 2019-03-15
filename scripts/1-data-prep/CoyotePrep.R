@@ -89,15 +89,14 @@ coyote[, c(projXCol, projYCol) :=
            project(cbind(get(xCol), get(yCol)), utm))]
 
 # Step Length
-
 step_length(
   coyote,
-  idCol,
-  datetimeCol = 'datetime',
-  yrCol = 'yr',
-  xCol = projXCol,
-  yCol = projYCol,
-  returnIntermediate = FALSE
+  coords = c(projXCol, projYCol),
+  time = 'datetime',
+  splitBy = c(idCol, 'yr'),
+  type = 'lead',
+  moverate = TRUE,
+  preserve = FALSE
 )
 
 ### Rarify locs ----

@@ -81,20 +81,27 @@ wolf[, c(projXCol, projYCol) := as.data.table(project(cbind(get(xCol), get(yCol)
                                                       utm))]
 
 # Step Length
-
-step_length(wolf, idCol, 
-           datetimeCol = 'datetime', yrCol = 'yr', 
-           xCol = projXCol, yCol = projYCol,
-           returnIntermediate = FALSE)
-
+step_length(
+  wolf,
+  coords = c(projXCol, projYCol),
+  time = 'datetime',
+  splitBy = c(idCol, 'yr'),
+  type = 'lead',
+  moverate = TRUE,
+  preserve = FALSE
+)
 difTimeThreshold <- 2
 wolf <- wolf[round(difdatetime) == difTimeThreshold]
 
-step_length(wolf, idCol, 
-           datetimeCol = 'datetime', yrCol = 'yr', 
-           xCol = projXCol, yCol = projYCol,
-           returnIntermediate = FALSE)
-
+step_length(
+  wolf,
+  coords = c(projXCol, projYCol),
+  time = 'datetime',
+  splitBy = c(idCol, 'yr'),
+  type = 'lead',
+  moverate = TRUE,
+  preserve = FALSE
+)
 
 ### Subset by collar fields ----
 # N by fix quality
