@@ -7,7 +7,24 @@
 
 ``` bash
 grep -rni 'R/' -e 'TODO';
+grep -rni 'scripts/' -e 'TODO';
 #> R/calc_abs_angle.R:41:  # TODO: what did this mean? .. my poor code commenting
+#> scripts/4-sociality/4.2-NearestNeighbourAnalysis.R:46:# TODO: investigate the both coords and ..coords exist in calling scope data.table error
+#> scripts/4-sociality/4.2-NearestNeighbourAnalysis.R:162:# TODO: investigate the both coords and ..coords exist in calling scope data.table error
+#> scripts/4-sociality/4.1-CalculateTurnAngles.R:41:#TODO: check that yrcol is well handled
+#> scripts/1-data-prep/BearPrep.R:85:# TODO: double check type of step_length
+#> scripts/1-data-prep/BearPrep.R:116:# TODO: do we ever need Map_Quality, NAV?
+#> scripts/2-rsf/predator-rsf/WolfRSF.R:75:# TODO: why also where season is NA?
+#> scripts/2-rsf/predator-rsf/WolfRSF.R:79:# TODO: #### Dist not logged yet - should it be?
+#> scripts/2-rsf/predator-rsf/WolfRSF.R:92:# TODO: with intercept of -3.044340?
+#> scripts/2-rsf/predator-rsf/WolfRSF.R:106:# TODO: why also na season?
+#> scripts/2-rsf/predator-rsf/WolfRSF.R:121:# TODO: with intercept of -2.711875?
+#> scripts/2-rsf/predator-rsf/WolfRSF.R:143:# TODO: can this be dropped then?
+#> scripts/2-rsf/prey-rsf/ElkRSF.R:77:# TODO: Dist not logged yet - should it be?
+#> scripts/2-rsf/prey-rsf/ElkRSF.R:89:#TODO: with intercept of -3.242852 ?
+#> scripts/2-rsf/prey-rsf/ElkRSF.R:103:# TODO: why is.na season?
+#> scripts/2-rsf/prey-rsf/ElkRSF.R:117:# TODO: with intercept of -2.053773?
+#> scripts/2-rsf/prey-rsf/ElkRSF.R:139:# TODO: can this be dropped then?
 ```
 
 ## Project structure
@@ -88,3 +105,16 @@ grep -rni 'R/' -e 'TODO';
     ├── Spring NL Dyad Distance.jpeg
     ├── TODO.md
     └── Winter NL DI.jpeg
+
+## Output metadata
+
+| script     | output path & name | description       |
+| ---------- | ------------------ | ----------------- |
+| BearPrep.R | data-prep/bear.Rds | prepped bear data |
+|            |                    |                   |
+|            |                    |                   |
+|            |                    |                   |
+|            |                    |                   |
+|            |                    |                   |
+|            |                    |                   |
+|            |                    |                   |

@@ -16,10 +16,11 @@ knitr::opts_chunk$set(
 
 ```{bash}
 grep -rni 'R/' -e 'TODO';
+grep -rni 'scripts/' -e 'TODO';
 ```
 
 ## Project structure
-```{}
+```
 .
 ├── graphics
 │   ├── data-model-prep
