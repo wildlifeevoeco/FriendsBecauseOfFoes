@@ -1,4 +1,16 @@
-DatePrep <- function(DT, dateCol, timeCol, dateFormat = NULL, timeFormat = NULL) {
+#' Date prep
+#'
+#' @inheritParams calc_abs_angle
+#' @param dateCol 
+#' @param timeCol 
+#' @param dateFormat 
+#' @param timeFormat 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+prep_date <- function(DT, dateCol, timeCol, dateFormat = NULL, timeFormat = NULL) {
   if(is.null(dateFormat)) {
     DT[, idate := as.IDate(get(dateCol))]
   } else {
