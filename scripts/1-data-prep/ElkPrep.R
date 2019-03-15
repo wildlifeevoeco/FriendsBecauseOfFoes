@@ -40,7 +40,6 @@ elk[, time := paste0(get(hourCol), ':', sprintf('%02d', get(minCol)))]
 timeCol <- 'time'
 
 ## Date time fields
-source('R/0-functions/prep_date.R')
 prep_date(elk, dateCol, timeCol, dateFormat = '%d/%m/%Y')
 
 # Check!

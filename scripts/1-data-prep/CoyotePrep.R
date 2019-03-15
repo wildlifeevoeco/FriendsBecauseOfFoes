@@ -52,7 +52,6 @@ projYCol <- 'NORTHING'
 
 ### Add fields ----
 # Date time fields
-source('R/0-functions/prep_date.R')
 prep_date(coyote, dateCol, timeCol)
 
 # What is the difference in hours between fixes
