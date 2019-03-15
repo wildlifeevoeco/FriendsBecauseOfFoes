@@ -38,7 +38,7 @@ DT[, rowID := rleid(EASTING), by = c("id", "yr")]
 
 calc_abs_angle(DT, coordCols, datetimeCol, idCol, yrCol, FALSE, FALSE)
 
-
+#TODO: check that yrcol is well handled
 calc_rel_angle(DT, coordCols, datetimeCol, idCol, yrCol, FALSE, FALSE)
 
 ### Output ----
