@@ -44,7 +44,7 @@ Carclipped2<-as.owin.SpatialPolygons(Carclipped)
 #!! the elk + wolf rsf use a regular grid !!#
 
 # Create Regular Grid
-source('R/0-functions/GenerateGrid.R')
+
 regPts <- GenerateGrid(90, mcpExtent = Carclipped, crs = utm)
 
 #CarRandSum<-runifpoint(n=nrow(CarSummer)*10,win=Carclipped2)

@@ -8,10 +8,9 @@
 
 
 ### Packages ----
-libs <- c('data.table', 'magrittr',
+libs <- c('data.table', 'ggplot2',
           'adehabitatHR', 'sp', 'rgdal', 'raster', 
-          'lme4',
-          'ggplot2','car','piecewiseSEM')
+          'lme4', 'car','piecewiseSEM')
 lapply(libs, require, character.only = TRUE)
 
 ### Input data ----
@@ -38,7 +37,7 @@ elkSP <- SpatialPoints(elk[, .(EASTING, NORTHING)],
 elkMCP <- mcp(elkSP, 100)
 
 # Create Regular Grid
-source('R/0-functions/GenerateGrid.R')
+
 regPts <- GenerateGrid(90, mcpExtent = elkMCP, crs = utm)
 
 setnames(regPts, c('EASTING', 'NORTHING'))

@@ -199,7 +199,7 @@ Coyclipped<-gIntersection(nlBounds,CoyAvailBuf)
 #clipped2<-as.owin.SpatialPolygons(clipped)
 
 # Create Regular Grid
-source('R/0-functions/GenerateGrid.R')
+
 regPts <- GenerateGrid(90, mcpExtent = Coyclipped, crs = utm)
 
 
