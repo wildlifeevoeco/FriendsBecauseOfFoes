@@ -1,25 +1,26 @@
 #' Generate grid
-#'
-#' @param spacing
-#' @param crs
-#' @param mcpExtent
-#'
+#' 
+#' Generate a regular grid within a polygon object. 
+#' 
+#' @param pol mcp or other SpatialPolygons object within which the grid will be generated. 
+#' @param spacing distance between points in grid. units of the projection.
+#' @param crs proj4string of coordinate reference system for pol.
 #' @return
 #' @export
 #'
 #' @examples
-generate_grid <- function(spacing, crs, mcpExtent) {
+generate_grid <- function(pol, spacing, crs) {
   rn <- n <- NULL
   
   if (missing(spacing))
     stop('spacing is missing')
   if (missing(crs))
     stop('crs is missing')
-  if (missing(mcpExtent))
-    stop('mcpExtent is missing')
+  if (missing(pol))
+    stop('pol is missing')
   
   extentDT <-
-    data.table::data.table(mcpExtent@bbox, keep.rownames = TRUE)
+    data.table::data.table(pol@bbox, keep.rownames = TRUE)
   
   extentDT[, dif := abs(min - max)]
   
@@ -47,5 +48,5 @@ generate_grid <- function(spacing, crs, mcpExtent) {
   
   rSP <- raster::rasterToPoints(ra, spatial = TRUE)
   
-  data.table::data.table(rSP@coords, n = 1:length(rSP))[n %in% sp::over(mcpExtent, rSP, returnList = TRUE)[[1]]][, n := NULL]
+  data.table::data.table(rSP@coords, n = 1:length(rSP))[n %in% sp::over(pol, rSP, returnList = TRUE)[[1]]][, n := NULL]
 }
