@@ -68,7 +68,7 @@ step_length <-
       shiftT <- paste0('lag', time)
       difT <- paste0('dif', time)
       
-      dropem <- c(dropem, shiftT, difT)
+      dropem <- c(dropem, shiftT)
       
       DT[order(get(time)), (shiftT) := data.table::shift(.SD, 1, NA, 'lag'),
          by = splitBy,
