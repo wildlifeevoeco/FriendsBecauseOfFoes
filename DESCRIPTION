@@ -13,5 +13,6 @@ Encoding: UTF-8
 LazyData: true
 Imports: 
     data.table,
-    raster
+    raster,
+    sp
 RoxygenNote: 6.1.1
