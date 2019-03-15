@@ -22,8 +22,8 @@ utm <- '+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
 elk <- readRDS('output/data-prep/elk.Rds')
 
 # MB Bounds shapefile
-bounds <- rgdal::readOGR('input/etc/RMNP-extent/RMNPextent.shp') %>%
-  spTransform(CRSobj = utm)
+bounds <- spTransform(readOGR('input/etc/RMNP-extent/RMNPextent.shp'), 
+                      CRSobj = utm)
 
 # Covariates
 lsCovers <- data.table(nm = dir('output/data-prep/cropped-rasters/RMNP', '.tif$'))[, 
