@@ -29,7 +29,6 @@ dropCols <-
     'Fix_Time_Delta',
     'EPSG_CODE'
   )
-#'Map_Quality','NAV')
 
 # Read in coyote data, dropping above columns
 coyote <- fread('input/locs/Coyote.csv',
@@ -39,8 +38,8 @@ coyote <- fread('input/locs/Coyote.csv',
 utm <- '+proj=utm +zone=21 ellps=WGS84'
 
 # NL Bounds shapefile
-nlBounds <- rgdal::readOGR('input/etc/NL-Bounds/NL-Bounds.shp') %>% 
-  spTransform(CRSobj = utm)
+nlBounds <- spTransform(readOGR('input/etc/NL-Bounds/NL-Bounds.shp'),
+                        CRSobj = utm)
 
 ### Variables ----
 xCol <- 'X_COORD'

@@ -26,8 +26,8 @@ caribou <- fread('input/locs/AllCaribouDataRaw.csv',
 utm <- '+proj=utm +zone=21 ellps=WGS84'
 
 # NL Bounds shapefile
-nlBounds <- rgdal::readOGR('input/etc/NL-Bounds/NL-Bounds.shp') %>% 
-  spTransform(CRSobj = utm)
+nlBounds <- spTransform(readOGR('input/etc/NL-Bounds/NL-Bounds.shp'),
+                        CRSobj = utm)
 
 ### Variables ----
 xCol <- 'X_COORD'

@@ -39,7 +39,7 @@ bear <- fread('input/locs/Bears.csv',
 utm <- '+proj=utm +zone=21 ellps=WGS84'
 
 # NL Bounds shapefile
-nlBounds <- spTransform(rgdal::readOGR('input/etc/NL-Bounds/NL-Bounds.shp'),
+nlBounds <- spTransform(readOGR('input/etc/NL-Bounds/NL-Bounds.shp'),
                         CRSobj = utm)
 
 ### Variables ----
@@ -113,7 +113,7 @@ lowJul <- 0
 highJul <- 365
 herdList <- 'MIDRIDGE'
 
-# Map_Quality, NAV
+# TODO: do we ever need Map_Quality, NAV?
 
 bear <- bear[stepLength < stepLengthThreshold & 
                moveRate < moveRateThreshold &

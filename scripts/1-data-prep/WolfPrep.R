@@ -42,8 +42,8 @@ wolf[, (dropCols) := NULL][, c('Fix2d3d', '2d3d') := .(`2d3d`, NULL)]
 utm <- '+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
 
 # MB Bounds shapefile
-bounds <- rgdal::readOGR('input/etc/RMNP-extent/RMNPextent.shp') %>%
-  spTransform(CRSobj = utm)
+bounds <- spTransform(readOGR('input/etc/RMNP-extent/RMNPextent.shp'),
+                      CRSobj = utm)
 
 ### Variables ----
 xCol <- 'longitude'
