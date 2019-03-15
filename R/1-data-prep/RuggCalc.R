@@ -1,6 +1,3 @@
-
-
-
 elevation <- raster('input/covariates/RMNP/Elevation.tif')
 
 #####calculate ruggedness from elevation
@@ -11,3 +8,4 @@ writeRaster(ruggedness,'input/covariates/RMNP/Ruggedness',
               overwrite = T)
 
 plot(ruggedness)
+ 
