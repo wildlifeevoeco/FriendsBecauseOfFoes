@@ -9,8 +9,8 @@
 
 ### Packages ----
 libs <- c('data.table', 'ggplot2', 'magrittr', 
-          'spatsoc', 'ewc',
-          'sp', 'rgdal')
+          'spatsoc', 'ewc', 
+          'sp', 'rgdal', 'adehabitatLT')
 lapply(libs, require, character.only = TRUE)
 
 ### Input data ----
@@ -84,6 +84,8 @@ wolf <- wolf[get(xCol) != 0 & get(xCol) < 0]
 wolf[wolf[, .N, by = c('datetime', idCol)][N > 1],
      on = c('datetime', idCol), drop := TRUE]
 wolf[!is.na(drop), drop := c(FALSE, rep(TRUE, .N-1)), by = c('datetime', idCol)]
+wolf <- wolf[is.na(drop) | !(drop)]
+
 
 ### Project + Step Length ----
 # Project coordinates to UTM
@@ -95,19 +97,51 @@ step_length(
   wolf,
   coords = c(projXCol, projYCol),
   time = 'datetime',
-  splitBy = c(idCol, 'yr'),
+  splitBy = c(idCol, 'yr', 'season'),
   type = 'lead',
   moverate = TRUE,
   preserve = FALSE
 )
-difTimeThreshold <- 2
-wolf <- wolf[round(difdatetime) == difTimeThreshold]
+
+### Rarify locs ----
+fixrate <- data.table(
+  season = c('spring', 'winter'),
+  rate = c(2, 2)
+)
+
+wolf[, idtime := paste(get(idCol), datetime, sep = " ")]
+
+collect <- rbindlist(lapply(
+  1:nrow(fixrate),
+  FUN = function(x) {
+    subSeason <- wolf[season == fixrate[x, season]]
+    
+    traj <- as.ltraj(
+      subSeason[, .SD, .SDcols = c(projXCol, projYCol)],
+      date = subSeason$datetime,
+      id = subSeason[[idCol]],
+      infolocs = subSeason[, c('idtime')]
+    )
+    
+    ref <- round(min(subSeason$datetime), "hour")
+    
+    trajNA <-
+      setNA(traj, ref, fixrate[x, rate], units = "hour")
+    
+    traj0 <- sett0(trajNA, ref, fixrate[x, rate], units = "hour")
+    
+    ld(traj0)
+  }
+))
+
+out <- merge(na.omit(collect), 
+             wolf, by = 'idtime')
 
 step_length(
-  wolf,
+  out,
   coords = c(projXCol, projYCol),
   time = 'datetime',
-  splitBy = c(idCol, 'yr'),
+  splitBy = c(idCol, 'yr', 'season'),
   type = 'lead',
   moverate = TRUE,
   preserve = FALSE
@@ -124,7 +158,7 @@ wolf[, .N, by = fixstatus]
 wolf[, uniqueN(get(idCol))]
 
 # How many unique animals per year?
-wolf[, .('N Unique Wolves' = uniqueN(get(idCol))), by = yr])
+wolf[, .('N Unique Wolves' = uniqueN(get(idCol))), by = yr]
 
 # Temporal distribution of locs
 wolf[order(mnth), .N, by = mnth]
@@ -155,7 +189,7 @@ wolf <- wolf[!(inrange(EASTING, minOfficeX, maxOfficeX) &
 
 ### Output ----
 # Match variables to output variables = consistent variables across species
-source('R/0-variabless/PrepDataOutputVariables.R')
+source('scripts/0-variables/PrepDataOutputVariables.R')
 wolf[, SPECIES := 'WOLF']
 
 outputVariables <- c(outputVariables, 'packid')
