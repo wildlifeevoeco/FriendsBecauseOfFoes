@@ -1,5 +1,6 @@
 NumbQuadTreeNeighbours <- function(DT, coords, numbNeighbours, idCol) {
   # NSE
+  ..coords <- NULL
   
   tree <- SearchTrees::createTree(DT[, ..coords])
   knn <- DT[, get(idCol)[SearchTrees::knnLookup(tree, newdat = DT[, ..coords], 

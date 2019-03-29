@@ -15,7 +15,7 @@ calc_rel_angle <-
            allCW = FALSE,
            returnIntermediate = FALSE) {
     # NSE
-    absAngle <- NULL
+    absAngle <- relAngle <- NULL
     
     if ('absAngle' %in% colnames(DT)) {
     

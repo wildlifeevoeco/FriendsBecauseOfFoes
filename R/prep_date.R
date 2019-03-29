@@ -16,7 +16,7 @@ prep_date <- function(DT, dateCol, timeCol, dateFormat = NULL, timeFormat = NULL
   # TODO: add a tz argument
   
   # NSE
-  idate <- itime <- datetime <- yr <- mnth <- hr <- NULL
+  idate <- itime <- datetime <- yr <- mnth <- hr <- julday <- NULL
   
   if (is.null(dateFormat)) {
     DT[, idate := data.table::as.IDate(get(dateCol))]
