@@ -49,10 +49,10 @@ step_length <-
     shiftXY <- paste0('lag', coords)
     difXY <- paste0('dif', coords)
     
-    DT[order(get(time)),
-       (shiftXY) := data.table::shift(.SD, n = 1, fill = NA, type),
-       by = splitBy,
-       .SDcols = coords]
+    setorderv(DT, time)
+    
+    DT[, (shiftXY) := data.table::shift(.SD, n = 1, fill = NA, type),
+       by = splitBy, .SDcols = coords]
     
     DT[, (difXY) := .((.SD[[1]] - .SD[[3]]) ^ 2, (.SD[[2]] - .SD[[4]]) ^ 2),
        .SDcols = c(coords, shiftXY)]
@@ -70,7 +70,8 @@ step_length <-
       
       dropem <- c(dropem, shiftT)
       
-      DT[order(get(time)), (shiftT) := data.table::shift(.SD, 1, NA, 'lag'),
+      setorderv(DT, time)
+      DT[, (shiftT) := data.table::shift(.SD, 1, NA, 'lag'),
          by = splitBy,
          .SDcols = time]
       
@@ -87,3 +88,6 @@ step_length <-
     
     DT[]
   }
+
+
+.datatable.aware = TRUE 
