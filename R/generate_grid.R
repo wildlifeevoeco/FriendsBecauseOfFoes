@@ -37,10 +37,10 @@ generate_grid <- function(pol, spacing, crs) {
                               by = spacing)]
   }
   
-  r <- raster::extent(head(xSeq, n = 1),
-                      tail(xSeq, n = 1),
-                      head(ySeq, n = 1),
-                      tail(ySeq, n = 1))
+  r <- raster::extent(utils::head(xSeq, n = 1),
+                      utils::tail(xSeq, n = 1),
+                      utils::head(ySeq, n = 1),
+                      utils::tail(ySeq, n = 1))
   ra <- raster::raster(r)
   raster::res(ra) <- c(spacing, spacing)
   

@@ -20,6 +20,9 @@ calc_abs_angle <- function(DT,
                           yr,
                           allCW = FALSE,
                           returnIntermediate = FALSE) {
+  # NSE
+  difY <- difX <- NULL
+  
   # Create lag and dif column names
   lagCols <- paste('lag', coords, sep = '')
   difCols <- c('difX', 'difY')

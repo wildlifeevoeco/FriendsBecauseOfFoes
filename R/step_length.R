@@ -34,7 +34,7 @@ step_length <-
            moverate = FALSE,
            type = 'lag',
            preserve = FALSE) {
-    # NSE errors
+    # NSE
     .SD <- . <- stepLength <- moveRate <- NULL
     
     if (type != 'lag' & type != 'lead') {
