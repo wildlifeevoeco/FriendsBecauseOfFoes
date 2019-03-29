@@ -8,7 +8,7 @@
 
 
 ### Packages ----
-libs <- c('data.table', 'ggplot2', 
+libs <- c('data.table', 'ggplot2', 'magrittr', 
           'spatsoc', 'ewc',
           'sp', 'rgdal')
 lapply(libs, require, character.only = TRUE)
@@ -19,8 +19,13 @@ paths <- dir('input/locs/RMNP_WolfLocations', '*.csv',
              full.names = TRUE)
 
 # Check how many times each column appears in the sheets
-cols <- rbindlist(lapply(paths, FUN = function(x) fread(x) %>% colnames(.) %>% 
-                           data.table(col = ., path = x, val = 1))) %>% dcast(path~col, value.var = 'val')
+cols <-
+  rbindlist(lapply(
+    paths,
+    FUN = function(x)
+      fread(x) %>% colnames(.) %>%
+      data.table(col = ., path = x, val = 1)
+  )) %>% dcast(path ~ col, value.var = 'val')
 cols[, path := rowid(path)][, lapply(.SD, sum, na.rm = TRUE), .SDcol = colnames(cols)]
 
 # Read in each and rbindlist
