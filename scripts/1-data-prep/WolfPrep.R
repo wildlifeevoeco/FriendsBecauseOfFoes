@@ -80,10 +80,15 @@ wolf <- na.omit(wolf, cols = checkCols)
 # Subset any 0 in lat/long and where longitude is positive
 wolf <- wolf[get(xCol) != 0 & get(xCol) < 0]
 
+# Drop duplicate fixes
+wolf[wolf[, .N, by = c('datetime', idCol)][N > 1],
+     on = c('datetime', idCol), drop := TRUE]
+wolf[!is.na(drop), drop := c(FALSE, rep(TRUE, .N-1)), by = c('datetime', idCol)]
+
 ### Project + Step Length ----
 # Project coordinates to UTM
-wolf[, c(projXCol, projYCol) := as.data.table(project(cbind(get(xCol), get(yCol)), 
-                                                      utm))]
+wolf[, c(projXCol, projYCol) := 
+       as.data.table(project(cbind(get(xCol), get(yCol)), utm))]
 
 # Step Length
 step_length(
