@@ -13,6 +13,8 @@ libs <- c('data.table', 'ggplot2',
           'sp', 'rgdal')
 lapply(libs, require, character.only = TRUE)
 
+### Variables ----
+source('scripts/0-variables/variables.R')
 
 ### Input data ----
 dropCols <-
@@ -60,8 +62,6 @@ prep_date(bear, dateCol, timeCol)
 bear[sample(.N, 5), .(idate, itime, yr, mnth, julday)]
 
 # Season
-source('scripts/0-variables/CutOffThresholds.R')
-
 bear[julday %between% winter, season := 'winter']
 bear[julday %between% spring, season := 'spring']
 
@@ -82,7 +82,6 @@ bear[, c(projXCol, projYCol) :=
        as.data.table(project(cbind(get(xCol), get(yCol)), utm))]
 
 # Step Length
-# TODO: double check type of step_length
 step_length(
   bear,
   coords = c(projXCol, projYCol),
@@ -113,7 +112,6 @@ lowJul <- 0
 highJul <- 365
 herdList <- 'MIDRIDGE'
 
-# TODO: do we ever need Map_Quality, NAV?
 bear <- bear[stepLength < stepLengthThreshold & 
                moveRate < moveRateThreshold &
                difdatetime < difTimeThreshold &
@@ -122,8 +120,6 @@ bear <- bear[stepLength < stepLengthThreshold &
 
 ### Output ----
 # Match variables to output variables = consistent variables across species
-source('scripts/0-variables/variables.R')
-
 outputVariables <- c(outputVariables, 'herd', 'sex')
 
 setnames(bear, c('ANIMAL_ID', 'SPECIES', 'season', 'timegroup',
