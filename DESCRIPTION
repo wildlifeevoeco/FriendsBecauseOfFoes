@@ -14,5 +14,6 @@ LazyData: true
 Imports: 
     data.table,
     raster,
-    sp
+    sp,
+    SearchTrees
 RoxygenNote: 6.1.1
