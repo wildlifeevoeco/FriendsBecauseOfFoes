@@ -49,7 +49,7 @@ step_length <-
     shiftXY <- paste0('lag', coords)
     difXY <- paste0('dif', coords)
     
-    setorderv(DT, time)
+    data.table::setorderv(DT, time)
     
     DT[, (shiftXY) := data.table::shift(.SD, n = 1, fill = NA, type),
        by = splitBy, .SDcols = coords]
@@ -70,7 +70,7 @@ step_length <-
       
       dropem <- c(dropem, shiftT)
       
-      setorderv(DT, time)
+      data.table::setorderv(DT, time)
       DT[, (shiftT) := data.table::shift(.SD, 1, NA, 'lag'),
          by = splitBy,
          .SDcols = time]
