@@ -12,6 +12,9 @@ libs <- c('data.table', 'ggplot2',
           'sp', 'rgdal')
 lapply(libs, require, character.only = TRUE)
 
+### Set variables ----
+source('scripts/0-variables/variables.R')
+
 ### Input data ----
 dropCols <- c('V1','FIX_ID','EPSG_CODE','Fix_Time_Delta',
               'COLLAR_FILE_ID',
@@ -22,12 +25,9 @@ dropCols <- c('V1','FIX_ID','EPSG_CODE','Fix_Time_Delta',
 caribou <- fread('input/locs/AllCaribouDataRaw.csv',
                  drop = dropCols)
 
-# UTM zone 21N
-utm <- '+proj=utm +zone=21 ellps=WGS84'
-
 # NL Bounds shapefile
 nlBounds <- spTransform(readOGR('input/etc/NL-Bounds/NL-Bounds.shp'),
-                        CRSobj = utm)
+                        CRSobj = utmNL)
 
 ### Variables ----
 xCol <- 'X_COORD'
@@ -67,7 +67,7 @@ caribou <- caribou[get(xCol) != 0 & get(xCol) < 0]
 ### Project + Step Length ----
 # Project coordinates to UTM
 caribou[, c(projXCol, projYCol) := as.data.table(
-  project(cbind(get(xCol), get(yCol)), utm))]
+  project(cbind(get(xCol), get(yCol)), utmNL))]
 
 # Step Length
 step_length(

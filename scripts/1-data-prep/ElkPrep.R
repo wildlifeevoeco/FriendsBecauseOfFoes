@@ -16,12 +16,9 @@ lapply(libs, require, character.only = TRUE)
 # Read in elk data
 elk <- fread('input/locs/RMNP_ElkData_clean.csv')
 
-# UTM zone 14N
-utm <- '+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
-
 # MB Bounds shapefile
 bounds <- spTransform(readOGR('input/etc/RMNP-extent/RMNPextent.shp'),
-                      CRSobj = utm)
+                      CRSobj = utmMB)
 
 ### Variables ----
 xCol <- 'X'
@@ -118,7 +115,7 @@ elk <- elk[stepLength < stepLengthThreshold &
 # Spatially constrain to RMNP bounds
 elkSP <- SpatialPointsDataFrame(elk[, .(get(projXCol), get(projYCol))],
                                 elk,
-                                proj4string = CRS(utm))
+                                proj4string = CRS(utmMB))
 
 elk <- data.table(over(bounds, elkSP, returnList = TRUE)[[1]])
 

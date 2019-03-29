@@ -43,12 +43,9 @@ dropCols <- colnames(wolf)[!(colnames(wolf) %in% keepCols)]
 # Drop columns above and rename 2d3d to Fix2d3d
 wolf[, (dropCols) := NULL][, c('Fix2d3d', '2d3d') := .(`2d3d`, NULL)]
 
-# UTM zone 14N
-utm <- '+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
-
 # MB Bounds shapefile
 bounds <- spTransform(readOGR('input/etc/RMNP-extent/RMNPextent.shp'),
-                      CRSobj = utm)
+                      CRSobj = utmMB)
 
 ### Variables ----
 xCol <- 'longitude'
@@ -90,7 +87,7 @@ wolf <- wolf[is.na(drop) | !(drop)]
 ### Project + Step Length ----
 # Project coordinates to UTM
 wolf[, c(projXCol, projYCol) := 
-       as.data.table(project(cbind(get(xCol), get(yCol)), utm))]
+       as.data.table(project(cbind(get(xCol), get(yCol)), utmMB))]
 
 # Step Length
 step_length(
@@ -174,7 +171,7 @@ wolf <- wolf[moveRate < moveRateThreshold]
 # Spatially constrain to RMNP bounds
 wolfSP <- SpatialPointsDataFrame(wolf[, .(get(projXCol), get(projYCol))],
                                  wolf,
-                                 proj4string = CRS(utm))
+                                 proj4string = CRS(utmMB))
 
 wolf <- data.table(over(bounds, wolfSP, returnList = TRUE)[[1]])
 
