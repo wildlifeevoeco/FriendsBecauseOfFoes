@@ -122,7 +122,7 @@ bear <- bear[stepLength < stepLengthThreshold &
 
 ### Output ----
 # Match variables to output variables = consistent variables across species
-source('scripts/0-variables/PrepDataOutputVariables.R')
+source('scripts/0-variables/variables.R')
 
 outputVariables <- c(outputVariables, 'herd', 'sex')
 

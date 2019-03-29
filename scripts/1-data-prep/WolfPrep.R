@@ -189,7 +189,7 @@ wolf <- wolf[!(inrange(EASTING, minOfficeX, maxOfficeX) &
 
 ### Output ----
 # Match variables to output variables = consistent variables across species
-source('scripts/0-variables/PrepDataOutputVariables.R')
+source('scripts/0-variables/variables.R')
 wolf[, SPECIES := 'WOLF']
 
 outputVariables <- c(outputVariables, 'packid')
