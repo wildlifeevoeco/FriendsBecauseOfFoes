@@ -13,7 +13,12 @@
 #'
 #' @examples
 prep_date <- function(DT, dateCol, timeCol, dateFormat = NULL, timeFormat = NULL) {
-  if(is.null(dateFormat)) {
+  # TODO: add a tz argument
+  
+  # NSE
+  idate <- itime <- datetime <- yr <- mnth <- hr <- NULL
+  
+  if (is.null(dateFormat)) {
     DT[, idate := data.table::as.IDate(get(dateCol))]
   } else {
     DT[, idate := data.table::as.IDate(get(dateCol), format = dateFormat)]

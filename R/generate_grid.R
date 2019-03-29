@@ -10,7 +10,7 @@
 #'
 #' @examples
 generate_grid <- function(pol, spacing, crs) {
-  rn <- n <- NULL
+  rn <- n <- dif <- NULL
   
   if (missing(spacing))
     stop('spacing is missing')

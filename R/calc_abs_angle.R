@@ -21,7 +21,7 @@ calc_abs_angle <- function(DT,
                           allCW = FALSE,
                           returnIntermediate = FALSE) {
   # NSE
-  difY <- difX <- NULL
+  difY <- difX <- . <- absAngle <- relAngle <- NULL
   
   # Create lag and dif column names
   lagCols <- paste('lag', coords, sep = '')

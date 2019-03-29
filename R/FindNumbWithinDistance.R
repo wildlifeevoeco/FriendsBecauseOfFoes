@@ -1,4 +1,6 @@
 FindNumbWithinDist = function(DT, distThreshold, coordCols, idCol){
+  # NSE
+  ..coordCols <- NULL
   a <- as.matrix(stats::dist(DT[, ..coordCols],
                              method = 'euclidean'))
   diag(a) <- NA

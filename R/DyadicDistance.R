@@ -4,6 +4,8 @@
 # March 2018
 DyadicDistance <- function(DT, coordCols, neighbourCoordCols = NULL, 
                        returnIntermediate = FALSE) {
+  # NSE 
+  . <- dyadDist <- NULL
   
   # Create and dif column names
   difCols <- c('difX', 'difY')

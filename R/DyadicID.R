@@ -1,4 +1,7 @@
 DyadId <- function(inDT, idcol, neighbour) {
+  # NSE
+  dyadID <- . <- id1 <- id2 <- dyadID2 <- NULL
+  
   if('dyadID' %in% colnames(inDT)) warning('dropping dyadID from inDT'); inDT[, dyadID := NULL]
   g <- igraph::graph_from_edgelist(
     as.matrix(unique(inDT[!is.na(get(neighbour)), 
@@ -8,10 +11,10 @@ DyadId <- function(inDT, idcol, neighbour) {
   
   simpleG <- igraph::simplify(g)
   
-  edgeDT <- data.table(get.edgelist(simpleG),
-                       E(simpleG))
+  edgeDT <- data.table::data.table(
+    igraph::get.edgelist(simpleG), igraph::E(simpleG))
   edgeNames <- c('id1', 'id2', 'dyadID')
-  setnames(edgeDT, edgeNames)
+  data.table::setnames(edgeDT, edgeNames)
   
   # Double merge
   # First where left goes to dyadID
