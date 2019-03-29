@@ -9,9 +9,11 @@
 grep -rni 'R/' -e 'TODO';
 grep -rni 'scripts/' -e 'TODO';
 #> R/calc_abs_angle.R:41:  # TODO: what did this mean? .. my poor code commenting
-#> scripts/4-sociality/4.2-NearestNeighbourAnalysis.R:46:# TODO: investigate the both coords and ..coords exist in calling scope data.table error
-#> scripts/4-sociality/4.2-NearestNeighbourAnalysis.R:162:# TODO: investigate the both coords and ..coords exist in calling scope data.table error
-#> scripts/4-sociality/4.1-CalculateTurnAngles.R:41:#TODO: check that yrcol is well handled
+#> scripts/4-sociality/NearestNeighbourAnalysis.R:8:#TODO: Grab Hance's updated social metrics from modeling script
+#> scripts/4-sociality/NearestNeighbourAnalysis.R:45:# TODO: investigate the both coords and ..coords exist in calling scope data.table error
+#> scripts/4-sociality/NearestNeighbourAnalysis.R:142:# TODO: investigate the both coords and ..coords exist in calling scope data.table error
+#> scripts/4-sociality/CalculateTurnAngles.R:11:#TODO: Grab Hance's updated social metrics from modeling script
+#> scripts/4-sociality/CalculateTurnAngles.R:38:#TODO: check that yrcol is well handled
 #> scripts/1-data-prep/BearPrep.R:85:# TODO: double check type of step_length
 #> scripts/1-data-prep/BearPrep.R:116:# TODO: do we ever need Map_Quality, NAV?
 #> scripts/2-rsf/predator-rsf/WolfRSF.R:75:# TODO: why also where season is NA?

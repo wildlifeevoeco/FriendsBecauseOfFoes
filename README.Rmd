@@ -15,8 +15,8 @@ knitr::opts_chunk$set(
 ## TODOs/NOTEs
 
 ```{bash}
-grep -rni 'R/' -e 'TODO';
-grep -rni 'scripts/' -e 'TODO';
+grep -rni 'R/' -e 'TODO' || true;
+grep -rni 'scripts/' -e 'TODO' || true;
 ```
 
 ## Project structure
