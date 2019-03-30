@@ -12,6 +12,9 @@ libs <- c('data.table', 'ggplot2',
           'sp', 'rgdal')
 lapply(libs, require, character.only = TRUE)
 
+### Set variables ----
+source('scripts/0-variables/variables.R')
+
 ### Input data ----
 # Read in elk data
 elk <- fread('input/locs/RMNP_ElkData_clean.csv')
@@ -39,15 +42,11 @@ timeCol <- 'time'
 ## Date time fields
 prep_date(elk, dateCol, timeCol, dateFormat = '%d/%m/%Y')
 
-# Check!
-elk[sample(.N, 5), .(idate, itime, yr, mnth, julday)]
-
 # Drop old date time fields
 dropCol <- c('Year', 'Month', 'Day', 'Hour', 'Minute', 'time')
 elk[, (dropCol) := NULL]
 
 # Season
-source('scripts/0-variables/CutOffThresholds.R')
 elk[julday %between% winter, season := 'winter']
 elk[julday %between% spring, season := 'spring']
 
@@ -98,9 +97,6 @@ elk[order(yr), .('N Unique Elks' = uniqueN(get(idCol))), by = yr]
 elk[order(mnth), .N, by = mnth]
 elk[order(yr), .N, by = yr]
 
-# Steplength distribution
-elk[, qplot(stepLength)]
-
 ### Subset ----
 # Thresholds
 stepLengthThreshold <- 7750000
@@ -121,8 +117,6 @@ elk <- data.table(over(bounds, elkSP, returnList = TRUE)[[1]])
 
 ### Output ----
 # Match variables to output variables = consistent variables across species
-source('scripts/0-variables/variables.R')
-
 elk[, SPECIES := 'ELK']
 
 setnames(elk, c('ElkID', 'SPECIES', 'season', 'timegroup',
