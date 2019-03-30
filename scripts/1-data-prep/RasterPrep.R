@@ -12,13 +12,15 @@ libs <- c('data.table', 'ggplot2',
           'sp', 'magrittr', 'raster')
 lapply(libs, require, character.only = TRUE)
 
-### Input data ----
-# UTM zone 14N
-utm <- '+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
 
+### Set variables ----
+source('scripts/0-variables/variables.R')
+
+
+### Input data ----
 # MB Bounds shapefile
 bounds <- rgdal::readOGR('input/etc/RMNP-extent/RMNPextent.shp') %>%
-  spTransform(CRSobj = utm)
+  spTransform(CRSobj = utmMB)
 
 # Covariates
 lsCovers <- data.table(nm = dir('input/covariates/RMNP', '.tif$'))[, nm := gsub(".tif|100m", "", nm)]$nm
@@ -42,9 +44,14 @@ transformed <- lapply(seq_along(namesTransform), FUN = function(x){
 })
 names(transformed) <- namesTransform
 
-transformed[['LinFeat_Dist']] <- resample(transformed[['LinFeat_Dist']], transformed[['Water_Dist']])
-cropRasters[['Ruggedness']] <- resample(cropRasters[['Ruggedness']], cropRasters[['Water_Dist']])
-cropRasters[['Elevation']] <- resample(cropRasters[['Elevation']], cropRasters[['Water_Dist']])
+transformed[['LinFeat_Dist']] <-
+  resample(transformed[['LinFeat_Dist']], transformed[['Water_Dist']])
+
+cropRasters[['Ruggedness_test']] <-
+  resample(cropRasters[['Ruggedness_test']], cropRasters[['Water_Dist']])
+
+cropRasters[['Elevation']] <-
+  resample(cropRasters[['Elevation']], cropRasters[['Water_Dist']])
 
 ### Output ----
 outRaster <- c(transformed, cropRasters[!(lapply(cropRasters, names) %in% namesTransform)])
