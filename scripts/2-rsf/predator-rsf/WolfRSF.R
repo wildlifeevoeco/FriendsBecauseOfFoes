@@ -20,9 +20,15 @@ utm <- '+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
 wolf <- readRDS('output/1-data-prep/wolf.Rds')
 
 # Covariates
-lsCovers <- data.table(nm = dir('output/1-data-prep/covariates/RMNP', '.tif$'))[, 
-                                                                                   nm := gsub(".tif|100m", "", nm)]$nm[-c(1, 4, 5)]
-lsPaths <- dir('output/1-data-prep/covariates/RMNP', '.tif$', full.names = TRUE)[-c(1, 4, 5)]
+lsCovers <- gsub(".tif|100m", "", 
+                 dir('output/1-data-prep/covariates/RMNP', '.tif$'))
+lsPaths <- dir('output/1-data-prep/covariates/RMNP', '.tif$', full.names = TRUE)
+names(lsPaths) <- lsCovers
+
+rmList <- which(lsCovers %in% c('Agriculture', 'Deciduous', 'Grassland'))
+
+lsCovers <- lsCovers[-rmList]
+lsPaths <- lsPaths[-rmList]
 
 ### Processing ----
 # MCPs
@@ -35,8 +41,6 @@ wolfMCP <- mcp(wolfSP, 100)
 regPts <- generate_grid(wolfMCP, 90, crs = utm)
 
 setnames(regPts, c('EASTING', 'NORTHING'))
-
-saveRDS(regPts, 'output/predator-rsf/wolfRegularPoints.Rds')
 
 # Combine observed and regular grid points
 regPts[, observed := 0]
@@ -141,7 +145,8 @@ plot(springwolfRSF.s)
 #springwolfRSF.z <- (springwolfRSF.rstr - cellStats(springwolfRSF.rstr,stat=mean))/cellStats(springwolfRSF.rstr,stat=sd)
 #plot(springwolfRSF.z)
 
-### Save the RSFs ----
+### Output ----
+# Save the RSFs
 ls.rsf <- list('WINTER' = winterwolfRSF.s,
                'SPRING' = springwolfRSF.s)
 lapply(
@@ -155,4 +160,7 @@ lapply(
     )
   }
 )
+
+# Regular points
+saveRDS(regPts, 'output/predator-rsf/wolfRegularPoints.Rds')
 
