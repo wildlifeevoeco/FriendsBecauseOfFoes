@@ -23,16 +23,16 @@ elk <- readRDS('output/1-data-prep/elk.Rds')
 
 
 # Covariates
-lsCovers <- gsub(".tif|100m", "", 
+covers <- gsub(".tif|100m", "", 
                  dir('output/1-data-prep/covariates/RMNP', '.tif$'))
-lsPaths <- dir('output/1-data-prep/covariates/RMNP', 
+paths <- dir('output/1-data-prep/covariates/RMNP', 
                '.tif$', full.names = TRUE)
-names(lsPaths) <- lsCovers
+names(paths) <- covers
 
-rmList <- which(lsCovers %in% c('Agriculture', 'Deciduous', 'Grassland'))
+rmList <- which(covers %in% c('Agriculture', 'Deciduous', 'Grassland'))
 
-lsCovers <- lsCovers[-rmList]
-lsPaths <- lsPaths[-rmList]
+lsCovers <- covers[-rmList]
+lsPaths <- paths[-rmList]
 
 ### Processing ----
 # MCPs

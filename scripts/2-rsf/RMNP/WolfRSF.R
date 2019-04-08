@@ -21,15 +21,16 @@ source('scripts/0-variables/variables.R')
 wolf <- readRDS('output/1-data-prep/wolf.Rds')
 
 # Covariates
-lsCovers <- gsub(".tif|100m", "", 
-                 dir('output/1-data-prep/covariates/RMNP', '.tif$'))
-lsPaths <- dir('output/1-data-prep/covariates/RMNP', '.tif$', full.names = TRUE)
-names(lsPaths) <- lsCovers
+covers <- gsub(".tif|100m", "", 
+               dir('output/1-data-prep/covariates/RMNP', '.tif$'))
+paths <- dir('output/1-data-prep/covariates/RMNP', 
+             '.tif$', full.names = TRUE)
+names(paths) <- covers
 
-rmList <- which(lsCovers %in% c('Agriculture', 'Deciduous', 'Grassland'))
+rmList <- which(covers %in% c('Agriculture', 'Deciduous', 'Grassland'))
 
-lsCovers <- lsCovers[-rmList]
-lsPaths <- lsPaths[-rmList]
+lsCovers <- covers[-rmList]
+lsPaths <- paths[-rmList]
 
 ### Processing ----
 # MCPs
