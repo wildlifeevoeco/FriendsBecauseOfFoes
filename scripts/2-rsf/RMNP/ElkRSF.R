@@ -13,10 +13,12 @@ libs <- c('data.table', 'ewc',
           'lme4', 'car','piecewiseSEM')
 lapply(libs, require, character.only = TRUE)
 
-### Input data ----
-# UTM zone 14N
-utm <- '+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
 
+### Set variables ----
+source('scripts/0-variables/variables.R')
+
+
+### Input data ----
 # Animal locations
 elk <- readRDS('output/1-data-prep/elk.Rds')
 
