@@ -1,5 +1,5 @@
 ### Covariate (Raster) Processing ----
-# Authors: Alec Robitaille, Christina M Prokopenko, Sana Zabihi, Michel Laforge
+# Authors: Alec Robitaille, Christina M Prokopenko, Sana Zabihi
 
 ### Packages ----
 libs <- c('data.table', 'ggplot2', 'sp', 'raster')
@@ -10,14 +10,17 @@ lapply(libs, require, character.only = TRUE)
 source('scripts/0-variables/variables.R')
 
 
-#### RMNP ========================================================
 ### List rasters ----
 # Covariates
-lsCovers <-
-  data.table(nm = dir('input/covariates/RMNP', '.tif$'))
-lsCovers <- gsub(".tif|100m", "", lsCovers$nm)
-lsPaths <- dir('input/covariates/RMNP', '.tif$', full.names = TRUE)
-names(lsPaths) <- lsCovers
+covers <- gsub(".tif|100m", "", dir('input/covariates/RMNP', '.tif$'))
+paths <- dir('input/covariates/RMNP', '.tif$', full.names = TRUE)
+names(paths) <- covers
+
+rmList <- which(covers %in% c('Agriculture', 'Deciduous', 'Grassland'))
+
+lsCovers <- covers[-rmList]
+lsPaths <- paths[-rmList]
+
 
 ### Processing ----
 # Crop the rasters, holding as temp files in a list
