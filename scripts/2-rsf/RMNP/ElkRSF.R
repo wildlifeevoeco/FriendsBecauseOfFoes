@@ -4,7 +4,6 @@
 # Inputs: Elk relocation data, habitat layers as rasters
 # Outputs: Elk RSF results for global model used to create winter and spring rasters as TIFF
 # Project: Easter Week Challenge 2018
-# Copyright: ./LICENSE.md 
 
 
 ### Packages ----
@@ -26,7 +25,8 @@ elk <- readRDS('output/1-data-prep/elk.Rds')
 # Covariates
 lsCovers <- gsub(".tif|100m", "", 
                  dir('output/1-data-prep/covariates/RMNP', '.tif$'))
-lsPaths <- dir('output/1-data-prep/covariates/RMNP', '.tif$', full.names = TRUE)
+lsPaths <- dir('output/1-data-prep/covariates/RMNP', 
+               '.tif$', full.names = TRUE)
 names(lsPaths) <- lsCovers
 
 rmList <- which(lsCovers %in% c('Agriculture', 'Deciduous', 'Grassland'))
@@ -49,6 +49,8 @@ setnames(regPts, c('EASTING', 'NORTHING'))
 regPts[, observed := 0]
 elk[, observed := 1]
 
+regPts[, season := 'grid']
+
 samplePts <- rbindlist(list(regPts, elk), 
                        use.names = TRUE, fill = TRUE)
 
@@ -68,16 +70,15 @@ samplePts[, (lsCovers) := lapply(
   }
 )]
 
-### RSF ====
+### RSF ----
 lsRasters <- lapply(lsPaths, raster)
 
 ## Winter RSF
-winterElk <- samplePts[season == "winter" | is.na(season)]
-winterElk[observed == 0, season := "winter"]
+winterElk <- samplePts[season == "winter" | season == 'grid']
+winterElk[season == 'grid', season := "winter"]
 
-# TODO: Dist not logged yet - should it be?
 winterElkRSF <- glm(reformulate(lsCovers, response = 'observed'), 
-        family = 'binomial',data = winterElk)
+                    family = 'binomial',data = winterElk)
 
 summary(winterElkRSF)
 vif(winterElkRSF)
@@ -87,17 +88,17 @@ rsquared(winterElkRSF)
 winElk.b <- coef(winterElkRSF)[-1]
 
 # Create the raster matching the first raster layer with the first fixed effect
-#TODO: with intercept of -3.242852 ?
-winterElkRSF.rstr <-
-  exp(
-    -3.242852 + lsRasters[[1]] * winElk.b[1] + lsRasters[[2]] * winElk.b[2] +
-      lsRasters[[3]] * winElk.b[3] + lsRasters[[4]] * winElk.b[4] +
-      lsRasters[[5]] * winElk.b[5] + lsRasters[[6]] * winElk.b[6] +
-      lsRasters[[7]] * winElk.b[7] + lsRasters[[8]] * winElk.b[8] +
-      lsRasters[[9]] * winElk.b[9]
-  )
+intercept <- coef(winterElkRSF)[1]
 
-plot(winterElkRSF.rstr)
+if (all(names(winElk.b) == names(lsRasters))) {
+  winterElkRSF.rstr <-
+    exp(intercept + Reduce('+', Map('*', winElk.b, lsRasters)))
+} else {
+  stop('names dont match, check coef and rasters')
+}
+
+
+mapview::mapview(winterElkRSF.rstr)
 
 
 ## Spring RSF
