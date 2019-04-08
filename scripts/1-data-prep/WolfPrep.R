@@ -194,4 +194,4 @@ setnames(wolf, c('wolfid', 'SPECIES', 'season', 'timegroup',
                  'packid'),
          outputVariables)
 
-saveRDS(wolf[, ..outputVariables], 'output/data-prep/wolf.Rds')
+saveRDS(wolf[, ..outputVariables], 'output/1-data-prep/wolf.Rds')

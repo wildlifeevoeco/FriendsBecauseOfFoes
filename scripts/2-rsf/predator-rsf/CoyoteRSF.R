@@ -22,7 +22,7 @@ nlBounds <- spTransform(readOGR('input/etc/NL/NL-Bounds.shp'),
 ############ caribou
 
 
-MRcar<-readRDS('output/data-prep/caribou.Rds')
+MRcar<-readRDS('output/1-data-prep/caribou.Rds')
 
 
 plot(nlBounds)
@@ -88,7 +88,7 @@ LinR<-resample(LinCrop,AntCrop)
 RugR<-resample(RugCrop,AntCrop)
 
 
-coyote<-readRDS('output/data-prep/coyote.Rds')
+coyote<-readRDS('output/1-data-prep/coyote.Rds')
 nrow(coyote)
 plot(coyote$EASTING,coyote$NORTHING)
 

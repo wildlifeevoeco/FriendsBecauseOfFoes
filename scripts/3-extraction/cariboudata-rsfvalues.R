@@ -7,7 +7,7 @@ CoySum<-raster("output/PredRSFNL/CoyoteSummer.tif")
 CoyWin<-raster("output/PredRSFNL/CoyoteWinter.tif")
 
 utm <- '+proj=utm +zone=21 ellps=WGS84'
-caribou<-readRDS('output/data-prep/caribou.Rds')
+caribou<-readRDS('output/1-data-prep/caribou.Rds')
 str(caribou)
 Summer<-subset(caribou,season=='spring')
 Winter<-subset(caribou,season=='winter')

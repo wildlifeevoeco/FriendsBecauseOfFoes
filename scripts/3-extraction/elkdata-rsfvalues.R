@@ -18,7 +18,7 @@ lapply(libs, require, character.only = TRUE)
 utm <- '+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
 
 # Animal locations
-elk <- readRDS('output/data-prep/elk.Rds')
+elk <- readRDS('output/1-data-prep/elk.Rds')
 
 #RSFs
 

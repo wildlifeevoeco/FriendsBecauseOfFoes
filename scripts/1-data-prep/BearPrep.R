@@ -123,4 +123,4 @@ setnames(bear, c('ANIMAL_ID', 'SPECIES', 'season', 'timegroup',
                  'difdatetime', 'HERD', 'SEX'),
          outputVariables)
 
-saveRDS(bear[, ..outputVariables], 'output/data-prep/bear.Rds')
+saveRDS(bear[, ..outputVariables], 'output/1-data-prep/bear.Rds')

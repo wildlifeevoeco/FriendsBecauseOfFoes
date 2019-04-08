@@ -183,4 +183,4 @@ setnames(coyote, c('ANIMAL_ID', 'SPECIES', 'season', 'timegroup',
                    'HERD', 'SEX'),
          outputVariables)
 
-saveRDS(coyote[, ..outputVariables], 'output/data-prep/coyote.Rds')
+saveRDS(coyote[, ..outputVariables], 'output/1-data-prep/coyote.Rds')

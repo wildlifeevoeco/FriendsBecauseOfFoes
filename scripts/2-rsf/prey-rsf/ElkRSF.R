@@ -18,16 +18,16 @@ lapply(libs, require, character.only = TRUE)
 utm <- '+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
 
 # Animal locations
-elk <- readRDS('output/data-prep/elk.Rds')
+elk <- readRDS('output/1-data-prep/elk.Rds')
 
 # MB Bounds shapefile
 bounds <- spTransform(readOGR('input/etc/RMNP/RMNPextent.shp'), 
                       CRSobj = utm)
 
 # Covariates
-lsCovers <- data.table(nm = dir('output/data-prep/cropped-rasters/RMNP', '.tif$'))[, 
+lsCovers <- data.table(nm = dir('output/1-data-prep/cropped-rasters/RMNP', '.tif$'))[, 
   nm := gsub(".tif|100m", "", nm)]$nm[-c(1, 4, 5)]
-lsPaths <- dir('output/data-prep/cropped-rasters/RMNP', '.tif$', full.names = TRUE)[-c(1, 4, 5)]
+lsPaths <- dir('output/1-data-prep/cropped-rasters/RMNP', '.tif$', full.names = TRUE)[-c(1, 4, 5)]
 
 ### Processing ----
 # MCPs

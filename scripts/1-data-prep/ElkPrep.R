@@ -121,4 +121,4 @@ setnames(elk, c('ElkID', 'SPECIES', 'season', 'timegroup',
                  'julday', 'yr', 'mnth', 'stepLength', 'moveRate', 'difdatetime'),
          outputVariables)
 
-saveRDS(elk[, ..outputVariables], 'output/data-prep/elk.Rds')
+saveRDS(elk[, ..outputVariables], 'output/1-data-prep/elk.Rds')

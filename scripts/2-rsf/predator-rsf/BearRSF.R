@@ -18,7 +18,7 @@ nlBounds <- spTransform('input/etc/NL-Bounds/NL-Bounds.shp',
 ############ caribou
 
 
-MRcar<-readRDS('output/data-prep/caribou.Rds')
+MRcar<-readRDS('output/1-data-prep/caribou.Rds')
 
 
 plot(nlBounds)
@@ -84,7 +84,7 @@ LinR<-resample(LinCrop,AntCrop)
 RugR<-resample(RugCrop,AntCrop)
 
 
-bears<-readRDS('output/data-prep/bear.Rds')
+bears<-readRDS('output/1-data-prep/bear.Rds')
 nrow(bears)
 plot(bears$EASTING,bears$NORTHING)
 

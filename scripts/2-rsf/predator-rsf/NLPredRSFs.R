@@ -18,7 +18,7 @@ nlBounds <- rgdal::readOGR('input/etc/NL-Bounds/NL-Bounds.shp') %>%
 ############ caribou
 
 
-MRcar<-readRDS('output/data-prep/caribou.Rds')
+MRcar<-readRDS('output/1-data-prep/caribou.Rds')
 
 
 plot(nlBounds)
@@ -235,7 +235,7 @@ saveRDS(WinRSF,"output/PredRSFNL/CaribouWinterRSF.RDS")
 ######## coyotes ##########
 
 
-coyote<-readRDS('output/data-prep/coyote.Rds')
+coyote<-readRDS('output/1-data-prep/coyote.Rds')
 
 plot(coyote$EASTING,coyote$NORTHING)
 
@@ -505,7 +505,7 @@ writeRaster(WinRSFsc,"output/PredRSFNL/CoyoteWinter.tif",overwrite=T)
 
 ################## Black bears ####################
 
-bear<-readRDS('output/data-prep/bear.Rds')
+bear<-readRDS('output/1-data-prep/bear.Rds')
 
 head(bear)
 

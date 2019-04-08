@@ -4,7 +4,6 @@
 # Inputs: Wolf relocation data, habitat layers as rasters
 # Outputs: Wolf RSF results for global model used to create winter and spring rasters as TIFF
 # Project: Easter Week Challenge 2018
-# Copyright: ./LICENSE.md 
 
 
 ### Packages ----
@@ -18,16 +17,12 @@ lapply(libs, require, character.only = TRUE)
 utm <- '+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
 
 # Animal locations
-wolf <- readRDS('output/data-prep/wolf.Rds')
-
-# MB Bounds shapefile
-bounds <- spTransform(readOGR('input/etc/RMNP/RMNPextent.shp'), 
-                              CRSobj = utm)
+wolf <- readRDS('output/1-data-prep/wolf.Rds')
 
 # Covariates
-lsCovers <- data.table(nm = dir('output/data-prep/cropped-rasters/RMNP', '.tif$'))[, 
+lsCovers <- data.table(nm = dir('output/1-data-prep/cropped-rasters/RMNP', '.tif$'))[, 
                                                                                    nm := gsub(".tif|100m", "", nm)]$nm[-c(1, 4, 5)]
-lsPaths <- dir('output/data-prep/cropped-rasters/RMNP', '.tif$', full.names = TRUE)[-c(1, 4, 5)]
+lsPaths <- dir('output/1-data-prep/cropped-rasters/RMNP', '.tif$', full.names = TRUE)[-c(1, 4, 5)]
 
 ### Processing ----
 # MCPs

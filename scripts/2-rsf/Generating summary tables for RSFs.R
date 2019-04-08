@@ -250,7 +250,7 @@ coywinRs<-rsquared(coywin)[5]
 coywinNPts<-rsquared(coywin)[4]
 coywinNind<-length(unique(subset(CoyD,season=="winter")$id))
 
-bears<-readRDS('output/data-prep/bear.Rds')
+bears<-readRDS('output/1-data-prep/bear.Rds')
 bearsprRs<-rsquared(bearspr)[5]
 bearsprNPts<-rsquared(bearspr)[4]
 bearsprNind<-length(unique(subset(bears,season=="spring")$id))
@@ -260,7 +260,7 @@ bearwinNPts<-NA
 bearwinNind<-NA
 
 
-MRcar<-readRDS('output/data-prep/caribou.Rds')
+MRcar<-readRDS('output/1-data-prep/caribou.Rds')
 carsprRs<-rsquared(carspr)[5]
 carsprNPts<-rsquared(carspr)[4]
 carsprNind<-length(unique(subset(MRcar,season=="spring")$id))

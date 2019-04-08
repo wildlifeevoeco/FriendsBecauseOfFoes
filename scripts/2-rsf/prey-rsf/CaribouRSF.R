@@ -19,7 +19,7 @@ nlBounds <- rgdal::readOGR('input/etc/NL-Bounds/NL-Bounds.shp') %>%
 ############ caribou
 
 
-MRcar<-readRDS('output/data-prep/caribou.Rds')
+MRcar<-readRDS('output/1-data-prep/caribou.Rds')
 
 
 plot(nlBounds)

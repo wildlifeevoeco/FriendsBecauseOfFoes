@@ -109,4 +109,4 @@ setnames(caribou, c('ANIMAL_ID', 'SPECIES', 'season', 'timegroup',
          outputVariables)
 
 saveRDS(caribou[, ..outputVariables], 
-        'output/data-prep/caribou.Rds')
+        'output/1-data-prep/caribou.Rds')
