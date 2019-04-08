@@ -131,19 +131,9 @@ plot(springElkRSF.rstr)
 # Using feature scaling
 winterElkRSF.s <-
   (winterElkRSF.rstr - (cellStats(winterElkRSF.rstr, min))) / (cellStats(winterElkRSF.rstr, max) - (cellStats(winterElkRSF.rstr, min)))
-plot(winterElkRSF.s)
+
 springElkRSF.s <-
   (springElkRSF.rstr - (cellStats(springElkRSF.rstr, min))) / (cellStats(springElkRSF.rstr, max) - (cellStats(springElkRSF.rstr, min)))
-plot(springElkRSF.s)
-
-# Using z score
-# TODO: can this be dropped then?
-#winterElkRSF.z <- (winterElkRSF.rstr - cellStats(winterElkRSF.rstr,stat=mean))/cellStats(winterElkRSF.rstr,stat=sd)
-#plot(winterElkRSF.z)
-#springElkRSF.z <- (springElkRSF.rstr - cellStats(springElkRSF.rstr,stat=mean))/cellStats(springElkRSF.rstr,stat=sd)
-#plot(springElkRSF.z)
-
-
 
 
 ### Output ----
