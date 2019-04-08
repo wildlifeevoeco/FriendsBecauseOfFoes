@@ -6,8 +6,6 @@
 ## Rerun
 
   - scripts
-      - 0-variables
-          - variables.R
       - 1-data-prep
           - ~~BearPrep.R~~
           - ~~CaribouPrep.R~~
@@ -33,7 +31,9 @@
           - CalculateTurnAngles.R
           - NearestNeighbourAnalysis.R
       - 5-model
-          - socialitydomainGLM.R \`\`\`
+          - socialitydomainGLM.R
+      - 0-variables
+          - variables.R \`\`\`
 
 ## TODOs/NOTEs
 
@@ -47,6 +47,7 @@ grep -rni 'scripts/' -e 'TODO' || true;
 #> scripts/4-sociality/NearestNeighbourAnalysis.R:143:# TODO: investigate the both coords and ..coords exist in calling scope data.table error
 #> scripts/4-sociality/CalculateTurnAngles.R:11:#TODO: Grab Hance's updated social metrics from modeling script
 #> scripts/4-sociality/CalculateTurnAngles.R:38:#TODO: check that yrcol is well handled
+#> scripts/1-data-prep/RasterPrep.R:48:# TODO: need MB elevation data
 #> scripts/2-rsf/predator-rsf/WolfRSF.R:75:# TODO: why also where season is NA?
 #> scripts/2-rsf/predator-rsf/WolfRSF.R:79:# TODO: #### Dist not logged yet - should it be?
 #> scripts/2-rsf/predator-rsf/WolfRSF.R:92:# TODO: with intercept of -3.044340?
