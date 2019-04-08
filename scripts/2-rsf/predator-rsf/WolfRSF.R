@@ -98,15 +98,8 @@ if (all(names(winwolf.b) == names(lsRasters))) {
   stop('names dont match, check coef and rasters')
 }
 
-
-
-
-plot(winterwolfRSF.rstr)
-
-
 # Spring RSF
-# TODO: why also na season?
-springwolf <- samplePts[season == "spring" | is.na(season)]
+springwolf <- samplePts[season == "spring" | season == 'grid']
 springwolf[observed == 0, season := "spring"]
 
 springwolfRSF <- glm(reformulate(lsCovers, response = 'observed'), 
@@ -120,38 +113,34 @@ rsquared(springwolfRSF)
 sprwolf.b <- coef(springwolfRSF)[-1]
 
 # Create the raster matching the first raster layer with the first fixed effect
-# TODO: with intercept of -2.711875?
-springwolfRSF.rstr <-
-  exp(
-    -2.711875 + lsRasters[[1]] * sprwolf.b[1] + lsRasters[[2]] * sprwolf.b[2] +
-      lsRasters[[3]] * sprwolf.b[3] + lsRasters[[4]] * sprwolf.b[4] +
-      lsRasters[[5]] * sprwolf.b[5] + lsRasters[[6]] * sprwolf.b[6] +
-      lsRasters[[7]] * sprwolf.b[7] + lsRasters[[8]] * sprwolf.b[8] +
-      lsRasters[[9]] * sprwolf.b[9]
-  )
+intercept <- coef(winterwolfRSF)[1]
 
-plot(springwolfRSF.rstr)
+if (all(names(winwolf.b) == names(lsRasters))) {
+  springwolfRSF.rstr <-
+    exp(intercept + Reduce('+', Map('*', sprwolf.b, lsRasters)))
+} else {
+  stop('names dont match, check coef and rasters')
+}
 
 ### Standardize RSFs ----
 # Using feature scaling
 winterwolfRSF.s <-
   (winterwolfRSF.rstr - (cellStats(winterwolfRSF.rstr, min))) / (cellStats(winterwolfRSF.rstr, max) - (cellStats(winterwolfRSF.rstr, min)))
-plot(winterwolfRSF.s)
+
 springwolfRSF.s <-
   (springwolfRSF.rstr - (cellStats(springwolfRSF.rstr, min))) / (cellStats(springwolfRSF.rstr, max) - (cellStats(springwolfRSF.rstr, min)))
-plot(springwolfRSF.s)
 
 
 ### Output ----
 # Save the RSFs
-ls.rsf <- list('WINTER' = winterwolfRSF.s,
-               'SPRING' = springwolfRSF.s)
+ls.rsf <- list('Winter' = winterwolfRSF.s,
+               'Spring' = springwolfRSF.s)
 lapply(
   seq_along(ls.rsf),
   FUN = function(r) {
     writeRaster(
       ls.rsf[[r]],
-      paste0('output/predator-rsf/wolfrsf', names(ls.rsf[r])),
+      paste0('output/2-rsf/wolf/wolfrsf', names(ls.rsf[r])),
       format = 'GTiff',
       overwrite = T
     )
@@ -159,5 +148,7 @@ lapply(
 )
 
 # Regular points
-saveRDS(regPts, 'output/predator-rsf/wolfRegularPoints.Rds')
+saveRDS(regPts, 'output/2-rsf/wolf/wolfRegularPoints.Rds')
 
+# Sample pts
+saveRDS(samplePts, 'output/2-rsf/wolf/wolfSamplePoints.Rds')
