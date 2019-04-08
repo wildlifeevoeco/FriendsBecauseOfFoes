@@ -1,6 +1,9 @@
 # Easter Week Challenge
 
  
+**WARNING**: currently working through rerun in the *compendium* branch. 
+
+
 ## Project structure
 ```
 .
