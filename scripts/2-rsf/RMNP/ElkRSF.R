@@ -36,13 +36,13 @@ lsPaths <- lsPaths[-rmList]
 
 ### Processing ----
 # MCPs
-elkSP <- SpatialPoints(elk[, .(EASTING, NORTHING)],
-                       proj4string = CRS(utmMB))
+points <- SpatialPoints(elk[, .(EASTING, NORTHING)],
+                        proj4string = CRS(utmMB))
 
-elkMCP <- mcp(elkSP, 100)
+mcps <- mcp(points, 100)
 
 # Create Regular Grid
-regPts <- generate_grid(pol = elkMCP, spacing = 90, crs = utmMB)
+regPts <- generate_grid(pol = mcps, spacing = 90, crs = utmMB)
 setnames(regPts, c('EASTING', 'NORTHING'))
 
 # Combine observed and regular grid points
@@ -74,67 +74,61 @@ samplePts[, (lsCovers) := lapply(
 lsRasters <- lapply(lsPaths, raster)
 
 ## Winter RSF
-winterElk <- samplePts[season == "winter" | season == 'grid']
-winterElk[season == 'grid', season := "winter"]
+winterPts <- samplePts[season == "winter" | season == 'grid']
+winterPts[season == 'grid', season := "winter"]
 
-winterElkRSF <- glm(reformulate(lsCovers, response = 'observed'), 
-                    family = 'binomial',data = winterElk)
+winterRSF <- glm(reformulate(lsCovers, response = 'observed'), 
+                    family = 'binomial',data = winterPts)
 
-summary(winterElkRSF)
-vif(winterElkRSF)
-rsquared(winterElkRSF)
+summary(winterRSF)
+vif(winterRSF)
+rsquared(winterRSF)
 
 # Pull out the coefficients, dropping the intercept
-winElk.b <- coef(winterElkRSF)[-1]
+winterCoefs <- coef(winterRSF)[-1]
 
 # Create the raster matching the first raster layer with the first fixed effect
-intercept <- coef(winterElkRSF)[1]
+intercept <- coef(winterRSF)[1]
 
-if (all(names(winElk.b) == names(lsRasters))) {
-  winterElkRSF.rstr <-
-    exp(intercept + Reduce('+', Map('*', winElk.b, lsRasters)))
+if (all(names(winterCoefs) == names(lsRasters))) {
+  winterRaster <-
+    exp(intercept + Reduce('+', Map('*', winterCoefs, lsRasters)))
+} else {
+  stop('names dont match, check coefs and rasters')
+}
+
+
+## Spring RSF
+springPts <- samplePts[season == "spring" | season == 'grid']
+springPts[observed == 0, season := "spring"]
+
+springRSF <- glm(reformulate(lsCovers, response = 'observed'), 
+       family = 'binomial',data = springPts)
+
+summary(springRSF)
+rsquared(springRSF)
+
+# Pull out the coefficients, dropping the intercept
+springCoefs <- coef(springRSF)[-1] 
+
+# Create the raster matching the first raster layer with the first fixed effect
+intercept <- coef(springRSF)[1]
+
+if (all(names(springCoefs) == names(lsRasters))) {
+  springRaster <-
+    exp(intercept + Reduce('+', Map('*', springCoefs, lsRasters)))
 } else {
   stop('names dont match, check coef and rasters')
 }
 
 
-mapview::mapview(winterElkRSF.rstr)
-
-
-## Spring RSF
-# TODO: why is.na season?
-springElk <- samplePts[season == "spring" | is.na(season)]
-springElk[observed == 0, season := "spring"]
-
-springElkRSF <- glm(reformulate(lsCovers, response = 'observed'), 
-       family = 'binomial',data = springElk)
-
-summary(springElkRSF)
-rsquared(springElkRSF)
-
-# Pull out the coefficients, dropping the intercept
-sprElk.b <- coef(springElkRSF)[-1] 
-
-# Create the raster matching the first raster layer with the first fixed effect
-# TODO: with intercept of -2.053773?
-springElkRSF.rstr <-
-  exp(
-    -2.053773 + lsRasters[[1]] * sprElk.b[1] + lsRasters[[2]] * sprElk.b[2] +
-      lsRasters[[3]] * sprElk.b[3] + lsRasters[[4]] * sprElk.b[4] +
-      lsRasters[[5]] * sprElk.b[5] + lsRasters[[6]] * sprElk.b[6] +
-      lsRasters[[7]] * sprElk.b[7] + lsRasters[[8]] * sprElk.b[8] +
-      lsRasters[[9]] * sprElk.b[9]
-  )
-
-plot(springElkRSF.rstr)
-
 ### Standardize RSFs ----
 # Using feature scaling
-winterElkRSF.s <-
-  (winterElkRSF.rstr - (cellStats(winterElkRSF.rstr, min))) / (cellStats(winterElkRSF.rstr, max) - (cellStats(winterElkRSF.rstr, min)))
+winterScaled <-
+  (winterRaster - (cellStats(winterRaster, min))) / (cellStats(winterRaster, max) - (cellStats(winterRaster, min)))
 
-springElkRSF.s <-
-  (springElkRSF.rstr - (cellStats(springElkRSF.rstr, min))) / (cellStats(springElkRSF.rstr, max) - (cellStats(springElkRSF.rstr, min)))
+springScaled <-
+  (springRaster - (cellStats(springRaster, min))) / (cellStats(springRaster, max) - (cellStats(springRaster, min)))
 
 
 ### Output ----
@@ -143,15 +137,15 @@ saveRDS(regPts, 'output/2-rsf/elk/elkRegularPoints.Rds')
 saveRDS(samplePts, 'output/2-rsf/elk/elkSamplePoints.Rds')
 
 # Save the RSFs 
-ls.rsf <- list('WINTER' = winterElkRSF.s,
-               'SPRING' = springElkRSF.s)
+ls.rsf <- list('Winter' = winterScaled,
+               'Spring' = springScaled)
 
 lapply(
   seq_along(ls.rsf),
   FUN = function(r) {
     writeRaster(
       ls.rsf[[r]],
-      paste0('output/prey-rsf/elkrsf', names(ls.rsf[r])),
+      paste0('output/2-rsf/elk/elkrsf', names(ls.rsf[r])),
       format = 'GTiff',
       overwrite = T
     )
