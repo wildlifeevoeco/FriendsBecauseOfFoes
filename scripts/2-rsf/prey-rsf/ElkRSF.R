@@ -25,9 +25,9 @@ bounds <- spTransform(readOGR('input/etc/RMNP/RMNPextent.shp'),
                       CRSobj = utm)
 
 # Covariates
-lsCovers <- data.table(nm = dir('output/1-data-prep/cropped-rasters/RMNP', '.tif$'))[, 
+lsCovers <- data.table(nm = dir('output/1-data-prep/covariates/RMNP', '.tif$'))[, 
   nm := gsub(".tif|100m", "", nm)]$nm[-c(1, 4, 5)]
-lsPaths <- dir('output/1-data-prep/cropped-rasters/RMNP', '.tif$', full.names = TRUE)[-c(1, 4, 5)]
+lsPaths <- dir('output/1-data-prep/covariates/RMNP', '.tif$', full.names = TRUE)[-c(1, 4, 5)]
 
 ### Processing ----
 # MCPs
