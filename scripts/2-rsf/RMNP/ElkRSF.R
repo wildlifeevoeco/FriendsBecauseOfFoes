@@ -22,27 +22,28 @@ source('scripts/0-variables/variables.R')
 # Animal locations
 elk <- readRDS('output/1-data-prep/elk.Rds')
 
-# MB Bounds shapefile
-bounds <- spTransform(readOGR('input/etc/RMNP/RMNPextent.shp'), 
-                      CRSobj = utm)
 
 # Covariates
-lsCovers <- data.table(nm = dir('output/1-data-prep/covariates/RMNP', '.tif$'))[, 
-  nm := gsub(".tif|100m", "", nm)]$nm[-c(1, 4, 5)]
-lsPaths <- dir('output/1-data-prep/covariates/RMNP', '.tif$', full.names = TRUE)[-c(1, 4, 5)]
+lsCovers <- gsub(".tif|100m", "", 
+                 dir('output/1-data-prep/covariates/RMNP', '.tif$'))
+lsPaths <- dir('output/1-data-prep/covariates/RMNP', '.tif$', full.names = TRUE)
+names(lsPaths) <- lsCovers
+
+rmList <- which(lsCovers %in% c('Agriculture', 'Deciduous', 'Grassland'))
+
+lsCovers <- lsCovers[-rmList]
+lsPaths <- lsPaths[-rmList]
 
 ### Processing ----
 # MCPs
 elkSP <- SpatialPoints(elk[, .(EASTING, NORTHING)],
-                       proj4string = CRS(utm))
+                       proj4string = CRS(utmMB))
 
 elkMCP <- mcp(elkSP, 100)
 
 # Create Regular Grid
-regPts <- generate_grid(pol = elkMCP, spacing = 90, crs = utm)
+regPts <- generate_grid(pol = elkMCP, spacing = 90, crs = utmMB)
 setnames(regPts, c('EASTING', 'NORTHING'))
-
-saveRDS(regPts, 'output/prey-rsf/elkRegularPoints.Rds')
 
 # Combine observed and regular grid points
 regPts[, observed := 0]
@@ -66,8 +67,6 @@ samplePts[, (lsCovers) := lapply(
     extract(raster(r), matrix(c(EASTING, NORTHING), ncol = 2))
   }
 )]
-
-saveRDS(samplePts, 'output/prey-rsf/elkSamplePoints.Rds')
 
 ### RSF ====
 lsRasters <- lapply(lsPaths, raster)
@@ -144,7 +143,15 @@ plot(springElkRSF.s)
 #springElkRSF.z <- (springElkRSF.rstr - cellStats(springElkRSF.rstr,stat=mean))/cellStats(springElkRSF.rstr,stat=sd)
 #plot(springElkRSF.z)
 
-### Save the RSFs ----
+
+
+
+### Output ----
+saveRDS(regPts, 'output/2-rsf/elk/elkRegularPoints.Rds')
+
+saveRDS(samplePts, 'output/2-rsf/elk/elkSamplePoints.Rds')
+
+# Save the RSFs 
 ls.rsf <- list('WINTER' = winterElkRSF.s,
                'SPRING' = springElkRSF.s)
 
@@ -159,6 +166,3 @@ lapply(
     )
   }
 )
-
-
-                       
