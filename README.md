@@ -18,14 +18,12 @@
           - ~~*RuggCalc.R*~~
       - 2-rsf
           - Generating summary tables for RSFs.R
-          - predator-rsf
           - BearRSF.R
           - CoyoteRSF.R
           - NLPredRSFs.R
           - ~~WolfRSF.R~~
-          - prey-rsf
           - CaribouRSF.R
-          - ElkRSF.R
+          - ~~ElkRSF.R~~
       - 3-extraction
           - cariboudata-rsfvalues.R
           - elkdata-rsfvalues.R
@@ -49,11 +47,6 @@ grep -rni 'scripts/' -e 'TODO' || true;
 #> scripts/4-sociality/NearestNeighbourAnalysis.R:143:# TODO: investigate the both coords and ..coords exist in calling scope data.table error
 #> scripts/4-sociality/CalculateTurnAngles.R:11:#TODO: Grab Hance's updated social metrics from modeling script
 #> scripts/4-sociality/CalculateTurnAngles.R:38:#TODO: check that yrcol is well handled
-#> scripts/2-rsf/RMNP/ElkRSF.R:77:# TODO: Dist not logged yet - should it be?
-#> scripts/2-rsf/RMNP/ElkRSF.R:89:#TODO: with intercept of -3.242852 ?
-#> scripts/2-rsf/RMNP/ElkRSF.R:103:# TODO: why is.na season?
-#> scripts/2-rsf/RMNP/ElkRSF.R:117:# TODO: with intercept of -2.053773?
-#> scripts/2-rsf/RMNP/ElkRSF.R:139:# TODO: can this be dropped then?
 #> scripts/2-rsf/RMNP/WolfRSF.R:79:# TODO: Dist not logged yet - should it be?
 ```
 

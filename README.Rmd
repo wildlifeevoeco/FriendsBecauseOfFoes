@@ -26,14 +26,12 @@ knitr::opts_chunk$set(
     * ~~*RuggCalc.R*~~
   * 2-rsf
     * Generating summary tables for RSFs.R
-    * predator-rsf
     * BearRSF.R
     * CoyoteRSF.R
     * NLPredRSFs.R
     * ~~WolfRSF.R~~
-    *  prey-rsf
     *  CaribouRSF.R
-    *  ElkRSF.R
+    * ~~ElkRSF.R~~
   * 3-extraction
     * cariboudata-rsfvalues.R
     *  elkdata-rsfvalues.R
