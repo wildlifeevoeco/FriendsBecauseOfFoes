@@ -1,85 +1,36 @@
 ### Bear RSF ----
-# Inputs: Bear relocation data
+# Authors: Michel Laforge, Alec Robitaille
 # Project: Easter Week Challenge 2018
 # Copyright: ./LICENSE.md
 
 
 ### Packages ----
-libs <- c('adehabitatHR',
-          'rgeos',
-          'spatstat',
-          'raster',
-          'data.table',
-          'piecewiseSEM',
-          'rgdal')
+libs <- c('data.table', 'sp', 'adehabitatHR')
+# libs <- c('adehabitatHR', 'rgeos', 'spatstat', 'raster',
+#           'ewc', 
+#           'data.table', 'piecewiseSEM', 'rgdal')
 lapply(libs, require, character.only = TRUE)
 
 ### Input data ----
-MRcar <- readRDS('output/1-data-prep/caribou.Rds')
+caribou <- readRDS('output/1-data-prep/caribou.Rds')
 
 
-plot(nlBounds)
-points(MRcar$EASTING, MRcar$NORTHING)
+### Processing ----
+points <- SpatialPoints(caribou[, .(EASTING, NORTHING)],
+                        proj4string = CRS(utm))
 
-CarPoints <-
-  SpatialPoints(data.frame(MRcar$EASTING, MRcar$NORTHING), proj4string = CRS(utm))
+mcps <- mcp(points, percent = 100)
 
-CarAvail <- mcp(CarPoints, percent = 100)
-shapefile(CarAvail, "Output/caribouMCP,shp")
-
-plot(nlBounds)
-plot(CarAvail, add = T)
-points(CarPoints)
 
 ### Buffer by mean step length
-CarAvailBuf <- gBuffer(CarAvail, width = mean(MRcar$stepLength))
+CarAvailBuf <- gBuffer(CarAvail, width = mean(caribou$stepLength))
 
 Carclipped <- gIntersection(nlBounds, CarAvailBuf)
 Carclipped2 <- as.owin.SpatialPolygons(Carclipped)
 
 #### Load in habitat layers
 
-Ant <- raster('input/Landcover/Reproj/Anthro100.tif')
-Bro <- raster('input/Landcover/Reproj/Broadleaf100.tif')
-Con <- raster('input/Landcover/Reproj/Conifer100.tif')
-Lic <- raster('input/Landcover/Reproj/Lichen100.tif')
-Mix <- raster('input/Landcover/Reproj/MixedWood100.tif')
-Roc <- raster('input/Landcover/Reproj/Rocky100.tif')
-Scr <- raster('input/Landcover/Reproj/Scrub100.tif')
-Wat <- raster('input/Landcover/Reproj/Water100.tif')
-Wet <- raster('input/Landcover/Reproj/Wetland100.tif')
-WaD1 <- raster('input/Landcover/Reproj/WaterDist.tif')
-Lin1 <- raster('input/Landcover/Reproj/LinearDist.tif')
 
-WaD <- log(WaD1 + 1)
-Lin <- log(Lin1 + 1)
-
-Elev <- raster('input/Landcover/Reproj/NLElev.tif')
-Rug <- terrain(Elev, opt = "roughness")
-
-AntCrop <- crop(Ant, Carclipped)
-BroCrop <- crop(Bro, Carclipped)
-ConCrop <- crop(Con, Carclipped)
-LicCrop <- crop(Lic, Carclipped)
-MixCrop <- crop(Mix, Carclipped)
-RocCrop <- crop(Roc, Carclipped)
-ScrCrop <- crop(Scr, Carclipped)
-WatCrop <- crop(Wat, Carclipped)
-WetCrop <- crop(Wet, Carclipped)
-RugCrop <- crop(Rug, Carclipped)
-WaDCrop <- crop(WaD, Carclipped)
-LinCrop <- crop(Lin, Carclipped)
-
-AntR <- AntCrop
-BroR <- resample(BroCrop, AntCrop)
-ConR <- resample(ConCrop, AntCrop)
-LicR <- resample(LicCrop, AntCrop)
-MixR <- resample(MixCrop, AntCrop)
-RocR <- resample(RocCrop, AntCrop)
-ScrR <- resample(ScrCrop, AntCrop)
-WaDR <- resample(WaDCrop, AntCrop)
-LinR <- resample(LinCrop, AntCrop)
-RugR <- resample(RugCrop, AntCrop)
 
 
 bears <- readRDS('output/1-data-prep/bear.Rds')

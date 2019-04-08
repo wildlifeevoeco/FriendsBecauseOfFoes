@@ -1,5 +1,5 @@
 ### Caribou RSF ----
-# Inputs: Caribou relocation data
+# Authors: Michel Laforge, Alec Robitaille
 # Project: Easter Week Challenge 2018
 # Copyright: ./LICENSE.md
 
