@@ -1,11 +1,5 @@
-### Raster Processing MB ----
+### Covariate (Raster) Processing MB ----
 # Authors: Alec Robitaille, Christina M Prokopenko, Sana Zabihi
-# Purpose:
-# Inputs: Elk relocation data
-# Outputs:
-# Project: Easter Week Challenge 2018
-# Copyright: ./LICENSE.md
-
 
 ### Packages ----
 libs <- c('data.table', 'ggplot2', 'sp', 'raster')
