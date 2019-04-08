@@ -69,17 +69,14 @@ samplePts[, (lsCovers) := lapply(
   }
 )]
 
-saveRDS(samplePts, 'output/predator-rsf/wolfSamplePoints.Rds')
-
-### RSF ====
+### RSF ----
 lsRasters <- lapply(lsPaths, raster)
 
 # Winter RSF
-# TODO: why also where season is NA?
-winterwolf <- samplePts[season == "winter" | is.na(season)]
-winterwolf[observed == 0, season := "winter"]
+winterwolf <- samplePts[season == "winter" | season == 'grid']
+winterwolf[season == 'grid', season := "winter"]
 
-# TODO: #### Dist not logged yet - should it be?
+# TODO: Dist not logged yet - should it be?
 winterwolfRSF <- glm(reformulate(lsCovers, response = 'observed'), 
                     family = 'binomial',data = winterwolf)
 
@@ -92,15 +89,17 @@ winwolf.b <- coef(winterwolfRSF)[-1]
 
 
 # Create the raster matching the first raster layer with the first fixed effect
-# TODO: with intercept of -3.044340?
-winterwolfRSF.rstr <-
-  exp(
-    -3.044340 + lsRasters[[1]] * winwolf.b[1] + lsRasters[[2]] * winwolf.b[2] +
-      lsRasters[[3]] * winwolf.b[3] + lsRasters[[4]] * winwolf.b[4] +
-      lsRasters[[5]] * winwolf.b[5] + lsRasters[[6]] * winwolf.b[6] +
-      lsRasters[[7]] * winwolf.b[7] + lsRasters[[8]] * winwolf.b[8] +
-      lsRasters[[9]] * winwolf.b[9]
-  )
+intercept <- coef(winterwolfRSF)[1]
+
+if (all(names(winwolf.b) == names(lsRasters))) {
+  winterwolfRSF.rstr <-
+    exp(intercept + Reduce('+', Map('*', winwolf.b, lsRasters)))
+} else {
+  stop('names dont match, check coef and rasters')
+}
+
+
+
 
 plot(winterwolfRSF.rstr)
 
