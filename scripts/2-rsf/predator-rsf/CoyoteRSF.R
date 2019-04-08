@@ -16,7 +16,7 @@ lapply(libs, require, character.only = TRUE)
 ### Input data ----
 
 utm <- '+proj=utm +zone=21 ellps=WGS84'
-nlBounds <- spTransform(readOGR('input/etc/NL-Bounds/NL-Bounds.shp'),
+nlBounds <- spTransform(readOGR('input/etc/NL/NL-Bounds.shp'),
                         CRSobj = utm)
 
 ############ caribou

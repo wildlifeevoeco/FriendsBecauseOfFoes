@@ -19,7 +19,7 @@ source('scripts/0-variables/variables.R')
 
 ### Input data ----
 # MB Bounds shapefile
-bounds <- rgdal::readOGR('input/etc/RMNP-extent/RMNPextent.shp') %>%
+bounds <- rgdal::readOGR('input/etc/RMNP/RMNPextent.shp') %>%
   spTransform(CRSobj = utmMB)
 
 # Covariates

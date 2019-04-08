@@ -25,10 +25,6 @@ dropCols <- c('V1','FIX_ID','EPSG_CODE','Fix_Time_Delta',
 caribou <- fread('input/locs/AllCaribouDataRaw.csv',
                  drop = dropCols)
 
-# NL Bounds shapefile
-nlBounds <- spTransform(readOGR('input/etc/NL-Bounds/NL-Bounds.shp'),
-                        CRSobj = utmNL)
-
 ### Variables ----
 xCol <- 'X_COORD'
 yCol <- 'Y_COORD'

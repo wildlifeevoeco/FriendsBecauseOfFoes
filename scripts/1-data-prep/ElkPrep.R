@@ -19,10 +19,6 @@ source('scripts/0-variables/variables.R')
 # Read in elk data
 elk <- fread('input/locs/RMNP_ElkData_clean.csv')
 
-# MB Bounds shapefile
-bounds <- spTransform(readOGR('input/etc/RMNP-extent/RMNPextent.shp'),
-                      CRSobj = utmMB)
-
 ### Variables ----
 xCol <- 'X'
 yCol <- 'Y'
@@ -113,7 +109,7 @@ elkSP <- SpatialPointsDataFrame(elk[, .(get(projXCol), get(projYCol))],
                                 elk,
                                 proj4string = CRS(utmMB))
 
-elk <- data.table(over(bounds, elkSP, returnList = TRUE)[[1]])
+elk <- data.table(over(mbBounds, elkSP, returnList = TRUE)[[1]])
 
 ### Output ----
 # Match variables to output variables = consistent variables across species

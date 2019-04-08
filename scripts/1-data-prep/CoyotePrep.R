@@ -37,9 +37,6 @@ coyote <- fread('input/locs/Coyote.csv',
 # UTM zone 21N
 utm <- '+proj=utm +zone=21 ellps=WGS84'
 
-# NL Bounds shapefile
-nlBounds <- spTransform(readOGR('input/etc/NL-Bounds/NL-Bounds.shp'),
-                        CRSobj = utm)
 
 ### Variables ----
 xCol <- 'X_COORD'

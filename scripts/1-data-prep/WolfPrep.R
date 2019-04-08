@@ -43,10 +43,6 @@ dropCols <- colnames(wolf)[!(colnames(wolf) %in% keepCols)]
 # Drop columns above and rename 2d3d to Fix2d3d
 wolf[, (dropCols) := NULL][, c('Fix2d3d', '2d3d') := .(`2d3d`, NULL)]
 
-# MB Bounds shapefile
-bounds <- spTransform(readOGR('input/etc/RMNP-extent/RMNPextent.shp'),
-                      CRSobj = utmMB)
-
 ### Variables ----
 xCol <- 'longitude'
 yCol <- 'latitude'
@@ -173,7 +169,7 @@ wolfSP <- SpatialPointsDataFrame(wolf[, .(get(projXCol), get(projYCol))],
                                  wolf,
                                  proj4string = CRS(utmMB))
 
-wolf <- data.table(over(bounds, wolfSP, returnList = TRUE)[[1]])
+wolf <- data.table(over(mbBounds, wolfSP, returnList = TRUE)[[1]])
 
 # Remove points at the office (le::crop)
 minOfficeX <- 432969

@@ -21,7 +21,7 @@ utm <- '+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
 elk <- readRDS('output/data-prep/elk.Rds')
 
 # MB Bounds shapefile
-bounds <- spTransform(readOGR('input/etc/RMNP-extent/RMNPextent.shp'), 
+bounds <- spTransform(readOGR('input/etc/RMNP/RMNPextent.shp'), 
                       CRSobj = utm)
 
 # Covariates
