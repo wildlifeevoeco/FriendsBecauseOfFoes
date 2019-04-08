@@ -7,26 +7,28 @@
 # Copyright: ./LICENSE.md 
 
 ### Packages ----
-libs <- c('data.table', 'magrittr',
+libs <- c('data.table',
           'adehabitatHR', 'sp', 'rgdal', 'raster', 
           'lme4',
           'ggplot2','car','piecewiseSEM')
 lapply(libs, require, character.only = TRUE)
 
-### Input data ----
-# UTM zone 14N
-utm <- '+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
 
+### Set variables ----
+source('scripts/0-variables/variables.R')
+
+
+### Input data ----
 # Animal locations
 elk <- readRDS('output/1-data-prep/elk.Rds')
 
 #RSFs
 
 # RSFs
-wolfwinter.rsf <- raster('output/predator-rsf/wolfrsfWINTER.tif')
-wolfspring.rsf <- raster('output/predator-rsf/wolfrsfSPRING.tif')
-elkwinter.rsf <- raster('output/prey-rsf/elkrsfWINTER.tif')
-elkspring.rsf <- raster('output/prey-rsf/elkrsfSPRING.tif')
+wolfwinter.rsf <- raster('output/predator-rsf/wolfrsfWinter.tif')
+wolfspring.rsf <- raster('output/predator-rsf/wolfrsfSpring.tif')
+elkwinter.rsf <- raster('output/prey-rsf/elkrsfWinter.tif')
+elkspring.rsf <- raster('output/prey-rsf/elkrsfSpring.tif')
 
 lsrasters <- list(wolfwinter.rsf, wolfspring.rsf, elkwinter.rsf, elkspring.rsf)
 lsnames <- c('wolfwinter', 'wolfspring', 'elkwinter', 'elkspring')
