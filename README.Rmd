@@ -12,6 +12,42 @@ knitr::opts_chunk$set(
 ```
 # Easter Week Challenge
 
+## Rerun
+
+
+* scripts
+  * 0-variables
+    * variables.R
+  * 1-data-prep
+    * BearPrep.R
+    * CaribouPrep.R
+    * CoyotePrep.R
+    * ElkPrep.R
+    * RasterPrep.R
+    * RuggCalc.R
+    *  WolfPrep.R
+  * 2-rsf
+    * Generating summary tables for RSFs.R
+    * predator-rsf
+    * BearRSF.R
+    * CoyoteRSF.R
+    * NLPredRSFs.R
+    *  WolfRSF.R
+    *  prey-rsf
+    *  CaribouRSF.R
+    *  ElkRSF.R
+  * 3-extraction
+    * cariboudata-rsfvalues.R
+    *  elkdata-rsfvalues.R
+  * 4-sociality
+    * CalculateTurnAngles.R
+    *  NearestNeighbourAnalysis.R
+  * 5-model
+    * socialitydomainGLM.R
+```
+
+
+
 ## TODOs/NOTEs
 
 ```{bash}
@@ -36,7 +72,7 @@ grep -rni 'scripts/' -e 'TODO' || true;
 │       ├── AllCaribouDataRaw.csv
 │       ├── Bears.csv
 │       ├── Coyote.csv
-│       └── RMNP_ElkData_clean.csv
+│    *  RMNP_ElkData_clean.csv
 ├── output
 │   ├── angles
 │   ├── data-prep
