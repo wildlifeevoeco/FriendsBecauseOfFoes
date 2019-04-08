@@ -77,7 +77,6 @@ lsRasters <- lapply(lsPaths, raster)
 winterPts <- samplePts[season == "winter" | season == 'grid']
 winterPts[season == 'grid', season := "winter"]
 
-# TODO: Dist not logged yet - should it be?
 winterRSF <- glm(reformulate(lsCovers, response = 'observed'), 
                     family = 'binomial',data = winterPts)
 
