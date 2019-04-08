@@ -42,12 +42,12 @@ grep -rni 'R/' -e 'TODO' || true;
 grep -rni 'scripts/' -e 'TODO' || true;
 #> R/calc_abs_angle.R:44:  # TODO: what did this mean? .. my poor code commenting
 #> R/prep_date.R:16:  # TODO: add a tz argument
+#> scripts/3-extraction/Elk-Extraction.R:9:# TODO: rename script/folder to domain? domain extraction? etc
 #> scripts/4-sociality/NearestNeighbourAnalysis.R:8:#TODO: Grab Hance's updated social metrics from modeling script
 #> scripts/4-sociality/NearestNeighbourAnalysis.R:46:# TODO: investigate the both coords and ..coords exist in calling scope data.table error
 #> scripts/4-sociality/NearestNeighbourAnalysis.R:143:# TODO: investigate the both coords and ..coords exist in calling scope data.table error
 #> scripts/4-sociality/CalculateTurnAngles.R:11:#TODO: Grab Hance's updated social metrics from modeling script
 #> scripts/4-sociality/CalculateTurnAngles.R:38:#TODO: check that yrcol is well handled
-#> scripts/2-rsf/RMNP/WolfRSF.R:79:# TODO: Dist not logged yet - should it be?
 ```
 
 ## Project structure
