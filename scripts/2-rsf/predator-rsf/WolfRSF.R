@@ -141,12 +141,6 @@ springwolfRSF.s <-
   (springwolfRSF.rstr - (cellStats(springwolfRSF.rstr, min))) / (cellStats(springwolfRSF.rstr, max) - (cellStats(springwolfRSF.rstr, min)))
 plot(springwolfRSF.s)
 
-# Using z score
-# TODO: can this be dropped then?
-#winterwolfRSF.z <- (winterwolfRSF.rstr - cellStats(winterwolfRSF.rstr,stat=mean))/cellStats(winterwolfRSF.rstr,stat=sd)
-#plot(winterwolfRSF.z)
-#springwolfRSF.z <- (springwolfRSF.rstr - cellStats(springwolfRSF.rstr,stat=mean))/cellStats(springwolfRSF.rstr,stat=sd)
-#plot(springwolfRSF.z)
 
 ### Output ----
 # Save the RSFs
