@@ -46,6 +46,10 @@ setnames(regPts, c('EASTING', 'NORTHING'))
 regPts[, observed := 0]
 wolf[, observed := 1]
 
+
+# Add fake season to regular grid 'grid'
+regPts[, season := 'grid']
+
 samplePts <- rbindlist(list(regPts, wolf), 
                        use.names = TRUE, fill = TRUE)
 
