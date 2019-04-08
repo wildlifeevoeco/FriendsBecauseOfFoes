@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 # Easter Week Challenge
 
 ## Rerun
-(*italics: deleted scripts*, ~~crossed out: completed~~, (Brackets: Old Name))
+*deleted scripts*, ~~completed~~, (Old Name)
 
 * scripts
   * 1-data-prep
@@ -22,8 +22,8 @@ knitr::opts_chunk$set(
     * ~~CoyotePrep.R~~
     * ~~ElkPrep.R~~
     * ~~WolfPrep.R~~
-    * CovariatePrep.R (RasterPrep.R)
-    * *RuggCalc.R*
+    * ~~CovariatePrep.R (RasterPrep.R)~~
+    * ~~*RuggCalc.R*~~
   * 2-rsf
     * Generating summary tables for RSFs.R
     * predator-rsf

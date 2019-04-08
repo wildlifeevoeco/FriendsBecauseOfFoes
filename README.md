@@ -5,8 +5,7 @@
 
 ## Rerun
 
-(*italics: deleted scripts*, ~~crossed out: completed~~, (Brackets: Old
-Name))
+*deleted scripts*, ~~completed~~, (Old Name)
 
   - scripts
       - 1-data-prep
@@ -15,8 +14,8 @@ Name))
           - ~~CoyotePrep.R~~
           - ~~ElkPrep.R~~
           - ~~WolfPrep.R~~
-          - CovariatePrep.R (RasterPrep.R)
-          - *RuggCalc.R*
+          - ~~CovariatePrep.R (RasterPrep.R)~~
+          - ~~*RuggCalc.R*~~
       - 2-rsf
           - Generating summary tables for RSFs.R
           - predator-rsf
@@ -50,13 +49,12 @@ grep -rni 'scripts/' -e 'TODO' || true;
 #> scripts/4-sociality/NearestNeighbourAnalysis.R:143:# TODO: investigate the both coords and ..coords exist in calling scope data.table error
 #> scripts/4-sociality/CalculateTurnAngles.R:11:#TODO: Grab Hance's updated social metrics from modeling script
 #> scripts/4-sociality/CalculateTurnAngles.R:38:#TODO: check that yrcol is well handled
-#> scripts/1-data-prep/CovariatePrep.R:66:# TODO: need MB elevation data
-#> scripts/2-rsf/predator-rsf/WolfRSF.R:75:# TODO: why also where season is NA?
-#> scripts/2-rsf/predator-rsf/WolfRSF.R:79:# TODO: #### Dist not logged yet - should it be?
-#> scripts/2-rsf/predator-rsf/WolfRSF.R:92:# TODO: with intercept of -3.044340?
-#> scripts/2-rsf/predator-rsf/WolfRSF.R:106:# TODO: why also na season?
-#> scripts/2-rsf/predator-rsf/WolfRSF.R:121:# TODO: with intercept of -2.711875?
-#> scripts/2-rsf/predator-rsf/WolfRSF.R:143:# TODO: can this be dropped then?
+#> scripts/2-rsf/predator-rsf/WolfRSF.R:68:# TODO: why also where season is NA?
+#> scripts/2-rsf/predator-rsf/WolfRSF.R:72:# TODO: #### Dist not logged yet - should it be?
+#> scripts/2-rsf/predator-rsf/WolfRSF.R:85:# TODO: with intercept of -3.044340?
+#> scripts/2-rsf/predator-rsf/WolfRSF.R:99:# TODO: why also na season?
+#> scripts/2-rsf/predator-rsf/WolfRSF.R:114:# TODO: with intercept of -2.711875?
+#> scripts/2-rsf/predator-rsf/WolfRSF.R:136:# TODO: can this be dropped then?
 #> scripts/2-rsf/prey-rsf/ElkRSF.R:77:# TODO: Dist not logged yet - should it be?
 #> scripts/2-rsf/prey-rsf/ElkRSF.R:89:#TODO: with intercept of -3.242852 ?
 #> scripts/2-rsf/prey-rsf/ElkRSF.R:103:# TODO: why is.na season?

@@ -10,21 +10,6 @@ lapply(libs, require, character.only = TRUE)
 source('scripts/0-variables/variables.R')
 
 
-### Calculate ruggedness ----
-# Read in DEM
-DEM <- raster('input/covariates/RMNP/Elevation.tif')
-
-ruggedness <- terrain(elevation, opt = "roughness")
-
-writeRaster(
-  ruggedness,
-  'input/covariates/RMNP/Ruggedness',
-  format = 'GTiff',
-  overwrite = T
-)
-
-
-
 ### List rasters ----
 # Covariates
 lsCovers <-
@@ -63,9 +48,6 @@ transformed[['LinFeat_Dist']] <-
 cropRasters[['Ruggedness_test']] <-
   resample(cropRasters[['Ruggedness']], cropRasters[['Water_Dist']])
 
-# TODO: need MB elevation data
-cropRasters[['Elevation']] <-
-  resample(cropRasters[['Elevation']], cropRasters[['Water_Dist']])
 
 ### Output ----
 outRaster <- c(transformed,
