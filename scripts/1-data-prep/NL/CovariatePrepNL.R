@@ -1,5 +1,5 @@
 ### Covariate (Raster) Processing ----
-# Authors: Alec Robitaille, Christina M Prokopenko, Sana Zabihi, Michel Laforge
+# Authors: Michel Laforge, Alec Robitaille
 
 ### Packages ----
 libs <- c('data.table', 'ggplot2', 'sp', 'raster')
@@ -10,26 +10,24 @@ lapply(libs, require, character.only = TRUE)
 source('scripts/0-variables/variables.R')
 
 
-#### RMNP ========================================================
 ### List rasters ----
 # Covariates
-lsCovers <-
-  data.table(nm = dir('input/covariates/RMNP', '.tif$'))
-lsCovers <- gsub(".tif|100m", "", lsCovers$nm)
-lsPaths <- dir('input/covariates/RMNP', '.tif$', full.names = TRUE)
+lsCovers <- gsub(".tif|100m", "", dir('input/covariates/NL', '.tif$'))
+lsPaths <- dir('input/covariates/NL', '.tif$', full.names = TRUE)
 names(lsPaths) <- lsCovers
+
 
 ### Processing ----
 # Crop the rasters, holding as temp files in a list
 cropRasters <- lapply(
   lsPaths,
   FUN = function(r) {
-    crop(raster(r), mbBounds)
+    crop(raster(r), nlBounds)
   }
 )
 
 # Log transform
-namesTransform <- c('LinFeat_Dist', 'Water_Dist')
+namesTransform <- c('LinearDist', 'WaterDist')
 rasterTransform <-
   cropRasters[lapply(cropRasters, names) %in% namesTransform]
 
@@ -43,11 +41,11 @@ transformed <- lapply(
 )
 names(transformed) <- namesTransform
 
-transformed[['LinFeat_Dist']] <-
-  resample(transformed[['LinFeat_Dist']], transformed[['Water_Dist']])
+transformed[['LinearDist']] <-
+  resample(transformed[['LinearDist']], transformed[['Water_Dist']])
 
-cropRasters[['Ruggedness_test']] <-
-  resample(cropRasters[['Ruggedness']], cropRasters[['Water_Dist']])
+transformed[['WaterDist']] <-
+  resample(transformed[['WaterDist']], transformed[['Water_Dist']])
 
 
 ### Output ----
@@ -60,7 +58,7 @@ lapply(
   FUN = function(r) {
     writeRaster(
       outRaster[[r]],
-      paste0('output/1-data-prep/covariates/RMNP/', outNames[[r]]),
+      paste0('output/1-data-prep/covariates/NL/', outNames[[r]]),
       format = 'GTiff',
       overwrite = T
     )
