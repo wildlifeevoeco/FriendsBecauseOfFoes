@@ -33,20 +33,19 @@ lsPaths <- lsPaths[-rmList]
 
 ### Processing ----
 # MCPs
-wolfSP <- SpatialPoints(wolf[, .(EASTING, NORTHING)],
+points <- SpatialPoints(wolf[, .(EASTING, NORTHING)],
                        proj4string = CRS(utmMB))
 
-wolfMCP <- mcp(wolfSP, 100)
+mcps <- mcp(points, 100)
 
 # Create Regular Grid
-regPts <- generate_grid(wolfMCP, 90, crs = utm)
+regPts <- generate_grid(mcps, 90, crs = utm)
 
 setnames(regPts, c('EASTING', 'NORTHING'))
 
 # Combine observed and regular grid points
 regPts[, observed := 0]
 wolf[, observed := 1]
-
 
 # Add fake season to regular grid 'grid'
 regPts[, season := 'grid']
@@ -74,27 +73,27 @@ samplePts[, (lsCovers) := lapply(
 lsRasters <- lapply(lsPaths, raster)
 
 # Winter RSF
-winterwolf <- samplePts[season == "winter" | season == 'grid']
-winterwolf[season == 'grid', season := "winter"]
+winterPts <- samplePts[season == "winter" | season == 'grid']
+winterPts[season == 'grid', season := "winter"]
 
 # TODO: Dist not logged yet - should it be?
-winterwolfRSF <- glm(reformulate(lsCovers, response = 'observed'), 
-                    family = 'binomial',data = winterwolf)
+winterRSF <- glm(reformulate(lsCovers, response = 'observed'), 
+                    family = 'binomial',data = winterPts)
 
-summary(winterwolfRSF)
-vif(winterwolfRSF)
-rsquared(winterwolfRSF)
+summary(winterRSF)
+vif(winterRSF)
+rsquared(winterRSF)
 
 # Pull out the coefficients, dropping the intercept
-winwolf.b <- coef(winterwolfRSF)[-1]
+winterCoefs <- coef(winterRSF)[-1]
 
 
 # Create the raster matching the first raster layer with the first fixed effect
-intercept <- coef(winterwolfRSF)[1]
+intercept <- coef(winterRSF)[1]
 
-if (all(names(winwolf.b) == names(lsRasters))) {
-  winterwolfRSF.rstr <-
-    exp(intercept + Reduce('+', Map('*', winwolf.b, lsRasters)))
+if (all(names(winterCoefs) == names(lsRasters))) {
+  winterRaster <-
+    exp(intercept + Reduce('+', Map('*', winterCoefs, lsRasters)))
 } else {
   stop('names dont match, check coef and rasters')
 }
@@ -111,37 +110,37 @@ vif(springwolfRSF)
 rsquared(springwolfRSF)
 
 # Pull out the coefficients, dropping the intercept
-sprwolf.b <- coef(springwolfRSF)[-1]
+springCoefs <- coef(springwolfRSF)[-1]
 
 # Create the raster matching the first raster layer with the first fixed effect
 intercept <- coef(winterwolfRSF)[1]
 
-if (all(names(winwolf.b) == names(lsRasters))) {
-  springwolfRSF.rstr <-
-    exp(intercept + Reduce('+', Map('*', sprwolf.b, lsRasters)))
+if (all(names(winterCoefs) == names(lsRasters))) {
+  springRaster <-
+    exp(intercept + Reduce('+', Map('*', springCoefs, lsRasters)))
 } else {
   stop('names dont match, check coef and rasters')
 }
 
 ### Standardize RSFs ----
 # Using feature scaling
-winterwolfRSF.s <-
-  (winterwolfRSF.rstr - (cellStats(winterwolfRSF.rstr, min))) / (cellStats(winterwolfRSF.rstr, max) - (cellStats(winterwolfRSF.rstr, min)))
+winterScaled <-
+  (winterRaster - (cellStats(winterRaster, min))) / (cellStats(winterRaster, max) - (cellStats(winterRaster, min)))
 
-springwolfRSF.s <-
-  (springwolfRSF.rstr - (cellStats(springwolfRSF.rstr, min))) / (cellStats(springwolfRSF.rstr, max) - (cellStats(springwolfRSF.rstr, min)))
+springScaled <-
+  (springRaster - (cellStats(springRaster, min))) / (cellStats(springRaster, max) - (cellStats(springRaster, min)))
 
 
 ### Output ----
 # Save the RSFs
-ls.rsf <- list('Winter' = winterwolfRSF.s,
-               'Spring' = springwolfRSF.s)
+rsfs <- list('Winter' = winterScaled, 'Spring' = springScaled)
+
 lapply(
-  seq_along(ls.rsf),
+  seq_along(rsfs),
   FUN = function(r) {
     writeRaster(
-      ls.rsf[[r]],
-      paste0('output/2-rsf/wolf/wolfrsf', names(ls.rsf[r])),
+      rsfs[[r]],
+      paste0('output/2-rsf/wolf/wolfrsf', names(rsfs[r])),
       format = 'GTiff',
       overwrite = T
     )

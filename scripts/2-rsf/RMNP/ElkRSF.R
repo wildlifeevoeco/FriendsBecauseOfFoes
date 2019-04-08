@@ -137,15 +137,15 @@ saveRDS(regPts, 'output/2-rsf/elk/elkRegularPoints.Rds')
 saveRDS(samplePts, 'output/2-rsf/elk/elkSamplePoints.Rds')
 
 # Save the RSFs 
-ls.rsf <- list('Winter' = winterScaled,
+rsfs <- list('Winter' = winterScaled,
                'Spring' = springScaled)
 
 lapply(
-  seq_along(ls.rsf),
+  seq_along(rsfs),
   FUN = function(r) {
     writeRaster(
-      ls.rsf[[r]],
-      paste0('output/2-rsf/elk/elkrsf', names(ls.rsf[r])),
+      rsfs[[r]],
+      paste0('output/2-rsf/elk/elkrsf', names(rsfs[r])),
       format = 'GTiff',
       overwrite = T
     )
