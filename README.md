@@ -9,13 +9,13 @@
       - 0-variables
           - variables.R
       - 1-data-prep
-          - BearPrep.R
-          - CaribouPrep.R
-          - CoyotePrep.R
-          - ElkPrep.R
+          - ~~BearPrep.R~~
+          - ~~CaribouPrep.R~~
+          - ~~CoyotePrep.R~~
+          - ~~ElkPrep.R~~
+          - ~~WolfPrep.R~~
           - RasterPrep.R
           - RuggCalc.R
-          - WolfPrep.R
       - 2-rsf
           - Generating summary tables for RSFs.R
           - predator-rsf
