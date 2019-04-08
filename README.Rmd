@@ -30,7 +30,7 @@ knitr::opts_chunk$set(
     * BearRSF.R
     * CoyoteRSF.R
     * NLPredRSFs.R
-    *  WolfRSF.R
+    * ~~WolfRSF.R~~
     *  prey-rsf
     *  CaribouRSF.R
     *  ElkRSF.R
