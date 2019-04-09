@@ -25,7 +25,7 @@ paths <- dir('output/1-data-prep/covariates/NL',
              '.tif$', full.names = TRUE)
 names(paths) <- covers
 
-rmList <- which(covers %in% c('Water', 'NLElev'))
+rmList <- which(covers %in% c('Water', 'NLElev', 'Wetland'))
 
 lsCovers <- covers[-rmList]
 lsPaths <- paths[-rmList]
@@ -108,14 +108,6 @@ if (all(names(winterCoefs) == names(lsRasters))) {
 springwolf <- samplePts[season == "spring" | season == 'grid']
 springwolf[observed == 0, season := "spring"]
 
-RSFCoyoteSum <-
-  glm(use ~ Ant + Bro + Con + Lic + Mix + Roc + Scr + WaD + Lin + Rug,
-      data = CoySummer,
-      family = 'binomial')
-RSFCoyoteWin <-
-  glm(use ~ Ant + Bro + Con + Lic + Mix + Roc + Scr + WaD + Lin + Rug,
-      data = CoyWinter,
-      family = 'binomial')
 springwolfRSF <- glm(reformulate(lsCovers, response = 'observed'), 
                      family = 'binomial',data = springwolf)
 

@@ -25,7 +25,7 @@ paths <- dir('output/1-data-prep/covariates/NL',
              '.tif$', full.names = TRUE)
 names(paths) <- covers
 
-rmList <- which(covers %in% c('Water', 'NLElev'))
+rmList <- which(covers %in% c('Water', 'NLElev', 'Wetland'))
 
 lsCovers <- covers[-rmList]
 lsPaths <- paths[-rmList]
