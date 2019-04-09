@@ -21,9 +21,7 @@ writeRaster(
   format = 'GTiff',
   overwrite = TRUE
 )
-
-
-
+#TODO: run prep/processing for ruggedness
 ### List rasters ----
 # Covariates
 lsCovers <- gsub(".tif|100m", "", dir('input/covariates/NL', '.tif$'))

@@ -19,9 +19,9 @@ source('scripts/0-variables/variables.R')
 bear <- readRDS('output/1-data-prep/bear.Rds')
 
 # Covariates
-covers <- gsub(".tif|100m", "", 
-               dir('output/1-data-prep/covariates/RMNP', '.tif$'))
-paths <- dir('output/1-data-prep/covariates/RMNP', 
+covers <- gsub(".tif|100|prep", "", 
+               dir('output/1-data-prep/covariates/NL', '.tif$'))
+paths <- dir('output/1-data-prep/covariates/NL', 
              '.tif$', full.names = TRUE)
 names(paths) <- covers
 
@@ -75,10 +75,11 @@ samplePts[, (lsCovers) := lapply(
 
 
 ### RSF ----
-## Remove all points with 50% NA data
+# TODO: Remove all points with 50% NA data
 
 
 # Winter RSF
+# TODO: need ruggedness
 winterPts <- samplePts[season == "winter" | season == 'grid']
 winterPts[season == 'grid', season := "winter"]
 
@@ -92,7 +93,6 @@ rsquared(winterRSF)
 # Pull out the coefficients, dropping the intercept
 winterCoefs <- coef(winterRSF)[-1]
 
-
 # Create the raster matching the first raster layer with the first fixed effect
 intercept <- coef(winterRSF)[1]
 
@@ -104,7 +104,7 @@ if (all(names(winterCoefs) == names(lsRasters))) {
 }
 
 # Spring RSF
-# RSFbearSum<-glm(use~Ant+Bro+Con+Lic+Mix+Roc+Scr+WaD+Lin+Rug,data=bearSummer, family='binomial')
+# TODO: need ruggedness
 springwolf <- samplePts[season == "spring" | season == 'grid']
 springwolf[observed == 0, season := "spring"]
 
@@ -136,3 +136,26 @@ winterScaled <-
 
 springScaled <-
   (springRaster - (cellStats(springRaster, min))) / (cellStats(springRaster, max) - (cellStats(springRaster, min)))
+
+
+### Output ----
+# Save the RSFs
+rsfs <- list('Winter' = winterScaled, 'Spring' = springScaled)
+
+lapply(
+  seq_along(rsfs),
+  FUN = function(r) {
+    writeRaster(
+      rsfs[[r]],
+      paste0('output/2-rsf/bear/bearrsf', names(rsfs[r])),
+      format = 'GTiff',
+      overwrite = T
+    )
+  }
+)
+
+# Regular points
+saveRDS(regPts, 'output/2-rsf/bear/bearRegularPoints.Rds')
+
+# Sample pts
+saveRDS(samplePts, 'output/2-rsf/bear/bearSamplePoints.Rds')
