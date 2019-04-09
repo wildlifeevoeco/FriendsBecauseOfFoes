@@ -4,7 +4,7 @@
 # Outputs: NN data
 
 
-
+#TODO: use edge-dist/nn instead
 #TODO: Grab Hance's updated social metrics from modeling script
 
 ### Packages ----
