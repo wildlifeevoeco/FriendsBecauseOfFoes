@@ -28,8 +28,7 @@ cropRasters <- lapply(
 
 # Log transform
 namesTransform <- c('LinearDist', 'WaterDist')
-rasterTransform <-
-  cropRasters[lapply(cropRasters, names) %in% namesTransform]
+rasterTransform <- cropRasters[lapply(cropRasters, names) %in% namesTransform]
 
 transformed <- lapply(
   seq_along(namesTransform),
@@ -58,9 +57,9 @@ lapply(
   FUN = function(r) {
     writeRaster(
       outRaster[[r]],
-      paste0('output/1-data-prep/covariates/NL/', outNames[[r]]),
+      paste0('output/1-data-prep/covariates/NL/prep', outNames[[r]]),
       format = 'GTiff',
-      overwrite = T
+      overwrite = TRUE
     )
   }
 )
