@@ -10,6 +10,20 @@ lapply(libs, require, character.only = TRUE)
 source('scripts/0-variables/variables.R')
 
 
+### Transform elev to ruggedness ----
+elev <- raster('input/covariates/NL/NLElev.tif')
+
+ruggedness <- terrain(elev, opt = "roughness")
+
+writeRaster(
+  ruggedness,
+  'input/covariates/NL/Ruggedness',
+  format = 'GTiff',
+  overwrite = TRUE
+)
+
+
+
 ### List rasters ----
 # Covariates
 lsCovers <- gsub(".tif|100m", "", dir('input/covariates/NL', '.tif$'))
