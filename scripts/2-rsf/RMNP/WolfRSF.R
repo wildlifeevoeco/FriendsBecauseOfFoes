@@ -42,7 +42,7 @@ mcps <- mcp(points, 100)
 # Create Regular Grid
 regPts <- generate_grid(mcps, 90, crs = utmMB)
 setnames(regPts, c('EASTING', 'NORTHING'))
-
+plot(regPts)
 # TODO: wolf - 7 regular to 1 observed
 
 # Combine observed and regular grid points
