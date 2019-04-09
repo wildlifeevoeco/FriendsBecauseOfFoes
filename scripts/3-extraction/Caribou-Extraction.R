@@ -1,70 +1,44 @@
-library(raster)
-
-BeaSum<-raster("output/PredRSFNL/bearSummer.tif")
-CarSum<-raster("output/PredRSFNL/CaribouSummer.tif")
-CarWin<-raster("output/PredRSFNL/CaribouWinter.tif")
-CoySum<-raster("output/PredRSFNL/CoyoteSummer.tif")
-CoyWin<-raster("output/PredRSFNL/CoyoteWinter.tif")
-
-utm <- '+proj=utm +zone=21 ellps=WGS84'
-caribou<-readRDS('output/1-data-prep/caribou.Rds')
-str(caribou)
-Summer<-subset(caribou,season=='spring')
-Winter<-subset(caribou,season=='winter')
-
-CarSumPoints<-SpatialPoints(data.frame(Summer$EASTING,Summer$NORTHING),proj4string = CRS(utm))
-CarWinPoints<-SpatialPoints(data.frame(Winter$EASTING,Winter$NORTHING),proj4string = CRS(utm))
-
-plot(CarSum)
-plot(BeaSum)
-points(CarSumPoints)
+### Caribou data RSF values extraction ----
+# Authors: Alec Robitaille, Michel Laforge
 
 
-Summer$CarRSF<-extract(CarSum,CarSumPoints)
-Winter$CarRSF<-extract(CarWin,CarWinPoints)
-
-Summer$CoyRSF<-extract(CoySum,CarSumPoints)
-Winter$CoyRSF<-extract(CoyWin,CarWinPoints)
-
-Summer$BearRSF<-extract(BeaSum,CarSumPoints)
-Winter$BearRSF<-NA
-
-Summer$Season<-"Summer"
-Winter$Season<-"Winter"
-
-AllData<-rbind(Summer,Winter)
-
-summary(Summer)
-
-head(AllData)
-
-saveRDS(AllData,"output/PredRSFNL/CaribouRSFVals.RDS")
+# TODO: rename script/folder to domain? domain extraction? etc
+### Packages ----
+libs <- c('data.table', 'raster')
+lapply(libs, require, character.only = TRUE)
 
 
-
-#### extracting new coyote RSF values
-
-
-library(raster)
-
-CoySum<-raster("output/PredRSFNL/CoyoteSummer.tif")
-CoyWin<-raster("output/PredRSFNL/CoyoteWinter.tif")
-
-caribou <- readRDS(paste0('output/rsf-values/caribouRsfValues.RDS'))
-
-Summer<-subset(caribou,season=='spring')
-Winter<-subset(caribou,season=='winter')
-
-CarSumPoints<-SpatialPoints(data.frame(Summer$EASTING,Summer$NORTHING),proj4string = CRS(utm))
-CarWinPoints<-SpatialPoints(data.frame(Winter$EASTING,Winter$NORTHING),proj4string = CRS(utm))
-
-Summer$CoyRSF<-extract(CoySum,CarSumPoints)
-Winter$CoyRSF<-extract(CoyWin,CarWinPoints)
-
-Summer$Season<-"Summer"
-Winter$Season<-"Winter"
-
-AllData<-rbind(Summer,Winter)
+### Set variables ----
+source('scripts/0-variables/variables.R')
 
 
-saveRDS(AllData,"output/PredRSFNL/CaribouRSFVals.RDS")
+### Input data ----
+# Animal locations
+caribou <- readRDS('output/1-data-prep/caribou.Rds')
+
+# RSFs
+bearSpring <- raster("output/2-rsf/bear/bearSummer.tif")
+caribouSpring <- raster("output/2-rsf/caribou/CaribouSummer.tif")
+caribouWinter <- raster("output/2-rsf/caribou/CaribouWinter.tif")
+coyoteSpring <- raster("output/2-rsf/coyote/CoyoteSummer.tif")
+coyoteWinter <- raster("output/2-rsf/coyote/CoyoteWinter.tif")
+
+
+rasters <- list(bearSpring, caribouSpring, caribouWinter, coyoteSpring, coyoteWinter)
+names <- c('bearspring', 'caribouspring', 'caribouwinter', 'coyotespring', 'coyotewinter')
+
+### Sampling ----
+# Sample rasters
+elk[, (names) := lapply(rasters, FUN = function(r){
+  extract(r, matrix(c(EASTING, NORTHING), ncol = 2))})]
+
+elk[season == 'spring', bearRSF := bearspring]
+elk[season == 'spring', caribouRSF := caribouspring]
+elk[season == 'winter', caribouRSF := caribouwinter]
+elk[season == 'spring', coyoteRSF := coyotespring]
+elk[season == 'winter', coyoteRSF := coyotewinter]
+
+elk[, (names) := NULL]
+
+### Save output ----
+saveRDS(elk, 'output/3-extraction/caribouRsfValues.Rds')
