@@ -26,7 +26,7 @@
           - ~~ElkRSF.R~~
       - 3-extraction
           - cariboudata-rsfvalues.R
-          - elkdata-rsfvalues.R
+          - ~~Elk-Extraction.R (elkdata-rsfvalues.R)~~
       - 4-sociality
           - CalculateTurnAngles.R
           - NearestNeighbourAnalysis.R
@@ -42,7 +42,6 @@ grep -rni 'R/' -e 'TODO' || true;
 grep -rni 'scripts/' -e 'TODO' || true;
 #> R/calc_abs_angle.R:44:  # TODO: what did this mean? .. my poor code commenting
 #> R/prep_date.R:16:  # TODO: add a tz argument
-#> scripts/3-extraction/Elk-Extraction.R:9:# TODO: rename script/folder to domain? domain extraction? etc
 #> scripts/4-sociality/NearestNeighbourAnalysis.R:8:#TODO: Grab Hance's updated social metrics from modeling script
 #> scripts/4-sociality/NearestNeighbourAnalysis.R:46:# TODO: investigate the both coords and ..coords exist in calling scope data.table error
 #> scripts/4-sociality/NearestNeighbourAnalysis.R:143:# TODO: investigate the both coords and ..coords exist in calling scope data.table error

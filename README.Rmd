@@ -34,7 +34,7 @@ knitr::opts_chunk$set(
     * ~~ElkRSF.R~~
   * 3-extraction
     * cariboudata-rsfvalues.R
-    *  elkdata-rsfvalues.R
+    * ~~Elk-Extraction.R (elkdata-rsfvalues.R)~~
   * 4-sociality
     * CalculateTurnAngles.R
     *  NearestNeighbourAnalysis.R

@@ -1,17 +1,10 @@
 ### Elk data RSF values extraction ----
 # Authors: Alec Robitaille, Sana Zabihi, Christina M Prokopenko
-# Purpose: Extract elk and wolf RSF values to elk GPS data
-# Inputs: Elk relocation data, Elk RSF raster, Wolf RSF raster
-# Outputs: Elk relocation data with corresponding RSF values at the points (csv)
-
 
 
 # TODO: rename script/folder to domain? domain extraction? etc
 ### Packages ----
-libs <- c('data.table',
-          'adehabitatHR', 'sp', 'rgdal', 'raster', 
-          'lme4',
-          'ggplot2','car','piecewiseSEM')
+libs <- c('data.table', 'raster')
 lapply(libs, require, character.only = TRUE)
 
 
@@ -23,13 +16,11 @@ source('scripts/0-variables/variables.R')
 # Animal locations
 elk <- readRDS('output/1-data-prep/elk.Rds')
 
-#RSFs
-
 # RSFs
-wolfwinter.rsf <- raster('output/predator-rsf/wolfrsfWinter.tif')
-wolfspring.rsf <- raster('output/predator-rsf/wolfrsfSpring.tif')
-elkwinter.rsf <- raster('output/prey-rsf/elkrsfWinter.tif')
-elkspring.rsf <- raster('output/prey-rsf/elkrsfSpring.tif')
+wolfwinter.rsf <- raster('output/2-rsf/wolf/wolfrsfWinter.tif')
+wolfspring.rsf <- raster('output/2-rsf/wolf/wolfrsfSpring.tif')
+elkwinter.rsf <- raster('output/2-rsf/elk/elkrsfWinter.tif')
+elkspring.rsf <- raster('output/2-rsf/elk/elkrsfSpring.tif')
 
 lsrasters <- list(wolfwinter.rsf, wolfspring.rsf, elkwinter.rsf, elkspring.rsf)
 lsnames <- c('wolfwinter', 'wolfspring', 'elkwinter', 'elkspring')
@@ -47,4 +38,4 @@ elk[season == 'spring', preyRSF := elkspring]
 elk[, (lsnames) := NULL]
 
 ### Save output ----
-saveRDS(elk, 'output/rsfvalues/elkRsfValues.Rds')
+saveRDS(elk, 'output/3-extraction/elkRsfValues.Rds')
