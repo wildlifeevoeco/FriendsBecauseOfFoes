@@ -1,302 +1,160 @@
 ### Caribou RSF ----
 # Authors: Michel Laforge, Alec Robitaille
 
-# Copyright: ./LICENSE.md
-
-#TODO: it's spring and not summer right?
 ### Packages ----
-libs <- c(
-  'adehabitatHR',
-  'rgeos',
-  'spatstat',
-  'polyCub',
-  'raster',
-  'data.table',
-  'ewc',
-  'piecewiseSEM',
-  'rgdal'
-)
+libs <- c('data.table', 'sp', 'adehabitatHR', 'raster',
+          'ewc', 'rgeos', 'lme4', 'car','piecewiseSEM')
+# libs <- c('adehabitatHR', 'rgeos', 'spatstat', 'raster',
+#           'ewc', 
+#           'data.table', 'piecewiseSEM', 'rgdal')
 lapply(libs, require, character.only = TRUE)
 
 
-### Input ----
-utm <- '+proj=utm +zone=21 ellps=WGS84'
-nlBounds <- rgdal::readOGR('input/etc/NL-Bounds/NL-Bounds.shp') %>%
-  spTransform(CRSobj = utm)
-
-############ caribou
+### Set variables ----
+source('scripts/0-variables/variables.R')
 
 
-MRcar <- readRDS('output/1-data-prep/caribou.Rds')
+### Input data ----
+caribou <- readRDS('output/1-data-prep/caribou.Rds')
+
+# Covariates
+covers <- gsub(".tif|100|prep", "", 
+               dir('output/1-data-prep/covariates/NL', '.tif$'))
+paths <- dir('output/1-data-prep/covariates/NL', 
+             '.tif$', full.names = TRUE)
+names(paths) <- covers
+
+rmList <- which(covers %in% c('Water', 'NLElev', 'Wetland'))
+
+lsCovers <- covers[-rmList]
+lsPaths <- paths[-rmList]
 
 
-plot(nlBounds)
-points(MRcar$EASTING, MRcar$NORTHING)
+### Processing ----
+points <- SpatialPoints(caribou[, .(EASTING, NORTHING)],
+                        proj4string = CRS(utmNL))
+width <- caribou[, mean(stepLength)]
+buffers <- buffer(points, width = width)
+intersect <- gIntersection(nlBounds, gUnaryUnion(buffers))
 
-CarPoints <-
-  SpatialPoints(data.frame(MRcar$EASTING, MRcar$NORTHING), proj4string = CRS(utm))
-
-CarAvail <- mcp(CarPoints, percent = 100)
-shapefile(CarAvail, "Output/caribouMCP,shp")
-
-plot(nlBounds)
-plot(CarAvail, add = T)
-points(CarPoints)
-
-### Buffer by mean step length
-CarAvailBuf <- gBuffer(CarAvail, width = mean(MRcar$stepLength))
-
-Carclipped <- gIntersection(nlBounds, CarAvailBuf)
-Carclipped2 <- as.owin.SpatialPolygons(Carclipped)
-
+buffered <- buffer(points, width = caribou[, mean(stepLength)])
 
 # Create Regular Grid
+regPts <- generate_grid(intersect, 90, crs = utmNL)
+setnames(regPts, c('EASTING', 'NORTHING'))
 
-regPts <- generate_grid(Carclipped, 90, crs = utm)
+# Combine observed and regular grid points
+regPts[, observed := 0]
+caribou[, observed := 1]
 
-#CarRandSum<-runifpoint(n=nrow(CarSummer)*10,win=Carclipped2)
-#CarRandWin<-runifpoint(n=nrow(CarWinter)*10,win=Carclipped2)
+# Add fake season to regular grid 'grid'
+regPts[, season := 'grid']
 
-#CarSumPoints<-SpatialPoints(data.frame(CarSummer$EASTING,CarSummer$NORTHING),proj4string = CRS(utm))
-#CarWinPoints<-SpatialPoints(data.frame(CarWinter$EASTING,CarWinter$NORTHING),proj4string = CRS(utm))
-
-#### Load in habitat layers
-
-Ant <- raster('input/Landcover/Reproj/Anthro100.tif')
-Bro <- raster('input/Landcover/Reproj/Broadleaf100.tif')
-Con <- raster('input/Landcover/Reproj/Conifer100.tif')
-Lic <- raster('input/Landcover/Reproj/Lichen100.tif')
-Mix <- raster('input/Landcover/Reproj/MixedWood100.tif')
-Roc <- raster('input/Landcover/Reproj/Rocky100.tif')
-Scr <- raster('input/Landcover/Reproj/Scrub100.tif')
-Wat <- raster('input/Landcover/Reproj/Water100.tif')
-Wet <- raster('input/Landcover/Reproj/Wetland100.tif')
-WaD1 <- raster('input/Landcover/Reproj/WaterDist.tif')
-Lin1 <- raster('input/Landcover/Reproj/LinearDist.tif')
-
-WaD <- log(WaD1 + 1)
-Lin <- log(Lin1 + 1)
-
-Elev <- raster('input/Landcover/Reproj/NLElev.tif')
-Rug <- terrain(Elev, opt = "roughness")
+samplePts <- rbindlist(list(regPts, caribou), 
+                       use.names = TRUE, fill = TRUE)
 
 
+### Sampling ----
+# Drop columns leaving only needed
+cols <- c('id','EASTING', 'NORTHING', 'season', 'observed')
+samplePts <- samplePts[, ..cols]
 
-CarAntUsed <- extract(Ant, CarPoints)
-CarBroUsed <- extract(Bro, CarPoints)
-CarConUsed <- extract(Con, CarPoints)
-CarLicUsed <- extract(Lic, CarPoints)
-CarMixUsed <- extract(Mix, CarPoints)
-CarRocUsed <- extract(Roc, CarPoints)
-CarScrUsed <- extract(Scr, CarPoints)
-CarWatUsed <- extract(Wat, CarPoints)
-CarWetUsed <- extract(Wet, CarPoints)
-CarRugUsed <- extract(Rug, CarPoints)
-CarWaDUsed <- extract(WaD, CarPoints)
-CarLinUsed <- extract(Lin, CarPoints)
+# Add row ID
+samplePts[, rowID := .I]
 
-CarRandPoints <-
-  SpatialPoints(data.frame(regPts[, 1], regPts[, 2]), proj4string = CRS(utm))
+# Sample rasters
+lsRasters <- lapply(lsPaths, raster)
 
-
-CarAntAvail <- extract(Ant, CarRandPoints)
-CarBroAvail <- extract(Bro, CarRandPoints)
-CarConAvail <- extract(Con, CarRandPoints)
-CarLicAvail <- extract(Lic, CarRandPoints)
-CarMixAvail <- extract(Mix, CarRandPoints)
-CarRocAvail <- extract(Roc, CarRandPoints)
-CarScrAvail <- extract(Scr, CarRandPoints)
-CarWatAvail <- extract(Wat, CarRandPoints)
-CarWetAvail <- extract(Wet, CarRandPoints)
-CarRugAvail <- extract(Rug, CarRandPoints)
-CarWaDAvail <- extract(WaD, CarRandPoints)
-CarLinAvail <- extract(Lin, CarRandPoints)
-
-CNames <-
-  c(
-    "use",
-    "Ant",
-    "Bro",
-    "Con",
-    "Lic",
-    "Mix",
-    "Roc",
-    "Scr",
-    "Wat",
-    "Wet",
-    "Rug",
-    "WaD",
-    "Lin",
-    "x",
-    "y",
-    "Season"
-  )
-
-CarUsedData <-
-  data.frame(
-    1,
-    CarAntUsed,
-    CarBroUsed,
-    CarConUsed,
-    CarLicUsed,
-    CarMixUsed,
-    CarRocUsed,
-    CarScrUsed,
-    CarWatUsed,
-    CarWetUsed,
-    CarRugUsed,
-    CarWaDUsed,
-    CarLinUsed,
-    MRcar$EASTING,
-    MRcar$NORTHING,
-    MRcar$season
-  )
-
-colnames(CarUsedData) <- CNames
-
-CarAvailData <-
-  data.frame(
-    0,
-    CarAntAvail,
-    CarBroAvail,
-    CarConAvail,
-    CarLicAvail,
-    CarMixAvail,
-    CarRocAvail,
-    CarScrAvail,
-    CarWatAvail,
-    CarWetAvail,
-    CarRugAvail,
-    CarWaDAvail,
-    CarLinAvail,
-    regPts[, 1],
-    regPts[, 2],
-    "Avail"
-  )
-
-colnames(CarAvailData) <- CNames
-
-caribouRSF <- rbind(CarUsedData, CarAvailData)
-
-summary(CaribouRSF)
+samplePts[, (lsCovers) := lapply(
+  lsRasters,
+  FUN = function(r) {
+    extract(r, matrix(c(EASTING, NORTHING), ncol = 2))
+  }
+)]
 
 
-write.csv(caribouRSF, "output/CaribouRSFdata.csv")
-
-caribouRSF <- read.csv("output/CaribouRSFdata.csv")
-
-caribouRSF$X <- NULL
-head(caribouRSF)
+### RSF ----
+# TODO: Remove all points with 50% NA data
 
 
-## Remove all points with 50% NA data
-#!! no data is removed for RMNP !! <- because RMNP cover data does not contain NAs#
-caribouRSF$rs <- rowSums(caribouRSF[2:10])
-carRSF2 <- subset(caribouRSF, rs > 0.5)
-summary(carRSF2$rs)
+# Winter RSF
+# TODO: need ruggedness
+winterPts <- samplePts[season == "winter" | season == 'grid']
+winterPts[season == 'grid', season := "winter"]
 
-carRSF2[, 2] <- carRSF2[, 2] / carRSF2$rs
-carRSF2[, 3] <- carRSF2[, 3] / carRSF2$rs
-carRSF2[, 4] <- carRSF2[, 4] / carRSF2$rs
-carRSF2[, 5] <- carRSF2[, 5] / carRSF2$rs
-carRSF2[, 6] <- carRSF2[, 6] / carRSF2$rs
-carRSF2[, 7] <- carRSF2[, 7] / carRSF2$rs
-carRSF2[, 8] <- carRSF2[, 8] / carRSF2$rs
-carRSF2[, 9] <- carRSF2[, 9] / carRSF2$rs
-carRSF2[, 10] <- carRSF2[, 10] / carRSF2$rs
+winterRSF <- glm(reformulate(lsCovers, response = 'observed'), 
+                 family = 'binomial',data = winterPts)
 
-## Check to make sure it worked
-carRSF2$rs2 <- rowSums(carRSF2[2:10])
+summary(winterRSF)
+vif(winterRSF)
+rsquared(winterRSF)
 
-head(carRSF2)
+# Pull out the coefficients, dropping the intercept
+winterCoefs <- coef(winterRSF)[-1]
 
+# Create the raster matching the first raster layer with the first fixed effect
+intercept <- coef(winterRSF)[1]
 
-AntCrop <- crop(Ant, Carclipped)
-BroCrop <- crop(Bro, Carclipped)
-ConCrop <- crop(Con, Carclipped)
-LicCrop <- crop(Lic, Carclipped)
-MixCrop <- crop(Mix, Carclipped)
-RocCrop <- crop(Roc, Carclipped)
-ScrCrop <- crop(Scr, Carclipped)
-WatCrop <- crop(Wat, Carclipped)
-WetCrop <- crop(Wet, Carclipped)
-RugCrop <- crop(Rug, Carclipped)
-WaDCrop <- crop(WaD, Carclipped)
-LinCrop <- crop(Lin, Carclipped)
+if (all(names(winterCoefs) == names(lsRasters))) {
+  winterRaster <-
+    exp(intercept + Reduce('+', Map('*', winterCoefs, lsRasters)))
+} else {
+  stop('names dont match, check coef and rasters')
+}
 
+# Spring RSF
+# TODO: need ruggedness
+springwolf <- samplePts[season == "spring" | season == 'grid']
+springwolf[observed == 0, season := "spring"]
 
-### Wetland is the reference
-library(car)
-summary(carRSF2)
+springwolfRSF <- glm(reformulate(lsCovers, response = 'observed'), 
+                     family = 'binomial',data = springwolf)
 
-CarSummerRSF <- subset(carRSF2, Season == "spring" | Season == "Avail")
-CarWinterRSF <- subset(carRSF2, Season == "winter" | Season == "Avail")
-summary(CarWinterRSF)
+summary(springwolfRSF)
+vif(springwolfRSF)
+rsquared(springwolfRSF)
 
-RSFCaribouSum <-
-  glm(use ~ Ant + Bro + Con + Lic + Mix + Roc + Scr + WaD + Lin + Rug,
-      data = CarSummerRSF,
-      family = 'binomial')
-RSFCaribouWin <-
-  glm(use ~ Con + Lic + Mix + Roc + Scr + WaD + Lin + Rug,
-      data = CarWinterRSF,
-      family = 'binomial')
+# Pull out the coefficients, dropping the intercept
+springCoefs <- coef(springwolfRSF)[-1]
 
-vif(RSFCaribouSum)
-vif(RSFCaribouWin)
+# Create the raster matching the first raster layer with the first fixed effect
+intercept <- coef(winterwolfRSF)[1]
 
-summary(RSFCaribouSum)
-rsquared(RSFCaribouSum)
-
-summary(RSFCaribouWin)
-rsquared(RSFCaribouWin)
+if (all(names(winterCoefs) == names(lsRasters))) {
+  springRaster <-
+    exp(intercept + Reduce('+', Map('*', springCoefs, lsRasters)))
+} else {
+  stop('names dont match, check coef and rasters')
+}
 
 
-AntR <- AntCrop
-BroR <- resample(BroCrop, AntCrop)
-ConR <- resample(ConCrop, AntCrop)
-LicR <- resample(LicCrop, AntCrop)
-MixR <- resample(MixCrop, AntCrop)
-RocR <- resample(RocCrop, AntCrop)
-ScrR <- resample(ScrCrop, AntCrop)
-WaDR <- resample(WaDCrop, AntCrop)
-LinR <- resample(LinCrop, AntCrop)
-RugR <- resample(RugCrop, AntCrop)
+### Standardize RSFs ----
+# Using feature scaling
+winterScaled <-
+  (winterRaster - (cellStats(winterRaster, min))) / (cellStats(winterRaster, max) - (cellStats(winterRaster, min)))
 
-SumRSF <-
-  exp(
-    coef(RSFCaribouSum)[1] + AntR * coef(RSFCaribouSum)[2] + BroR * coef(RSFCaribouSum)[3] +
-      ConR * coef(RSFCaribouSum)[4] + LicR * coef(RSFCaribouSum)[5] +
-      MixR * coef(RSFCaribouSum)[6] + RocR * coef(RSFCaribouSum)[7] +
-      ScrR * coef(RSFCaribouSum)[8] + WaDR * coef(RSFCaribouSum)[9] +
-      LinR * coef(RSFCaribouSum)[10] + RugR * coef(RSFCaribouSum)[11]
-  )
-
-WinRSF <-
-  exp(
-    coef(RSFCaribouWin)[1] + ConR * coef(RSFCaribouWin)[2] + LicR * coef(RSFCaribouWin)[3] +
-      MixR * coef(RSFCaribouWin)[4] + RocR * coef(RSFCaribouWin)[5] +
-      ScrR * coef(RSFCaribouWin)[6] + WaDR * coef(RSFCaribouWin)[7] +
-      LinR * coef(RSFCaribouWin)[8] + RugR * coef(RSFCaribouWin)[9]
-  )
+springScaled <-
+  (springRaster - (cellStats(springRaster, min))) / (cellStats(springRaster, max) - (cellStats(springRaster, min)))
 
 
-cellStats(SumRSF, max)
+### Output ----
+# Save the RSFs
+rsfs <- list('Winter' = winterScaled, 'Spring' = springScaled)
 
-SumRSFsc <-
-  (SumRSF - (cellStats(SumRSF, min))) / (cellStats(SumRSF, max) - cellStats(SumRSF, min))
-WinRSFsc <-
-  (WinRSF - (cellStats(WinRSF, min))) / (cellStats(WinRSF, max) - cellStats(WinRSF, min))
+lapply(
+  seq_along(rsfs),
+  FUN = function(r) {
+    writeRaster(
+      rsfs[[r]],
+      paste0('output/2-rsf/caribou/cariboursf', names(rsfs[r])),
+      format = 'GTiff',
+      overwrite = T
+    )
+  }
+)
 
-cellStats(SumRSFsc, max)
+# Regular points
+saveRDS(regPts, 'output/2-rsf/caribou/caribouRegularPoints.Rds')
 
-plot(SumRSFsc)
-plot(WinRSFsc)
-
-writeRaster(SumRSFsc, "output/PredRSFNL/CaribouSummer.tif", overwrite =
-              T)
-writeRaster(WinRSFsc, "output/PredRSFNL/CaribouWinter.tif", overwrite =
-              T)
-
-saveRDS(RSFCaribouSum, "output/PredRSFNL/CaribouSummerRSF.RDS")
-saveRDS(RSFCaribouWin, "output/PredRSFNL/CaribouWinterRSF.RDS")
+# Sample pts
+saveRDS(samplePts, 'output/2-rsf/caribou/caribouSamplePoints.Rds')
