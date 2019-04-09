@@ -3,7 +3,7 @@
 
 # Copyright: ./LICENSE.md
 
-
+#TODO: it's spring and not summer right?
 ### Packages ----
 libs <- c('data.table', 'sp', 'adehabitatHR')
 # libs <- c('adehabitatHR', 'rgeos', 'spatstat', 'raster',
