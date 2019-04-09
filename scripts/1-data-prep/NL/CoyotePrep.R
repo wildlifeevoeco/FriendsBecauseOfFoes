@@ -3,7 +3,7 @@
 # Purpose: To prepare coyote data for EWC
 # Inputs: Coyote relocation data
 # Outputs: Prepped coyote data as RDS
-# Project: Easter Week Challenge 2018
+
 # Copyright: ./LICENSE.md 
 
 

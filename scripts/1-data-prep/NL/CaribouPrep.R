@@ -3,7 +3,7 @@
 # Purpose: To prepare caribou data for EWC
 # Inputs: Caribou relocation data
 # Outputs: Prepared caribou data as RDS
-# Project: Easter Week Challenge 2018
+
 # Copyright: ./LICENSE.md 
 
 ### Packages ----

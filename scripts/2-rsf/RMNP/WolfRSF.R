@@ -3,7 +3,7 @@
 # Purpose: Determine habitat domain for wolves using second order RSFs
 # Inputs: Wolf relocation data, habitat layers as rasters
 # Outputs: Wolf RSF results for global model used to create winter and spring rasters as TIFF
-# Project: Easter Week Challenge 2018
+
 
 
 ### Packages ----

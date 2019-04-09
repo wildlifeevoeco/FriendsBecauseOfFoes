@@ -3,7 +3,7 @@
 # Purpose: 
 # Inputs: sociality measures, predator and prey RSFs for RMNP and NL
 # Outputs:
-# Project: Easter Week Challenge 2018
+
 # Copyright: ./LICENSE.md 
 
 libs <- c('data.table',  

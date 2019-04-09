@@ -5,7 +5,7 @@
 #          between locs of an individual
 # Inputs: Elk, caribou relocation data
 # Outputs: Abs TA data
-# Project: Easter Week Challenge 2018
+
 # Copyright: ./LICENSE.md 
 
 #TODO: Grab Hance's updated social metrics from modeling script

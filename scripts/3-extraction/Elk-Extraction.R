@@ -3,9 +3,10 @@
 # Purpose: Extract elk and wolf RSF values to elk GPS data
 # Inputs: Elk relocation data, Elk RSF raster, Wolf RSF raster
 # Outputs: Elk relocation data with corresponding RSF values at the points (csv)
-# Project: Easter Week Challenge 2018
-# Copyright: ./LICENSE.md 
 
+
+
+# TODO: rename script/folder to domain? domain extraction? etc
 ### Packages ----
 libs <- c('data.table',
           'adehabitatHR', 'sp', 'rgdal', 'raster', 

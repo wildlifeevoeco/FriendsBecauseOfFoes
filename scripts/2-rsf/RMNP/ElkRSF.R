@@ -3,7 +3,7 @@
 # Purpose: Determine habitat domain for elk using second order RSFs
 # Inputs: Elk relocation data, habitat layers as rasters
 # Outputs: Elk RSF results for global model used to create winter and spring rasters as TIFF
-# Project: Easter Week Challenge 2018
+
 
 
 ### Packages ----

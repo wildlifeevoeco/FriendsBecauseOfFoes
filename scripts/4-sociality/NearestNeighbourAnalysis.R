@@ -2,7 +2,7 @@
 # Purpose: Determine number of NN within dist threshold and dist to NN
 # Inputs: Elk, caribou relocation data
 # Outputs: NN data
-# Project: Easter Week Challenge 2018
+
 # Copyright: ./LICENSE.md 
 
 #TODO: Grab Hance's updated social metrics from modeling script

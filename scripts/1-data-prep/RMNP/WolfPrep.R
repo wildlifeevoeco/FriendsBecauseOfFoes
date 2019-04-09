@@ -3,7 +3,7 @@
 # Purpose: To prepare wolf data for EWC
 # Inputs: Wolf relocation data
 # Outputs: Prepared wolf data as RDS
-# Project: Easter Week Challenge 2018
+
 # Copyright: ./LICENSE.md 
 
 

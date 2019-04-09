@@ -1,6 +1,6 @@
 ### Bear RSF ----
 # Authors: Michel Laforge, Alec Robitaille
-# Project: Easter Week Challenge 2018
+
 # Copyright: ./LICENSE.md
 
 
