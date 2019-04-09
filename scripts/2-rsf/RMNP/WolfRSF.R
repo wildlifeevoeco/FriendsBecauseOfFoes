@@ -40,7 +40,7 @@ points <- SpatialPoints(wolf[, .(EASTING, NORTHING)],
 mcps <- mcp(points, 100)
 
 # Create Regular Grid
-regPts <- generate_grid(mcps, 90, crs = utm)
+regPts <- generate_grid(mcps, 90, crs = utmMB)
 
 setnames(regPts, c('EASTING', 'NORTHING'))
 
