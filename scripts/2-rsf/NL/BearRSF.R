@@ -4,7 +4,7 @@
 
 ### Packages ----
 libs <- c('data.table', 'sp', 'adehabitatHR', 'raster',
-          'ewc', 'rgeos')
+          'ewc', 'rgeos', 'lme4', 'car','piecewiseSEM')
 # libs <- c('adehabitatHR', 'rgeos', 'spatstat', 'raster',
 #           'ewc', 
 #           'data.table', 'piecewiseSEM', 'rgdal')

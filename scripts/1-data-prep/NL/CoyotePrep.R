@@ -74,6 +74,41 @@ coyote <- coyote[get(xCol) != 0 & get(xCol) < 0]
 # Drop any rows that have identical fix times as previous
 coyote <- coyote[difdatetime != 0]
 
+## Subset to residents and sub transients
+coyote[, status := 'RESIDENT']
+
+unknowns <- c("co_lp1109", "co_mr1003", "co_mr1012", "co_np1022")
+
+subtransients <- c("co_lp0902", "co_lp1001", "co_lp1003", "co_lp1012",
+                   "co_lp1107", "co_mr1005", "co_mr1010", "co_mr1312",
+                   "co_mr1303", "co_np0915", "co_np1005", "co_np1006", 
+                   "co_np1017")
+
+toofews <- c("co_lp1005", "co_lp1106", "co_mr0806", "co_mr0901", 
+             "co_mr0907", "co_mr0911", "co_mr0914", "co_mr1014",
+             "co_mr1015", "co_mr1102", "co_mr1106", "co_mr1205",
+             "co_mr1304", "co_mr1311", "co_mr1313", "co_mr1314", 
+             "co_np0801", "co_np0904", "co_np1002", "co_np1015", 
+             "co_np1014", "co_lp0908", "co_lp1010", "co_lp1013", 
+             "co_lp1101", "co_mr1009", "co_mr1107", "co_mr1108", 
+             "co_mr1204", "co_mr1210", "co_mr1211", "co_np0908",
+             "co_np1021")
+
+transients <- c("co_lp0904", "co_lp0910", "co_lp1002", "co_lp1006",
+                "co_lp1008", "co_lp1014", "co_mr0905", "co_mr0906", 
+                "co_mr0908", "co_mr1001", "co_mr1004", "co_mr1006", 
+                "co_mr1007", "co_mr1011", "co_mr1013", "co_mr1101", 
+                "co_mr1105", "co_mr1209", "co_mr1212", "co_mr1302", 
+                "co_mr1306", "co_mr1308", "co_np0903", "co_np1016")
+
+coyote[get(idCol) %chin% unknowns, status := 'UNKNOWN']
+coyote[get(idCol) %chin% subtransients, status := 'SUB-TRANSIENT']
+coyote[get(idCol) %chin% toofews, status := 'TOOFEW']
+coyote[get(idCol) %chin% transients, status := 'TRANSIENT']
+
+coyote <- coyote[status == "RESIDENT" | status == "SUB-TRANSIENT"]
+
+
 ### Project Coords, Step length  ----
 # Project coordinates to UTM
 coyote[, c(projXCol, projYCol) := 
