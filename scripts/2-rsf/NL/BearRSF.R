@@ -19,12 +19,16 @@ source('scripts/0-variables/variables.R')
 bear <- readRDS('output/1-data-prep/bear.Rds')
 
 # Covariates
-lsCovers <- gsub(".tif|100|prep", "", 
-                 dir('output/1-data-prep/covariates/NL', '.tif$'))
+covers <- gsub(".tif|100m", "", 
+               dir('output/1-data-prep/covariates/RMNP', '.tif$'))
+paths <- dir('output/1-data-prep/covariates/RMNP', 
+             '.tif$', full.names = TRUE)
+names(paths) <- covers
 
-lsPaths <- dir('output/1-data-prep/covariates/NL', 
-               '.tif$', full.names = TRUE)
-names(lsPaths) <- lsCovers
+rmList <- which(covers %in% c('Water', 'NLElev'))
+
+lsCovers <- covers[-rmList]
+lsPaths <- paths[-rmList]
 
 
 ### Processing ----
