@@ -3,7 +3,7 @@
 # Purpose: 
 # Inputs: sociality measures, predator and prey RSFs for RMNP and NL
 # Outputs:
-
+# TODO:  how to ignore dif in line endings/force git to use one
 
 
 libs <- c('data.table',  
