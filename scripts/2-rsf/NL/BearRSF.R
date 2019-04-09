@@ -1,12 +1,10 @@
 ### Bear RSF ----
 # Authors: Michel Laforge, Alec Robitaille
 
-# Copyright: ./LICENSE.md
 
-#TODO: it's spring and not summer right?
 ### Packages ----
 libs <- c('data.table', 'sp', 'adehabitatHR', 'raster',
-          'ewc')
+          'ewc', 'rgeos')
 # libs <- c('adehabitatHR', 'rgeos', 'spatstat', 'raster',
 #           'ewc', 
 #           'data.table', 'piecewiseSEM', 'rgdal')
@@ -33,9 +31,16 @@ names(lsPaths) <- lsCovers
 points <- SpatialPoints(bear[, .(EASTING, NORTHING)],
                         proj4string = CRS(utmNL))
 
-mcps <- mcp(points, percent = 100)
+CarAvailBuf <- gBuffer(points, width = bear[, mean(stepLength)])
+
+Carclipped<-gIntersection(nlBounds,CarAvailBuf)
+Carclipped2<-as.owin.SpatialPolygons(Carclipped)
 
 
+
+mcps <- mcp(points, percent = 90)
+
+mapview::mapview(mcps) + mapview::mapview(points)
 # Create Regular Grid
 regPts <- generate_grid(mcps, 90, crs = utmNL)
 setnames(regPts, c('EASTING', 'NORTHING'))
@@ -71,6 +76,9 @@ samplePts[, (lsCovers) := lapply(
 
 
 ### RSF ----
+## Remove all points with 50% NA data
+
+
 # Winter RSF
 winterPts <- samplePts[season == "winter" | season == 'grid']
 winterPts[season == 'grid', season := "winter"]
@@ -97,6 +105,7 @@ if (all(names(winterCoefs) == names(lsRasters))) {
 }
 
 # Spring RSF
+# RSFbearSum<-glm(use~Ant+Bro+Con+Lic+Mix+Roc+Scr+WaD+Lin+Rug,data=bearSummer, family='binomial')
 springwolf <- samplePts[season == "spring" | season == 'grid']
 springwolf[observed == 0, season := "spring"]
 
@@ -120,191 +129,11 @@ if (all(names(winterCoefs) == names(lsRasters))) {
   stop('names dont match, check coef and rasters')
 }
 
-bears <- readRDS('output/1-data-prep/bear.Rds')
-nrow(bears)
-plot(bears$EASTING, bears$NORTHING)
 
-head(bears)
+### Standardize RSFs ----
+# Using feature scaling
+winterScaled <-
+  (winterRaster - (cellStats(winterRaster, min))) / (cellStats(winterRaster, max) - (cellStats(winterRaster, min)))
 
-
-plot(nlBounds)
-points(bears$EASTING, bears$NORTHING)
-
-
-BearPoints <-
-  SpatialPoints(data.frame(bears$EASTING, bears$NORTHING), proj4string = CRS(utm))
-
-BearAvail <- mcp(BearPoints, percent = 100)
-shapefile(BearAvail, "output/bearsMCP.shp")
-
-### Buffer by mean step length
-BearAvailBuf <- gBuffer(BearAvail, width = mean(bears$stepLength))
-
-Bearclipped <- gIntersection(nlBounds, BearAvailBuf)
-#clipped2<-as.owin.SpatialPolygons(clipped)
-
-# Create Regular Grid
-
-regPts <- generate_grid(Bearclipped, 90, crs = utm)
-
-
-
-BearAntUsed <- extract(Ant, BearPoints)
-BearBroUsed <- extract(Bro, BearPoints)
-BearConUsed <- extract(Con, BearPoints)
-BearLicUsed <- extract(Lic, BearPoints)
-BearMixUsed <- extract(Mix, BearPoints)
-BearRocUsed <- extract(Roc, BearPoints)
-BearScrUsed <- extract(Scr, BearPoints)
-BearWatUsed <- extract(Wat, BearPoints)
-BearWetUsed <- extract(Wet, BearPoints)
-BearRugUsed <- extract(Rug, BearPoints)
-BearWaDUsed <- extract(WaD, BearPoints)
-BearLinUsed <- extract(Lin, BearPoints)
-
-BearRandPoints <-
-  SpatialPoints(data.frame(regPts[, 1], regPts[, 2]), proj4string = CRS(utm))
-
-
-BearAntAvail <- extract(Ant, BearRandPoints)
-BearBroAvail <- extract(Bro, BearRandPoints)
-BearConAvail <- extract(Con, BearRandPoints)
-BearLicAvail <- extract(Lic, BearRandPoints)
-BearMixAvail <- extract(Mix, BearRandPoints)
-BearRocAvail <- extract(Roc, BearRandPoints)
-BearScrAvail <- extract(Scr, BearRandPoints)
-BearWatAvail <- extract(Wat, BearRandPoints)
-BearWetAvail <- extract(Wet, BearRandPoints)
-BearRugAvail <- extract(Rug, BearRandPoints)
-BearWaDAvail <- extract(WaD, BearRandPoints)
-BearLinAvail <- extract(Lin, BearRandPoints)
-
-CNames <-
-  c(
-    "use",
-    "Ant",
-    "Bro",
-    "Con",
-    "Lic",
-    "Mix",
-    "Roc",
-    "Scr",
-    "Wat",
-    "Wet",
-    "Rug",
-    "WaD",
-    "Lin",
-    "x",
-    "y",
-    "Season"
-  )
-
-BearUsedData <-
-  data.frame(
-    1,
-    BearAntUsed,
-    BearBroUsed,
-    BearConUsed,
-    BearLicUsed,
-    BearMixUsed,
-    BearRocUsed,
-    BearScrUsed,
-    BearWatUsed,
-    BearWetUsed,
-    BearRugUsed,
-    BearWaDUsed,
-    BearLinUsed,
-    bears$EASTING,
-    bears$NORTHING,
-    bears$season
-  )
-
-colnames(BearUsedData) <- CNames
-
-BearAvailData <-
-  data.frame(
-    0,
-    BearAntAvail,
-    BearBroAvail,
-    BearConAvail,
-    BearLicAvail,
-    BearMixAvail,
-    BearRocAvail,
-    BearScrAvail,
-    BearWatAvail,
-    BearWetAvail,
-    BearRugAvail,
-    BearWaDAvail,
-    BearLinAvail,
-    regPts[, 1],
-    regPts[, 2],
-    "Avail"
-  )
-
-colnames(BearAvailData) <- CNames
-
-bearsRSF <- rbind(BearUsedData, BearAvailData)
-
-
-write.csv(bearsRSF, "output/bearsRSFdata.csv")
-
-bearsRSF <- read.csv("output/bearsRSFdata.csv")
-
-bearsRSF$X <- NULL
-head(bearsRSF)
-
-
-
-
-## Remove all points with 50% NA data
-bearsRSF$rs <- rowSums(bearsRSF[2:10])
-coyRSF2 <- subset(bearsRSF, rs > 0.5)
-summary(coyRSF2$rs)
-
-coyRSF2[, 2] <- coyRSF2[, 2] / coyRSF2$rs
-coyRSF2[, 3] <- coyRSF2[, 3] / coyRSF2$rs
-coyRSF2[, 4] <- coyRSF2[, 4] / coyRSF2$rs
-coyRSF2[, 5] <- coyRSF2[, 5] / coyRSF2$rs
-coyRSF2[, 6] <- coyRSF2[, 6] / coyRSF2$rs
-coyRSF2[, 7] <- coyRSF2[, 7] / coyRSF2$rs
-coyRSF2[, 8] <- coyRSF2[, 8] / coyRSF2$rs
-coyRSF2[, 9] <- coyRSF2[, 9] / coyRSF2$rs
-coyRSF2[, 10] <- coyRSF2[, 10] / coyRSF2$rs
-
-## Check to make sure it worked
-coyRSF2$rs2 <- rowSums(coyRSF2[2:10])
-head(coyRSF2)
-
-
-### Wetland is the reference
-BearSummer <- subset(coyRSF2, Season == "spring" | Season == "Avail")
-
-
-RSFbearsSum <-
-  glm(use ~ Ant + Bro + Con + Lic + Mix + Roc + Scr + WaD + Lin + Rug,
-      data = BearSummer,
-      family = 'binomial')
-
-
-summary(RSFbearsSum)
-rsquared(RSFbearsSum)
-
-SumRSF <-
-  exp(
-    coef(RSFbearsSum)[1] + AntR * coef(RSFbearsSum)[2] + BroR * coef(RSFbearsSum)[3] +
-      ConR * coef(RSFbearsSum)[4] + LicR * coef(RSFbearsSum)[5] +
-      MixR * coef(RSFbearsSum)[6] + RocR * coef(RSFbearsSum)[7] +
-      ScrR * coef(RSFbearsSum)[8] + WaDR * coef(RSFbearsSum)[9] +
-      LinR * coef(RSFbearsSum)[10] + RugR * coef(RSFbearsSum)[11]
-  )
-
-cellStats(SumRSF, max)
-
-SumRSFsc <-
-  (SumRSF - (cellStats(SumRSF, min))) / (cellStats(SumRSF, max) - cellStats(SumRSF, min))
-
-plot(SumRSFsc)
-
-writeRaster(SumRSFsc, "output/PredRSFNL/bearSummer.tif", overwrite = T)
-
-saveRDS(RSFbearsSum, "output/PredRSFNL/BearsSummerRSF.RDS")
+springScaled <-
+  (springRaster - (cellStats(springRaster, min))) / (cellStats(springRaster, max) - (cellStats(springRaster, min)))

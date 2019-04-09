@@ -45,6 +45,8 @@ mcps <- mcp(points, 100)
 regPts <- generate_grid(pol = mcps, spacing = 90, crs = utmMB)
 setnames(regPts, c('EASTING', 'NORTHING'))
 
+# TODO: elk - 4.3 regular to 1 observed
+
 # Combine observed and regular grid points
 regPts[, observed := 0]
 elk[, observed := 1]

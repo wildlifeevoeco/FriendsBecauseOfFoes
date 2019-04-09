@@ -7,7 +7,7 @@
 
 
 ### Packages ----
-libs <- c('data.table', 'ewc',          
+libs <- c('data.table', 'ewc',
           'adehabitatHR', 'sp', 'rgdal', 'raster', 
           'lme4', 'car','piecewiseSEM')
 lapply(libs, require, character.only = TRUE)
@@ -41,8 +41,9 @@ mcps <- mcp(points, 100)
 
 # Create Regular Grid
 regPts <- generate_grid(mcps, 90, crs = utmMB)
-
 setnames(regPts, c('EASTING', 'NORTHING'))
+
+# TODO: wolf - 7 regular to 1 observed
 
 # Combine observed and regular grid points
 regPts[, observed := 0]
