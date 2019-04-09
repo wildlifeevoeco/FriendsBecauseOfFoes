@@ -19,30 +19,25 @@ source('scripts/0-variables/variables.R')
 bear <- readRDS('output/1-data-prep/bear.Rds')
 
 # Covariates
-lsCovers <- gsub(".tif|100m|prep", "", 
-               dir('output/1-data-prep/covariates/NL', '.tif$'))
+lsCovers <- gsub(".tif|100|prep", "", 
+                 dir('output/1-data-prep/covariates/NL', '.tif$'))
 
 lsPaths <- dir('output/1-data-prep/covariates/NL', 
-             '.tif$', full.names = TRUE)
+               '.tif$', full.names = TRUE)
 names(lsPaths) <- lsCovers
 
 
 ### Processing ----
 points <- SpatialPoints(bear[, .(EASTING, NORTHING)],
                         proj4string = CRS(utmNL))
+width <- bear[, mean(stepLength)]
+buffers <- buffer(points, width = width)
+intersect <- gIntersection(nlBounds, gUnaryUnion(buffers))
 
 buffered <- buffer(points, width = bear[, mean(stepLength)])
 
-Carclipped<-gIntersection(nlBounds,CarAvailBuf)
-Carclipped2<-as.owin.SpatialPolygons(Carclipped)
-
-
-
-mcps <- mcp(points, percent = 90)
-
-mapview::mapview(mcps) + mapview::mapview(points)
 # Create Regular Grid
-regPts <- generate_grid(mcps, 90, crs = utmNL)
+regPts <- generate_grid(intersect, 90, crs = utmNL)
 setnames(regPts, c('EASTING', 'NORTHING'))
 
 # Combine observed and regular grid points

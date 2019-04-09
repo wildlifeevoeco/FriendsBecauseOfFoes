@@ -19,28 +19,28 @@ generate_grid <- function(pol, spacing, crs) {
   if (missing(pol))
     stop('pol is missing')
   
-  extentDT <-
-    data.table::data.table(pol@bbox, keep.rownames = TRUE)
+  # extentDT <-
+  #   data.table::data.table(pol@bbox, keep.rownames = TRUE)
+  # 
+  # extentDT[, dif := abs(min - max)]
   
-  extentDT[, dif := abs(min - max)]
   
-  
-  if (extentDT[order(-dif)][1, rn] == "x") {
-    xSeq <- extentDT[rn == "x", seq(min, max, by = spacing)]
-    ySeq <-
-      extentDT[rn == "y", seq(min, min + (spacing * (length(xSeq) - 1)),
-                              by = spacing)]
-  } else {
-    ySeq <- extentDT[rn == "y", seq(min, max, by = spacing)]
-    xSeq <-
-      extentDT[rn == "x", seq(min, min + (spacing * (length(ySeq) - 1)),
-                              by = spacing)]
-  }
-  
-  r <- raster::extent(utils::head(xSeq, n = 1),
-                      utils::tail(xSeq, n = 1),
-                      utils::head(ySeq, n = 1),
-                      utils::tail(ySeq, n = 1))
+  # if (extentDT[order(-dif)][1, rn] == "x") {
+  #   xSeq <- extentDT[rn == "x", seq(min, max, by = spacing)]
+  #   ySeq <-
+  #     extentDT[rn == "y", seq(min, min + (spacing * (length(xSeq) - 1)),
+  #                             by = spacing)]
+  # } else {
+  #   ySeq <- extentDT[rn == "y", seq(min, max, by = spacing)]
+  #   xSeq <-
+  #     extentDT[rn == "x", seq(min, min + (spacing * (length(ySeq) - 1)),
+  #                             by = spacing)]
+  # }
+  r <- raster::extent(pol)
+  # r <- raster::extent(utils::head(xSeq, n = 1),
+  #                     utils::tail(xSeq, n = 1),
+  #                     utils::head(ySeq, n = 1),
+  #                     utils::tail(ySeq, n = 1))
   ra <- raster::raster(r)
   raster::res(ra) <- c(spacing, spacing)
   
@@ -48,5 +48,6 @@ generate_grid <- function(pol, spacing, crs) {
   
   rSP <- raster::rasterToPoints(ra, spatial = TRUE)
   
-  data.table::data.table(rSP@coords, n = 1:length(rSP))[n %in% sp::over(pol, rSP, returnList = TRUE)[[1]]][, n := NULL][]
+  ovr <-  sp::over(pol, rSP, returnList = TRUE)
+  # data.table::data.table(rSP@coords, n = 1:length(rSP))[n %in% sp::over(pol, rSP, returnList = TRUE)[[1]]][, n := NULL][]
 }
