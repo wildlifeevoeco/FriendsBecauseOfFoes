@@ -10,6 +10,7 @@
 libs <- c('data.table', 'ewc',
           'adehabitatHR', 'sp', 'rgdal', 'raster', 
           'lme4', 'car','piecewiseSEM')
+# TODO: check need car and piecewiseSEM?
 lapply(libs, require, character.only = TRUE)
 
 ### Set variables ----
