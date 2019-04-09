@@ -1,10 +1,5 @@
 ### Coyote data preparation ----
 # Authors: Quinn Webber, Alec Robitaille
-# Purpose: To prepare coyote data for EWC
-# Inputs: Coyote relocation data
-# Outputs: Prepped coyote data as RDS
-
-
 
 
 ### Packages ----

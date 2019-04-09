@@ -1,10 +1,5 @@
 ### Bear data preparation ----
 # Authors: Quinn Webber, Alec Robitaille
-# Purpose: To prepare bear data for EWC
-# Inputs: Bear relocation data
-# Outputs: Prepared bear data as RDS
-
-
 
 
 ### Packages ----

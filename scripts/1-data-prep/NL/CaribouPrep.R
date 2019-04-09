@@ -1,9 +1,5 @@
 ### Caribou data preparation ----
 # Authors: Quinn Webber, Alec Robitaille
-# Purpose: To prepare caribou data for EWC
-# Inputs: Caribou relocation data
-# Outputs: Prepared caribou data as RDS
-
 
 
 ### Packages ----
