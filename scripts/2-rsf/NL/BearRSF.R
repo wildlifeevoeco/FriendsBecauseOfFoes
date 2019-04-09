@@ -31,7 +31,7 @@ names(lsPaths) <- lsCovers
 points <- SpatialPoints(bear[, .(EASTING, NORTHING)],
                         proj4string = CRS(utmNL))
 
-CarAvailBuf <- gBuffer(points, width = bear[, mean(stepLength)])
+buffered <- buffer(points, width = bear[, mean(stepLength)])
 
 Carclipped<-gIntersection(nlBounds,CarAvailBuf)
 Carclipped2<-as.owin.SpatialPolygons(Carclipped)
