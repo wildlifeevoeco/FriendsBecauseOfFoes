@@ -4,7 +4,7 @@
 # Inputs: Elk relocation data
 # Outputs: Prepared elk data as RDS
 
-# Copyright: ./LICENSE.md 
+
 
 ### Packages ----
 libs <- c('data.table', 'ggplot2', 

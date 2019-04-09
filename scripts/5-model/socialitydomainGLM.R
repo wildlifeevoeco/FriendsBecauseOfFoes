@@ -4,7 +4,7 @@
 # Inputs: sociality measures, predator and prey RSFs for RMNP and NL
 # Outputs:
 
-# Copyright: ./LICENSE.md 
+
 
 libs <- c('data.table',  
           'lme4',

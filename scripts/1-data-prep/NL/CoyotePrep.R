@@ -4,7 +4,7 @@
 # Inputs: Coyote relocation data
 # Outputs: Prepped coyote data as RDS
 
-# Copyright: ./LICENSE.md 
+
 
 
 ### Packages ----

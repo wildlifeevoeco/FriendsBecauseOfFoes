@@ -4,7 +4,7 @@
 # Inputs: Wolf relocation data
 # Outputs: Prepared wolf data as RDS
 
-# Copyright: ./LICENSE.md 
+
 
 
 ### Packages ----

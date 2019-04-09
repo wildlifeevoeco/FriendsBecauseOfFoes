@@ -3,7 +3,7 @@
 # Inputs: Elk, caribou relocation data
 # Outputs: NN data
 
-# Copyright: ./LICENSE.md 
+
 
 #TODO: Grab Hance's updated social metrics from modeling script
 

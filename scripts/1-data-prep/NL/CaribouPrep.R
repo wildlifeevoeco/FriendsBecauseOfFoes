@@ -4,7 +4,7 @@
 # Inputs: Caribou relocation data
 # Outputs: Prepared caribou data as RDS
 
-# Copyright: ./LICENSE.md 
+
 
 ### Packages ----
 libs <- c('data.table', 'ggplot2', 

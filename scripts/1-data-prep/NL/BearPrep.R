@@ -4,7 +4,7 @@
 # Inputs: Bear relocation data
 # Outputs: Prepared bear data as RDS
 
-# Copyright: ./LICENSE.md 
+
 
 
 ### Packages ----
