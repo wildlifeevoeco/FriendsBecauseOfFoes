@@ -4,7 +4,7 @@
 ### Packages ----
 libs <- c('data.table', 'ewc',
           'adehabitatHR', 'sp', 'rgdal', 'raster', 
-          'lme4', 'car','piecewiseSEM')
+          'lme4')
 lapply(libs, require, character.only = TRUE)
 
 ### Set variables ----
