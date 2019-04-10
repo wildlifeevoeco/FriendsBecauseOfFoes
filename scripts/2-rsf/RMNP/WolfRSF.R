@@ -95,7 +95,7 @@ springPts <- samplePts[season == "spring" | season == 'grid']
 springPts[observed == 0, season := "spring"]
 
 springRSF <- glm(reformulate(lsCovers, response = 'observed'), 
-                 family = 'binomial',data = springwolf)
+                 family = 'binomial',data = springPts)
 
 # Pull out the coefficients, dropping the intercept
 springCoefs <- coef(springRSF)[-1]
