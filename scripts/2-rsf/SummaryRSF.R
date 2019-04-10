@@ -20,7 +20,7 @@ rsfs[, species := gsub('spring|winter|rsf', '', nm, ignore.case = TRUE)]
 
 ### Processing ----
 digits <- 3
-rsfs[, {
+out <- rsfs[, {
   r <- readRDS(paths)
   coefs <- coef(r)
   
@@ -36,3 +36,6 @@ rsfs[, {
                          round(uci, digits = digits),"]"),
        RSquared = rsquared(r)$`R.squared`)
 }, by = .(season, species)]
+
+### Output ----
+saveRDS(out, 'output/2-rsf/summaryRSF.Rds')
