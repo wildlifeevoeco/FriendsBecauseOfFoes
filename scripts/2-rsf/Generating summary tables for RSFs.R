@@ -10,6 +10,15 @@ library(lme4)
 
 wolfspr<-readRDS("output/PredRSFRMNP/springWolfRSF.RDS")
 
+summary(winterRSF)
+vif(winterRSF)
+rsquared(winterRSF)
+
+summary(springwolfRSF)
+vif(springwolfRSF)
+rsquared(springwolfRSF)
+
+
 wolfsprcoefs<-coef(wolfspr)
 
 wolfsprSEs<-c(sqrt(diag(vcov(wolfspr))))
