@@ -1,34 +1,31 @@
 ### Generating summary tables for RSFs ====
-# Authors: 
+# Authors: Alec Robitaille, Michel Laforge
 
-library(piecewiseSEM)
-library(lme4)
+### Packages ----
+pkgs <- c('piecewiseSEM', 'lme4')
+lapply(pkgs, requires, character.only = TRUE)
 
+### Input ----
+paths <- dir('output/2-rsf', 'RSF', recursive = TRUE, full.names = TRUE)
+names <- lapply(dir('output/2-rsf', 'RSF', recursive = TRUE), function(x) strsplit(x, '/'))
+rsfs <- lapply(paths, readRDS)
+names()
+### Processing ----
+digits <- 3
+lapply(rsfs, function(r) {
+  coefs <- coef(r)
+  
+  se <- sqrt(diag(vcov(r)))
+  
+  lci <- coefs - (se * 1.96)
+  uci <- coefs + (se * 1.96)
+  
+  list()
+  paste0(round(coefs, digits = digits), " [", 
+           round(lci, digits = digits), ", ", 
+           round(uci, digits = digits), "]")
+})
 
-#### Wolves ####
-
-## Spring
-
-wolfspr<-readRDS("output/PredRSFRMNP/springWolfRSF.RDS")
-
-summary(winterRSF)
-vif(winterRSF)
-rsquared(winterRSF)
-
-summary(springwolfRSF)
-vif(springwolfRSF)
-rsquared(springwolfRSF)
-
-
-wolfsprcoefs<-coef(wolfspr)
-
-wolfsprSEs<-c(sqrt(diag(vcov(wolfspr))))
-
-wolfsprLCI<-wolfsprcoefs-(wolfsprSEs*1.96)
-wolfsprUCI<-wolfsprcoefs+(wolfsprSEs*1.96)
-
-wolfsprcoefsR<-round(wolfsprcoefs,3)
-wolfsprCI<-paste(wolfsprcoefsR, " [",round(wolfsprLCI,3), ", ",round(wolfsprUCI,3),"]",sep="")
 
 
 ## Winter
