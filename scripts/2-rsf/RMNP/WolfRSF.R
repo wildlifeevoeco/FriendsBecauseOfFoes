@@ -1,16 +1,10 @@
 ### Wolf RSF ----
 # Authors: Alec Robitaille, Christina M Prokopenko, Sana Zabihi
-# Purpose: Determine habitat domain for wolves using second order RSFs
-# Inputs: Wolf relocation data, habitat layers as rasters
-# Outputs: Wolf RSF results for global model used to create winter and spring rasters as TIFF
-
-
 
 ### Packages ----
 libs <- c('data.table', 'ewc',
           'adehabitatHR', 'sp', 'rgdal', 'raster', 
           'lme4', 'car','piecewiseSEM')
-# TODO: check need car and piecewiseSEM?
 lapply(libs, require, character.only = TRUE)
 
 ### Set variables ----
@@ -41,10 +35,9 @@ points <- SpatialPoints(wolf[, .(EASTING, NORTHING)],
 mcps <- mcp(points, 100)
 
 # Create Regular Grid
+# TODO: wolf - 7 regular to 1 observed
 regPts <- generate_grid(mcps, 90, crs = utmMB)
 setnames(regPts, c('EASTING', 'NORTHING'))
-
-# TODO: wolf - 7 regular to 1 observed
 
 # Combine observed and regular grid points
 regPts[, observed := 0]
@@ -82,9 +75,6 @@ winterPts[season == 'grid', season := "winter"]
 winterRSF <- glm(reformulate(lsCovers, response = 'observed'), 
                     family = 'binomial',data = winterPts)
 
-summary(winterRSF)
-vif(winterRSF)
-rsquared(winterRSF)
 
 # Pull out the coefficients, dropping the intercept
 winterCoefs <- coef(winterRSF)[-1]
@@ -101,23 +91,19 @@ if (all(names(winterCoefs) == names(lsRasters))) {
 }
 
 # Spring RSF
-springwolf <- samplePts[season == "spring" | season == 'grid']
-springwolf[observed == 0, season := "spring"]
+springPts <- samplePts[season == "spring" | season == 'grid']
+springPts[observed == 0, season := "spring"]
 
-springwolfRSF <- glm(reformulate(lsCovers, response = 'observed'), 
-                    family = 'binomial',data = springwolf)
-
-summary(springwolfRSF)
-vif(springwolfRSF)
-rsquared(springwolfRSF)
+springRSF <- glm(reformulate(lsCovers, response = 'observed'), 
+                 family = 'binomial',data = springwolf)
 
 # Pull out the coefficients, dropping the intercept
-springCoefs <- coef(springwolfRSF)[-1]
+springCoefs <- coef(springRSF)[-1]
 
 # Create the raster matching the first raster layer with the first fixed effect
-intercept <- coef(winterwolfRSF)[1]
+intercept <- coef(springRSF)[1]
 
-if (all(names(winterCoefs) == names(lsRasters))) {
+if (all(names(springCoefs) == names(lsRasters))) {
   springRaster <-
     exp(intercept + Reduce('+', Map('*', springCoefs, lsRasters)))
 } else {
@@ -154,3 +140,7 @@ saveRDS(regPts, 'output/2-rsf/wolf/wolfRegularPoints.Rds')
 
 # Sample pts
 saveRDS(samplePts, 'output/2-rsf/wolf/wolfSamplePoints.Rds')
+
+# RSF
+saveRDS(winterRSF, 'output/2-rsf/wolf/wolfWinterRSF.Rds')
+saveRDS(springRSF, 'output/2-rsf/wolf/wolfSpringRSF.Rds')
