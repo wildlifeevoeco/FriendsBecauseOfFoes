@@ -61,7 +61,7 @@ samplePts <- samplePts[, ..cols]
 samplePts[, rowID := .I]
 
 # Sample rasters
-lsRasters <- lapply(lsPaths, raster)
+lsRasters <- lapply(lsPaths, function(r) crop(raster(r), mcps))
 
 samplePts[, (lsCovers) := lapply(
   lsRasters,
