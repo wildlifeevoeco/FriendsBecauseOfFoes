@@ -1,7 +1,10 @@
 ---
 title: "Summary RSF Table"
 output: pdf_document
+include-header:
+  - \usepackage{longtable}
 ---
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
@@ -10,15 +13,15 @@ knitr::opts_knit$set(root.dir = '..')
 library(knitr)
 library(kableExtra)
 library(magrittr)
+library(data.table)
 ```
 
 
 ```{r}
 summary <- readRDS('output/2-rsf/summaryRSF.Rds')
 
-
 kable(summary,
-      format = 'latex', 
+      format = 'latex',
       booktabs = FALSE) %>%
       kable_styling(latex_options = "scale_down")
 ```
