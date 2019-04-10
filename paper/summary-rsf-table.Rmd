@@ -1,0 +1,26 @@
+---
+title: "Summary RSF Table"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_knit$set(root.dir = '..')
+
+library(knitr)
+library(kableExtra)
+library(magrittr)
+```
+
+
+```{r}
+summary <- readRDS('output/2-rsf/summaryRSF.Rds')
+
+
+kable(summary,
+      format = 'latex', 
+      booktabs = FALSE) %>%
+      kable_styling(latex_options = "scale_down")
+```
+
+```
