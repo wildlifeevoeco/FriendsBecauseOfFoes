@@ -34,14 +34,11 @@ lsPaths <- paths[-rmList]
 ### Processing ----
 points <- SpatialPoints(bear[, .(EASTING, NORTHING)],
                         proj4string = CRS(utmNL))
-width <- bear[, mean(stepLength)]
-buffers <- buffer(points, width = width)
-intersect <- gIntersection(nlBounds, gUnaryUnion(buffers))
-
-buffered <- buffer(points, width = bear[, mean(stepLength)])
+# TODO: note change to mcps for bear rsf
+mcps <- mcp(points, percent = 100)
 
 # Create Regular Grid
-regPts <- generate_grid(intersect, 90, crs = utmNL)
+regPts <- generate_grid(mcps, 210, crs = utmNL)
 setnames(regPts, c('EASTING', 'NORTHING'))
 
 # Combine observed and regular grid points
