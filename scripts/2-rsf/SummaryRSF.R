@@ -1,4 +1,5 @@
-###### Script to generate summary tables from RSF models
+### Generating summary tables for RSFs ====
+# Authors: 
 
 library(piecewiseSEM)
 library(lme4)
