@@ -72,14 +72,17 @@ samplePts[, (lsCovers) := lapply(
 
 
 ### RSF ----
-# TODO: Remove all points with 50% NA data
+# Remove all points with <50% landcover sampled
+not <- which(lsCovers %in% c('Ruggedness' ,'WaterDist', 'LinearDist'))
+samplePts[, lcNA := rowSums(.SD), .SDcols = lsCovers[-not]]
 
+samplePts <- samplePts[lcNA > 0.5]
 
 # Winter RSF
-# TODO: need ruggedness
 winterPts <- samplePts[season == "winter" | season == 'grid']
 winterPts[season == 'grid', season := "winter"]
 
+#TODO: warning glm.fit: fitted probabilities numerically 0 or 1 occurred 
 winterRSF <- glm(reformulate(lsCovers, response = 'observed'), 
                  family = 'binomial',data = winterPts)
 
