@@ -23,47 +23,59 @@ source('scripts/0-variables/variables.R')
 # )
 
 ### List rasters ----
-# Covariates
-lsCovers <- gsub(".tif|100m", "", dir('input/covariates/NL', '.tif$'))
-lsPaths <- dir('input/covariates/NL', '.tif$', full.names = TRUE)
-names(lsPaths) <- lsCovers
+rasterOptions(tmpdir = "output/2-rsf/temp")
 
+# Covariates
+lsCovers <- gsub(".tif|100", "", dir('input/covariates/NL', '.tif$'))
+lsPaths <- dir('input/covariates/NL', '.tif$', full.names = TRUE)
+
+
+lsRasters <- lapply(lsPaths, raster)
+names(lsRasters) <- lsCovers
 
 ### Processing ----
-# Crop the rasters, holding as temp files in a list
-cropRasters <- lapply(
-  lsPaths,
-  FUN = function(r) {
-    crop(raster(r), nlBounds)
-  }
-)
-
 # Log transform
 namesTransform <- c('LinearDist', 'WaterDist')
-rasterTransform <- cropRasters[lapply(cropRasters, names) %in% namesTransform]
+whichTransform <- which(names(lsRasters) %in% namesTransform)
+rasterTransform <- lsRasters[whichTransform]
 
 transformed <- lapply(
-  seq_along(namesTransform),
+  rasterTransform,
   FUN = function(x) {
-    r <- log(rasterTransform[[x]] + 1)
-    names(r) <- namesTransform[[x]]
-    r
+    log(x + 1)
   }
 )
-names(transformed) <- namesTransform
 
-transformed[['LinearDist']] <-
-  resample(transformed[['LinearDist']], transformed[['Water_Dist']])
+lsRasters[whichTransform] <- transformed
+
+
+# Crop the rasters
+cropRasters <- lapply(
+  lsRasters,
+  FUN = function(r) {
+    crop(r, nlBounds)
+  }
+)
+
+
+
+reLin <- 
+  resample(cropRasters[['LinearDist']], cropRasters[['Anthro']], method = 'bilinear')
 
 transformed[['WaterDist']] <-
-  resample(transformed[['WaterDist']], transformed[['Water_Dist']])
+  resample(transformed[['WaterDist']], cropRasters[['Anthro']], method = 'bilinear')
+
+
+
+
 
 
 ### Output ----
 outRaster <- c(transformed,
-               cropRasters[!(lapply(cropRasters, names) %in% namesTransform)])
+               cropRasters[!(names(cropRasters) %in% namesTransform)])
 outNames <- lapply(outRaster, names)
-
+lapply(outRaster, origin)
+#TODO: why non matching origin
 lapply(
   seq_along(outRaster),
   FUN = function(r) {
