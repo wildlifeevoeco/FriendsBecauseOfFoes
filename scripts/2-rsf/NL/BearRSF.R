@@ -104,7 +104,6 @@ if (all(names(winterCoefs) == names(lsRasters))) {
 }
 
 # Spring RSF
-# TODO: need ruggedness
 springwolf <- samplePts[season == "spring" | season == 'grid']
 springwolf[observed == 0, season := "spring"]
 
