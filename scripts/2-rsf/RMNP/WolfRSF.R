@@ -58,16 +58,16 @@ samplePts <- samplePts[, ..cols]
 samplePts[, rowID := .I]
 
 # Sample rasters
+lsRasters <- lapply(lsPaths, raster)
+
 samplePts[, (lsCovers) := lapply(
-  lsPaths,
+  lsRasters,
   FUN = function(r) {
-    extract(raster(r), matrix(c(EASTING, NORTHING), ncol = 2))
+    extract(r, matrix(c(EASTING, NORTHING), ncol = 2))
   }
 )]
 
 ### RSF ----
-lsRasters <- lapply(lsPaths, raster)
-
 # Winter RSF
 winterPts <- samplePts[season == "winter" | season == 'grid']
 winterPts[season == 'grid', season := "winter"]
