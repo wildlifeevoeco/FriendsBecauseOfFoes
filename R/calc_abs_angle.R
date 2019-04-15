@@ -21,8 +21,8 @@ calc_abs_angle <- function(DT,
   # NSE
   difY <- difX <- . <- absAngle <- relAngle <- NULL
   
-  # Create lag and dif column names
-  lagCols <- paste('lag', coords, sep = '')
+  # Create lead and dif column names
+  lagCols <- paste('lead', coords, sep = '')
   difCols <- c('difX', 'difY')
   
   DT[order(datetime),
