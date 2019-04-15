@@ -40,6 +40,9 @@ DT[NbyTime > neighbours,
     (neighbourCols) := NumbQuadTreeNeighbours(.SD, coords = coordCols,
                                               neighbours, idCol),
     by = timegroup]
+
+edge_nn(DT, id = idCol, coords = coordCols, 
+        timegroup = 'timegroup')
 # TODO: investigate the both coords and ..coords exist in calling scope data.table error
 
 # NA in neighbour means that there were less than the NbyTime in the timegroup
