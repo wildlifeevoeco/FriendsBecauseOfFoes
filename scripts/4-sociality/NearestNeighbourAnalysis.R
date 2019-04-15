@@ -1,14 +1,10 @@
 ### Nearest Neighbour Analysis ----
-# Purpose: Determine number of NN within dist threshold and dist to NN
-# Inputs: Elk, caribou relocation data
-# Outputs: NN data
+# Authors: Alec Robitaille
 
-
-#TODO: use edge-dist/nn instead
 #TODO: Grab Hance's updated social metrics from modeling script
 
 ### Packages ----
-libs <- c('data.table', 'ewc', 'spatsoc', 'SearchTrees', 'igraph')
+libs <- c('data.table', 'ewc', 'spatsoc', 'igraph')
 lapply(libs, require, character.only = TRUE)
 
 
@@ -28,22 +24,13 @@ all.equal(DT[, .(N = uniqueN(id)), by = timegroup],
 # Which timegroups have more than one individual?
 DT[, NbyTime := .N, by = timegroup]
 
-### Quadtree - Find Nearest Neighbour ----
-# How many neighbours 
-neighbours <- 1
-neighbourCols <- paste0('neighbour', seq(1, neighbours))
-
-# Read in function
-source('R/0-functions/NumbQuadTreeNeighbours.R')
-# Only running on where there are at least 2 in a timegroup, else the bomb!
-DT[NbyTime > neighbours, 
-    (neighbourCols) := NumbQuadTreeNeighbours(.SD, coords = coordCols,
-                                              neighbours, idCol),
-    by = timegroup]
-
+### Find nearest neighbour with spatsoc ----
 edge_nn(DT, id = idCol, coords = coordCols, 
         timegroup = 'timegroup')
-# TODO: investigate the both coords and ..coords exist in calling scope data.table error
+
+
+
+
 
 # NA in neighbour means that there were less than the NbyTime in the timegroup
 # Careful with the columns selected in the second argument and 
