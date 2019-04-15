@@ -25,7 +25,7 @@ calc_abs_angle <- function(DT,
   lagCols <- paste('lead', coords, sep = '')
   difCols <- c('difX', 'difY')
   
-  DT[order(datetime),
+  setorderv(DT, datetime)
      (lagCols) := data.table::shift(.SD, 1, NA, 'lead'),
      by = c(id, yr), .SDcols = coords]
   
