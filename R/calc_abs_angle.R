@@ -16,9 +16,7 @@
 calc_abs_angle <- function(DT,
                           coords,
                           datetime,
-                          id,
-                          yr,
-                          allCW = FALSE,
+                          by, 
                           returnIntermediate = FALSE) {
   # NSE
   difY <- difX <- . <- absAngle <- relAngle <- NULL
