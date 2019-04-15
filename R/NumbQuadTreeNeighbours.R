@@ -1,3 +1,14 @@
+#' Title
+#'
+#' @param DT 
+#' @param coords 
+#' @param numbNeighbours 
+#' @param idCol 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 NumbQuadTreeNeighbours <- function(DT, coords, numbNeighbours, idCol) {
   # NSE
   ..coords <- NULL
