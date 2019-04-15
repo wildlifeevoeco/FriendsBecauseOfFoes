@@ -40,11 +40,5 @@ calc_abs_angle <- function(DT,
     DT[, c(lagCols, difCols) := NULL]
   }
   
-  # TODO: what did this mean? .. my poor code commenting
-  if (!allCW) {
-    DT
-  } else {
-    DT[absAngle < 0, absAngle := absAngle + 360]
-  }
-  
+  DT
 }
