@@ -1,4 +1,4 @@
-#' Relative Angles
+#' Calculate Relative Angles
 #'
 #' @inheritParams calc_abs_angle
 #'
@@ -10,23 +10,28 @@ calc_rel_angle <-
   function(DT,
            coords = NULL,
            datetime = NULL,
-           id = NULL,
-           yr = NULL,
-           allCW = FALSE,
-           returnIntermediate = FALSE) {
+           by = NULL) {
     # NSE
     absAngle <- relAngle <- NULL
     
-    if ('absAngle' %in% colnames(DT)) {
+    if (missing(DT)) {
+      stop('must provide an input DT')
+    }
     
-      DT[, relAngle := 
-           data.table::shift(absAngle, 1, type = 'lead') - absAngle]
+    data.table::setorderv(DT, datetime)
+    
+    if ('absAngle' %in% colnames(DT)) {
+      DT[, relAngle := absAngle -
+           data.table::shift(absAngle, 1, type = 'lag'),
+         by = by]
       
     } else {
+      calc_abs_angle(DT, coords, datetime, by = by)
       
-      calc_abs_angle(DT, coords, datetime, id, yr, allCW, returnIntermediate)
-      
-      DT[, relAngle := 
-           data.table::shift(absAngle, 1, type = 'lead') - absAngle]
+      DT[, relAngle := absAngle -
+           data.table::shift(absAngle, 1, type = 'lag'),
+         by = by]
     }
+    
+    return(DT)
   }
