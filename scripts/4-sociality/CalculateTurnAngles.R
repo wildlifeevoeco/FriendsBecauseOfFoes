@@ -20,6 +20,37 @@ DT <- readRDS(paste0('output/3-extraction/', species, 'RsfValues.Rds'))
 
 if (truelength(DT) == 0) alloc.col(DT) 
 
+
+## DECISIONS
+# turning angle is related to the t = 1 step if turning angle is 
+#   angle t = 1 and angle t = 2 
+
+
+###########
+one <- DT[season == 'winter' & id == 862]
+setorder(one, datetime)
+
+calc_angles(DT, coordCols, datetimeCol, c('season', 'id'))
+DT
+
+
+
+library(trajr)
+
+traj <- TrajFromCoords(
+  one,
+  xCol = 'EASTING',
+  yCol = 'NORTHING',
+  timeCol = 'datetime',
+  spatialUnits = 'm'
+)
+TrajStepLengths(traj)
+traj$angle <- c(NA, NA, TrajAngles(traj))
+
+calc_abs_angle(one, coordCols, datetimeCol, idCol, yrCol, TRUE, FALSE)
+calc_rel_angle(one, coordCols, datetimeCol, idCol, yrCol, TRUE, FALSE)
+
+
 # List relevant column names
 coordCols <- c('EASTING', 'NORTHING')
 idCol <- 'id'
