@@ -26,14 +26,15 @@ calc_abs_angle <- function(DT,
   difCols <- c('difX', 'difY')
   
   setorderv(DT, datetime)
-     (lagCols) := data.table::shift(.SD, 1, NA, 'lead'),
-     by = c(id, yr), .SDcols = coords]
+  DT[, (lagCols) := data.table::shift(.SD, 1, NA, 'lead'),
+     by = by, .SDcols = coords]
   
   # Find the difference between subsequent points in x,y
   DT[, (difCols) := .((get(lagCols[1]) - get(coords[1])),
                       (get(lagCols[2]) - get(coords[2])))]
   
   DT[, absAngle := atan2(difY, difX) * 180 / pi]
+  DT[absAngle < 0, absAngle := absAngle + 360]
   
   if (!returnIntermediate) {
     DT[, c(lagCols, difCols) := NULL]
