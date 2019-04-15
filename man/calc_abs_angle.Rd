@@ -4,8 +4,7 @@
 \alias{calc_abs_angle}
 \title{Absolute angle}
 \usage{
-calc_abs_angle(DT, coords, datetime, id, yr, allCW = FALSE,
-  returnIntermediate = FALSE)
+calc_abs_angle(DT, coords, datetime, by, returnIntermediate = FALSE)
 }
 \arguments{
 \item{DT}{data.table}
@@ -14,11 +13,7 @@ calc_abs_angle(DT, coords, datetime, id, yr, allCW = FALSE,
 
 \item{datetime}{character; datetime column}
 
-\item{id}{character; id column}
-
-\item{yr}{character; year column}
-
-\item{allCW}{boolean; all clockwise}
+\item{by}{character vector; columns identifying within which groups (e.g. each individual and year) to calculate angles}
 
 \item{returnIntermediate}{boolean; return intermediate columns}
 }

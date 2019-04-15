@@ -27,15 +27,24 @@ if (truelength(DT) == 0) alloc.col(DT)
 
 
 ###########
-one <- DT[season == 'winter' & id == 862]
-setorder(one, datetime)
+# one <- DT[season == 'winter' & id == 862]
+# setorder(one, datetime)
+# List relevant column names
+coordCols <- c('EASTING', 'NORTHING')
+idCol <- 'id'
+datetimeCol <- 'datetime' 
+yrCol <- 'yr'
 
-calc_angles(DT, coordCols, datetimeCol, c('season', 'id'))
-DT
+calc_abs_angle(DT, coordCols, datetimeCol, by = c(idCol, yrCol, 'season'), FALSE)
 
+one <- DT[id == sample(id, 1) & season == 'winter']
 
+x <- x+10;  
+ggplot(one[seq(x, x+10)], aes(EASTING, NORTHING)) + 
+  geom_path(aes(group = id, color = id), arrow = arrow()) + 
+  geom_text(aes(label = round(absAngle, 2)))
+  # geom_text(aes(label = round(relative, 2)))
 
-library(trajr)
 
 traj <- TrajFromCoords(
   one,

@@ -3,9 +3,7 @@
 #' @param DT data.table
 #' @param coords character vector; coordinate columns
 #' @param datetime character; datetime column
-#' @param id character; id column
-#' @param yr character; year column
-#' @param allCW boolean; all clockwise
+#' @param by character vector; columns identifying within which groups (e.g. each individual and year) to calculate angles
 #' @param returnIntermediate boolean; return intermediate columns
 #'
 #' @return input DT appended with absolute angle column 
@@ -19,7 +17,7 @@ calc_abs_angle <- function(DT,
                           by, 
                           returnIntermediate = FALSE) {
   # NSE
-  difY <- difX <- . <- absAngle <- relAngle <- NULL
+  difY <- difX <- . <- absAngle <- NULL
   
   # Create lead and dif column names
   lagCols <- paste('lead', coords, sep = '')
@@ -33,12 +31,16 @@ calc_abs_angle <- function(DT,
   DT[, (difCols) := .((get(lagCols[1]) - get(coords[1])),
                       (get(lagCols[2]) - get(coords[2])))]
   
-  DT[, absAngle := atan2(difY, difX) * 180 / pi]
+  # Calculate absolute angle
+  DT[, absAngle := atan2(difY, difX) * (180 / pi)]
+  
+  # Rescale between 0-360
   DT[absAngle < 0, absAngle := absAngle + 360]
   
-  if (!returnIntermediate) {
+  if (returnIntermediate) {
+    return(DT)
+  } else {
     DT[, c(lagCols, difCols) := NULL]
-  }
-  
-  DT
+    return(DT)
+  }    
 }
