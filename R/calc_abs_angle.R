@@ -1,4 +1,4 @@
-#' Absolute angle
+#' Calculate Absolute Angle
 #'
 #' @param DT data.table
 #' @param coords character vector; coordinate columns
@@ -6,16 +6,16 @@
 #' @param by character vector; columns identifying within which groups (e.g. each individual and year) to calculate angles
 #' @param returnIntermediate boolean; return intermediate columns
 #'
-#' @return input DT appended with absolute angle column 
-#' 
+#' @return input DT appended with absolute angle column
+#'
 #' @export
 #'
 #' @examples
 calc_abs_angle <- function(DT,
-                          coords,
-                          datetime,
-                          by, 
-                          returnIntermediate = FALSE) {
+                           coords,
+                           datetime,
+                           by,
+                           returnIntermediate = FALSE) {
   # NSE
   difY <- difX <- . <- absAngle <- NULL
   
@@ -23,7 +23,7 @@ calc_abs_angle <- function(DT,
   lagCols <- paste('lead', coords, sep = '')
   difCols <- c('difX', 'difY')
   
-  setorderv(DT, datetime)
+  data.table::setorderv(DT, datetime)
   DT[, (lagCols) := data.table::shift(.SD, 1, NA, 'lead'),
      by = by, .SDcols = coords]
   
@@ -42,5 +42,5 @@ calc_abs_angle <- function(DT,
   } else {
     DT[, c(lagCols, difCols) := NULL]
     return(DT)
-  }    
+  }
 }

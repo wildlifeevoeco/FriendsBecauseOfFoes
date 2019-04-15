@@ -2,7 +2,7 @@
 % Please edit documentation in R/calc_abs_angle.R
 \name{calc_abs_angle}
 \alias{calc_abs_angle}
-\title{Absolute angle}
+\title{Calculate Absolute Angle}
 \usage{
 calc_abs_angle(DT, coords, datetime, by, returnIntermediate = FALSE)
 }
@@ -21,5 +21,5 @@ calc_abs_angle(DT, coords, datetime, by, returnIntermediate = FALSE)
 input DT appended with absolute angle column
 }
 \description{
-Absolute angle
+Calculate Absolute Angle
 }

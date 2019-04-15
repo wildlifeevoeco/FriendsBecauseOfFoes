@@ -2,10 +2,9 @@
 % Please edit documentation in R/calc_rel_angle.R
 \name{calc_rel_angle}
 \alias{calc_rel_angle}
-\title{Relative Angles}
+\title{Calculate Relative Angles}
 \usage{
-calc_rel_angle(DT, coords = NULL, datetime = NULL, id = NULL,
-  yr = NULL, allCW = FALSE, returnIntermediate = FALSE)
+calc_rel_angle(DT, coords = NULL, datetime = NULL, by = NULL)
 }
 \arguments{
 \item{DT}{data.table}
@@ -14,14 +13,8 @@ calc_rel_angle(DT, coords = NULL, datetime = NULL, id = NULL,
 
 \item{datetime}{character; datetime column}
 
-\item{id}{character; id column}
-
-\item{yr}{character; year column}
-
-\item{allCW}{boolean; all clockwise}
-
-\item{returnIntermediate}{boolean; return intermediate columns}
+\item{by}{character vector; columns identifying within which groups (e.g. each individual and year) to calculate angles}
 }
 \description{
-Relative Angles
+Calculate Relative Angles
 }
