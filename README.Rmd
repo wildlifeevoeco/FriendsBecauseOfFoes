@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 # Easter Week Challenge
 
 ## Rerun
-*deleted scripts*, ~~completed~~, (Old Name)
+~~*deleted scripts*~~, ~~completed~~, (Old Name)
 
 * scripts
   * 1-data-prep
@@ -22,22 +22,22 @@ knitr::opts_chunk$set(
     * ~~CoyotePrep.R~~
     * ~~ElkPrep.R~~
     * ~~WolfPrep.R~~
-    * ~~CovariatePrep.R (RasterPrep.R)~~
+    * ~~CovariatePrepNL.R CovariatePrepRMNP.R(RasterPrep.R)~~
     * ~~*RuggCalc.R*~~
   * 2-rsf
     * Generating summary tables for RSFs.R
-    * BearRSF.R
-    * CoyoteRSF.R
-    * NLPredRSFs.R
+    * BearRSF.R (NLPredRSFs.R)
+    * CoyoteRSF.R (NLPredRSFs.R)
     * ~~WolfRSF.R~~
-    *  CaribouRSF.R
+    * ~~*NLPredRSFs.R*~~
+    *  CaribouRSF.R (NLPredRSFs.R)
     * ~~ElkRSF.R~~
   * 3-extraction
-    * cariboudata-rsfvalues.R
-    * ~~Elk-Extraction.R (elkdata-rsfvalues.R)~~
+    * Caribou-Extraction.R (cariboudata-rsfvalues.R)
+    * Elk-Extraction.R (elkdata-rsfvalues.R)
   * 4-sociality
     * CalculateTurnAngles.R
-    *  NearestNeighbourAnalysis.R
+    * NearestNeighbourAnalysis.R
   * 5-model
     * socialitydomainGLM.R
   * 0-variables

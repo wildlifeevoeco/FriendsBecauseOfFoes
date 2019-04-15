@@ -5,7 +5,7 @@
 
 ## Rerun
 
-*deleted scripts*, ~~completed~~, (Old Name)
+~~*deleted scripts*~~, ~~completed~~, (Old Name)
 
   - scripts
       - 1-data-prep
@@ -14,19 +14,19 @@
           - ~~CoyotePrep.R~~
           - ~~ElkPrep.R~~
           - ~~WolfPrep.R~~
-          - ~~CovariatePrep.R (RasterPrep.R)~~
+          - ~~CovariatePrepNL.R CovariatePrepRMNP.R(RasterPrep.R)~~
           - ~~*RuggCalc.R*~~
       - 2-rsf
           - Generating summary tables for RSFs.R
-          - BearRSF.R
-          - CoyoteRSF.R
-          - NLPredRSFs.R
+          - BearRSF.R (NLPredRSFs.R)
+          - CoyoteRSF.R (NLPredRSFs.R)
           - ~~WolfRSF.R~~
-          - CaribouRSF.R
+          - ~~*NLPredRSFs.R*~~
+          - CaribouRSF.R (NLPredRSFs.R)
           - ~~ElkRSF.R~~
       - 3-extraction
-          - cariboudata-rsfvalues.R
-          - ~~Elk-Extraction.R (elkdata-rsfvalues.R)~~
+          - Caribou-Extraction.R (cariboudata-rsfvalues.R)
+          - Elk-Extraction.R (elkdata-rsfvalues.R)
       - 4-sociality
           - CalculateTurnAngles.R
           - NearestNeighbourAnalysis.R
@@ -54,21 +54,19 @@ grep -rni 'scripts/' -e 'TODO' || true;
 #> scripts/4-sociality/CalculateTurnAngles.R:30:# TODO: check rleid/ http://stackoverflow.com/q/21421047/559784
 #> scripts/4-sociality/CalculateTurnAngles.R:34:# TODO: (Ask Hance) would it be better if we had range from 0-360 instead? for dif abs angle
 #> scripts/4-sociality/CalculateTurnAngles.R:37:#TODO: check that yrcol is well handled
-#> scripts/1-data-prep/NL/CovariatePrepNL.R:24:#TODO: run prep/processing for ruggedness
+#> scripts/1-data-prep/NL/CovariatePrepNL.R:78:#TODO: why non matching origin
 #> scripts/1-data-prep/NL/BearPrep.R:97:# TODO: is this really the step length threshold?? 
 #> scripts/1-data-prep/NL/CoyotePrep.R:191:# TODO: is this really the step length threshold?? 
 #> scripts/2-rsf/RMNP/ElkRSF.R:48:# TODO: elk - 4.3 regular to 1 observed
-#> scripts/2-rsf/RMNP/WolfRSF.R:13:# TODO: check need car and piecewiseSEM?
-#> scripts/2-rsf/RMNP/WolfRSF.R:47:# TODO: wolf - 7 regular to 1 observed
+#> scripts/2-rsf/RMNP/WolfRSF.R:38:# TODO: wolf - 7 regular to 1 observed
 #> scripts/2-rsf/NL/CoyoteRSF.R:78:# TODO: Remove all points with 50% NA data
 #> scripts/2-rsf/NL/CoyoteRSF.R:82:# TODO: need ruggedness
 #> scripts/2-rsf/NL/CoyoteRSF.R:107:# TODO: need ruggedness
 #> scripts/2-rsf/NL/CaribouRSF.R:77:# TODO: Remove all points with 50% NA data
 #> scripts/2-rsf/NL/CaribouRSF.R:81:# TODO: need ruggedness
 #> scripts/2-rsf/NL/CaribouRSF.R:106:# TODO: need ruggedness
-#> scripts/2-rsf/NL/BearRSF.R:78:# TODO: Remove all points with 50% NA data
-#> scripts/2-rsf/NL/BearRSF.R:82:# TODO: need ruggedness
-#> scripts/2-rsf/NL/BearRSF.R:107:# TODO: need ruggedness
+#> scripts/2-rsf/NL/BearRSF.R:37:# TODO: note change to mcps for bear rsf
+#> scripts/2-rsf/NL/BearRSF.R:85:#TODO: warning glm.fit: fitted probabilities numerically 0 or 1 occurred
 ```
 
 ## Project structure
