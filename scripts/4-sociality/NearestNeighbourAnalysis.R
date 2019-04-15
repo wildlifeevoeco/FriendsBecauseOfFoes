@@ -8,16 +8,14 @@
 #TODO: Grab Hance's updated social metrics from modeling script
 
 ### Packages ----
-libs <- c('data.table', 
-          'ewc',
-          'SearchTrees', 'igraph')
+libs <- c('data.table', 'ewc', 'spatsoc', 'SearchTrees', 'igraph')
 lapply(libs, require, character.only = TRUE)
 
 
 ### Input data ----
 # Which species would you like to calculate abs and rel TA for?
 species <- 'elk'
-DT <- readRDS(paste0('output/angles/', species, 'Angle.Rds'))
+DT <- readRDS(paste0('output/4-sociality/', species, 'Angle.Rds'))
 
 coordCols <- c('EASTING', 'NORTHING')
 idCol <- 'id'
@@ -29,7 +27,6 @@ all.equal(DT[, .(N = uniqueN(id)), by = timegroup],
 
 # Which timegroups have more than one individual?
 DT[, NbyTime := .N, by = timegroup]
-DT[, qplot(NbyTime)]
 
 ### Quadtree - Find Nearest Neighbour ----
 # How many neighbours 
