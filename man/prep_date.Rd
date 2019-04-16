@@ -7,6 +7,8 @@
 prep_date(DT, dateCol, timeCol, dateFormat = NULL, timeFormat = NULL)
 }
 \arguments{
+\item{DT}{data.table}
+
 \item{dateCol}{}
 
 \item{timeCol}{}
