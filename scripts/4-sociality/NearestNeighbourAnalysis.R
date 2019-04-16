@@ -31,6 +31,14 @@ edges <- edge_nn(DT, id = idCol, coords = coordCols,
 # Check
 edges[, .N, timegroup][, sum(N)] == nrow(edges)
 
+### Create Dyadic ID ----
+dyads <- dyad_id(edges, id = 'ID', nn = 'NN')
+
+edges[dyads, dyadID := dyadID, on = .(ID = ID, NN = NN)]
+
+# Check
+edges[is.na(dyadID), .N] == 0
+
 
 ### Combine ID + NN columns
 cols <- c('EASTING',
@@ -76,11 +84,6 @@ message(paste(DT[id == neighbour1, .N],
 ... replaced with NA"))
 DT[id == neighbour1, (neighbourValCols) := NA]
 
-
-### Create Dyadic ID ----
-source('R/0-functions/DyadicID.R')
-# Since the merge reorders, we have to reassign
-DT <- DyadId(DT, idCol, neighbourCols)
 
 ### Calculate dyadic distance ----
 source('R/0-functions/DyadicDistance.R')
