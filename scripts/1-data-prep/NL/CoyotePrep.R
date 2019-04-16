@@ -3,10 +3,13 @@
 
 
 ### Packages ----
-libs <- c('data.table', 'ggplot2', 
-          'spatsoc', 'ewc',
+libs <- c('data.table', 'spatsoc', 'ewc',
           'sp', 'rgdal', 'adehabitatLT')
 lapply(libs, require, character.only = TRUE)
+
+### Set variables ----
+source('scripts/0-variables/variables.R')
+
 
 ### Input data ----
 dropCols <-
@@ -28,9 +31,6 @@ dropCols <-
 # Read in coyote data, dropping above columns
 coyote <- fread('input/locs/Coyote.csv',
                 drop = dropCols)
-
-# UTM zone 21N
-utm <- '+proj=utm +zone=21 ellps=WGS84'
 
 
 ### Variables ----
@@ -58,8 +58,6 @@ coyote[order(datetime),
 coyote[sample(.N, 5), .(idate, itime, yr, mnth, julday)]
 
 # Season
-source('scripts/0-variables/CutOffThresholds.R')
-
 coyote[julday %between% winter, season := 'winter']
 coyote[julday %between% spring, season := 'spring']
 
@@ -113,7 +111,7 @@ coyote <- coyote[status == "RESIDENT" | status == "SUB-TRANSIENT"]
 # Project coordinates to UTM
 coyote[, c(projXCol, projYCol) := 
          as.data.table(
-           project(cbind(get(xCol), get(yCol)), utm))]
+           project(cbind(get(xCol), get(yCol)), utmNL))]
 
 # Step Length
 step_length(
@@ -202,8 +200,6 @@ coyote <- coyote[stepLength < stepLengthThreshold &
 
 ### Output ----
 # Match variables to output variables = consistent variables across species
-source('scripts/0-variables/variables.R')
-
 outputVariables <- c(outputVariables, 'herd', 'sex')
 
 setnames(coyote, c('ANIMAL_ID', 'SPECIES', 'season', 'timegroup',
