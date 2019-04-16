@@ -5,9 +5,6 @@
 ### Packages ----
 libs <- c('data.table', 'sp', 'adehabitatHR', 'raster',
           'ewc', 'rgeos', 'lme4', 'car','piecewiseSEM')
-# libs <- c('adehabitatHR', 'rgeos', 'spatstat', 'raster',
-#           'ewc', 
-#           'data.table', 'piecewiseSEM', 'rgdal')
 lapply(libs, require, character.only = TRUE)
 
 
@@ -111,9 +108,9 @@ rsquared(springwolfRSF)
 springCoefs <- coef(springwolfRSF)[-1]
 
 # Create the raster matching the first raster layer with the first fixed effect
-intercept <- coef(winterwolfRSF)[1]
+intercept <- coef(springwolfRSF)[1]
 
-if (all(names(winterCoefs) == names(lsRasters))) {
+if (all(names(springCoefs) == names(lsRasters))) {
   springRaster <-
     exp(intercept + Reduce('+', Map('*', springCoefs, lsRasters)))
 } else {
