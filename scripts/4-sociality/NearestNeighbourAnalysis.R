@@ -50,9 +50,11 @@ cols <- c('EASTING',
           'relAngle')
 
 if (species == 'elk') {
-  cols <- c(cols, 'predatorRSF', 'preyRSF')
+  rsfCols <- c('predatorRSF', 'preyRSF')
+  cols <- c(cols, rsfCols)
 } else if (species == 'caribou') {
-  cols <- c(cols, 'caribouRSF', 'coyoteRSF', 'bearRSF')
+  rsfCols <- c('caribouRSF', 'coyoteRSF', 'bearRSF')
+  cols <- c(cols, rsfCols)
 }
 
 slim <- DT[, .SD, .SDcols = c('id', 'timegroup', cols)]
