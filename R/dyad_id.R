@@ -38,7 +38,7 @@ dyad_id <- function(DT, id, nn) {
   dyads[, (c(id, nn)) := lapply(.SD, function(col) as(col, type)),
         .SDcols = c(id, nn)]
 
-  return(dyads)
+  return(dyads[])
 }
 
 # DT

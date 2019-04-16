@@ -53,37 +53,24 @@ if (species == 'elk') {
   cols <- c(cols, 'caribouRSF', 'coyoteRSF', 'bearRSF')
 }
 
-both <- merge(
+slim <- DT[, .SD, .SDcols = c('id', 'timegroup', cols)]
+
+m <- merge(
   x = edges,
-  y = DT,
-  by.x = c('id', 'timegroup'),
-  by.y = c('NN', 'timegroup'),
+  y = slim,
+  by.x = c('ID', 'timegroup'),
+  by.y = c('id', 'timegroup'),
+  all.x = TRUE
+)
+
+mm <- merge(
+  x = m,
+  y = slim,
+  by.x = c('NN', 'timegroup'),
+  by.y = c('id', 'timegroup'),
   all.x = TRUE,
   suffixes = c('', '.nn')
 )
-both
-
-# NA in neighbour means that there were less than the NbyTime in the timegroup
-# Careful with the columns selected in the second argument and 
-#  subsequent neighbourValCols
-DT <- merge(DT, 
-            DT[, .(neighbour1 = id, timegroup,
-                   rEASTING = EASTING, rNORTHING = NORTHING,
-                   rstepLength = stepLength,
-                   rpredatorRSF = predatorRSF, rpreyRSF = preyRSF,
-                   rabsAngle = absAngle, rrelAngle = relAngle)],
-            all.x = TRUE,
-            suffixes = c('', 'r'))
-
-
-neighbourValCols <- c('rEASTING', 'rNORTHING', 'rstepLength',
-                      'rpredatorRSF', 'rpreyRSF',
-                      'rabsAngle', 'rrelAngle')
-message(paste(DT[id == neighbour1, .N], 
-"row(s) where id is equal to the NN
-... replaced with NA"))
-DT[id == neighbour1, (neighbourValCols) := NA]
-
 
 ### Calculate dyadic distance ----
 source('R/0-functions/DyadicDistance.R')
