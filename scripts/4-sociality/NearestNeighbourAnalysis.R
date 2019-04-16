@@ -113,13 +113,19 @@ lapply(rsfCols, function(col) {
 
 out
 
-### Number of neighbours within distance ----
-# Find the number of neighbours within specific distance threshold
-distanceThreshold <- 500
+### Find neighbours within distance with spatsoc ----
+threshold <- 500
+
+wiDist <- edge_dist(
+  DT = DT,
+  threshold = threshold,
+  id = idCol,
+  coords = coordCols,
+  timegroup = 'timegroup',
+  fillNA = TRUE
+)
 
 
-# edge_dist !!!!!!!!!!!!!!!!!
-source('R/0-functions/FindNumbWithinDistance.R')
 out[NbyTime > 1, 
     (withinCol) := FindNumbWithinDist(.SD, distanceThreshold,
                                       coordCols, idCol),
