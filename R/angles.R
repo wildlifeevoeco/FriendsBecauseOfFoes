@@ -11,11 +11,12 @@
 #' @export
 #'
 #' @examples
-calc_abs_angle <- function(DT,
-                           coords,
-                           datetime,
-                           by,
-                           returnIntermediate = FALSE) {
+abs_angle <- function(DT,
+                      coords,
+                      datetime,
+                      by,
+                      returnIntermediate = FALSE) {
+  
   # NSE
   difY <- difX <- . <- absAngle <- NULL
   
@@ -48,13 +49,13 @@ calc_abs_angle <- function(DT,
 
 #' Calculate Relative Angles
 #'
-#' @inheritParams calc_abs_angle
+#' @inheritParams abs_angle
 #'
 #' @return
 #' @export
 #'
 #' @examples
-calc_rel_angle <-
+rel_angle <-
   function(DT,
            coords = NULL,
            datetime = NULL,
@@ -74,11 +75,7 @@ calc_rel_angle <-
          by = by]
       
     } else {
-      calc_abs_angle(DT, coords, datetime, by = by)
-      
-      DT[, relAngle := absAngle -
-           data.table::shift(absAngle, 1, type = 'lag'),
-         by = by]
+      stop('absAngle column not found - please run abs_angle')
     }
     
     return(DT)

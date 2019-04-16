@@ -26,17 +26,21 @@ yrCol <- 'yr'
 
 ### Calculate Angles ----
 # Absolute angles
-calc_abs_angle(DT = DT,
-               coords = coordCols,
-               datetime = datetimeCol,
-               by = c('season', idCol, yrCol),
-               returnIntermediate = FALSE)
+abs_angle(
+  DT = DT,
+  coords = coordCols,
+  datetime = datetimeCol,
+  by = c('season', idCol, yrCol),
+  returnIntermediate = FALSE
+)
 
 # Relative angles
-calc_rel_angle(DT = DT,
-               coords = coordCols,
-               datetime = datetimeCol,
-               by = c('season', idCol, yrCol))
+rel_angle(
+  DT = DT,
+  coords = coordCols,
+  datetime = datetimeCol,
+  by = c('season', idCol, yrCol)
+)
 
 ### Output ----
 # Check results

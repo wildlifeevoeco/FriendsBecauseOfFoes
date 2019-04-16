@@ -1,6 +1,6 @@
 #' Date prep
 #'
-#' @inheritParams calc_abs_angle
+#' @inheritParams abs_angle
 #' @param dateCol 
 #' @param timeCol 
 #' @param dateFormat 
