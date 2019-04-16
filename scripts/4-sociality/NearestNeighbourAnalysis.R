@@ -122,7 +122,7 @@ wiDist <- edge_dist(
   id = idCol,
   coords = coordCols,
   timegroup = 'timegroup',
-  fillNA = TRUE
+  fillNA = FALSE
 )
 
 
