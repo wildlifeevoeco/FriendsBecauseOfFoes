@@ -67,49 +67,60 @@ m <- merge(
   all.x = TRUE
 )
 
-mm <- merge(
+suff <- '.nn'
+out <- merge(
   x = m,
   y = slim,
   by.x = c('NN', 'timegroup'),
   by.y = c('id', 'timegroup'),
   all.x = TRUE,
-  suffixes = c('', '.nn')
+  suffixes = c('', suff)
 )
 
 ### Calculate dyadic distance ----
 dyad_dist(
-  DT = mm,
+  DT = out,
   coords = coordCols,
-  suffix = '.nn',
+  suffix = suff,
   returnIntermediate = FALSE
 )
 
 ### Differences within dyads ----
 # Dif in step length
-DT[, dSI := abs(stepLength - rstepLength)]
+out[, dSI := abs(stepLength - stepLength.nn)]
 
 # Dif in abs Angle
-DT[, dAbsAng := abs(absAngle - rabsAngle)]
+out[, dAbsAng := abs(absAngle - absAngle.nn)]
 
-# Dif in RSF
-DT[, dPredRSF := abs(predatorRSF - rpredatorRSF)]
-DT[, dPreyRSF := abs(preyRSF - rpreyRSF)]
 
-# Avg RSF
-DT[, avgPredRSF := rowMeans(.SD), .SDcols = c('predatorRSF', 'rpredatorRSF')]
-DT[, avgPreyRSF := rowMeans(.SD), .SDcols = c('preyRSF', 'rpreyRSF')]
+## RSF
+lapply(rsfCols, function(col) {
+  difnm <- paste0('d', col)
+  avgnm <- paste0('avg', col)
+  endnm <- paste0('end', col)
+  sufnm <- paste0(col, suff)
+  
+  # Difference within dyad
+  out[, (difnm) := abs(.SD[[1]] - .SD[[2]]), .SDcols = c(col, sufnm)]
+  
+  # Average within dyad 
+  out[, (avgnm) := rowMeans(.SD), .SDcols = c(col, sufnm)]
+  
+  # End RSF 
+  out[, (endnm) := shift(.SD, 1, NA, 'lead'), .SDcols = c(col, sufnm)]
+})
 
-### End RSF values ----
-DT[, endPredRSF := shift(predatorRSF, 1, NA, 'lead')]
-DT[, endPreyRSF := shift(preyRSF, 1, NA, 'lead')]
+
+
 
 ### Number of neighbours within distance ----
 # Find the number of neighbours within specific distance threshold
 distanceThreshold <- 500
 withinCol <- paste0('nWithin', distanceThreshold)
 
+# edge_dist !!!!!!!!!!!!!!!!!
 source('R/0-functions/FindNumbWithinDistance.R')
-DT[NbyTime > 1, 
+out[NbyTime > 1, 
     (withinCol) := FindNumbWithinDist(.SD, distanceThreshold,
                                       coordCols, idCol),
     by = timegroup]
