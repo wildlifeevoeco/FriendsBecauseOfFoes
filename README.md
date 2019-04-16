@@ -40,20 +40,12 @@
 ``` bash
 grep -rni 'R/' -e 'TODO' || true;
 grep -rni 'scripts/' -e 'TODO' || true;
-#> R/calc_abs_angle.R:44:  # TODO: what did this mean? .. my poor code commenting
 #> R/prep_date.R:16:  # TODO: add a tz argument
-#> scripts/5-model/socialitydomainGLM.R:6:# TODO:  how to ignore dif in line endings/force git to use one
 #> scripts/3-extraction/Caribou-Extraction.R:5:# TODO: rename script/folder to domain? domain extraction? etc
 #> scripts/3-extraction/Elk-Extraction.R:5:# TODO: rename script/folder to domain? domain extraction? etc
 #> scripts/3-extraction/Elk-Extraction.R:40:# TODO: rename output "rsfvalues"
-#> scripts/4-sociality/NearestNeighbourAnalysis.R:7:#TODO: use edge-dist/nn instead
-#> scripts/4-sociality/NearestNeighbourAnalysis.R:8:#TODO: Grab Hance's updated social metrics from modeling script
-#> scripts/4-sociality/NearestNeighbourAnalysis.R:46:# TODO: investigate the both coords and ..coords exist in calling scope data.table error
-#> scripts/4-sociality/NearestNeighbourAnalysis.R:143:# TODO: investigate the both coords and ..coords exist in calling scope data.table error
-#> scripts/4-sociality/CalculateTurnAngles.R:5:#TODO: Grab Hance's updated social metrics from modeling script
-#> scripts/4-sociality/CalculateTurnAngles.R:30:# TODO: check rleid/ http://stackoverflow.com/q/21421047/559784
-#> scripts/4-sociality/CalculateTurnAngles.R:34:# TODO: (Ask Hance) would it be better if we had range from 0-360 instead? for dif abs angle
-#> scripts/4-sociality/CalculateTurnAngles.R:37:#TODO: check that yrcol is well handled
+#> scripts/4-sociality/NearestNeighbourAnalysis.R:4:#TODO: Grab Hance's updated social metrics from modeling script
+#> scripts/4-sociality/NearestNeighbourAnalysis.R:127:# TODO: investigate the both coords and ..coords exist in calling scope data.table error
 #> scripts/1-data-prep/NL/CovariatePrepNL.R:78:#TODO: why non matching origin
 #> scripts/1-data-prep/NL/BearPrep.R:97:# TODO: is this really the step length threshold?? 
 #> scripts/1-data-prep/NL/CoyotePrep.R:191:# TODO: is this really the step length threshold?? 
