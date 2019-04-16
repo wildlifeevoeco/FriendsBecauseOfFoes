@@ -29,7 +29,7 @@ mcps <- mcp(points, percent = 100)
 
 # Create Regular Grid
 # TODO: size of grid?
-regPts <- generate_grid(mcps, 210, crs = utmNL)
+regPts <- generate_grid(mcps, 80, crs = utmNL)
 setnames(regPts, c('EASTING', 'NORTHING'))
 
 # Combine observed and regular grid points
@@ -75,7 +75,7 @@ winterPts[season == 'grid', season := "winter"]
 
 #TODO: warning glm.fit: fitted probabilities numerically 0 or 1 occurred 
 winterRSF <- glm(reformulate(lsCovers, response = 'observed'), 
-                 family = 'binomial',data = winterPts)
+                 family = 'binomial', data = winterPts)
 
 summary(winterRSF)
 vif(winterRSF)
