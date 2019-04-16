@@ -17,24 +17,30 @@ dyad_dist <-
     # NSE
     . <- dyadDist <- NULL
     
-    # Create and dif column names
+    # Difference column names
     difCols <- c('difX', 'difY')
     
-    # Find the difference between subsequent points in x,y
-    DT[, (difCols) := .((get(coords[1]) - get(suffix[1])),
-                        (get(coords[2]) - get(suffix[2])))]
+    # Neighbour column names
+    neighs <- paste0(coords, suffix)
     
-    difSqCols <- paste0('sq', difCols)
+    
+    # Find the difference between subsequent points in x,y
+    DT[, (difCols) := .(.SD[[1]] - .SD[[3]], .SD[[2]] - .SD[[4]]),
+       .SDcols = c(coords, neighs)]
+    
+    sqCols <- paste0('sq', difCols)
     
     # Square the difference
-    DT[, (difSqCols) := .(get(difCols[1]) ^ 2, get(difCols[2]) ^ 2)]
+    DT[, (sqCols) := .(.SD[[1]] ^ 2, .SD[[2]] ^ 2),
+       .SDcols = difCols]
     
     # Square root the summed difference for a simple step length
-    DT[, dyadDist := sqrt(rowSums(.SD)), .SDcols = difSqCols]
+    DT[, dyadDist := sqrt(rowSums(.SD)), .SDcols = sqCols]
     
     if (returnIntermediate) {
-      DT
+      return(DT)
     } else {
-      DT[, c(difCols, difSqCols) := NULL]
+      DT[, c(difCols, sqCols) := NULL]
+      return(DT)
     }
   }

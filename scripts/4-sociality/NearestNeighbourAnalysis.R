@@ -73,10 +73,12 @@ mm <- merge(
 )
 
 ### Calculate dyadic distance ----
-source('R/0-functions/DyadicDistance.R')
-DyadicDistance(DT, coordCols = coordCols,
-               neighbourCoordCols = paste0('r', coordCols),
-               returnIntermediate = FALSE)
+dyad_dist(
+  DT = mm,
+  coords = coordCols,
+  suffix = '.nn',
+  returnIntermediate = FALSE
+)
 
 ### Differences within dyads ----
 # Dif in step length
