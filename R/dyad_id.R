@@ -17,6 +17,7 @@ dyad_id <- function(DT, id, nn) {
   g <- igraph::graph_from_data_frame(unique(na.omit(edges)[, .SD, .SDcols = c(id, nn)]),
                                      directed = FALSE)
   
+  simple <- igraph::simplify(g)
   dyads <- data.table::data.table(igraph::get.edgelist(g),
                                   as.numeric(igraph::E(g)))
   nm <- c(id, nn, paste0('dyad', id))
