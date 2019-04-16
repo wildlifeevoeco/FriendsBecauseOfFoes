@@ -21,16 +21,36 @@ idCol <- 'id'
 all.equal(DT[, .(N = uniqueN(id)), by = timegroup],
           DT[, .N, by = timegroup])
 
-# Which timegroups have more than one individual?
-DT[, NbyTime := .N, by = timegroup]
+# Number of individuals in each timegroup
+DT[, nByTimegroup := .N, timegroup]
+
 
 ### Find nearest neighbour with spatsoc ----
-edge_nn(DT, id = idCol, coords = coordCols, 
-        timegroup = 'timegroup')
+edges <- edge_nn(DT, id = idCol, coords = coordCols, 
+                 timegroup = 'timegroup')
+# Check
+edges[, .N, timegroup][, sum(N)] == nrow(edges)
 
 
-
-
+### Combine ID + NN columns
+cols <- c('EASTING', 'NORTHING',
+          'stepLength', 
+          'absAngle', 
+          'relAngle')
+if (species == 'elk') {
+  cols <- c(cols, 'predatorRSF', 'preyRSF')
+} else if (species == 'caribou') {
+  cols <- c(cols, 'carRSF')
+}
+both <- merge(
+  x = edges,
+  y = DT,
+  by.x = c('id', 'timegroup'),
+  by.y = c('NN', 'timegroup'),
+  all.x = TRUE,
+  suffixes = c('', '.nn')
+)
+both
 
 # NA in neighbour means that there were less than the NbyTime in the timegroup
 # Careful with the columns selected in the second argument and 
