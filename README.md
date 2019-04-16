@@ -41,12 +41,11 @@
 grep -rni 'R/' -e 'TODO' || true;
 grep -rni 'scripts/' -e 'TODO' || true;
 #> R/prep_date.R:16:  # TODO: add a tz argument
+#> R/internal.R:1:#TODO: remove? is this used?
 #> scripts/3-extraction/Caribou-Extraction.R:5:# TODO: rename script/folder to domain? domain extraction? etc
 #> scripts/3-extraction/Elk-Extraction.R:5:# TODO: rename script/folder to domain? domain extraction? etc
 #> scripts/3-extraction/Elk-Extraction.R:40:# TODO: rename output "rsfvalues"
 #> scripts/4-sociality/NearestNeighbourAnalysis.R:4:#TODO: Grab Hance's updated social metrics from modeling script
-#> scripts/4-sociality/NearestNeighbourAnalysis.R:127:# TODO: investigate the both coords and ..coords exist in calling scope data.table error
-#> scripts/1-data-prep/NL/CovariatePrepNL.R:78:#TODO: why non matching origin
 #> scripts/1-data-prep/NL/BearPrep.R:97:# TODO: is this really the step length threshold?? 
 #> scripts/1-data-prep/NL/CoyotePrep.R:191:# TODO: is this really the step length threshold?? 
 #> scripts/2-rsf/RMNP/ElkRSF.R:48:# TODO: elk - 4.3 regular to 1 observed
@@ -57,8 +56,7 @@ grep -rni 'scripts/' -e 'TODO' || true;
 #> scripts/2-rsf/NL/CaribouRSF.R:77:# TODO: Remove all points with 50% NA data
 #> scripts/2-rsf/NL/CaribouRSF.R:81:# TODO: need ruggedness
 #> scripts/2-rsf/NL/CaribouRSF.R:106:# TODO: need ruggedness
-#> scripts/2-rsf/NL/BearRSF.R:37:# TODO: note change to mcps for bear rsf
-#> scripts/2-rsf/NL/BearRSF.R:85:#TODO: warning glm.fit: fitted probabilities numerically 0 or 1 occurred
+#> scripts/2-rsf/NL/BearRSF.R:78:#TODO: warning glm.fit: fitted probabilities numerically 0 or 1 occurred
 ```
 
 ## Project structure
