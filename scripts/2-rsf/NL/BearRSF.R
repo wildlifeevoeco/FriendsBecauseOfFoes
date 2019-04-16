@@ -19,22 +19,15 @@ source('scripts/0-variables/variables.R')
 bear <- readRDS('output/1-data-prep/bear.Rds')
 
 # Covariates
-covers <- gsub(".tif|100|prep", "", 
+lsCovers <- gsub(".tif|100|prep", "", 
                dir('output/1-data-prep/covariates/NL', '.tif$'))
-paths <- dir('output/1-data-prep/covariates/NL', 
+lsPaths <- dir('output/1-data-prep/covariates/NL', 
              '.tif$', full.names = TRUE)
-names(paths) <- covers
-
-rmList <- which(covers %in% c('Water', 'NLElev', 'Wetland'))
-
-lsCovers <- covers[-rmList]
-lsPaths <- paths[-rmList]
-
+names(lsPaths) <- lsCovers
 
 ### Processing ----
 points <- SpatialPoints(bear[, .(EASTING, NORTHING)],
                         proj4string = CRS(utmNL))
-# TODO: note change to mcps for bear rsf
 mcps <- mcp(points, percent = 100)
 
 # Create Regular Grid
