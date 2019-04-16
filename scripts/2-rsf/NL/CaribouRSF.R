@@ -1,12 +1,10 @@
 ### Caribou RSF ----
 # Authors: Michel Laforge, Alec Robitaille
 
+
 ### Packages ----
 libs <- c('data.table', 'sp', 'adehabitatHR', 'raster',
           'ewc', 'rgeos', 'lme4', 'car','piecewiseSEM')
-# libs <- c('adehabitatHR', 'rgeos', 'spatstat', 'raster',
-#           'ewc', 
-#           'data.table', 'piecewiseSEM', 'rgdal')
 lapply(libs, require, character.only = TRUE)
 
 
@@ -18,29 +16,20 @@ source('scripts/0-variables/variables.R')
 caribou <- readRDS('output/1-data-prep/caribou.Rds')
 
 # Covariates
-covers <- gsub(".tif|100|prep", "", 
-               dir('output/1-data-prep/covariates/NL', '.tif$'))
-paths <- dir('output/1-data-prep/covariates/NL', 
-             '.tif$', full.names = TRUE)
-names(paths) <- covers
-
-rmList <- which(covers %in% c('Water', 'NLElev', 'Wetland'))
-
-lsCovers <- covers[-rmList]
-lsPaths <- paths[-rmList]
-
+lsCovers <- gsub(".tif|100|prep", "", 
+                 dir('output/1-data-prep/covariates/NL', '.tif$'))
+lsPaths <- dir('output/1-data-prep/covariates/NL', 
+               '.tif$', full.names = TRUE)
+names(lsPaths) <- lsCovers
 
 ### Processing ----
 points <- SpatialPoints(caribou[, .(EASTING, NORTHING)],
                         proj4string = CRS(utmNL))
-width <- caribou[, mean(stepLength)]
-buffers <- buffer(points, width = width)
-intersect <- gIntersection(nlBounds, gUnaryUnion(buffers))
-
-buffered <- buffer(points, width = caribou[, mean(stepLength)])
+mcps <- mcp(points, percent = 100)
 
 # Create Regular Grid
-regPts <- generate_grid(intersect, 90, crs = utmNL)
+# TODO: size of grid?
+regPts <- generate_grid(mcps, 210, crs = utmNL)
 setnames(regPts, c('EASTING', 'NORTHING'))
 
 # Combine observed and regular grid points
@@ -63,7 +52,7 @@ samplePts <- samplePts[, ..cols]
 samplePts[, rowID := .I]
 
 # Sample rasters
-lsRasters <- lapply(lsPaths, raster)
+lsRasters <- lapply(lsPaths, function(r) crop(raster(r), mcps))
 
 samplePts[, (lsCovers) := lapply(
   lsRasters,
@@ -74,14 +63,17 @@ samplePts[, (lsCovers) := lapply(
 
 
 ### RSF ----
-# TODO: Remove all points with 50% NA data
+# Remove all points with <50% landcover sampled
+not <- which(lsCovers %in% c('Ruggedness' ,'WaterDist', 'LinearDist'))
+samplePts[, lcNA := rowSums(.SD), .SDcols = lsCovers[-not]]
 
+samplePts <- samplePts[lcNA > 0.5]
 
 # Winter RSF
-# TODO: need ruggedness
 winterPts <- samplePts[season == "winter" | season == 'grid']
 winterPts[season == 'grid', season := "winter"]
 
+#TODO: warning glm.fit: fitted probabilities numerically 0 or 1 occurred 
 winterRSF <- glm(reformulate(lsCovers, response = 'observed'), 
                  family = 'binomial',data = winterPts)
 
@@ -103,24 +95,24 @@ if (all(names(winterCoefs) == names(lsRasters))) {
 }
 
 # Spring RSF
-# TODO: need ruggedness
-springwolf <- samplePts[season == "spring" | season == 'grid']
-springwolf[observed == 0, season := "spring"]
+springPts <- samplePts[season == "spring" | season == 'grid']
+springPts[observed == 0, season := "spring"]
 
-springwolfRSF <- glm(reformulate(lsCovers, response = 'observed'), 
-                     family = 'binomial',data = springwolf)
+springRSF <- glm(reformulate(lsCovers, response = 'observed'),
+                 family = 'binomial',
+                 data = springPts)
 
-summary(springwolfRSF)
-vif(springwolfRSF)
-rsquared(springwolfRSF)
+summary(springRSF)
+vif(springRSF)
+rsquared(springRSF)
 
 # Pull out the coefficients, dropping the intercept
-springCoefs <- coef(springwolfRSF)[-1]
+springCoefs <- coef(springRSF)[-1]
 
 # Create the raster matching the first raster layer with the first fixed effect
-intercept <- coef(winterwolfRSF)[1]
+intercept <- coef(springRSF)[1]
 
-if (all(names(winterCoefs) == names(lsRasters))) {
+if (all(names(springCoefs) == names(lsRasters))) {
   springRaster <-
     exp(intercept + Reduce('+', Map('*', springCoefs, lsRasters)))
 } else {
