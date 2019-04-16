@@ -23,7 +23,7 @@ source('scripts/0-variables/variables.R')
 # )
 
 ### List rasters ----
-rasterOptions(tmpdir = "output/2-rsf/temp")
+rasterOptions(tmpdir = "output/1-prep/covariates/temp")
 
 # Covariates
 covers <- gsub(".tif|100", "", dir('input/covariates/NL', '.tif$'))
@@ -40,49 +40,54 @@ names(lsRasters) <- lsCovers
 
 
 ### Processing ----
+# Resample non matching rasters
+beginCluster()
+linDist <- resample(lsRasters[['LinearDist']], lsRasters[['Anthro']])
+rugged <- resample(lsRasters[['Ruggedness']], lsRasters[['Anthro']])
+endCluster()
+
+
+# Find communal smallest extent
+lsExtents <- lapply(c(nlBounds = nlBounds, lsRasters), extent)
+minExtent <- Reduce(intersect, lsExtents)
+
 # Log transform
-namesTransform <- c('LinearDist', 'WaterDist')
-whichTransform <- which(names(lsRasters) %in% namesTransform)
-rasterTransform <- lsRasters[whichTransform]
+# namesTransform <- c('LinearDist', 'WaterDist')
+# whichTransform <- which(names(lsRasters) %in% namesTransform)
+# rasterTransform <- lsRasters[whichTransform]
+# 
+# transformed <- lapply(
+#   rasterTransform,
+#   FUN = function(x) {
+#     log(x + 1)
+#   }
+# )
+# 
+# lsRasters[whichTransform] <- transformed
 
-transformed <- lapply(
-  rasterTransform,
-  FUN = function(x) {
-    log(x + 1)
-  }
-)
 
-lsRasters[whichTransform] <- transformed
-
-
-# Crop (and mask) the rasters
-cropRasters <- lapply(
-  lsRasters,
-  FUN = function(r) {
-    mask(crop(r, extent(nlBounds)), nlBounds)
-  }
-)
+# Mask and crop the rasters
+cropRasters <- lapply(lsRasters, crop, minExtent)
 
 beginCluster()
 cropRasters[['LinearDist']] <- 
-  projectRaster(cropRasters[['LinearDist']], cropRasters[['Anthro']], method = 'bilinear')
+  projectRaster(cropRasters[['Anthro']], cropRasters[['LinearDist']], method = 'bilinear')
 
 cropRasters[['WaterDist']] <-
-  projectRaster(transformed[['WaterDist']], cropRasters[['Anthro']], method = 'bilinear')
+  projectRaster(cropRasters[['Anthro']], cropRasters[['WaterDist']], method = 'bilinear')
+
+cropRasters[['Ruggedness']] <- 
+  projectRaster(cropRasters[['Anthro']], cropRasters[['Ruggedness']], method = 'bilinear')
 endCluster()
 
 
 ### Output ----
-outNames <- lapply(cropRasters, names)
-
-#TODO: why non matching origin
-
 lapply(
   seq_along(cropRasters),
   FUN = function(r) {
     writeRaster(
       cropRasters[[r]],
-      paste0('output/1-data-prep/covariates/NL/prep', outNames[[r]]),
+      paste0('output/1-data-prep/covariates/NL/prep', names(cropRasters)[r]),
       format = 'GTiff',
       overwrite = TRUE
     )
