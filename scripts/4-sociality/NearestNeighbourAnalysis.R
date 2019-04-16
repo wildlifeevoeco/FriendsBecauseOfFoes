@@ -47,7 +47,8 @@ cols <- c('EASTING',
           'NORTHING',
           'stepLength',
           'absAngle',
-          'relAngle')
+          'relAngle',
+          'nByTimegroup')
 
 if (species == 'elk') {
   rsfCols <- c('predatorRSF', 'preyRSF')
@@ -111,8 +112,6 @@ lapply(rsfCols, function(col) {
 })
 
 
-out
-
 ### Find neighbours within distance with spatsoc ----
 threshold <- 500
 
@@ -133,5 +132,8 @@ unique(wiDist)[, .N] == wiDist[, .N]
 wiDist[, nWithin := .N, by = .(timegroup, ID1)]
 
 
+out[wiDist, nWithin := nWithin, 
+    on = .(ID = ID1, timegroup = timegroup)]
+
 ### Output ----
-saveRDS(DT, paste0('output/nna/', species, 'NNA.Rds'))
+saveRDS(DT, paste0('output/4-sociality/', species, 'NNA.Rds'))
