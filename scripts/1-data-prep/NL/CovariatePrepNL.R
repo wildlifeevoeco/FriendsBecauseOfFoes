@@ -46,40 +46,31 @@ linDist <- resample(lsRasters[['LinearDist']], lsRasters[['Anthro']])
 rugged <- resample(lsRasters[['Ruggedness']], lsRasters[['Anthro']])
 endCluster()
 
+lsRasters[['Ruggedness']] <- rugged
+
+
+# Log transform
+namesTransform <- c('LinearDist', 'WaterDist')
+whichTransform <- which(names(lsRasters) %in% namesTransform)
+rasterTransform <- c(linDist, lsRasters[['WaterDist']])
+
+transformed <- lapply(
+  rasterTransform,
+  FUN = function(x) {
+    log(x + 1)
+  }
+)
+
+lsRasters[whichTransform] <- transformed
+
 
 # Find communal smallest extent
 lsExtents <- lapply(c(nlBounds = nlBounds, lsRasters), extent)
 minExtent <- Reduce(intersect, lsExtents)
 
-# Log transform
-# namesTransform <- c('LinearDist', 'WaterDist')
-# whichTransform <- which(names(lsRasters) %in% namesTransform)
-# rasterTransform <- lsRasters[whichTransform]
-# 
-# transformed <- lapply(
-#   rasterTransform,
-#   FUN = function(x) {
-#     log(x + 1)
-#   }
-# )
-# 
-# lsRasters[whichTransform] <- transformed
-
 
 # Mask and crop the rasters
 cropRasters <- lapply(lsRasters, crop, minExtent)
-
-beginCluster()
-cropRasters[['LinearDist']] <- 
-  projectRaster(cropRasters[['Anthro']], cropRasters[['LinearDist']], method = 'bilinear')
-
-cropRasters[['WaterDist']] <-
-  projectRaster(cropRasters[['Anthro']], cropRasters[['WaterDist']], method = 'bilinear')
-
-cropRasters[['Ruggedness']] <- 
-  projectRaster(cropRasters[['Anthro']], cropRasters[['Ruggedness']], method = 'bilinear')
-endCluster()
-
 
 ### Output ----
 lapply(
