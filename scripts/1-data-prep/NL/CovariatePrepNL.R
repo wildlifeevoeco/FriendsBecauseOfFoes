@@ -23,7 +23,7 @@ source('scripts/0-variables/variables.R')
 # )
 
 ### List rasters ----
-rasterOptions(tmpdir = "output/1-prep/covariates/temp")
+rasterOptions(tmpdir = "output/1-data-prep/covariates/temp")
 
 # Covariates
 covers <- gsub(".tif|100", "", dir('input/covariates/NL', '.tif$'))
