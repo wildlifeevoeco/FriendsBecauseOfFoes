@@ -116,6 +116,7 @@ out
 ### Find neighbours within distance with spatsoc ----
 threshold <- 500
 
+# Which individuals are within threshold distance of each other in each timegroup?
 wiDist <- edge_dist(
   DT = DT,
   threshold = threshold,
@@ -125,11 +126,12 @@ wiDist <- edge_dist(
   fillNA = FALSE
 )
 
+# Check
+unique(wiDist)[, .N] == wiDist[, .N]
 
-out[NbyTime > 1, 
-    (withinCol) := FindNumbWithinDist(.SD, distanceThreshold,
-                                      coordCols, idCol),
-    by = timegroup]
+# Count number of edges for each individual
+wiDist[, nWithin := .N, by = .(timegroup, ID1)]
+
 
 ### Output ----
 saveRDS(DT, paste0('output/nna/', species, 'NNA.Rds'))
