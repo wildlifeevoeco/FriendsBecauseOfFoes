@@ -1,22 +1,21 @@
 #' Dyad ID
 #'
-#' @param variables
+#' @param DT
+#' @param id
+#' @param nn
 #'
 #' @return
+#' data.table with first, second ID and dyad ID
+#' 
 #' @export
 #'
 #' @examples
 dyad_id <- function(DT, id, nn) {
-  # NSE
-  dyadID <- . <- id1 <- id2 <- dyadID2 <- NULL
-  
   g <- igraph::graph_from_data_frame(unique(na.omit(edges)[, .SD, .SDcols = c(id, nn)]),
                                      directed = FALSE)
   
-  simple <- igraph::simplify(g)
-  
-  dyads <- data.table::data.table(igraph::get.edgelist(simple),
-                                  igraph::E(simple))
+  dyads <- data.table::data.table(igraph::get.edgelist(g),
+                                  igraph::E(g))
   nm <- c(paste0(id, c(1, 2)), paste0('dyad', id))
   data.table::setnames(dyads, nm)
   

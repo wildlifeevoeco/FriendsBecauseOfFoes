@@ -7,7 +7,10 @@
 dyad_id(DT, id, nn)
 }
 \arguments{
-\item{variables}{}
+\item{nn}{}
+}
+\value{
+data.table with first, second ID and dyad ID
 }
 \description{
 Dyad ID
