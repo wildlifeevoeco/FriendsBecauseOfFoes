@@ -94,21 +94,22 @@ if (all(names(winterCoefs) == names(lsRasters))) {
 }
 
 # Spring RSF
-springwolf <- samplePts[season == "spring" | season == 'grid']
-springwolf[observed == 0, season := "spring"]
+springPts <- samplePts[season == "spring" | season == 'grid']
+springPts[observed == 0, season := "spring"]
 
-springwolfRSF <- glm(reformulate(lsCovers, response = 'observed'), 
-                     family = 'binomial',data = springwolf)
+springRSF <- glm(reformulate(lsCovers, response = 'observed'),
+                 family = 'binomial',
+                 data = springPts)
 
-summary(springwolfRSF)
-vif(springwolfRSF)
-rsquared(springwolfRSF)
+summary(springRSF)
+vif(springRSF)
+rsquared(springRSF)
 
 # Pull out the coefficients, dropping the intercept
-springCoefs <- coef(springwolfRSF)[-1]
+springCoefs <- coef(springRSF)[-1]
 
 # Create the raster matching the first raster layer with the first fixed effect
-intercept <- coef(springwolfRSF)[1]
+intercept <- coef(springRSF)[1]
 
 if (all(names(springCoefs) == names(lsRasters))) {
   springRaster <-
