@@ -16,6 +16,8 @@ DT <- readRDS(paste0('output/4-sociality/', species, 'Angle.Rds'))
 coordCols <- c('EASTING', 'NORTHING')
 idCol <- 'id'
 
+if (truelength(DT) == 0) alloc.col(DT)
+
 ### Checks ----
 # Do any timegroups have the same individual twice?
 all.equal(DT[, .(N = uniqueN(id)), by = timegroup],
