@@ -18,7 +18,7 @@ dyad_id <- function(DT, id, nn) {
                                      directed = FALSE)
   
   dyads <- data.table::data.table(igraph::get.edgelist(g),
-                                  igraph::E(g))
+                                  as.numeric(igraph::E(g)))
   nm <- c(id, nn, paste0('dyad', id))
   data.table::setnames(dyads, nm)
   
