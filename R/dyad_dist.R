@@ -2,10 +2,8 @@
 #'
 #' For each dyad, calculate the euclidean distance between locations.
 #'
-#' @param DT
-#' @param coords
-#' @param suffix
-#' @param returnIntermediate
+#' @inheritParams abs_angle 
+#' @param suffix in column names associated with neighbours (e.g.: '.nn')
 #'
 #' @return
 #' @export

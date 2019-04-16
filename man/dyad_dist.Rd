@@ -7,7 +7,13 @@
 dyad_dist(DT, coords, suffix = NULL, returnIntermediate = FALSE)
 }
 \arguments{
-\item{returnIntermediate}{}
+\item{DT}{data.table}
+
+\item{coords}{character vector; coordinate columns}
+
+\item{suffix}{in column names associated with neighbours (e.g.: '.nn')}
+
+\item{returnIntermediate}{boolean; return intermediate columns}
 }
 \description{
 For each dyad, calculate the euclidean distance between locations.
