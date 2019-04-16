@@ -107,16 +107,16 @@ lapply(rsfCols, function(col) {
   out[, (avgnm) := rowMeans(.SD), .SDcols = c(col, sufnm)]
   
   # End RSF 
-  out[, (endnm) := shift(.SD, 1, NA, 'lead'), .SDcols = c(col, sufnm)]
+  out[, (endnm) := shift(.SD, 1, NA, 'lead'), .SDcols = col]
 })
 
 
-
+out
 
 ### Number of neighbours within distance ----
 # Find the number of neighbours within specific distance threshold
 distanceThreshold <- 500
-withinCol <- paste0('nWithin', distanceThreshold)
+
 
 # edge_dist !!!!!!!!!!!!!!!!!
 source('R/0-functions/FindNumbWithinDistance.R')
