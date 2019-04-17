@@ -6,35 +6,24 @@ libs <- c('data.table', 'lme4', 'ggplot2', 'Hmisc')
 lapply(libs, require, character.only = TRUE)
 
 ### Input data ----
+# Which species would you like to calculate abs and rel TA for?
+species <- 'elk'
+DT <- readRDS(paste0('output/4-sociality/', species, 'NNA.Rds'))
 
-#RMNP file
+coordCols <- c('EASTING', 'NORTHING')
+idCol <- 'id'
 
-rmnp <- readRDS('output/nna/elkNNA.Rds')
+if (truelength(DT) == 0) alloc.col(DT)
 
-nlold <- readRDS('output/nna/caribouNNA.Rds')
-nl <- readRDS('output/nna/CaribouNNANEW.Rds')
 
-### one case where dyad is just i-i, instead of i-j
-### Alec has satisfied Hance that this error is okay and driven by the way QuadTree extracts nearest dyads
+### 
+# Dyads within 500m 
+DT[dyadDist >= 500, bin500m := TRUE]
+DT[dyadDist < 500, bin500m := FALSE]
 
-rmnp$bad.neighbor<-ifelse(rmnp$id==rmnp$neighbour1,1,0)
-summary(rmnp$bad.neighbor)
-        
-rmnp$bin500m<-ifelse(rmnp$dyadDist>500,0,1) ## dyad within 500m or not
-
-nl$bad.neighbor<-ifelse(nl$id==nl$neighbour1,1,0)
-summary(nl$bad.neighbor)
-
-nl$bin500m<-ifelse(nl$dyadDist>500,0,1) ## dyad within 500m or not
-
-### removing this case plus just extracting dyads
-
-rmnp.dyad1<-subset(rmnp, rmnp$bad.neighbor==0)
-nl.dyad1<-subset(nl, nl$bad.neighbor==0)
-
+# Duplicated dyads
+DT[, nDyadTime := .N, by = .()]
 ### removing duplicate dyad,times
-
-rmnp.dyad1$dyad.time<-paste(rmnp.dyad1$dyadID,rmnp.dyad1$timegroup,sep="_")
 
 rmnp.dyad2<-rmnp.dyad1[!duplicated(rmnp.dyad1$dyad.time),]
 
