@@ -136,4 +136,8 @@ out[wiDist, nWithin := nWithin,
     on = .(ID = ID1, timegroup = timegroup)]
 
 ### Output ----
-saveRDS(DT, paste0('output/4-sociality/', species, 'NNA.Rds'))
+# DyadID + timegroup
+out[, dyadTime := paste(dyadID, timegroup, sep = '-')]
+
+
+saveRDS(out, paste0('output/4-sociality/', species, 'NNA.Rds'))
