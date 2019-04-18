@@ -54,6 +54,12 @@ diff_azimuth <- function(DT, suffix, angle) {
     stop('angle (and angle+suffix) columns not found in DT')
   }
   
+  if ('diAngle' %in% colnames(DT)) {
+    message('overwriting diAngle, found in colnames(DT).')
+    data.table::set(DT, j = 'diAngle', value = NULL)
+  }
+  
+  
   # If one undefined
   DT[is.na(get(angle1)) | is.na(get(angle2)), 
       diAngle := 0]
@@ -96,10 +102,18 @@ diff_dist <- function(DT, suffix, dist, alpha = 1) {
     stop('dist (and dist+suffix) columns not found in DT')
   }
   
+  if ('diDist' %in% colnames(DT)) {
+    message('overwriting diDist, found in colnames(DT).')
+    data.table::set(DT, j = 'diDist', value = NULL)
+  }
+  
   DT[get(dist1) + get(dist2) == 0, diDist := 1]
   
   DT[is.na(diDist), 
-     diDist := 1 - ((abs(.SD[[1]] - .SD[[2]]) / .SD[[1]] + .SD[[2]]) ^ alpha),
+     diDist := 1 - (
+       (abs(.SD[[1]] - .SD[[2]]) / 
+          (.SD[[1]] + .SD[[2]])
+        ) ^ alpha),
      .SDcols = c(dist1, dist2)]
   
   return(DT)
