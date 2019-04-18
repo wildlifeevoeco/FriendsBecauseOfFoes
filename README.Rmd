@@ -27,7 +27,7 @@ knitr::opts_chunk$set(
   * 2-rsf
     * Generating summary tables for RSFs.R
     * BearRSF.R (NLPredRSFs.R)
-    * CoyoteRSF.R (NLPredRSFs.R)
+    * ~~CoyoteRSF.R (NLPredRSFs.R)~~
     * ~~WolfRSF.R~~
     * ~~*NLPredRSFs.R*~~
     *  CaribouRSF.R (NLPredRSFs.R)
