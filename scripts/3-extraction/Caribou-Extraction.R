@@ -4,8 +4,8 @@
 
 # TODO: rename script/folder to domain? domain extraction? etc
 ### Packages ----
-libs <- c('data.table', 'raster')
-lapply(libs, require, character.only = TRUE)
+pkgs <- c('data.table', 'raster')
+lapply(pkgs, require, character.only = TRUE)
 
 
 ### Set variables ----

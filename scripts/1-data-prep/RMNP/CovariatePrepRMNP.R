@@ -2,8 +2,8 @@
 # Authors: Alec Robitaille, Christina M Prokopenko, Sana Zabihi
 
 ### Packages ----
-libs <- c('data.table', 'ggplot2', 'sp', 'raster')
-lapply(libs, require, character.only = TRUE)
+pkgs <- c('data.table', 'ggplot2', 'sp', 'raster')
+lapply(pkgs, require, character.only = TRUE)
 
 
 ### Set variables ----

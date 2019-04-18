@@ -1,12 +1,12 @@
 ### SOCIALITY ~ DOMAIN MODEL ----
 # Authors: Alec Robitaille, Christina M Prokopenko, Hance Ellington
 
-
-libs <- c('data.table', 'lme4', 'ggplot2', 'Hmisc')
-lapply(libs, require, character.only = TRUE)
+### Packages ----
+pkgs <- c('data.table', 'lme4', 'ggplot2', 'Hmisc')
+lapply(pkgs, require, character.only = TRUE)
 
 ### Input data ----
-# Which species would you like to calculate abs and rel TA for?
+# Which species?
 species <- 'elk'
 DT <- readRDS(paste0('output/4-sociality/', species, 'NNA.Rds'))
 

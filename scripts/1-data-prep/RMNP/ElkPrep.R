@@ -7,10 +7,10 @@
 
 
 ### Packages ----
-libs <- c('data.table', 'ggplot2', 
+pkgs <- c('data.table', 'ggplot2', 
           'spatsoc', 'ewc',
           'sp', 'rgdal')
-lapply(libs, require, character.only = TRUE)
+lapply(pkgs, require, character.only = TRUE)
 
 ### Set variables ----
 source('scripts/0-variables/variables.R')

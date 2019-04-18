@@ -3,8 +3,8 @@
 
 
 ### Packages ----
-libs <- c('data.table', 'ggplot2', 'ewc', 'SearchTrees')
-lapply(libs, require, character.only = TRUE)
+pkgs <- c('data.table', 'ggplot2', 'ewc', 'SearchTrees')
+lapply(pkgs, require, character.only = TRUE)
 
 
 ### Set variables ----

@@ -2,8 +2,8 @@
 # Authors: Alec Robitaille, Christina M Prokopenko, Hance Ellington
 
 
-libs <- c('data.table', 'lme4', 'ggplot2', 'Hmisc')
-lapply(libs, require, character.only = TRUE)
+pkgs <- c('data.table', 'lme4', 'ggplot2', 'Hmisc')
+lapply(pkgs, require, character.only = TRUE)
 
 ### Input data ----
 

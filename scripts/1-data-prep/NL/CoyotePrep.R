@@ -3,9 +3,9 @@
 
 
 ### Packages ----
-libs <- c('data.table', 'spatsoc', 'ewc',
+pkgs <- c('data.table', 'spatsoc', 'ewc',
           'sp', 'rgdal', 'adehabitatLT')
-lapply(libs, require, character.only = TRUE)
+lapply(pkgs, require, character.only = TRUE)
 
 ### Set variables ----
 source('scripts/0-variables/variables.R')

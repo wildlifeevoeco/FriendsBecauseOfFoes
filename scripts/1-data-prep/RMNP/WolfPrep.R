@@ -8,10 +8,10 @@
 
 
 ### Packages ----
-libs <- c('data.table', 'ggplot2', 'magrittr', 
+pkgs <- c('data.table', 'ggplot2', 'magrittr', 
           'spatsoc', 'ewc', 
           'sp', 'rgdal', 'adehabitatLT')
-lapply(libs, require, character.only = TRUE)
+lapply(pkgs, require, character.only = TRUE)
 
 ### Input data ----
 # List individual wolf sheets

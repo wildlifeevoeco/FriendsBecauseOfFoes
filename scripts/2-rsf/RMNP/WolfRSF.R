@@ -2,10 +2,10 @@
 # Authors: Alec Robitaille, Christina M Prokopenko, Sana Zabihi
 
 ### Packages ----
-libs <- c('data.table', 'ewc',
+pkgs <- c('data.table', 'ewc',
           'adehabitatHR', 'sp', 'rgdal', 'raster', 
           'lme4')
-lapply(libs, require, character.only = TRUE)
+lapply(pkgs, require, character.only = TRUE)
 
 ### Set variables ----
 source('scripts/0-variables/variables.R')

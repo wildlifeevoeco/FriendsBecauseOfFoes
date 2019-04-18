@@ -2,8 +2,8 @@
 # Authors: Michel Laforge, Alec Robitaille
 
 ### Packages ----
-libs <- c('data.table', 'sp', 'raster')
-lapply(libs, require, character.only = TRUE)
+pkgs <- c('data.table', 'sp', 'raster')
+lapply(pkgs, require, character.only = TRUE)
 
 
 ### Set variables ----

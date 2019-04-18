@@ -3,9 +3,9 @@
 
 
 ### Packages ----
-libs <- c('data.table', 'sp', 'adehabitatHR', 'raster',
+pkgs <- c('data.table', 'sp', 'adehabitatHR', 'raster',
           'ewc', 'rgeos', 'lme4', 'car','piecewiseSEM')
-lapply(libs, require, character.only = TRUE)
+lapply(pkgs, require, character.only = TRUE)
 
 
 ### Set variables ----
