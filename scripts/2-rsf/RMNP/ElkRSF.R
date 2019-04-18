@@ -1,9 +1,6 @@
-### Elk RSF ----
+### RMNP RSF ----
+# Elk, wolf
 # Authors: Alec Robitaille, Christina M Prokopenko, Sana Zabihi
-# Purpose: Determine habitat domain for elk using second order RSFs
-# Inputs: Elk relocation data, habitat layers as rasters
-# Outputs: Elk RSF results for global model used to create winter and spring rasters as TIFF
-
 
 
 ### Packages ----
@@ -18,15 +15,17 @@ source('scripts/0-variables/variables.R')
 
 
 ### Input data ----
-# Animal locations
-elk <- readRDS('output/1-data-prep/elk.Rds')
+# Which species?
+species <- 'elk'
+DT <- readRDS(paste0('output/1-data-prep/', species, '.Rds'))
+
+if (truelength(DT) == 0) alloc.col(DT)
 
 
 # Covariates
-covers <- gsub(".tif|100m", "", 
-                 dir('output/1-data-prep/covariates/RMNP', '.tif$'))
-paths <- dir('output/1-data-prep/covariates/RMNP', 
-               '.tif$', full.names = TRUE)
+rpath <- 'output/1-data-prep/covariates/RMNP' 
+covers <- gsub(".tif|100m", "", dir(rpath, '.tif$'))
+paths <- dir(rpath, '.tif$', full.names = TRUE)
 names(paths) <- covers
 
 rmList <- which(covers %in% c('Agriculture', 'Deciduous', 'Grassland'))
@@ -36,24 +35,24 @@ lsPaths <- paths[-rmList]
 
 ### Processing ----
 # MCPs
-points <- SpatialPoints(elk[, .(EASTING, NORTHING)],
+points <- SpatialPoints(DT[, .(EASTING, NORTHING)],
                         proj4string = CRS(utmMB))
 
 mcps <- mcp(points, 100)
 
 # Create Regular Grid
+# TODO: number of regular points?
 regPts <- generate_grid(pol = mcps, spacing = 90, crs = utmMB)
 setnames(regPts, c('EASTING', 'NORTHING'))
 
-# TODO: elk - 4.3 regular to 1 observed
 
 # Combine observed and regular grid points
 regPts[, observed := 0]
-elk[, observed := 1]
+DT[, observed := 1]
 
 regPts[, season := 'grid']
 
-samplePts <- rbindlist(list(regPts, elk), 
+samplePts <- rbindlist(list(regPts, DT), 
                        use.names = TRUE, fill = TRUE)
 
 ### Sampling ----
@@ -73,7 +72,7 @@ samplePts[, (lsCovers) := lapply(
 )]
 
 ### RSF ----
-lsRasters <- lapply(lsPaths, raster)
+lsRasters <- lapply(lsPaths, function(r) crop(raster(r), mcps))
 
 ## Winter RSF
 winterPts <- samplePts[season == "winter" | season == 'grid']
@@ -127,9 +126,7 @@ springScaled <-
 
 
 ### Output ----
-saveRDS(regPts, 'output/2-rsf/elk/elkRegularPoints.Rds')
-
-saveRDS(samplePts, 'output/2-rsf/elk/elkSamplePoints.Rds')
+path <- paste0('output/2-rsf/', species, '/')
 
 # Save the RSFs 
 rsfs <- list('Winter' = winterScaled,
@@ -140,9 +137,15 @@ lapply(
   FUN = function(r) {
     writeRaster(
       rsfs[[r]],
-      paste0('output/2-rsf/elk/elkrsf', names(rsfs[r])),
+      paste0(path, species, 'rsf', names(rsfs[r])),
       format = 'GTiff',
       overwrite = T
     )
   }
 )
+
+# Regular points
+saveRDS(regPts, paste0(path, 'RegularPoints.Rds'))
+
+# Sample pts
+saveRDS(samplePts, paste0(path, 'SamplePoints.Rds'))
