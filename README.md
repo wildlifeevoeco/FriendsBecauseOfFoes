@@ -19,7 +19,7 @@
       - 2-rsf
           - Generating summary tables for RSFs.R
           - BearRSF.R (NLPredRSFs.R)
-          - CoyoteRSF.R (NLPredRSFs.R)
+          - ~~CoyoteRSF.R (NLPredRSFs.R)~~
           - ~~WolfRSF.R~~
           - ~~*NLPredRSFs.R*~~
           - CaribouRSF.R (NLPredRSFs.R)
@@ -45,18 +45,12 @@ grep -rni 'scripts/' -e 'TODO' || true;
 #> scripts/3-extraction/Caribou-Extraction.R:5:# TODO: rename script/folder to domain? domain extraction? etc
 #> scripts/3-extraction/Elk-Extraction.R:5:# TODO: rename script/folder to domain? domain extraction? etc
 #> scripts/3-extraction/Elk-Extraction.R:40:# TODO: rename output "rsfvalues"
-#> scripts/4-sociality/NearestNeighbourAnalysis.R:4:#TODO: Grab Hance's updated social metrics from modeling script
-#> scripts/1-data-prep/NL/BearPrep.R:97:# TODO: is this really the step length threshold?? 
-#> scripts/1-data-prep/NL/CoyotePrep.R:191:# TODO: is this really the step length threshold?? 
-#> scripts/2-rsf/RMNP/ElkRSF.R:48:# TODO: elk - 4.3 regular to 1 observed
-#> scripts/2-rsf/RMNP/WolfRSF.R:38:# TODO: wolf - 7 regular to 1 observed
-#> scripts/2-rsf/NL/CoyoteRSF.R:78:# TODO: Remove all points with 50% NA data
-#> scripts/2-rsf/NL/CoyoteRSF.R:82:# TODO: need ruggedness
-#> scripts/2-rsf/NL/CoyoteRSF.R:107:# TODO: need ruggedness
-#> scripts/2-rsf/NL/CaribouRSF.R:77:# TODO: Remove all points with 50% NA data
-#> scripts/2-rsf/NL/CaribouRSF.R:81:# TODO: need ruggedness
-#> scripts/2-rsf/NL/CaribouRSF.R:106:# TODO: need ruggedness
-#> scripts/2-rsf/NL/BearRSF.R:78:#TODO: warning glm.fit: fitted probabilities numerically 0 or 1 occurred
+#> scripts/4-sociality/Nearest-Neighbour-Analysis.R:4:#TODO: Grab Hance's updated social metrics from modeling script
+#> scripts/1-data-prep/NL/Bear-Prep.R:97:# TODO: is this really the step length threshold?? 
+#> scripts/1-data-prep/NL/Coyote-Prep.R:189:# TODO: is this really the step length threshold?? 
+#> scripts/2-rsf/RMNP-RSF.R:44:# TODO: number of regular points?
+#> scripts/2-rsf/NL-RSF.R:35:# TODO: size of grid?
+#> scripts/2-rsf/NL-RSF.R:90:#TODO: warning glm.fit: fitted probabilities numerically 0 or 1 occurred
 ```
 
 ## Project structure
