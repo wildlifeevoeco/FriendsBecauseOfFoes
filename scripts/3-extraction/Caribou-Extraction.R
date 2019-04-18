@@ -2,7 +2,6 @@
 # Authors: Alec Robitaille, Michel Laforge
 
 
-# TODO: rename script/folder to domain? domain extraction? etc
 ### Packages ----
 pkgs <- c('data.table', 'raster')
 lapply(pkgs, require, character.only = TRUE)
@@ -14,31 +13,63 @@ source('scripts/0-variables/variables.R')
 
 ### Input data ----
 # Animal locations
-caribou <- readRDS('output/1-data-prep/caribou.Rds')
+DT <- readRDS('output/1-data-prep/caribou.Rds')
 
 # RSFs
-bearSpring <- raster("output/2-rsf/bear/bearSummer.tif")
-caribouSpring <- raster("output/2-rsf/caribou/CaribouSummer.tif")
-caribouWinter <- raster("output/2-rsf/caribou/CaribouWinter.tif")
-coyoteSpring <- raster("output/2-rsf/coyote/CoyoteSummer.tif")
-coyoteWinter <- raster("output/2-rsf/coyote/CoyoteWinter.tif")
+rsfPath <- 'output/2-rsf/'
+
+bearSpring <- raster(paste0('bear/bearSummer.tif'))
+# bearWinter <- raster(paste0('bear/bearWinter.tif'))
+caribouSpring <- raster(paste0('caribou/caribouSummer.tif'))
+caribouWinter <- raster(paste0('caribou/caribouWinter.tif'))
+coyoteSpring <- raster(paste0('coyote/coyoteSpring.tif'))
+coyoteWinter <- raster(paste0('coyote/coyoteWinter.tif'))
 
 
-rasters <- list(bearSpring, caribouSpring, caribouWinter, coyoteSpring, coyoteWinter)
-names <- c('bearspring', 'caribouspring', 'caribouwinter', 'coyotespring', 'coyotewinter')
+rasters <-
+  list(bearSpring,
+       # bearWinter,
+       caribouSpring,
+       caribouWinter,
+       coyoteSpring,
+       coyoteWinter)
+
+names <-
+  c(
+    'bearspring',
+    # 'bearWinter',
+    'caribouspring',
+    'caribouwinter',
+    'coyotespring',
+    'coyotewinter'
+  )
 
 ### Sampling ----
 # Sample rasters
-elk[, (names) := lapply(rasters, FUN = function(r){
+DT[, (names) := lapply(rasters, FUN = function(r){
   extract(r, matrix(c(EASTING, NORTHING), ncol = 2))})]
 
-elk[season == 'spring', bearRSF := bearspring]
-elk[season == 'spring', caribouRSF := caribouspring]
-elk[season == 'winter', caribouRSF := caribouwinter]
-elk[season == 'spring', coyoteRSF := coyotespring]
-elk[season == 'winter', coyoteRSF := coyotewinter]
+# Bears
+DT[season == 'spring', bearRSF := bearspring]
+# DT[season == 'winter', bearRSF := bearwinter]
 
-elk[, (names) := NULL]
+# Caribou
+DT[season == 'spring', caribouRSF := caribouspring]
+DT[season == 'winter', caribouRSF := caribouwinter]
+
+# Coyote
+DT[season == 'spring', coyoteRSF := coyotespring]
+DT[season == 'winter', coyoteRSF := coyotewinter]
+
+# Predators
+DT[season == 'spring', predatorRSF := coyotespring + bearspring]
+DT[season == 'winter', predatorRSF := coyotewinter]
+
+# Prey
+DT[season == 'spring', preyRSF := caribouspring]
+DT[season == 'winter', preyRSF := caribouwinter]
+
+DT[, (names) := NULL]
 
 ### Save output ----
-saveRDS(elk, 'output/3-extraction/caribouRsfValues.Rds')
+saveRDS(DT, 'output/3-extraction/caribouRsfValues.Rds')
