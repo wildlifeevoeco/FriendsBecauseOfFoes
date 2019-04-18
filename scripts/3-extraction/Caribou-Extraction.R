@@ -19,7 +19,7 @@ DT <- readRDS('output/1-data-prep/caribou.Rds')
 rsfPath <- 'output/2-rsf/'
 
 bearSpring <- raster(paste0('bear/bearSummer.tif'))
-# bearWinter <- raster(paste0('bear/bearWinter.tif'))
+
 caribouSpring <- raster(paste0('caribou/caribouSummer.tif'))
 caribouWinter <- raster(paste0('caribou/caribouWinter.tif'))
 coyoteSpring <- raster(paste0('coyote/coyoteSpring.tif'))
@@ -28,7 +28,6 @@ coyoteWinter <- raster(paste0('coyote/coyoteWinter.tif'))
 
 rasters <-
   list(bearSpring,
-       # bearWinter,
        caribouSpring,
        caribouWinter,
        coyoteSpring,
@@ -37,7 +36,6 @@ rasters <-
 names <-
   c(
     'bearspring',
-    # 'bearWinter',
     'caribouspring',
     'caribouwinter',
     'coyotespring',
@@ -51,7 +49,6 @@ DT[, (names) := lapply(rasters, FUN = function(r){
 
 # Bears
 DT[season == 'spring', bearRSF := bearspring]
-# DT[season == 'winter', bearRSF := bearwinter]
 
 # Caribou
 DT[season == 'spring', caribouRSF := caribouspring]
