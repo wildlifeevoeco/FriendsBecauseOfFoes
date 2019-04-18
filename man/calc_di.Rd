@@ -10,6 +10,8 @@ calc_di(DT, suffix, angle, dist)
 \item{DT}{}
 
 \item{suffix}{character to append directly to angle column name, indicating the angle of the neighbour.}
+
+\item{dist}{}
 }
 \description{
 Dynamic interaction as described by Long and Nelson (2013).

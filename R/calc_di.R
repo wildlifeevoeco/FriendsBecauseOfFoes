@@ -4,6 +4,7 @@
 #'
 #' @param DT 
 #' @inheritParams diff_azimuth
+#' @inheritParams diff_dist
 #' @return
 #' @export
 #' 
@@ -13,13 +14,22 @@
 #'
 #' @examples
 calc_di <- function(DT, suffix, angle, dist) {
-  
+  # NSE
+  diAngle <- diDist <- di <- NULL
   
   diff_azimuth(DT, suffix = suffix, angle = angle)
   
+  diff_dist(DT, suffix = suffix, dist = dist)
   
   
+  if ('di' %in% colnames(DT)) {
+    message('overwriting di, found in colnames(DT).')
+    data.table::set(DT, j = 'di', value = NULL)
+  }
   
+  DT[, di := diAngle * diDist]
+  
+  return(DT[])
 }
 
 
