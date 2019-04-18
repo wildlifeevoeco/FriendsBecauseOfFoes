@@ -9,29 +9,26 @@
 
   - scripts
       - 1-data-prep
-          - ~~BearPrep.R~~
-          - ~~CaribouPrep.R~~
-          - ~~CoyotePrep.R~~
-          - ~~ElkPrep.R~~
-          - ~~WolfPrep.R~~
-          - ~~CovariatePrepNL.R CovariatePrepRMNP.R(RasterPrep.R)~~
+          - ~~Bear-Prep.R~~
+          - ~~Caribou-Prep.R~~
+          - ~~Coyote-Prep.R~~
+          - ~~Elk-Prep.R~~
+          - ~~Wolf-Prep.R~~
+          - ~~Covariate-Prep-NL.R Covariate-Prep-RMNP.R (RasterPrep.R)~~
           - ~~*RuggCalc.R*~~
       - 2-rsf
-          - Generating summary tables for RSFs.R
-          - BearRSF.R (NLPredRSFs.R)
-          - ~~CoyoteRSF.R (NLPredRSFs.R)~~
-          - ~~WolfRSF.R~~
-          - ~~*NLPredRSFs.R*~~
-          - CaribouRSF.R (NLPredRSFs.R)
-          - ~~ElkRSF.R~~
+          - *Generating summary tables for RSFs.R*
+          - RMNP-RSF.R (*WolfRSF.R*, *ElkRSF.R*)\~\~
+          - ~~NL-RSF.R (*CaribouRSF.R*, *CoyoteRSF.R*, *BearRSF.R*,
+            *NLPredRSFs.R*)~~
       - 3-extraction
           - Caribou-Extraction.R (cariboudata-rsfvalues.R)
           - Elk-Extraction.R (elkdata-rsfvalues.R)
       - 4-sociality
-          - CalculateTurnAngles.R
-          - NearestNeighbourAnalysis.R
+          - Calculate-Turn-Angles.R
+          - Nearest-Neighbour-Analysis.R
       - 5-model
-          - socialitydomainGLM.R
+          - sociality-domain-GLM.R
       - 0-variables
           - variables.R \`\`\`
 
@@ -41,9 +38,10 @@
 grep -rni 'R/' -e 'TODO' || true;
 grep -rni 'scripts/' -e 'TODO' || true;
 #> R/prep_date.R:16:  # TODO: add a tz argument
+#> R/calc_di.R:13:  # TODO: add reference to long and nelson?
+#> R/calc_di.R:41:  # TODO: add reference to long and nelson?
 #> R/internal.R:1:#TODO: remove? is this used?
-#> scripts/4-sociality/Nearest-Neighbour-Analysis.R:4:#TODO: Grab Hance's updated social metrics from modeling script
-#> scripts/4-sociality/Nearest-Neighbour-Analysis.R:103:#TODO: where NL + spring, this:     (nl.dyad2$predatorRSF + nl.dyad2$rpredatorRSF) / 2, ?
+#> scripts/4-sociality/Nearest-Neighbour-Analysis.R:101:#TODO: where NL + spring, this:     (nl.dyad2$predatorRSF + nl.dyad2$rpredatorRSF) / 2, ?
 #> scripts/1-data-prep/NL/Bear-Prep.R:97:# TODO: is this really the step length threshold?? 
 #> scripts/1-data-prep/NL/Coyote-Prep.R:189:# TODO: is this really the step length threshold?? 
 #> scripts/2-rsf/RMNP-RSF.R:46:# TODO: number of regular points?

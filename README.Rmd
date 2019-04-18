@@ -17,29 +17,25 @@ knitr::opts_chunk$set(
 
 * scripts
   * 1-data-prep
-    * ~~BearPrep.R~~
-    * ~~CaribouPrep.R~~
-    * ~~CoyotePrep.R~~
-    * ~~ElkPrep.R~~
-    * ~~WolfPrep.R~~
-    * ~~CovariatePrepNL.R CovariatePrepRMNP.R(RasterPrep.R)~~
+    * ~~Bear-Prep.R~~
+    * ~~Caribou-Prep.R~~
+    * ~~Coyote-Prep.R~~
+    * ~~Elk-Prep.R~~
+    * ~~Wolf-Prep.R~~
+    * ~~Covariate-Prep-NL.R Covariate-Prep-RMNP.R (RasterPrep.R)~~
     * ~~*RuggCalc.R*~~
   * 2-rsf
-    * Generating summary tables for RSFs.R
-    * BearRSF.R (NLPredRSFs.R)
-    * ~~CoyoteRSF.R (NLPredRSFs.R)~~
-    * ~~WolfRSF.R~~
-    * ~~*NLPredRSFs.R*~~
-    *  CaribouRSF.R (NLPredRSFs.R)
-    * ~~ElkRSF.R~~
+    * *Generating summary tables for RSFs.R*
+    * RMNP-RSF.R (*WolfRSF.R*, *ElkRSF.R*)~~
+    * ~~NL-RSF.R (*CaribouRSF.R*, *CoyoteRSF.R*, *BearRSF.R*, *NLPredRSFs.R*)~~
   * 3-extraction
     * Caribou-Extraction.R (cariboudata-rsfvalues.R)
     * Elk-Extraction.R (elkdata-rsfvalues.R)
   * 4-sociality
-    * CalculateTurnAngles.R
-    * NearestNeighbourAnalysis.R
+    * Calculate-Turn-Angles.R
+    * Nearest-Neighbour-Analysis.R
   * 5-model
-    * socialitydomainGLM.R
+    * sociality-domain-GLM.R
   * 0-variables
     * variables.R
 ```
