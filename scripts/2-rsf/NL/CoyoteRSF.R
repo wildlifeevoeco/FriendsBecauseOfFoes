@@ -11,6 +11,8 @@ lapply(pkgs, require, character.only = TRUE)
 ### Set variables ----
 source('scripts/0-variables/variables.R')
 
+rasterOptions(tmpdir = 'output/2-rsf/temp')
+
 
 ### Input data ----
 coyote <- readRDS('output/1-data-prep/coyote.Rds')
@@ -22,6 +24,7 @@ lsPaths <- dir('output/1-data-prep/covariates/NL',
                '.tif$', full.names = TRUE)
 names(lsPaths) <- lsCovers
 
+
 ### Processing ----
 points <- SpatialPoints(coyote[, .(EASTING, NORTHING)],
                         proj4string = CRS(utmNL))
@@ -29,7 +32,7 @@ mcps <- mcp(points, percent = 100)
 
 # Create Regular Grid
 # TODO: size of grid?
-regPts <- generate_grid(mcps, 80, crs = utmNL)
+regPts <- generate_grid(mcps, 800, crs = utmNL)
 setnames(regPts, c('EASTING', 'NORTHING'))
 
 # Combine observed and regular grid points
@@ -73,7 +76,6 @@ samplePts <- samplePts[lcNA > 0.5]
 winterPts <- samplePts[season == "winter" | season == 'grid']
 winterPts[season == 'grid', season := "winter"]
 
-#TODO: warning glm.fit: fitted probabilities numerically 0 or 1 occurred 
 winterRSF <- glm(reformulate(lsCovers, response = 'observed'), 
                  family = 'binomial', data = winterPts)
 
@@ -150,3 +152,4 @@ saveRDS(regPts, 'output/2-rsf/coyote/coyoteRegularPoints.Rds')
 
 # Sample pts
 saveRDS(samplePts, 'output/2-rsf/coyote/coyoteSamplePoints.Rds')
+
