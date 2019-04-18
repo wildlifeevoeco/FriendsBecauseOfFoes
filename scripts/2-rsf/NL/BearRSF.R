@@ -36,7 +36,18 @@ points <- SpatialPoints(DT[, .(EASTING, NORTHING)],
 mcps <- mcp(points, percent = 100)
 
 # Create Regular Grid
-regPts <- generate_grid(mcps, 210, crs = utmNL)
+# TODO: size of grid?
+gridsize <- data.table(
+  species = c('bear', 'coyote', 'caribou'),
+  dist = c(210, 800, 80)
+)[species == species]$dist
+
+regPts <- generate_grid(
+  pol = mcps, 
+  spacing = gridsize, 
+  crs = utmNL
+)
+
 setnames(regPts, c('EASTING', 'NORTHING'))
 
 # Combine observed and regular grid points
