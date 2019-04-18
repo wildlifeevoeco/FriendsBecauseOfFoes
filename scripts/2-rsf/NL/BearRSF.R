@@ -1,4 +1,5 @@
-### Bear RSF ----
+### NL RSF ----
+# Bear, caribou, coyote
 # Authors: Michel Laforge, Alec Robitaille
 
 
@@ -13,17 +14,24 @@ source('scripts/0-variables/variables.R')
 
 
 ### Input data ----
-bear <- readRDS('output/1-data-prep/bear.Rds')
+# Which species?
+species <- 'bear'
+DT <- readRDS(paste0('output/1-data-prep/', species, '.Rds'))
+
+if (truelength(DT) == 0) alloc.col(DT)
 
 # Covariates
-lsCovers <- gsub(".tif|100|prep", "", 
-               dir('output/1-data-prep/covariates/NL', '.tif$'))
-lsPaths <- dir('output/1-data-prep/covariates/NL', 
-             '.tif$', full.names = TRUE)
+lsCovers <- gsub(
+  ".tif|100|prep",
+  "",
+  dir('output/1-data-prep/covariates/NL', '.tif$')
+)
+lsPaths <- dir('output/1-data-prep/covariates/NL',
+               '.tif$', full.names = TRUE)
 names(lsPaths) <- lsCovers
 
 ### Processing ----
-points <- SpatialPoints(bear[, .(EASTING, NORTHING)],
+points <- SpatialPoints(DT[, .(EASTING, NORTHING)],
                         proj4string = CRS(utmNL))
 mcps <- mcp(points, percent = 100)
 
@@ -33,12 +41,12 @@ setnames(regPts, c('EASTING', 'NORTHING'))
 
 # Combine observed and regular grid points
 regPts[, observed := 0]
-bear[, observed := 1]
+DT[, observed := 1]
 
 # Add fake season to regular grid 'grid'
 regPts[, season := 'grid']
 
-samplePts <- rbindlist(list(regPts, bear), 
+samplePts <- rbindlist(list(regPts, DT), 
                        use.names = TRUE, fill = TRUE)
 
 
@@ -131,13 +139,14 @@ springScaled <-
 ### Output ----
 # Save the RSFs
 rsfs <- list('Winter' = winterScaled, 'Spring' = springScaled)
+path <- paste0('output/2-rsf/', species, '/')
 
 lapply(
   seq_along(rsfs),
   FUN = function(r) {
     writeRaster(
       rsfs[[r]],
-      paste0('output/2-rsf/bear/bearrsf', names(rsfs[r])),
+      paste0(path, species, 'rsf', names(rsfs[r])),
       format = 'GTiff',
       overwrite = T
     )
@@ -145,7 +154,7 @@ lapply(
 )
 
 # Regular points
-saveRDS(regPts, 'output/2-rsf/bear/bearRegularPoints.Rds')
+saveRDS(regPts, paste0(path, 'RegularPoints.Rds'))
 
 # Sample pts
-saveRDS(samplePts, 'output/2-rsf/bear/bearSamplePoints.Rds')
+saveRDS(samplePts, paste0(path, 'SamplePoints.Rds'))
