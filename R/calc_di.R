@@ -66,11 +66,12 @@ diff_azimuth <- function(DT, suffix, angle) {
 #'
 #' @inheritParams diff_azimuth
 #' @param dist 
+#' @param alpha default is 1. 
 #'
 #' @return
 #' @export
 #'
 #' @examples
-diff_dist <- function(DT, suffix, dist) {
+diff_dist <- function(DT, suffix, dist, alpha = 1) {
   
 }
