@@ -13,6 +13,8 @@ lapply(pkgs, require, character.only = TRUE)
 ### Set variables ----
 source('scripts/0-variables/variables.R')
 
+rasterOptions(tmpdir = 'output/2-rsf/temp')
+
 
 ### Input data ----
 # Which species?
