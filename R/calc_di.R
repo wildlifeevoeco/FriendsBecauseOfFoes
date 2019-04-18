@@ -1,16 +1,18 @@
 #' Calculate DI
 #' 
-#' Dynamic interaction. 
+#' Dynamic interaction as described by Long and Nelson (2013). 
 #'
 #' @param DT 
 #' @inheritParams diff_azimuth
 #' @return
 #' @export
+#' 
+#' @references Long, Jed A., and Trisalyn A. Nelson. "Measuring dynamic interaction in movement data." Transactions in GIS 17.1 (2013): 62-77.
+#' 
 #' @seealso abs_angle diff_azimuth
 #'
 #' @examples
 calc_di <- function(DT, suffix, angle, dist) {
-  # TODO: add reference to long and nelson?
   
   angle1 <- angle
   angle2 <- paste0(angle, suffix)
@@ -34,11 +36,14 @@ calc_di <- function(DT, suffix, angle, dist) {
 #'
 #' @return
 #' @seealso abs_angle
+#' 
+#' @references Long, Jed A., and Trisalyn A. Nelson. "Measuring dynamic interaction in movement data." Transactions in GIS 17.1 (2013): 62-77.
+#' 
 #' @export
 #'
 #' @examples
 diff_azimuth <- function(DT, suffix, angle) {
-  # TODO: add reference to long and nelson?
+  # NSE
   
   if (any(!(c(angle1, angle2) %in% colnames(DT)))) {
     stop('columns provided for angle1 and angle2 not found in DT')
@@ -69,6 +74,9 @@ diff_azimuth <- function(DT, suffix, angle) {
 #' @param alpha default is 1. 
 #'
 #' @return
+#' 
+#' @references Long, Jed A., and Trisalyn A. Nelson. "Measuring dynamic interaction in movement data." Transactions in GIS 17.1 (2013): 62-77.
+#' 
 #' @export
 #'
 #' @examples

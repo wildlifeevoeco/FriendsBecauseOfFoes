@@ -4,17 +4,20 @@
 \alias{diff_azimuth}
 \title{Difference in azimuth}
 \usage{
-diff_azimuth(DT, angle1, angle2)
+diff_azimuth(DT, suffix, angle)
 }
 \arguments{
 \item{DT}{data.table}
 
-\item{angle1}{character of column name with azimuth angle for left individual}
+\item{suffix}{character to append directly to angle column name, indicating the angle of the neighbour.}
 
-\item{angle2}{character of column name with  azimuth angle for right individual}
+\item{angles}{character of column name with  azimuth angle.}
 }
 \description{
 Difference in azimuth or absolute angle, calculated with \code{\link{abs_angle}}.
+}
+\references{
+Long, Jed A., and Trisalyn A. Nelson. "Measuring dynamic interaction in movement data." Transactions in GIS 17.1 (2013): 62-77.
 }
 \seealso{
 abs_angle
