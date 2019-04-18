@@ -2,7 +2,6 @@
 # Authors: Alec Robitaille, Sana Zabihi, Christina M Prokopenko
 
 
-# TODO: rename script/folder to domain? domain extraction? etc
 ### Packages ----
 pkgs <- c('data.table', 'raster')
 lapply(pkgs, require, character.only = TRUE)
@@ -14,7 +13,7 @@ source('scripts/0-variables/variables.R')
 
 ### Input data ----
 # Animal locations
-elk <- readRDS('output/1-data-prep/elk.Rds')
+DT <- readRDS('output/1-data-prep/elk.Rds')
 
 # RSFs
 wolfWinter <- raster('output/2-rsf/wolf/wolfrsfWinter.tif')
@@ -26,16 +25,15 @@ rasters <- list(wolfWinter, wolfSpring, elkWinter, elkSpring)
 names <- c('wolfwinter', 'wolfspring', 'elkwinter', 'elkspring')
 
 ### Sampling ----
-elk[, (names) := lapply(rasters, FUN = function(r){
+DT[, (names) := lapply(rasters, FUN = function(r){
   extract(r, matrix(c(EASTING, NORTHING), ncol = 2))})]
 
-elk[season == 'winter', predatorRSF := wolfwinter]
-elk[season == 'winter', preyRSF := elkwinter]
-elk[season == 'spring', predatorRSF := wolfspring]
-elk[season == 'spring', preyRSF := elkspring]
+DT[season == 'winter', predatorRSF := wolfwinter]
+DT[season == 'winter', preyRSF := elkwinter]
+DT[season == 'spring', predatorRSF := wolfspring]
+DT[season == 'spring', preyRSF := elkspring]
 
-elk[, (names) := NULL]
+DT[, (names) := NULL]
 
 ### Save output ----
-# TODO: rename output "rsfvalues"
-saveRDS(elk, 'output/3-extraction/elkRsfValues.Rds')
+saveRDS(DT, 'output/3-extraction/elkRsfValues.Rds')
