@@ -54,7 +54,12 @@ if (species == 'elk') {
   rsfCols <- c('predatorRSF', 'preyRSF')
   cols <- c(cols, rsfCols)
 } else if (species == 'caribou') {
-  rsfCols <- c('caribouRSF', 'coyoteRSF', 'bearRSF')
+  rsfCols <-
+    c('predatorRSF',
+      'preyRSF',
+      'caribouRSF',
+      'coyoteRSF',
+      'bearRSF')
   cols <- c(cols, rsfCols)
 }
 
@@ -95,6 +100,8 @@ out[, dAbsAng := abs(absAngle - absAngle.nn)]
 
 
 ## RSF
+#TODO: where NL + spring, this:     (nl.dyad2$predatorRSF + nl.dyad2$rpredatorRSF) / 2, ?
+
 lapply(rsfCols, function(col) {
   difnm <- paste0('d', col)
   avgnm <- paste0('avg', col)
