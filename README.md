@@ -42,15 +42,13 @@ grep -rni 'R/' -e 'TODO' || true;
 grep -rni 'scripts/' -e 'TODO' || true;
 #> R/prep_date.R:16:  # TODO: add a tz argument
 #> R/internal.R:1:#TODO: remove? is this used?
-#> scripts/3-extraction/Caribou-Extraction.R:5:# TODO: rename script/folder to domain? domain extraction? etc
-#> scripts/3-extraction/Elk-Extraction.R:5:# TODO: rename script/folder to domain? domain extraction? etc
-#> scripts/3-extraction/Elk-Extraction.R:40:# TODO: rename output "rsfvalues"
 #> scripts/4-sociality/Nearest-Neighbour-Analysis.R:4:#TODO: Grab Hance's updated social metrics from modeling script
+#> scripts/4-sociality/Nearest-Neighbour-Analysis.R:103:#TODO: where NL + spring, this:     (nl.dyad2$predatorRSF + nl.dyad2$rpredatorRSF) / 2, ?
 #> scripts/1-data-prep/NL/Bear-Prep.R:97:# TODO: is this really the step length threshold?? 
 #> scripts/1-data-prep/NL/Coyote-Prep.R:189:# TODO: is this really the step length threshold?? 
-#> scripts/2-rsf/RMNP-RSF.R:44:# TODO: number of regular points?
-#> scripts/2-rsf/NL-RSF.R:35:# TODO: size of grid?
-#> scripts/2-rsf/NL-RSF.R:90:#TODO: warning glm.fit: fitted probabilities numerically 0 or 1 occurred
+#> scripts/2-rsf/RMNP-RSF.R:46:# TODO: number of regular points?
+#> scripts/2-rsf/NL-RSF.R:36:# TODO: size of grid?
+#> scripts/2-rsf/NL-RSF.R:91:#TODO: warning glm.fit: fitted probabilities numerically 0 or 1 occurred
 ```
 
 ## Project structure
