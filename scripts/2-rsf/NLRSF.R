@@ -21,13 +21,9 @@ DT <- readRDS(paste0('output/1-data-prep/', species, '.Rds'))
 if (truelength(DT) == 0) alloc.col(DT)
 
 # Covariates
-lsCovers <- gsub(
-  ".tif|100|prep",
-  "",
-  dir('output/1-data-prep/covariates/NL', '.tif$')
-)
-lsPaths <- dir('output/1-data-prep/covariates/NL',
-               '.tif$', full.names = TRUE)
+rpath <- 'output/1-data-prep/covariates/NL'
+lsCovers <- gsub(".tif|100|prep", "", dir(rpath, '.tif$'))
+lsPaths <- dir(rpath, '.tif$', full.names = TRUE)
 names(lsPaths) <- lsCovers
 
 ### Processing ----
