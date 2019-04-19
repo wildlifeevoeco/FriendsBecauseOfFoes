@@ -15,5 +15,6 @@ Imports:
     data.table,
     raster,
     sp,
-    igraph
+    igraph,
+    spatsoc
 RoxygenNote: 6.1.1
