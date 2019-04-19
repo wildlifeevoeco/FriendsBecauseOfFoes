@@ -75,37 +75,6 @@ nl.dyad3.1$bin500m <- as.factor(nl.dyad3.1$bin500m)
 #nl.dyad3.1$nWithin500 <- as.factor(nl.dyad3.1$nWithin500) ### update after adding niwthin500
 
 
-### need to fix dAbsAng it is giving us incorrect estimate of socialness AbsAng1 = 179 and AbsAng2 = -179, currently dAbsAng = 358 (highly unsocial)
-### but these two angle actually suggest a highly social dyad, should be 2
-
-### solution, I think is
-
-### dAbsAng.mod = 180 - abs(abs(AbsAng1-AbsAng2)-180)
-
-rmnp.dyad3.1$dAbsAng.trnsfrm<-180 - abs(abs(rmnp.dyad3.1$absAngle-rmnp.dyad3.1$rabsAngle)-180)
-nl.dyad3.1$dAbsAng.trnsfrm<-180 - abs(abs(nl.dyad3.1$absAngle-nl.dyad3.1$rabsAngle)-180)
-
-
-### Further, I have also approximated the DI value for each dyad based on the formula from Long and Nelson 2013
-### I say approximated because we have turning angle as absolute (-180 to 180) and DI uses azimuth (which I think is a little different)
-
-### Long and Nelson also suggest what to do when azimuth is NA, i.e. animal does not move
-### however, I think are NAs originate because the animal did not have three locations available to calculate AbsAng
-### because in all cases of NAs in either AbsAng or rAbsAng, the steplength is >0
-
-### if these were NAs because of not moving Long and Nelson recommend if both members of dyad dont move DI = 1 if only one moves DI = 0
-
-rmnp.dyad3.1$DI.ang<-(-1*(rmnp.dyad3.1$dAbsAng.trnsfrm-90)/90)
-rmnp.dyad3.1$DI.dist<-(1-((rmnp.dyad3.1$dSI/(rmnp.dyad3.1$stepLength+rmnp.dyad3.1$rstepLength))^1))
-rmnp.dyad3.1$DI<-rmnp.dyad3.1$DI.ang*rmnp.dyad3.1$DI.dist
-
-nl.dyad3.1$DI.ang<-(-1*(nl.dyad3.1$dAbsAng.trnsfrm-90)/90)
-nl.dyad3.1$DI.dist<-(1-((nl.dyad3.1$dSI/(nl.dyad3.1$stepLength+nl.dyad3.1$rstepLength))^1))
-nl.dyad3.1$DI<-nl.dyad3.1$DI.ang*nl.dyad3.1$DI.dist
-
-### DI is on scale of -1 (asocial) to 1 (social)
-### should probably put this fix in earlier code segments
-
 RMNP_cor<-c("predatorRSF","preyRSF","dPredRSF","dPreyRSF","dSI","dAbsAng.trnsfrm","avgPredRSF","avgPreyRSF","dyadDist","DI")
 NL_cor<-c("predatorRSF","CarRSF","CoyRSF","BearRSF","dPredRSF","dCarRSF","dCoyRSF","dBearRSF","dSI","dAbsAng.trnsfrm","avgPredRSF","avgCarRSF","avgCoyRSF","avgBearRSF","dyadDist","DI")
 
