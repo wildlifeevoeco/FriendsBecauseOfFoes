@@ -4,7 +4,7 @@
 \alias{calc_di}
 \title{Calculate DI}
 \usage{
-calc_di(DT, suffix, angle, dist)
+calc_di(DT, suffix, angle, dist, alpha = 1)
 }
 \arguments{
 \item{DT}{}
@@ -12,6 +12,8 @@ calc_di(DT, suffix, angle, dist)
 \item{suffix}{character to append directly to angle column name, indicating the angle of the neighbour.}
 
 \item{dist}{}
+
+\item{alpha}{default is 1.}
 }
 \description{
 Dynamic interaction as described by Long and Nelson (2013).
