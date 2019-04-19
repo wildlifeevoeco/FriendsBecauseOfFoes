@@ -1,9 +1,5 @@
 ### Elk data preparation ----
 # Authors: Alec Robitaille
-# Purpose: To prepare elk data for EWC
-# Inputs: Elk relocation data
-# Outputs: Prepared elk data as RDS
-
 
 
 ### Packages ----

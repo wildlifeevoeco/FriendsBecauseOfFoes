@@ -3,7 +3,7 @@
 
 
 ### Packages ----
-pkgs <- c('data.table', 'ggplot2', 'magrittr', 
+pkgs <- c('data.table', 'ggplot2', 
           'spatsoc', 'ewc', 
           'sp', 'rgdal', 'adehabitatLT')
 lapply(pkgs, require, character.only = TRUE)
