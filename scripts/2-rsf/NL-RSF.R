@@ -140,14 +140,14 @@ springScaled <-
 ### Output ----
 # Save the RSFs
 rsfs <- list('Winter' = winterScaled, 'Spring' = springScaled)
-path <- paste0('output/2-rsf/', species, '/')
+path <- paste0('output/2-rsf/')
 
 lapply(
   seq_along(rsfs),
   FUN = function(r) {
     writeRaster(
       rsfs[[r]],
-      paste0(path, species, 'rsf', names(rsfs[r])),
+      paste0(path, 'rasters/', species, 'rsf', names(rsfs[r])),
       format = 'GTiff',
       overwrite = T
     )
@@ -155,11 +155,11 @@ lapply(
 )
 
 # Regular points
-saveRDS(regPts, paste0(path, species, 'RegularPoints.Rds'))
+saveRDS(regPts, paste0(path, 'points/', species, 'RegularPoints.Rds'))
 
 # Sample pts
-saveRDS(samplePts, paste0(path, species, 'SamplePoints.Rds'))
+saveRDS(samplePts, paste0(path, 'points/', species, 'SamplePoints.Rds'))
 
 # RSF
-saveRDS(springRSF, paste0(path, species, 'SpringRSF.Rds'))
-saveRDS(winterRSF, paste0(path, species, 'WinterRSF.Rds'))
+saveRDS(springRSF, paste0(path, 'models/', species, 'SpringModel.Rds'))
+saveRDS(winterRSF, paste0(path, 'models/', species, 'WinterModel.Rds'))
