@@ -11,11 +11,12 @@ knitr::opts_chunk$set(echo = FALSE, cache = TRUE)
 knitr::opts_knit$set(root.dir = '..')
 
 library(knitr)
+library(pander)
 ```
 
 \clearpage
 
-```{r packages}
+```{r packages, results = 'hide'}
 library(data.table)
 library(piecewiseSEM)
 library(lme4)
