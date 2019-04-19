@@ -35,17 +35,18 @@ mcps <- mcp(points, percent = 100)
 # Create Regular Grid
 # TODO: size of grid?
 gridsize <- data.table(
-  species = c('bear', 'coyote', 'caribou'),
-  dist = c(210, 800, 80)
-)[species == species]$dist
+  sp = c('bear', 'coyote', 'caribou'),
+  dist = c(60, 700, 75)
+)[sp == species]$dist
 
 regPts <- generate_grid(
   pol = mcps, 
   spacing = gridsize, 
   crs = utmNL
 )
-
 setnames(regPts, c('EASTING', 'NORTHING'))
+
+nrow(regPts) / nrow(DT)
 
 # Combine observed and regular grid points
 regPts[, observed := 0]
