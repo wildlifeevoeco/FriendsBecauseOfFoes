@@ -16,7 +16,7 @@ rasterOptions(tmpdir = 'output/2-rsf/temp')
 
 ### Input data ----
 # Which species?
-species <- 'coyote'
+species <- 'bear'
 DT <- readRDS(paste0('output/1-data-prep/', species, '.Rds'))
 
 if (truelength(DT) == 0) alloc.col(DT)
@@ -162,7 +162,11 @@ lapply(
 )
 
 # Regular points
-saveRDS(regPts, paste0(path, 'RegularPoints.Rds'))
+saveRDS(regPts, paste0(path, species, 'RegularPoints.Rds'))
 
 # Sample pts
-saveRDS(samplePts, paste0(path, 'SamplePoints.Rds'))
+saveRDS(samplePts, paste0(path, species, 'SamplePoints.Rds'))
+
+# RSF
+saveRDS(springRSF, paste0(path, species, 'SpringRSF.Rds'))
+saveRDS(winterRSF, paste0(path, species, 'WinterRSF.Rds'))
