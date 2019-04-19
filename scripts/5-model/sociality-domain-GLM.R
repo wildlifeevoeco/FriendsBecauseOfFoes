@@ -22,7 +22,10 @@ DT[dyadDist >= 500, bin500m := TRUE]
 DT[dyadDist < 500, bin500m := FALSE]
 
 # Duplicated dyads
-DT[, nDyadTime := .N, by = .()]
+DT[, nDyadTime := .N, by = dyadTime]
+# TODO: add is duplicated column
+
+
 ### removing duplicate dyad,times
 
 rmnp.dyad2<-rmnp.dyad1[!duplicated(rmnp.dyad1$dyad.time),]
