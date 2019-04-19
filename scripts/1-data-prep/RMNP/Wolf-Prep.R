@@ -1,10 +1,5 @@
 ### Wolf data preparation ----
 # Authors: Alec Robitaille
-# Purpose: To prepare wolf data for EWC
-# Inputs: Wolf relocation data
-# Outputs: Prepared wolf data as RDS
-
-
 
 
 ### Packages ----
@@ -12,6 +7,11 @@ pkgs <- c('data.table', 'ggplot2', 'magrittr',
           'spatsoc', 'ewc', 
           'sp', 'rgdal', 'adehabitatLT')
 lapply(pkgs, require, character.only = TRUE)
+
+
+### Set variables ----
+source('scripts/0-variables/variables.R')
+
 
 ### Input data ----
 # List individual wolf sheets
@@ -58,7 +58,6 @@ projYCol <- 'NORTHING'
 prep_date(wolf, dateCol, timeCol)
 
 # Season
-source('scripts/0-variables/CutOffThresholds.R')
 wolf[julday %between% winter, season := 'winter']
 wolf[julday %between% spring, season := 'spring']
 
