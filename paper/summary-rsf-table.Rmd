@@ -17,11 +17,15 @@ library(data.table)
 ```
 
 
-```{r}
+```{r, results = 'asis'}
 summary <- readRDS('output/2-rsf/summaryRSF.Rds')
+summary[, {
+  print(kable(.SD, format = 'latex', 
+              booktabs = TRUE, linesep = '') %>% 
+          kable_styling(latex_options = 'scale_down'))
+  (1)
+}, by = .(species, season)]
 
-kable(summary,
-      format = 'latex',
-      booktabs = FALSE) %>%
-      kable_styling(latex_options = "scale_down")
+```
+
 ```
