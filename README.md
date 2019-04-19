@@ -5,32 +5,34 @@
 
 ## Rerun
 
-~~*deleted scripts*~~, ~~completed~~, (Old Name)
+*completed*, (~~deleted scripts/old name~~)
 
   - scripts
       - 1-data-prep
-          - ~~Bear-Prep.R~~
-          - ~~Caribou-Prep.R~~
-          - ~~Coyote-Prep.R~~
-          - ~~Elk-Prep.R~~
-          - ~~Wolf-Prep.R~~
-          - ~~Covariate-Prep-NL.R Covariate-Prep-RMNP.R (RasterPrep.R)~~
-          - ~~*RuggCalc.R*~~
+          - *Bear-Prep.R*
+          - *Caribou-Prep.R*
+          - *Coyote-Prep.R*
+          - *Elk-Prep.R*
+          - *Wolf-Prep.R*
+          - *Covariate-Prep-NL.R* *Covariate-Prep-RMNP.R*
+            (~~RasterPrep.R~~)
+          - *RuggCalc.R*
       - 2-rsf
-          - *Generating summary tables for RSFs.R*
-          - RMNP-RSF.R (*WolfRSF.R*, *ElkRSF.R*)\~\~
-          - ~~NL-RSF.R (*CaribouRSF.R*, *CoyoteRSF.R*, *BearRSF.R*,
-            *NLPredRSFs.R*)~~
+          - *Summary-RSF.R* *paper/summary-rsf-table.Rmd* (~~Generating
+            summary tables for RSFs.R~~)
+          - *RMNP-RSF.R* (~~WolfRSF.R~~, ~~ElkRSF.R~~)
+          - *NL-RSF.R* (~~CaribouRSF.R~~, ~~CoyoteRSF.R~~,
+            ~~BearRSF.R~~, ~~NLPredRSFs.R~~)
       - 3-extraction
-          - Caribou-Extraction.R (cariboudata-rsfvalues.R)
-          - Elk-Extraction.R (elkdata-rsfvalues.R)
+          - *Caribou-Extraction.R* (~~cariboudata-rsfvalues.R~~)
+          - *Elk-Extraction.R* (~~elkdata-rsfvalues.R~~)
       - 4-sociality
           - Calculate-Turn-Angles.R
           - Nearest-Neighbour-Analysis.R
       - 5-model
           - sociality-domain-GLM.R
       - 0-variables
-          - variables.R \`\`\`
+          - *variables.R* \`\`\`
 
 ## TODOs/NOTEs
 
@@ -38,13 +40,12 @@
 grep -rni 'R/' -e 'TODO' || true;
 grep -rni 'scripts/' -e 'TODO' || true;
 #> R/prep_date.R:16:  # TODO: add a tz argument
-#> R/calc_di.R:13:  # TODO: add reference to long and nelson?
-#> R/calc_di.R:41:  # TODO: add reference to long and nelson?
 #> R/internal.R:1:#TODO: remove? is this used?
+#> scripts/5-model/sociality-domain-GLM.R:26:# TODO: add is duplicated column
 #> scripts/4-sociality/Nearest-Neighbour-Analysis.R:101:#TODO: where NL + spring, this:     (nl.dyad2$predatorRSF + nl.dyad2$rpredatorRSF) / 2, ?
 #> scripts/1-data-prep/NL/Bear-Prep.R:97:# TODO: is this really the step length threshold?? 
 #> scripts/1-data-prep/NL/Coyote-Prep.R:189:# TODO: is this really the step length threshold?? 
-#> scripts/2-rsf/RMNP-RSF.R:46:# TODO: number of regular points?
+#> scripts/2-rsf/RMNP-RSF.R:51:# TODO: number of regular points?
 #> scripts/2-rsf/NL-RSF.R:36:# TODO: size of grid?
 #> scripts/2-rsf/NL-RSF.R:91:#TODO: warning glm.fit: fitted probabilities numerically 0 or 1 occurred
 ```
@@ -53,90 +54,88 @@ grep -rni 'scripts/' -e 'TODO' || true;
 
     .
     ├── graphics
-    │   ├── data-model-prep
-    │   └── data-prep
     ├── input
     │   ├── covariates
+    │   │   ├── NL
     │   │   └── RMNP
-    │   ├── etc
-    │   │   ├── NL-Bounds
-    │   │   └── RMNP-extent
+    │   ├── extent
+    │   │   ├── NL
+    │   │   │   └── NL-Bounds.shp
+    │   │   └── RMNP
+    │   │       └── RMNPextent.shp
     │   └── locs
     │       ├── RMNP_WolfLocations
     │       ├── AllCaribouDataRaw.csv
     │       ├── Bears.csv
     │       ├── Coyote.csv
-    │    *  RMNP_ElkData_clean.csv
+    │       └── RMNP_ElkData_clean.csv
+    ├── man
     ├── output
-    │   ├── angles
-    │   ├── data-prep
-    │   ├── nna
-    │   ├── predator-rsf
-    │   ├── prey-rsf
-    │   └── rsf-values
-    ├── R
-    │   ├── 0-functions
-    │   │   ├── calc_abs_angle.R
-    │   │   ├── prep_date.R
-    │   │   ├── DyadicDistance.R
-    │   │   ├── DyadicID.R
-    │   │   ├── FindNumbWithinDistance.R
-    │   │   ├── generate_grid.R
-    │   │   ├── NumbQuadTreeNeighbours.R
-    │   │   ├── PlotLocsByFigure.R
-    │   │   ├── calc_rel_angle.R
-    │   │   ├── StepLength.R
-    │   │   └── TemporalDistributionFigure.R
-    │   ├── 0-variables
-    │   │   ├── CutOffThresholds.R
-    │   │   └── PrepDataOutputVariables.R
     │   ├── 1-data-prep
-    │   │   ├── BearPrep.R
-    │   │   ├── CaribouPrep.R
-    │   │   ├── CoyotePrep.R
-    │   │   ├── ElkPrep.R
-    │   │   ├── RasterPrep.R
-    │   │   ├── RuggCalc.R
-    │   │   └── WolfPrep.R
+    │   │   ├── covariates
+    │   │   │   ├── NL
+    │   │   │   └── RMNP
+    │   │   ├── bear.Rds
+    │   │   ├── caribou.Rds
+    │   │   ├── coyote.Rds
+    │   │   ├── elk.Rds
+    │   │   └── wolf.Rds
     │   ├── 2-rsf
-    │   │   ├── predator-rsf
-    │   │   │   ├── BearRSF2.R
-    │   │   │   ├── BearRSF.R
-    │   │   │   ├── CoyoteRSF2.R
-    │   │   │   ├── CoyoteRSF.R
-    │   │   │   └── WolfRSF.R
-    │   │   ├── prey-rsf
-    │   │   │   ├── CaribouRSF2.R
-    │   │   │   ├── CaribouRSF.R
-    │   │   │   └── ElkRSF.R
-    │   │   └── NLPredRSFs.R
+    │   │   ├── bear
+    │   │   ├── caribou
+    │   │   ├── coyote
+    │   │   ├── elk
+    │   │   ├── temp
+    │   │   ├── wolf
+    │   │   └── summaryRSF.Rds
     │   ├── 3-extraction
-    │   │   ├── cariboudata-rsfvalues.R
-    │   │   └── elkdata-rsfvalues.R
+    │   │   ├── caribouExtract.Rds
+    │   │   └── elkExtract.Rds
+    │   └── 4-sociality
+    │       ├── elkAngle.Rds
+    │       └── elkNNA.Rds
+    ├── paper
+    │   ├── summary-rsf-table.pdf
+    │   └── summary-rsf-table.Rmd
+    ├── R
+    │   ├── angles.R
+    │   ├── calc_di.R
+    │   ├── dyad_dist.R
+    │   ├── dyad_id.R
+    │   ├── generate_grid.R
+    │   ├── internal.R
+    │   ├── prep_date.R
+    │   └── step_length.R
+    ├── scripts
+    │   ├── 0-variables
+    │   │   └── variables.R
+    │   ├── 1-data-prep
+    │   │   ├── NL
+    │   │   │   ├── Bear-Prep.R
+    │   │   │   ├── Caribou-Prep.R
+    │   │   │   ├── Covariate-Prep-NL.R
+    │   │   │   └── Coyote-Prep.R
+    │   │   └── RMNP
+    │   │       ├── Covariate-Prep-RMNP.R
+    │   │       ├── Elk-Prep.R
+    │   │       └── Wolf-Prep.R
+    │   ├── 2-rsf
+    │   │   ├── NL-RSF.R
+    │   │   ├── RMNP-RSF.R
+    │   │   └── Summary-RSF.R
+    │   ├── 3-extraction
+    │   │   ├── Caribou-Extraction.R
+    │   │   └── Elk-Extraction.R
     │   ├── 4-sociality
-    │   │   ├── 4.1-CalculateTurnAngles.R
-    │   │   └── 4.2-NearestNeighbourAnalysis.R
-    │   ├── 5-model
-    │   │   └── socialitydomainGLM.R
-    │   └── Generating summary tables for RSFs.R
+    │   │   ├── Calculate-Turn-Angles.R
+    │   │   └── Nearest-Neighbour-Analysis.R
+    │   └── 5-model
+    │       ├── socialitydomainGLM-archive.R
+    │       └── sociality-domain-GLM.R
     ├── CONTRIBUTING.md
+    ├── DESCRIPTION
     ├── ewc.Rproj
     ├── LICENSE
-    ├── NOTES.md
+    ├── NAMESPACE
     ├── README.md
-    ├── Spring NL Dyad Distance.jpeg
-    ├── TODO.md
-    └── Winter NL DI.jpeg
-
-## Output metadata
-
-| script     | output path & name | description       |
-| ---------- | ------------------ | ----------------- |
-| BearPrep.R | data-prep/bear.Rds | prepped bear data |
-|            |                    |                   |
-|            |                    |                   |
-|            |                    |                   |
-|            |                    |                   |
-|            |                    |                   |
-|            |                    |                   |
-|            |                    |                   |
+    ├── README.Rmd
