@@ -1,8 +1,6 @@
 ---
-title: "Summary RSF Table"
+title: "Summary RSF Tables"
 output: pdf_document
-include-header:
-  - \usepackage{longtable}
 ---
 
 
@@ -19,13 +17,17 @@ library(data.table)
 
 ```{r, results = 'asis'}
 summary <- readRDS('output/2-rsf/summaryRSF.Rds')
-summary[, {
-  print(kable(.SD, format = 'latex', 
-              booktabs = TRUE, linesep = '') %>% 
-          kable_styling(latex_options = 'scale_down'))
-  (1)
-}, by = .(species, season)]
 
-```
+summary <- summary[!(season == 'winter' & species == 'bear')]
+
+tabs <- summary[, {
+  print(kable(
+    .SD,
+    format = 'latex',
+    booktabs = TRUE,
+    linesep = '',
+    caption = paste0(.BY, collapse = ' ')
+    ))
+}, by = .(species, season)]
 
 ```
