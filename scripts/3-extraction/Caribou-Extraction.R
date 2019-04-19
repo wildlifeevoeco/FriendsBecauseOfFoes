@@ -16,14 +16,12 @@ source('scripts/0-variables/variables.R')
 DT <- readRDS('output/1-data-prep/caribou.Rds')
 
 # RSFs
-rsfPath <- 'output/2-rsf/'
+bearSpring <- raster('output/2-rsf/bear/bearrsfWinter.tif')
 
-bearSpring <- raster(paste0('bear/bearSummer.tif'))
-
-caribouSpring <- raster(paste0('caribou/caribouSummer.tif'))
-caribouWinter <- raster(paste0('caribou/caribouWinter.tif'))
-coyoteSpring <- raster(paste0('coyote/coyoteSpring.tif'))
-coyoteWinter <- raster(paste0('coyote/coyoteWinter.tif'))
+caribouWinter <- raster('output/2-rsf/caribou/cariboursfWinter.tif')
+caribouSpring <- raster('output/2-rsf/caribou/cariboursfSpring.tif')
+coyoteWinter <- raster('output/2-rsf/coyote/coyotersfWinter.tif')
+coyoteSpring <- raster('output/2-rsf/coyote/coyotersfSpring.tif')
 
 
 rasters <-
@@ -66,7 +64,5 @@ DT[season == 'winter', predatorRSF := coyotewinter]
 DT[season == 'spring', preyRSF := caribouspring]
 DT[season == 'winter', preyRSF := caribouwinter]
 
-DT[, (names) := NULL]
-
 ### Save output ----
-saveRDS(DT, 'output/3-extraction/caribouRsfValues.Rds')
+saveRDS(DT, 'output/3-extraction/caribouExtract.Rds')
