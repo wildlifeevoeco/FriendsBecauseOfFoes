@@ -16,7 +16,7 @@ rasterOptions(tmpdir = 'output/2-rsf/temp')
 
 ### Input data ----
 # Which species?
-species <- 'bear'
+species <- 'coyote'
 DT <- readRDS(paste0('output/1-data-prep/', species, '.Rds'))
 
 if (truelength(DT) == 0) alloc.col(DT)
@@ -89,7 +89,7 @@ samplePts <- samplePts[lcNA > 0.5]
 winterPts <- samplePts[season == "winter" | season == 'grid']
 winterPts[season == 'grid', season := "winter"]
 
-#TODO: warning glm.fit: fitted probabilities numerically 0 or 1 occurred 
+#TODO: warning glm.fit: fitted probabilities numerically 0 or 1 occurred  (bear winter, caribou winter)
 winterRSF <- glm(reformulate(lsCovers, response = 'observed'), 
                  family = 'binomial',data = winterPts)
 
