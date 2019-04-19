@@ -12,13 +12,13 @@
 #' 
 #'
 #' @examples
-calc_di <- function(DT, suffix, angle, dist) {
+calc_di <- function(DT, suffix, angle, dist, alpha = 1) {
   # NSE
   diAngle <- diDist <- di <- NULL
   
   diff_azimuth(DT, suffix = suffix, angle = angle)
   
-  diff_dist(DT, suffix = suffix, dist = dist)
+  diff_dist(DT, suffix = suffix, dist = dist, alpha = alpha)
   
   
   if ('di' %in% colnames(DT)) {
