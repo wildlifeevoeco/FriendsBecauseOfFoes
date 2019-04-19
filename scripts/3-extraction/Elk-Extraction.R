@@ -36,4 +36,4 @@ DT[season == 'spring', preyRSF := elkspring]
 DT[, (names) := NULL]
 
 ### Save output ----
-saveRDS(DT, 'output/3-extraction/elkRsfValues.Rds')
+saveRDS(DT, 'output/3-extraction/elkExtract.Rds')
