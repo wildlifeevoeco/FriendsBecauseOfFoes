@@ -1,5 +1,4 @@
 ---
-title: "Summary RSF Tables"
 output: pdf_document
 header-includes:
    - \usepackage{booktabs}
@@ -52,33 +51,26 @@ summary <- rsfs[, {
                          round(lci, digits = digits), ", ",
                          round(uci, digits = digits),"]"),
        RSquared = rsquared(r)$`R.squared`,
-       paths)
+       paths = paths)
 }, by = .(season, species)]
 ```
-
-```{r models, results = 'asis'}
-digits <- 3
-zzz <- rsfs[, {
-  r <- readRDS(paths)
-  print(kable(broom::tidy(r),
-              format = 'latex', 
-              booktabs = TRUE))
-}, by = .(season, species)]
-```
-
 
 ```{r tables, results = 'asis'}
 tabs <- summary[, {
-  print(kable(broom::tidy(readRDS(paths)),
-              format = 'latex', 
-              booktabs = TRUE))
+  bys <- paste(.BY, collapse = ' ')
+  pandoc.header(bys, level = 1)
   
   print(kable(
-    .SD,
+    broom::tidy(readRDS(paths[1])),
     format = 'latex',
     booktabs = TRUE,
-    linesep = '',
-    caption = paste0(.BY, collapse = ' ')
-    ))
+    linesep = ''))
+
+  
+  print(kable(
+    .SD[, 1:3],
+    format = 'latex',
+    booktabs = TRUE,
+    linesep = ''))
 }, by = .(species, season)]
 ```
