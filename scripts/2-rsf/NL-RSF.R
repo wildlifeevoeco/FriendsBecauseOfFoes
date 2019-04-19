@@ -16,7 +16,14 @@ rasterOptions(tmpdir = 'output/2-rsf/temp')
 
 ### Input data ----
 # Which species?
-species <- 'coyote'
+# Flexible for Makefile: if running script manually, edit species in else block
+if (length(commandArgs(trailingOnly = TRUE) > 1)) {
+  species <- commandArgs(trailingOnly = TRUE)[2]
+  print(paste0('using species: ', species))
+} else {
+  species <- 'elk'
+}
+
 DT <- readRDS(paste0('output/1-data-prep/', species, '.Rds'))
 
 if (truelength(DT) == 0) alloc.col(DT)
