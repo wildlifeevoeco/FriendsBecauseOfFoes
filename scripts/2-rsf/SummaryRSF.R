@@ -7,15 +7,12 @@ lapply(pkgs, require, character.only = TRUE)
 
 ### Input ----
 rsfs <- data.table(
-  paths = dir('output/2-rsf', 'RSF', recursive = TRUE, full.names = TRUE)
+  paths = dir('output/2-rsf', 'Spring|Winter', recursive = TRUE, full.names = TRUE)
 )
-rsfs[, nm := tstrsplit(paths, '/', keep = 4)]
-rsfs[, nm := gsub('.Rds', '', nm)]
+rsfs[, species := tstrsplit(paths, '/', keep = 3)]
 
-rsfs[grepl('spring', nm, ignore.case = TRUE), season := 'spring']
-rsfs[grepl('winter', nm, ignore.case = TRUE), season := 'winter']
-
-rsfs[, species := gsub('spring|winter|rsf', '', nm, ignore.case = TRUE)]
+rsfs[grepl('spring', paths, ignore.case = TRUE), season := 'spring']
+rsfs[grepl('winter', paths, ignore.case = TRUE), season := 'winter']
 
 
 ### Processing ----
