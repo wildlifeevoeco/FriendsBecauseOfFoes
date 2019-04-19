@@ -1,8 +1,6 @@
 ### Nearest Neighbour Analysis ----
 # Authors: Alec Robitaille
 
-#TODO: Grab Hance's updated social metrics from modeling script
-
 ### Packages ----
 pkgs <- c('data.table', 'ewc', 'spatsoc', 'igraph')
 lapply(pkgs, require, character.only = TRUE)
@@ -141,6 +139,15 @@ wiDist[, nWithin := .N, by = .(timegroup, ID1)]
 
 out[wiDist, nWithin := nWithin, 
     on = .(ID = ID1, timegroup = timegroup)]
+
+### Calculate DI
+calc_di(
+  DT = out,
+  suffix = '.nn',
+  angle = 'absAngle',
+  dist = 'stepLength'
+)
+
 
 ### Output ----
 # DyadID + timegroup
