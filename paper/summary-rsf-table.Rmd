@@ -25,5 +25,3 @@ kable(summary,
       booktabs = FALSE) %>%
       kable_styling(latex_options = "scale_down")
 ```
-
-```
