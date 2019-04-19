@@ -3,7 +3,7 @@
 
 
 ### Packages ----
-pkgs <- c('data.table', 'ggplot2', 'ewc', 'SearchTrees')
+pkgs <- c('data.table', 'ggplot2', 'ewc')
 lapply(pkgs, require, character.only = TRUE)
 
 
