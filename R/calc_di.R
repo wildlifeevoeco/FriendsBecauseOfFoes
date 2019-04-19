@@ -10,7 +10,6 @@
 #' 
 #' @references Long, Jed A., and Trisalyn A. Nelson. "Measuring dynamic interaction in movement data." Transactions in GIS 17.1 (2013): 62-77.
 #' 
-#' @seealso abs_angle diff_azimuth
 #'
 #' @examples
 calc_di <- function(DT, suffix, angle, dist) {
@@ -43,7 +42,6 @@ calc_di <- function(DT, suffix, angle, dist) {
 #' @param angles character of column name with  azimuth angle.
 #'
 #' @return
-#' @seealso abs_angle
 #' 
 #' @references Long, Jed A., and Trisalyn A. Nelson. "Measuring dynamic interaction in movement data." Transactions in GIS 17.1 (2013): 62-77.
 #' 
