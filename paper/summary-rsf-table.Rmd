@@ -19,6 +19,8 @@ library(pander)
 library(data.table)
 library(piecewiseSEM)
 library(lme4)
+library(car)
+library(carData)
 ```
 
 
@@ -58,10 +60,14 @@ summary <- rsfs[, {
 ```{r tables, results = 'asis'}
 tabs <- summary[, {
   bys <- paste(.BY, collapse = ' ')
+  
   pandoc.header(bys, level = 1)
   
+  r <- readRDS(paths[1])
+
+  
   print(kable(
-    broom::tidy(readRDS(paths[1])),
+    cbind(broom::tidy(r), vif = c(NA, vif(r))),
     format = 'latex',
     booktabs = TRUE,
     linesep = ''))

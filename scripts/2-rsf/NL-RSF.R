@@ -93,10 +93,6 @@ winterPts[season == 'grid', season := "winter"]
 winterRSF <- glm(reformulate(lsCovers, response = 'observed'), 
                  family = 'binomial',data = winterPts)
 
-summary(winterRSF)
-vif(winterRSF)
-rsquared(winterRSF)
-
 # Pull out the coefficients, dropping the intercept
 winterCoefs <- coef(winterRSF)[-1]
 
@@ -117,10 +113,6 @@ springPts[observed == 0, season := "spring"]
 springRSF <- glm(reformulate(lsCovers, response = 'observed'),
                  family = 'binomial',
                  data = springPts)
-
-summary(springRSF)
-vif(springRSF)
-rsquared(springRSF)
 
 # Pull out the coefficients, dropping the intercept
 springCoefs <- coef(springRSF)[-1]
