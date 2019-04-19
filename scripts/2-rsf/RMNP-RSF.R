@@ -32,8 +32,13 @@ names(paths) <- covers
 
 rmList <- which(covers %in% c('Agriculture', 'Deciduous', 'Grassland'))
 
-lsCovers <- covers[-rmList]
-lsPaths <- paths[-rmList]
+if (length(rmList) == 0) {
+  lsCovers <- covers
+  lsPaths <- paths
+} else {
+  lsCovers <- covers[-rmList]
+  lsPaths <- paths[-rmList]
+}
 
 ### Processing ----
 # MCPs
