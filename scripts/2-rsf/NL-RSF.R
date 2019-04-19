@@ -16,7 +16,7 @@ rasterOptions(tmpdir = 'output/2-rsf/temp')
 
 ### Input data ----
 # Which species?
-species <- 'bear'
+species <- 'coyote'
 DT <- readRDS(paste0('output/1-data-prep/', species, '.Rds'))
 
 if (truelength(DT) == 0) alloc.col(DT)
