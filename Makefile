@@ -3,7 +3,7 @@
 
 SPECIES-NL = Caribou Coyote Bear
 SPECIES-MB = Wolf Elk
-SPECIES = $(SPECIES-ML) $(SPECIES-MB)
+SPECIES = $(SPECIES-NL) $(SPECIES-MB)
 
 
 ## 2 - RSFs
