@@ -18,7 +18,7 @@ rasterOptions(tmpdir = 'output/2-rsf/temp')
 # Which species?
 # Flexible for Makefile: if running script manually, edit species in else block
 if (length(commandArgs(trailingOnly = TRUE) > 1)) {
-  species <- commandArgs(trailingOnly = TRUE)[2]
+  species <- tolower(commandArgs(trailingOnly = TRUE)[2])
   print(paste0('using species: ', species))
 } else {
   species <- 'elk'
