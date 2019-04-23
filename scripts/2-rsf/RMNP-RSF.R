@@ -145,10 +145,8 @@ springScaled <-
 
 ### Output ----
 # Save the RSFs 
-rsfs <- list('Winter' = winterScaled,
-               'Spring' = springScaled)
-
-path <- paste0('output/2-rsf/')
+rsfs <- list('Winter' = winterScaled, 'Spring' = springScaled)
+path <- 'output/2-rsf/'
 
 lapply(
   seq_along(rsfs),
