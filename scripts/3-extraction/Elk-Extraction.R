@@ -20,10 +20,10 @@ source('scripts/0-variables/variables.R')
 DT <- readRDS('output/1-data-prep/elk.Rds')
 
 # RSFs
-wolfWinter <- raster('output/2-rsf/wolf/wolfrsfWinter.tif')
-wolfSpring <- raster('output/2-rsf/wolf/wolfrsfSpring.tif')
-elkWinter <- raster('output/2-rsf/elk/elkrsfWinter.tif')
-elkSpring <- raster('output/2-rsf/elk/elkrsfSpring.tif')
+wolfWinter <- raster('output/2-rsf/rasters/wolfrsfWinter.tif')
+wolfSpring <- raster('output/2-rsf/rasters/wolfrsfSpring.tif')
+elkWinter <- raster('output/2-rsf/rasters/elkrsfWinter.tif')
+elkSpring <- raster('output/2-rsf/rasters/elkrsfSpring.tif')
 
 rasters <- list(wolfWinter, wolfSpring, elkWinter, elkSpring)
 names <- c('wolfwinter', 'wolfspring', 'elkwinter', 'elkspring')
