@@ -1,4 +1,4 @@
-### Caribou data preparation ----
+message('=== Caribou data preparation ===')
 # Authors: Quinn Webber, Alec Robitaille
 
 

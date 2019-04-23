@@ -1,4 +1,4 @@
-### NL RSF ----
+message('=== NL RSF ===')
 # Bear, caribou, coyote
 # Authors: Michel Laforge, Alec Robitaille
 

@@ -1,4 +1,4 @@
-### Wolf data preparation ----
+message('=== Wolf data preparation ===')
 # Authors: Alec Robitaille
 
 

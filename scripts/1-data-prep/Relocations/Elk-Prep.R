@@ -1,4 +1,4 @@
-### Elk data preparation ----
+message('=== Elk data preparation ===')
 # Authors: Alec Robitaille
 
 

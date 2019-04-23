@@ -1,4 +1,4 @@
-### RMNP RSF ----
+message('=== RMNP RSF ===')
 # Elk, wolf
 # Authors: Alec Robitaille, Christina M Prokopenko, Sana Zabihi
 

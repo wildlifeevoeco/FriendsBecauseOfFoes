@@ -1,4 +1,4 @@
-### Bear data preparation ----
+message('=== Bear data preparation ===')
 # Authors: Quinn Webber, Alec Robitaille
 
 

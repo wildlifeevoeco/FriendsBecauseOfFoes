@@ -1,4 +1,4 @@
-### Coyote data preparation ----
+message('=== Coyote data preparation ===')
 # Authors: Quinn Webber, Alec Robitaille
 
 
