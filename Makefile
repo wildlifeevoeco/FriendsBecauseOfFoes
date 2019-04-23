@@ -2,6 +2,17 @@
 # Alec Robitaille
 
 
+## 3 - Extract
+# RMNP
+
+output/3-extraction/elkRsfValues.Rds: scripts/3-extraction/Elk-Extraction.R output/2-rsf/models/elkWinterRSF.Rds output/2-rsf/models/elkSpringRSF.Rds output/2-rsf/models/wolfWinterRSF.Rds output/2-rsf/models/wolfSpringRSF.Rds
+	Rscript scripts/3-extraction/Elk-Extraction.R
+
+# NL
+output/3-extraction/caribouExtract.Rds: scripts/3-extraction/Caribou-Extraction.R output/2-rsf/models/bearWinterRSF.Rds output/2-rsf/models/bearSpringRSF.Rds output/2-rsf/models/caribouWinterRSF.Rds output/2-rsf/models/caribouSpringRSF.Rds output/2-rsf/models/coyoteWinterRSF.Rds output/2-rsf/models/coyoteSpringRSF.Rds
+	Rscript scripts/3-extraction/Caribou-Extraction.R
+
+
 ## 2 - RSFs
 # RMNP
 output/2-rsf/models/elkWinterRSF.Rds output/2-rsf/models/elkSpringRSF.Rds: scripts/2-rsf/RMNP-RSF.R output/1-data-prep/elk.Rds
