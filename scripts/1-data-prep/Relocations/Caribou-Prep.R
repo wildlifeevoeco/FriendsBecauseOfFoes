@@ -106,3 +106,5 @@ setnames(caribou, c('ANIMAL_ID', 'SPECIES', 'season', 'timegroup',
 
 saveRDS(caribou[, ..outputVariables], 
         'output/1-data-prep/caribou.Rds')
+
+message('=== CARIBOU PREP COMPLETE ===')

@@ -211,3 +211,6 @@ setnames(coyote, c('ANIMAL_ID', 'SPECIES', 'season', 'timegroup',
          outputVariables)
 
 saveRDS(coyote[, ..outputVariables], 'output/1-data-prep/coyote.Rds')
+
+
+message('=== COYOTE PREP COMPLETE ===')

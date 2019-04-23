@@ -193,3 +193,5 @@ setnames(wolf, c('wolfid', 'SPECIES', 'season', 'timegroup',
          outputVariables)
 
 saveRDS(wolf[, ..outputVariables], 'output/1-data-prep/wolf.Rds')
+
+message('=== WOLF PREP COMPLETE ===')

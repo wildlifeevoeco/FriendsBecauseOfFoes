@@ -118,3 +118,6 @@ setnames(elk, c('ElkID', 'SPECIES', 'season', 'timegroup',
          outputVariables)
 
 saveRDS(elk[, ..outputVariables], 'output/1-data-prep/elk.Rds')
+
+
+message('=== ELK PREP COMPLETE ===')
