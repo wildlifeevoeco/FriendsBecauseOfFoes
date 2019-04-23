@@ -1,5 +1,5 @@
 message('=== Wolf data preparation ===')
-# Authors: Alec Robitaille
+# Authors: Alec Robitaille, Christina M Prokopenko, Sana Zabihi
 
 
 ### Packages ----
@@ -35,13 +35,31 @@ cols[, path := rowid(path)][, lapply(.SD, sum, na.rm = TRUE), .SDcol = colnames(
 # Read in each and rbindlist
 #   To make sure LATITUDE and Latitude are considered as the same, 
 #   change all colnames to lower case, and rbindlist!
-wolf <- rbindlist(lapply(paths, FUN = function(p){
-  fread(p) %>% setnames(colnames(.), tolower(colnames(.)))
-}), fill = TRUE, use.names = TRUE)
+wolf <- rbindlist(lapply(
+  paths,
+  FUN = function(p) {
+    fread(p) %>% setnames(colnames(.), tolower(colnames(.)))
+  }
+),
+fill = TRUE,
+use.names = TRUE)
 
 # List drop and keep columns
-keepCols <- c('wolfid', 'packid', 'longitude', 'latitude', 'collar', 'gmtdate', 'gmttime', 
-              'time', 'date', '2d3d', 'fixstatus', 'info')
+keepCols <-
+  c(
+    'wolfid',
+    'packid',
+    'longitude',
+    'latitude',
+    'collar',
+    'gmtdate',
+    'gmttime',
+    'time',
+    'date',
+    '2d3d',
+    'fixstatus',
+    'info'
+  )
 dropCols <- colnames(wolf)[!(colnames(wolf) %in% keepCols)]
 
 # Drop columns above and rename 2d3d to Fix2d3d

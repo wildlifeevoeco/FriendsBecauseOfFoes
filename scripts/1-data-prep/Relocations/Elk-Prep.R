@@ -1,5 +1,5 @@
 message('=== Elk data preparation ===')
-# Authors: Alec Robitaille
+# Authors: Alec Robitaille, Christina M Prokopenko, Sana Zabihi
 
 
 ### Packages ----
