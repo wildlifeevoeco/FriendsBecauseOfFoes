@@ -1,17 +1,44 @@
 ### Makefile
 # Alec Robitaille
 
-SPECIES-NL = Caribou Coyote Bear
-SPECIES-MB = Wolf Elk
-SPECIES = $(SPECIES-NL) $(SPECIES-MB)
-
 
 ## 2 - RSFs
-output/2-rsf/models/*.Rds output/2-rsf/rasters/.tif: scripts/2-rsf/NL-RSF.R scripts/2-rsf/RMNP-RSF.R output/1-data-prep/*.Rds
-	$(foreach var,$(SPECIES-MB), Rscript scripts/2-rsf/NL-RSF.R --arg $(var) ;)
-	$(foreach var,$(SPECIES-NL), Rscript scripts/2-rsf/RMNP-RSF.R --arg $(var) ;)
+#output/2-rsf/models/*.Rds output/2-rsf/rasters/.tif: scripts/2-rsf/NL-RSF.R scripts/2-rsf/RMNP-RSF.R output/1-data-prep/*.Rds
+#	$(foreach var,$(SPECIES-MB), Rscript scripts/2-rsf/NL-RSF.R --arg $(var) ;)
+#	$(foreach var,$(SPECIES-NL), Rscript scripts/2-rsf/RMNP-RSF.R --arg $(var) ;)
+
+output/2-rsf/models/elkWinterRSF.Rds output/2-rsf/models/elkSpringRSF.Rds: scripts/2-rsf/RMNP-RSF.R
+	Rscript scripts/2-rsf/RMNP-RSF.R --arg Elk
+	
+output/2-rsf/models/wolfWinterRSF.Rds output/2-rsf/models/wolfSpringRSF.Rds: scripts/2-rsf/RMNP-RSF.R
+	Rscript scripts/2-rsf/RMNP-RSF.R --arg Wolf
+
+# NL
+output/2-rsf/models/bearWinterRSF.Rds output/2-rsf/models/bearSpringRSF.Rds: scripts/2-rsf/NL-RSF.R
+	Rscript scripts/2-rsf/NL-RSF.R --arg Bear
+	
+output/2-rsf/models/caribouWinterRSF.Rds output/2-rsf/models/caribouSpringRSF.Rds: scripts/2-rsf/NL-RSF.R
+	Rscript scripts/2-rsf/NL-RSF.R --arg Caribou
+	
+output/2-rsf/models/coyoteWinterRSF.Rds output/2-rsf/models/coyoteSpringRSF.Rds: scripts/2-rsf/NL-RSF.R
+	Rscript scripts/2-rsf/NL-RSF.R --arg Coyote
+	
 
 
 ## 1 - Prep data
-output/1-data-prep/*.Rds: scripts/1-data-prep/Relocations/*.R
-	$(foreach var,$(SPECIES), Rscript scripts/1-data-prep/Relocations/$(var)-Prep.R ;)
+# RMNP
+output/1-data-prep/elk.Rds: scripts/1-data-prep/Relocations/Elk-Prep.R
+	Rscript scripts/1-data-prep/Relocations/Elk-Prep.R
+	
+output/1-data-prep/wolf.Rds: scripts/1-data-prep/Relocations/Wolf-Prep.R
+	Rscript scripts/1-data-prep/Relocations/Wolf-Prep.R
+
+# NL
+output/1-data-prep/bear.Rds: scripts/1-data-prep/Relocations/Bear-Prep.R
+	Rscript scripts/1-data-prep/Relocations/Bear-Prep.R
+	
+output/1-data-prep/caribou.Rds: scripts/1-data-prep/Relocations/Caribou-Prep.R
+	Rscript scripts/1-data-prep/Relocations/Caribou-Prep.R
+	
+output/1-data-prep/coyote.Rds: scripts/1-data-prep/Relocations/Coyote-Prep.R
+	Rscript scripts/1-data-prep/Relocations/Coyote-Prep.R
