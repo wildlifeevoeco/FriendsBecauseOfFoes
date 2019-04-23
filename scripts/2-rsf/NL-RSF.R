@@ -25,7 +25,7 @@ if (length(commandArgs(trailingOnly = TRUE) > 1)) {
   species <- tolower(commandArgs(trailingOnly = TRUE)[2])
   print(paste0('using species: ', species))
 } else {
-  species <- 'elk'
+  species <- 'bear'
 }
 
 DT <- readRDS(paste0('output/1-data-prep/', species, '.Rds'))
@@ -47,7 +47,7 @@ mcps <- mcp(points, percent = 100)
 # TODO: size of grid?
 gridsize <- data.table(
   sp = c('bear', 'coyote', 'caribou'),
-  dist = c(60, 700, 75)
+  dist = c(210, 700, 75)
 )[sp == species]$dist
 
 regPts <- generate_grid(
