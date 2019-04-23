@@ -139,22 +139,21 @@ step_length(
   preserve = FALSE
 )
 
-### Subset by collar fields ----
-# N by fix quality
-wolf[, .N, by = info]
-wolf[, .N, by = Fix2d3d]
-wolf[, .N, by = fixstatus]
-
 ### Summary information ----
+# N by fix quality
+# wolf[, .N, by = info]
+# wolf[, .N, by = Fix2d3d]
+# wolf[, .N, by = fixstatus]
+
 # How many unique animals?
-wolf[, uniqueN(get(idCol))]
+# wolf[, uniqueN(get(idCol))]
 
 # How many unique animals per year?
-wolf[, .('N Unique Wolves' = uniqueN(get(idCol))), by = yr]
+# wolf[, .('N Unique Wolves' = uniqueN(get(idCol))), by = yr]
 
 # Temporal distribution of locs
-wolf[order(mnth), .N, by = mnth]
-wolf[order(yr), .N, by = yr]
+# wolf[order(mnth), .N, by = mnth]
+# wolf[order(yr), .N, by = yr]
 
 ### Subset ----
 # Thresholds
