@@ -167,3 +167,6 @@ saveRDS(samplePts, paste0(path, 'points/', species, 'SamplePoints.Rds'))
 # RSF
 saveRDS(springRSF, paste0(path, 'models/', species, 'SpringModel.Rds'))
 saveRDS(winterRSF, paste0(path, 'models/', species, 'WinterModel.Rds'))
+
+
+message('=== ', toupper(species), ' RSF COMPLETE ===')
