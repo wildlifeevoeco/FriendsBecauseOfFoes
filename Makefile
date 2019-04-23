@@ -2,6 +2,11 @@
 # Alec Robitaille
 
 
+## RSF Summary
+paper/summary-rsf-table.pdf: paper/summary-rsf-table.Rmd output/3-extraction/elkExtract.Rds output/3-extraction/caribouExtract.Rds
+	Rscript -e "rmarkdown::render('paper/summary-rsf-table.Rmd')"
+
+
 ## 3 - Extract
 # RMNP
 
