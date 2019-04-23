@@ -9,8 +9,7 @@ paper/summary-rsf-table.pdf: paper/summary-rsf-table.Rmd output/3-extraction/elk
 
 ## 3 - Extract
 # RMNP
-
-output/3-extraction/elkRsfValues.Rds: scripts/3-extraction/Elk-Extraction.R output/2-rsf/models/elkWinterModel.Rds output/2-rsf/models/elkSpringModel.Rds output/2-rsf/models/wolfWinterModel.Rds output/2-rsf/models/wolfSpringModel.Rds
+output/3-extraction/elkExtract.Rds: scripts/3-extraction/Elk-Extraction.R output/2-rsf/models/elkWinterModel.Rds output/2-rsf/models/elkSpringModel.Rds output/2-rsf/models/wolfWinterModel.Rds output/2-rsf/models/wolfSpringModel.Rds
 	Rscript scripts/3-extraction/Elk-Extraction.R
 
 # NL
