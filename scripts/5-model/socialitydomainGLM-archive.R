@@ -3,7 +3,11 @@
 
 
 pkgs <- c('data.table', 'lme4', 'ggplot2', 'Hmisc')
-lapply(pkgs, require, character.only = TRUE)
+p <- suppressPackageStartupMessages(lapply(
+  pkgs, 
+  library, 
+  character.only = TRUE)
+)
 
 ### Input data ----
 

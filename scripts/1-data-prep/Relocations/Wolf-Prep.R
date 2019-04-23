@@ -6,7 +6,11 @@
 pkgs <- c('data.table', 'ggplot2', 'magrittr',
           'spatsoc', 'ewc', 
           'sp', 'rgdal', 'adehabitatLT')
-lapply(pkgs, require, character.only = TRUE)
+p <- suppressPackageStartupMessages(lapply(
+  pkgs, 
+  library, 
+  character.only = TRUE)
+)
 
 
 ### Set variables ----

@@ -5,7 +5,11 @@
 ### Packages ----
 pkgs <- c('data.table', 'spatsoc', 'ewc',
           'sp', 'rgdal', 'adehabitatLT')
-lapply(pkgs, require, character.only = TRUE)
+p <- suppressPackageStartupMessages(lapply(
+  pkgs, 
+  library, 
+  character.only = TRUE)
+)
 
 ### Set variables ----
 source('scripts/0-variables/variables.R')

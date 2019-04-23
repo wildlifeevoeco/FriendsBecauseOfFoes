@@ -3,7 +3,11 @@
 
 ### Packages ----
 pkgs <- c('data.table', 'ewc', 'spatsoc', 'igraph')
-lapply(pkgs, require, character.only = TRUE)
+p <- suppressPackageStartupMessages(lapply(
+  pkgs, 
+  library, 
+  character.only = TRUE)
+)
 
 
 ### Input data ----

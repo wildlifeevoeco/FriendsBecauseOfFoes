@@ -7,7 +7,11 @@
 pkgs <- c('data.table', 'ewc',
           'adehabitatHR', 'sp', 'rgdal', 'raster', 
           'lme4')
-lapply(pkgs, require, character.only = TRUE)
+p <- suppressPackageStartupMessages(lapply(
+  pkgs, 
+  library, 
+  character.only = TRUE)
+)
 
 
 ### Set variables ----
