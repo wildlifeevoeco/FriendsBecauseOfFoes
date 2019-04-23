@@ -26,7 +26,7 @@ library(carData)
 
 ```{r input}
 rsfs <- data.table(
-  paths = dir('output/2-rsf', '[SpringWinter]RSF.Rds', recursive = TRUE, full.names = TRUE)
+  paths = dir('output/2-rsf/models', '[SpringWinter]Model.Rds', full.names = TRUE)
 )
 rsfs[, species := tstrsplit(paths, '/', keep = 3)]
 
