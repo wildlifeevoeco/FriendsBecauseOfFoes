@@ -20,12 +20,12 @@ source('scripts/0-variables/variables.R')
 DT <- readRDS('output/1-data-prep/caribou.Rds')
 
 # RSFs
-bearSpring <- raster('output/2-rsf/bear/bearrsfWinter.tif')
+bearSpring <- raster('output/2-rsf/rasters/bearrsfWinter.tif')
 
-caribouWinter <- raster('output/2-rsf/caribou/cariboursfWinter.tif')
-caribouSpring <- raster('output/2-rsf/caribou/cariboursfSpring.tif')
-coyoteWinter <- raster('output/2-rsf/coyote/coyotersfWinter.tif')
-coyoteSpring <- raster('output/2-rsf/coyote/coyotersfSpring.tif')
+caribouWinter <- raster('output/2-rsf/rasters/cariboursfWinter.tif')
+caribouSpring <- raster('output/2-rsf/rasters/cariboursfSpring.tif')
+coyoteWinter <- raster('output/2-rsf/rasters/coyotersfWinter.tif')
+coyoteSpring <- raster('output/2-rsf/rasters/coyotersfSpring.tif')
 
 
 rasters <-
