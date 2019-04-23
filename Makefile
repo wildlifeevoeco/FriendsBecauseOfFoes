@@ -3,24 +3,21 @@
 
 
 ## 2 - RSFs
-#output/2-rsf/models/*.Rds output/2-rsf/rasters/.tif: scripts/2-rsf/NL-RSF.R scripts/2-rsf/RMNP-RSF.R output/1-data-prep/*.Rds
-#	$(foreach var,$(SPECIES-MB), Rscript scripts/2-rsf/NL-RSF.R --arg $(var) ;)
-#	$(foreach var,$(SPECIES-NL), Rscript scripts/2-rsf/RMNP-RSF.R --arg $(var) ;)
-
-output/2-rsf/models/elkWinterRSF.Rds output/2-rsf/models/elkSpringRSF.Rds: scripts/2-rsf/RMNP-RSF.R
+# RMNP
+output/2-rsf/models/elkWinterRSF.Rds output/2-rsf/models/elkSpringRSF.Rds: scripts/2-rsf/RMNP-RSF.R output/1-data-prep/elk.Rds
 	Rscript scripts/2-rsf/RMNP-RSF.R --arg Elk
 	
-output/2-rsf/models/wolfWinterRSF.Rds output/2-rsf/models/wolfSpringRSF.Rds: scripts/2-rsf/RMNP-RSF.R
+output/2-rsf/models/wolfWinterRSF.Rds output/2-rsf/models/wolfSpringRSF.Rds: scripts/2-rsf/RMNP-RSF.R output/1-data-prep/wolf.Rds
 	Rscript scripts/2-rsf/RMNP-RSF.R --arg Wolf
 
 # NL
-output/2-rsf/models/bearWinterRSF.Rds output/2-rsf/models/bearSpringRSF.Rds: scripts/2-rsf/NL-RSF.R
+output/2-rsf/models/bearWinterRSF.Rds output/2-rsf/models/bearSpringRSF.Rds: scripts/2-rsf/NL-RSF.R output/1-data-prep/bear.Rds
 	Rscript scripts/2-rsf/NL-RSF.R --arg Bear
 	
-output/2-rsf/models/caribouWinterRSF.Rds output/2-rsf/models/caribouSpringRSF.Rds: scripts/2-rsf/NL-RSF.R
+output/2-rsf/models/caribouWinterRSF.Rds output/2-rsf/models/caribouSpringRSF.Rds: scripts/2-rsf/NL-RSF.R output/1-data-prep/caribou.Rds
 	Rscript scripts/2-rsf/NL-RSF.R --arg Caribou
 	
-output/2-rsf/models/coyoteWinterRSF.Rds output/2-rsf/models/coyoteSpringRSF.Rds: scripts/2-rsf/NL-RSF.R
+output/2-rsf/models/coyoteWinterRSF.Rds output/2-rsf/models/coyoteSpringRSF.Rds: scripts/2-rsf/NL-RSF.R output/1-data-prep/coyote.Rds
 	Rscript scripts/2-rsf/NL-RSF.R --arg Coyote
 	
 
