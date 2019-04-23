@@ -1,4 +1,4 @@
-### Caribou data RSF values extraction ----
+message('=== Caribou data RSF values extraction ===')
 # Authors: Alec Robitaille, Michel Laforge
 
 
@@ -70,3 +70,4 @@ DT[season == 'winter', preyRSF := caribouwinter]
 
 ### Save output ----
 saveRDS(DT, 'output/3-extraction/caribouExtract.Rds')
+message('=== CARIBOU EXTRACTION COMPLETE ===')

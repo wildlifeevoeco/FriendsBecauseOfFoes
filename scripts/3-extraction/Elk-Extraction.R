@@ -1,4 +1,4 @@
-### Elk data RSF values extraction ----
+message('=== Elk data RSF values extraction ===')
 # Authors: Alec Robitaille, Sana Zabihi, Christina M Prokopenko
 
 
@@ -41,3 +41,6 @@ DT[, (names) := NULL]
 
 ### Save output ----
 saveRDS(DT, 'output/3-extraction/elkExtract.Rds')
+
+
+message('=== ELK EXTRACTION COMPLETE ===')
