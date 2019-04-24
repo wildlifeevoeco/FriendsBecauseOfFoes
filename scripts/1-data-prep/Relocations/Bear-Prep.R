@@ -46,10 +46,11 @@ idCol <- 'ANIMAL_ID'
 projXCol <- 'EASTING'
 projYCol <- 'NORTHING'
 
+tz <- 'America/St_Johns'
 
 ### Add fields ----
 ## Date time fields
-prep_date(bear, dateCol, timeCol)
+prep_date(bear, dateCol, timeCol, tz = tz)
 
 # Check!
 bear[sample(.N, 5), .(idate, itime, yr, mnth, julday)]

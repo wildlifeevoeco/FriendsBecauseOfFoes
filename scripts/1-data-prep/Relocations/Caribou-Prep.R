@@ -34,12 +34,14 @@ idCol <- 'ANIMAL_ID'
 projXCol <- 'EASTING'
 projYCol <- 'NORTHING'
 
+tz <- 'America/St_Johns'
+
 # Subset to Middle Ridge right away, so subsequent steps are faster
 caribou <- caribou[HERD == 'MIDRIDGE']
 
 ### Add fields ----
 # Date time fields
-prep_date(caribou, dateCol, timeCol)
+prep_date(caribou, dateCol, timeCol, tz = tz)
 
 # Season
 caribou[julday %between% winter, season := 'winter']

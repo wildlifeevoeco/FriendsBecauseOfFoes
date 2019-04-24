@@ -46,9 +46,11 @@ idCol <- 'ANIMAL_ID'
 projXCol <- 'EASTING'
 projYCol <- 'NORTHING'
 
+tz <- 'America/St_Johns'
+
 ### Add fields ----
 # Date time fields
-prep_date(coyote, dateCol, timeCol)
+prep_date(coyote, dateCol, timeCol, tz = tz)
 
 # What is the difference in hours between fixes
 coyote[order(datetime), 
