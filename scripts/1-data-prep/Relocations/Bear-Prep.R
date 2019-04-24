@@ -66,7 +66,7 @@ bear[julday %between% spring, season := 'spring']
 
 group_times(bear, 'datetime', '15 minutes')
 
-bear[, .N, c('timegroup', 'idCol')][N > 1, .N]
+bear[, .N, c('timegroup', idCol)][N > 1, .N]
 
 ### Subset ----
 # Subset any NAs in defined cols

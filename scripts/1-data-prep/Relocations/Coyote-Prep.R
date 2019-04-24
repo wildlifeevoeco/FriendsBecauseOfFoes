@@ -181,7 +181,7 @@ step_length(
 # group_times from spatsoc
 group_times(coyote, 'datetime', '15 minutes')
 
-coyote[, .N, c('timegroup', 'idCol')][N > 1, .N]
+coyote[, .N, c('timegroup', idCol)][N > 1, .N]
 
 ### Summary information ----
 # How many unique animals?

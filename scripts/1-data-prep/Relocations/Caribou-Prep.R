@@ -55,7 +55,7 @@ caribou[julday %between% spring, season := 'spring']
 # Temporal grouping
 group_times(caribou, 'datetime', '15 minutes')
 
-caribou[, .N, c('timegroup', 'idCol')][N > 1, .N]
+caribou[, .N, c('timegroup', idCol)][N > 1, .N]
 
 ### Subset ----
 # Subset any NAs in defined cols
