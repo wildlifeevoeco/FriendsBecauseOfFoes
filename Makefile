@@ -2,7 +2,7 @@
 # Alec Robitaille
 
 ## Sociality Summary
-paper/summary-sociality.pdf: paper/summary-sociality.Rmd output/3-extraction/elkExtract.Rds output/3-extraction/caribouExtract.Rds
+paper/summary-sociality.pdf: paper/summary-sociality.Rmd output/4-sociality/elkNNA.Rds output/4-sociality/caribouNNA.Rds
 	Rscript -e "rmarkdown::render('paper/summary-sociality.Rmd')"
 
 
