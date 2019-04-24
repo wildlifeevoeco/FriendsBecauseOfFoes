@@ -39,7 +39,7 @@ prep_date <-
       DT[, itime := data.table::as.ITime(get(timeCol), format = timeFormat, tz = tz)]
     }
     
-    DT[, datetime := as.POSIXct(paste(idate, itime), tz = tz)]
+    DT[, datetime := as.POSIXct(paste(idate, itime), tz = tz, format = '%F %T')]
     
     DT[, julday := data.table::yday(idate)]
     DT[, yr := data.table::year(idate)]
