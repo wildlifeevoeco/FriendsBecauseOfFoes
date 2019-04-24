@@ -39,20 +39,20 @@ output/3-extraction/caribouExtract.Rds: scripts/3-extraction/Caribou-Extraction.
 ## 2 - RSFs
 # RMNP
 output/2-rsf/models/elkWinterModel.Rds output/2-rsf/models/elkSpringModel.Rds: scripts/2-rsf/RMNP-RSF.R output/1-data-prep/elk.Rds
-	Rscript scripts/2-rsf/RMNP-RSF.R --arg Elk
+	Rscript scripts/2-rsf/RMNP-RSF.R --arg elk
 	
 output/2-rsf/models/wolfWinterModel.Rds output/2-rsf/models/wolfSpringModel.Rds: scripts/2-rsf/RMNP-RSF.R output/1-data-prep/wolf.Rds
-	Rscript scripts/2-rsf/RMNP-RSF.R --arg Wolf
+	Rscript scripts/2-rsf/RMNP-RSF.R --arg wolf
 
 # NL
 output/2-rsf/models/bearWinterModel.Rds output/2-rsf/models/bearSpringModel.Rds: scripts/2-rsf/NL-RSF.R output/1-data-prep/bear.Rds
-	Rscript scripts/2-rsf/NL-RSF.R --arg Bear
+	Rscript scripts/2-rsf/NL-RSF.R --arg bear
 	
 output/2-rsf/models/caribouWinterModel.Rds output/2-rsf/models/caribouSpringModel.Rds: scripts/2-rsf/NL-RSF.R output/1-data-prep/caribou.Rds
-	Rscript scripts/2-rsf/NL-RSF.R --arg Caribou
+	Rscript scripts/2-rsf/NL-RSF.R --arg caribou
 	
 output/2-rsf/models/coyoteWinterModel.Rds output/2-rsf/models/coyoteSpringModel.Rds: scripts/2-rsf/NL-RSF.R output/1-data-prep/coyote.Rds
-	Rscript scripts/2-rsf/NL-RSF.R --arg Coyote
+	Rscript scripts/2-rsf/NL-RSF.R --arg coyote
 	
 
 
