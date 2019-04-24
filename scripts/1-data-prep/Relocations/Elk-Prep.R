@@ -57,6 +57,8 @@ elk[julday %between% spring, season := 'spring']
 # Temporal grouping
 group_times(elk, 'datetime', '15 minutes')
 
+elk[, .N, c('timegroup', 'idCol')][N > 1, .N]
+
 ### Subset ----
 # Subset any NAs in defined cols
 checkCols <- c(xCol, yCol, dateCol, 'season')

@@ -41,7 +41,12 @@ caribou <- caribou[HERD == 'MIDRIDGE']
 
 ### Add fields ----
 # Date time fields
-prep_date(caribou, dateCol, timeCol, tz = tz)
+prep_date(
+  DT = caribou, 
+  dateCol = dateCol, 
+  timeCol = timeCol, 
+  tz = tz
+)
 
 # Season
 caribou[julday %between% winter, season := 'winter']
@@ -49,6 +54,8 @@ caribou[julday %between% spring, season := 'spring']
 
 # Temporal grouping
 group_times(caribou, 'datetime', '15 minutes')
+
+caribou[, .N, c('timegroup', 'idCol')][N > 1, .N]
 
 ### Subset ----
 # Subset any NAs in defined cols

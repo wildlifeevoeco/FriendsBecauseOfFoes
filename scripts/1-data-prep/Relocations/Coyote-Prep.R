@@ -50,7 +50,12 @@ tz <- 'America/St_Johns'
 
 ### Add fields ----
 # Date time fields
-prep_date(coyote, dateCol, timeCol, tz = tz)
+prep_date(
+  DT = coyote, 
+  dateCol = dateCol, 
+  timeCol = timeCol, 
+  tz = tz
+)
 
 # What is the difference in hours between fixes
 coyote[order(datetime), 
@@ -175,6 +180,8 @@ step_length(
 
 # group_times from spatsoc
 group_times(coyote, 'datetime', '15 minutes')
+
+coyote[, .N, c('timegroup', 'idCol')][N > 1, .N]
 
 ### Summary information ----
 # How many unique animals?

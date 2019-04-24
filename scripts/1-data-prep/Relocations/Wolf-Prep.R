@@ -92,6 +92,8 @@ wolf[julday %between% spring, season := 'spring']
 # Group Time - from spatsoc
 group_times(wolf, 'datetime', '15 minutes')
 
+wolf[, .N, c('timegroup', 'idCol')][N > 1, .N]
+
 ### Subset ----
 # Subset any NAs in defined cols
 checkCols <- c(xCol, yCol, timeCol, dateCol, 'season')

@@ -50,7 +50,12 @@ tz <- 'America/St_Johns'
 
 ### Add fields ----
 ## Date time fields
-prep_date(bear, dateCol, timeCol, tz = tz)
+prep_date(
+  DT = bear, 
+  dateCol = dateCol, 
+  timeCol = timeCol, 
+  tz = tz
+)
 
 # Check!
 bear[sample(.N, 5), .(idate, itime, yr, mnth, julday)]
@@ -61,6 +66,7 @@ bear[julday %between% spring, season := 'spring']
 
 group_times(bear, 'datetime', '15 minutes')
 
+bear[, .N, c('timegroup', 'idCol')][N > 1, .N]
 
 ### Subset ----
 # Subset any NAs in defined cols
