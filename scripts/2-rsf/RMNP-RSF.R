@@ -170,5 +170,7 @@ saveRDS(samplePts, paste0(path, 'points/', species, 'SamplePoints.Rds'))
 saveRDS(springRSF, paste0(path, 'models/', species, 'SpringModel.Rds'))
 saveRDS(winterRSF, paste0(path, 'models/', species, 'WinterModel.Rds'))
 
+# Remove temporary files
+file.remove(dir('output/2-rsf/temp', full.names = TRUE))
 
 message('=== ', toupper(species), ' RSF COMPLETE ===')
