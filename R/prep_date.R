@@ -1,10 +1,10 @@
 #' Date prep
 #'
 #' @inheritParams abs_angle
-#' @param dateCol 
-#' @param timeCol 
-#' @param dateFormat 
-#' @param timeFormat 
+#' @param dateCol character of date column name
+#' @param timeCol character of time column name
+#' @param dateFormat character of date format as described in `strptime`
+#' @param timeFormat character of time format as described in `strptime`
 #'
 #' @import data.table
 #'

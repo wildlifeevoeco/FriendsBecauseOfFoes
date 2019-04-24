@@ -4,18 +4,19 @@
 \alias{prep_date}
 \title{Date prep}
 \usage{
-prep_date(DT, dateCol, timeCol, dateFormat = NULL, timeFormat = NULL)
+prep_date(DT, dateCol, timeCol, tz, dateFormat = NULL,
+  timeFormat = NULL)
 }
 \arguments{
 \item{DT}{data.table}
 
-\item{dateCol}{}
+\item{dateCol}{character of date column name}
 
-\item{timeCol}{}
+\item{timeCol}{character of time column name}
 
-\item{dateFormat}{}
+\item{dateFormat}{character of date format as described in `strptime`}
 
-\item{timeFormat}{}
+\item{timeFormat}{character of time format as described in `strptime`}
 }
 \description{
 Date prep
