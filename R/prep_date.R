@@ -19,6 +19,7 @@ prep_date <-
            tz,
            dateFormat = NULL,
            timeFormat = NULL) {
+    
     if (missing(tz)) {
       stop('must provide a tz argument')
     }
