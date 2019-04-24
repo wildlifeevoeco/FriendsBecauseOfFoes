@@ -29,6 +29,8 @@ idCol <- 'ElkID'
 projXCol <- 'EASTING'
 projYCol <- 'NORTHING'
 
+tz <- 'GMT'
+
 ### Add fields ----
 # Missing single time field, we'll combine hour and minute and save as 'time'
 # Combine hour, minute to timeCol
@@ -36,7 +38,13 @@ elk[, time := paste0(get(hourCol), ':', sprintf('%02d', get(minCol)))]
 timeCol <- 'time'
 
 ## Date time fields
-prep_date(elk, dateCol, timeCol, dateFormat = '%d/%m/%Y')
+prep_date(
+  DT = elk,
+  dateCol = dateCol,
+  timeCol = timeCol,
+  tz = tz,
+  dateFormat = '%d/%m/%Y'
+)
 
 # Drop old date time fields
 dropCol <- c('Year', 'Month', 'Day', 'Hour', 'Minute', 'time')

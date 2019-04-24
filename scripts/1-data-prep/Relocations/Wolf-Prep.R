@@ -68,16 +68,22 @@ wolf[, (dropCols) := NULL][, c('Fix2d3d', '2d3d') := .(`2d3d`, NULL)]
 ### Variables ----
 xCol <- 'longitude'
 yCol <- 'latitude'
-# Time zone of this data is CST (at least some seasons)
-timeCol <- 'time'
-dateCol <- 'date'
+timeCol <- 'gmttime'
+dateCol <- 'gmtdate'
 idCol <- 'wolfid'
 projXCol <- 'EASTING'
 projYCol <- 'NORTHING'
 
+tz <- 'GMT'
+
 ### Add fields ----
 # Date time fields
-prep_date(wolf, dateCol, timeCol)
+prep_date(
+  DT = wolf, 
+  dateCol = dateCol, 
+  timeCol = timeCol,
+  tz = tz
+)
 
 # Season
 wolf[julday %between% winter, season := 'winter']
