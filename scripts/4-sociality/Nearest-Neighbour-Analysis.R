@@ -1,5 +1,5 @@
-### Nearest Neighbour Analysis ----
-# Authors: Alec Robitaille
+message('=== Nearest Neighbour Analysis ===')
+# Authors: Alec Robitaille, Hance Ellington
 
 ### Packages ----
 pkgs <- c('data.table', 'ewc', 'spatsoc', 'igraph')
@@ -165,3 +165,6 @@ out[, dyadTime := paste(dyadID, timegroup, sep = '-')]
 
 
 saveRDS(out, paste0('output/4-sociality/', species, 'NNA.Rds'))
+
+
+message('=== NNA COMPLETE ===')

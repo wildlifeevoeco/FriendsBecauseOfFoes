@@ -1,4 +1,4 @@
-### Calculate Turn Angles ----
+message('=== Calculate Turn Angles ===')
 # Authors: Alec Robitaille
 
 
@@ -61,3 +61,5 @@ if (any(!(DT[is.na(relAngle), .N, by = .(id, yr, season)][, range(N)] ==
 }
 
 saveRDS(DT, paste0('output/4-sociality/', species, 'Angle.Rds'))
+
+message('=== TURN ANGLES COMPLETE ===')
