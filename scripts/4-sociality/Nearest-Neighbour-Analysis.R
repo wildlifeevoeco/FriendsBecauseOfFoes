@@ -56,7 +56,8 @@ cols <- c('EASTING',
           'stepLength',
           'absAngle',
           'relAngle',
-          'nByTimegroup')
+          'nByTimegroup',
+          'season')
 
 if (species == 'elk') {
   rsfCols <- c('predatorRSF', 'preyRSF')
