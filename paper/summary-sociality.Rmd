@@ -1,0 +1,38 @@
+---
+output: pdf_document
+header-includes:
+   - \usepackage{booktabs}
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, cache = TRUE)
+knitr::opts_knit$set(root.dir = '..')
+
+library(knitr)
+library(pander)
+```
+
+\clearpage
+
+```{r packages, results = 'hide'}
+library(data.table)
+library(ggplot2)
+```
+
+
+```{r input, results = 'hide'}
+elk <- readRDS('output/4-sociality/elkNNA.Rds')
+# caribou <- readRDS('output/4-sociality/caribouNNA.Rds')
+
+alloc.col(elk)
+# alloc.col(caribou)
+```
+
+```{r processing}
+cols <- c('dSI', 'predatorRSF', 'preyRSF', 'dyadDist', 'dSI', 'di')
+elk[, lapply(.SD, function(col) {
+  qplot(col) + ggtitle(paste0(.BY, collapse = ' '))
+}), by = .(season, species), .SDcols = cols]
+ggplot(out) + geom_histogram(aes(dSI))
+```
