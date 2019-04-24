@@ -57,7 +57,11 @@ elk[julday %between% spring, season := 'spring']
 # Temporal grouping
 group_times(elk, 'datetime', '15 minutes')
 
-elk[, .N, c('timegroup', 'idCol')][N > 1, .N]
+
+# Drop duplicates
+if (elk[, .N, by = c('timegroup', idCol)][N > 1, .N] > 0) {
+  elk <- elk[!duplicated(elk[, .SD, .SDcols = !'fixID'])]
+}
 
 ### Subset ----
 # Subset any NAs in defined cols
