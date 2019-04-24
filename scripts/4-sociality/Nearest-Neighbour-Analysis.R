@@ -12,7 +12,13 @@ p <- suppressPackageStartupMessages(lapply(
 
 ### Input data ----
 # Which species would you like to calculate abs and rel TA for?
-species <- 'elk'
+# Flexible for Makefile: if running script manually, edit species in else block
+if (length(commandArgs(trailingOnly = TRUE) > 1)) {
+  species <- tolower(commandArgs(trailingOnly = TRUE)[2])
+  print(paste0('using species: ', species))
+} else {
+  species <- 'elk'
+}
 DT <- readRDS(paste0('output/4-sociality/', species, 'Angle.Rds'))
 
 coordCols <- c('EASTING', 'NORTHING')
