@@ -1,6 +1,10 @@
 ### Makefile
 # Alec Robitaille
 
+## Sociality Summary
+paper/summary-sociality.pdf: paper/summary-sociality.Rmd output/3-extraction/elkExtract.Rds output/3-extraction/caribouExtract.Rds
+	Rscript -e "rmarkdown::render('paper/summary-sociality.Rmd')"
+
 
 ## 4 - Sociality
 # NNA
