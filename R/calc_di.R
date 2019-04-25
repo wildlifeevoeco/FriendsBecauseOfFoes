@@ -28,7 +28,7 @@ calc_di <- function(DT, suffix, angle, dist, alpha = 1) {
   
   DT[, di := diAngle * diDist]
   
-  return(DT[])
+  return(DT)
 }
 
 
