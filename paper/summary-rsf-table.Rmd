@@ -1,0 +1,84 @@
+---
+output: 
+  pdf_document:
+    keep_tex: false
+header-includes:
+   - \usepackage{booktabs}
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, cache = TRUE)
+knitr::opts_knit$set(root.dir = '..')
+
+library(knitr)
+library(pander)
+```
+
+\clearpage
+
+```{r packages, results = 'hide'}
+library(data.table)
+library(piecewiseSEM)
+library(lme4)
+library(car)
+library(carData)
+```
+
+
+```{r input}
+rsfs <- data.table(
+  paths = dir('output/2-rsf/models', '[SpringWinter]Model.Rds', full.names = TRUE)
+)
+rsfs[, species := tstrsplit(paths, '/', keep = 3)]
+
+rsfs[grepl('Spring', paths), season := 'spring']
+rsfs[grepl('Winter', paths), season := 'winter']
+
+rsfs <- rsfs[!(season == 'winter' & species == 'bear')]
+```
+
+```{r processing}
+digits <- 3
+summary <- rsfs[, {
+  r <- readRDS(paths)
+  coefs <- coef(r)
+  
+  se <- sqrt(diag(vcov(r)))
+  
+  lci <- coefs - (se * 1.96)
+  uci <- coefs + (se * 1.96)
+  
+  
+  list(Coefficient = names(coefs),
+       Estimate = paste0(round(coefs, digits = digits), " [", 
+                         round(lci, digits = digits), ", ",
+                         round(uci, digits = digits),"]"),
+       RSquared = rsquared(r)$`R.squared`,
+       paths = paths)
+}, by = .(season, species)]
+```
+
+```{r tables, results = 'asis'}
+tabs <- summary[, {
+  bys <- paste(.BY, collapse = ' ')
+  
+  pandoc.header(bys, level = 1)
+  
+  r <- readRDS(paths[1])
+
+  
+  print(kable(
+    cbind(broom::tidy(r), vif = c(NA, vif(r))),
+    format = 'latex',
+    booktabs = TRUE,
+    linesep = ''))
+
+  
+  print(kable(
+    .SD[, 1:3],
+    format = 'latex',
+    booktabs = TRUE,
+    linesep = ''))
+}, by = .(species, season)]
+```
