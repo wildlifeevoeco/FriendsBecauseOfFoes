@@ -126,6 +126,11 @@ elkSP <- SpatialPointsDataFrame(elk[, .(get(projXCol), get(projYCol))],
 elk <- data.table(over(mbBounds, elkSP, returnList = TRUE)[[1]])
 
 ### Output ----
+# Check 
+if (elk[, .N, c('timegroup', idCol)][N > 1, .N] != 0) {
+  stop('duplicate fixes in a timegroup * ID')
+}
+
 # Match variables to output variables = consistent variables across species
 elk[, SPECIES := 'ELK']
 

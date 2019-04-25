@@ -208,6 +208,12 @@ wolf <- wolf[!(inrange(EASTING, minOfficeX, maxOfficeX) &
 
 
 ### Output ----
+# Check 
+if (wolf[, .N, c('timegroup', idCol)][N > 1, .N] != 0) {
+  stop('duplicate fixes in a timegroup * ID')
+}
+
+
 # Match variables to output variables = consistent variables across species
 source('scripts/0-variables/variables.R')
 wolf[, SPECIES := 'WOLF']

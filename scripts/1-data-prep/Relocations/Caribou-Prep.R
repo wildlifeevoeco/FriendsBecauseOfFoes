@@ -106,6 +106,11 @@ caribou <- caribou[stepLength < stepLengthThreshold &
                    between(julday, lowJul, highJul)]
 
 ### Output ----
+# Check 
+if (caribou[, .N, c('timegroup', idCol)][N > 1, .N] != 0) {
+  stop('duplicate fixes in a timegroup * ID')
+}
+
 # Match variables to output variables = consistent variables across species
 outputVariables <- c(outputVariables, 'herd', 'sex')
 
