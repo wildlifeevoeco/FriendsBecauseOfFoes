@@ -109,7 +109,18 @@ out[, dAbsAng := abs(absAngle - absAngle.nn)]
 
 
 ## RSF
-#TODO: where NL + spring, this:     (nl.dyad2$predatorRSF + nl.dyad2$rpredatorRSF) / 2, ?
+# TODO: fix NL spring average - (nl.dyad2$predatorRSF + nl.dyad2$rpredatorRSF) / 2.
+# TODO: only need average for NL?
+# TODO: switch to an if else block like this - 
+# if (species == 'elk') {
+#   avg = these columns
+#   dif = these pairs of columns
+#   end = these columns
+#   suffix columns
+# } else if species == 'caribou' {
+#   these difference columns
+#   rowMeans with an NA for winter?
+# }
 
 lapply(rsfCols, function(col) {
   difnm <- paste0('d', col)
