@@ -3,7 +3,7 @@ message('=== Calculate Turn Angles ===')
 
 
 ### Packages ----
-pkgs <- c('data.table', 'ggplot2', 'ewc')
+pkgs <- c('data.table', 'ewc')
 p <- suppressPackageStartupMessages(lapply(
   pkgs, 
   library, 
