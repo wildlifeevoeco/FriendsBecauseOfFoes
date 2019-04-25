@@ -17,14 +17,14 @@ if (length(commandArgs(trailingOnly = TRUE) > 1)) {
   species <- tolower(commandArgs(trailingOnly = TRUE)[2])
   print(paste0('using species: ', species))
 } else {
-  species <- 'elk'
+  species <- 'caribou'
 }
 DT <- readRDS(paste0('output/4-sociality/', species, 'Angle.Rds'))
 
 coordCols <- c('EASTING', 'NORTHING')
 idCol <- 'id'
 
-if (truelength(DT) == 0) alloc.col(DT)
+if (truelength(DT) == 0) invisible(alloc.col(DT))
 
 ### Checks ----
 # Do any timegroups have the same individual twice?
@@ -106,23 +106,10 @@ out[, dSI := abs(stepLength - stepLength.nn)]
 
 # Dif in abs Angle
 out[, dAbsAng := abs(absAngle - absAngle.nn)]
-
+ 
 
 ## RSF
-# TODO: fix NL spring average - (nl.dyad2$predatorRSF + nl.dyad2$rpredatorRSF) / 2.
-# TODO: only need average for NL?
-# TODO: switch to an if else block like this - 
-# if (species == 'elk') {
-#   avg = these columns
-#   dif = these pairs of columns
-#   end = these columns
-#   suffix columns
-# } else if species == 'caribou' {
-#   these difference columns
-#   rowMeans with an NA for winter?
-# }
-
-lapply(rsfCols, function(col) {
+for (col in rsfCols) {
   difnm <- paste0('d', col)
   avgnm <- paste0('avg', col)
   endnm <- paste0('end', col)
@@ -132,11 +119,20 @@ lapply(rsfCols, function(col) {
   out[, (difnm) := abs(.SD[[1]] - .SD[[2]]), .SDcols = c(col, sufnm)]
   
   # Average within dyad 
-  out[, (avgnm) := rowMeans(.SD), .SDcols = c(col, sufnm)]
+  out[, (avgnm) := rowMeans(.SD), .SDcols = c(col, sufnm)]  
+  
   
   # End RSF 
   out[, (endnm) := shift(.SD, 1, NA, 'lead'), .SDcols = col]
-})
+}
+
+
+# Adjust caribou where predatorRSF in spring is coyote and bear
+if (species == 'caribou') {
+  adjustCols <- c('coyoteRSF', 'bearRSF')
+  out[season == 'spring', avgpredatorRSF := rowMeans(.SD), 
+      .SDcols = c(adjustCols, paste0(adjustCols, suff))]
+}
 
 
 ### Find neighbours within distance with spatsoc ----
