@@ -97,10 +97,32 @@ samplePts[, lcNA := rowSums(.SD), .SDcols = lsCovers[-not]]
 
 samplePts <- samplePts[lcNA > 0.5]
 
+# Spring RSF
+springPts <- samplePts[season == "spring" | season == 'grid']
+springPts[observed == 0, season := "spring"]
+
+springRSF <- glm(reformulate(lsCovers, response = 'observed'),
+                 family = 'binomial',
+                 data = springPts)
+
+# Pull out the coefficients, dropping the intercept
+springCoefs <- coef(springRSF)[-1]
+
+# Create the raster matching the first raster layer with the first fixed effect
+intercept <- coef(springRSF)[1]
+
+if (all(names(springCoefs) == names(lsRasters))) {
+  springRaster <-
+    exp(intercept + Reduce('+', Map('*', springCoefs, lsRasters)))
+} else {
+  stop('names dont match, check coef and rasters')
+}
+
 # Winter RSF
 if (species == 'caribou') {
-  dropCovers <- c('Anthro', 'Broadleaf', 'MixedWood')
-  lsCovers <- lsCovers[-which(lsCovers %in% dropCovers)]
+  dropCovers <- which(lsCovers %in% c('Anthro', 'Broadleaf', 'MixedWood'))
+  lsCovers <- lsCovers[-dropCovers]
+  lsRasters <- lsRaster[-dropCovers]
 }
 
 winterPts <- samplePts[season == "winter" | season == 'grid']
