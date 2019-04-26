@@ -119,10 +119,11 @@ if (all(names(springCoefs) == names(lsRasters))) {
 }
 
 # Winter RSF
+# If caribou winter, drop antro, broadleaf, mixedwood from RSF
 if (species == 'caribou') {
   dropCovers <- which(lsCovers %in% c('Anthro', 'Broadleaf', 'MixedWood'))
   lsCovers <- lsCovers[-dropCovers]
-  lsRasters <- lsRaster[-dropCovers]
+  lsRasters <- lsRasters[-dropCovers]
 }
 
 winterPts <- samplePts[season == "winter" | season == 'grid']
