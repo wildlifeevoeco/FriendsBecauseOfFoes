@@ -30,7 +30,8 @@ library(carData)
 rsfs <- data.table(
   paths = dir('output/2-rsf/models', '[SpringWinter]Model.Rds', full.names = TRUE)
 )
-rsfs[, species := tstrsplit(paths, '/', keep = 3)]
+rsfs[, species := tstrsplit(paths, '/', keep = 4)]
+rsfs[, gsub('(SpringModel.Rds|WinterModel.Rds)', '', species)]
 
 rsfs[grepl('Spring', paths), season := 'spring']
 rsfs[grepl('Winter', paths), season := 'winter']
