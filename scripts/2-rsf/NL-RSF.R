@@ -38,6 +38,10 @@ lsCovers <- gsub(".tif|100|prep", "", dir(rpath, '.tif$'))
 lsPaths <- dir(rpath, '.tif$', full.names = TRUE)
 names(lsPaths) <- lsCovers
 
+# Dropping some covariates
+dropCovers <- c('Anthro', 'Broadleaf', 'MixedWood')
+
+
 ### Processing ----
 points <- SpatialPoints(DT[, .(EASTING, NORTHING)],
                         proj4string = CRS(utmNL))
@@ -97,6 +101,11 @@ samplePts[, lcNA := rowSums(.SD), .SDcols = lsCovers[-not]]
 samplePts <- samplePts[lcNA > 0.5]
 
 # Winter RSF
+if (species == 'caribou') {
+  dropCovers <- c('Anthro', 'Broadleaf', 'MixedWood')
+  lsCovers <- lsCovers[-which(lsCovers %in% dropCovers)]
+}
+
 winterPts <- samplePts[season == "winter" | season == 'grid']
 winterPts[season == 'grid', season := "winter"]
 
