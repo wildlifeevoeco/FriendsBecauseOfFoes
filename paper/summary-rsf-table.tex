@@ -1,0 +1,434 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\providecommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{}
+    \pretitle{\vspace{\droptitle}}
+  \posttitle{}
+    \author{}
+    \preauthor{}\postauthor{}
+    \date{}
+    \predate{}\postdate{}
+  
+\usepackage{booktabs}
+
+\begin{document}
+
+\clearpage
+
+\begin{verbatim}
+## Warning: package 'data.table' was built under R version 3.5.3
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'piecewiseSEM' was built under R version 3.5.1
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'lme4' was built under R version 3.5.3
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'Matrix' was built under R version 3.5.3
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'car' was built under R version 3.5.1
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'carData' was built under R version 3.5.2
+\end{verbatim}
+
+\section{bear spring}\label{bear-spring}
+
+\begin{tabular}{llrrrrr}
+\toprule
+  & term & estimate & std.error & statistic & p.value & vif\\
+\midrule
+ & (Intercept) & -4.1543455 & 0.0579762 & -71.656108 & 0.0000000 & NA\\
+Anthro & Anthro & 0.4026494 & 0.1081728 & 3.722281 & 0.0001974 & 1.367789\\
+Broadleaf & Broadleaf & 0.6960179 & 0.1394049 & 4.992779 & 0.0000006 & 1.242895\\
+Conifer & Conifer & 2.0837273 & 0.0522886 & 39.850533 & 0.0000000 & 4.406922\\
+Lichen & Lichen & 1.4496776 & 0.0578543 & 25.057389 & 0.0000000 & 5.137413\\
+LinearDist & LinearDist & 0.2089535 & 0.0048951 & 42.686043 & 0.0000000 & 1.162518\\
+MixedWood & MixedWood & 1.7630854 & 0.0651236 & 27.072912 & 0.0000000 & 2.468413\\
+Rocky & Rocky & 0.2645918 & 0.1139746 & 2.321498 & 0.0202600 & 1.339746\\
+Ruggedness & Ruggedness & 0.0133835 & 0.0012161 & 11.005613 & 0.0000000 & 1.217511\\
+Scrub & Scrub & 0.8800762 & 0.0538066 & 16.356276 & 0.0000000 & 4.806392\\
+WaterDist & WaterDist & -0.1663650 & 0.0053977 & -30.821434 & 0.0000000 & 1.459245\\
+\bottomrule
+\end{tabular}
+
+\begin{tabular}{llr}
+\toprule
+Coefficient & Estimate & RSquared\\
+\midrule
+(Intercept) & -4.154 [-4.268, -4.041] & 0.0450875\\
+Anthro & 0.403 [0.191, 0.615] & 0.0450875\\
+Broadleaf & 0.696 [0.423, 0.969] & 0.0450875\\
+Conifer & 2.084 [1.981, 2.186] & 0.0450875\\
+Lichen & 1.45 [1.336, 1.563] & 0.0450875\\
+LinearDist & 0.209 [0.199, 0.219] & 0.0450875\\
+MixedWood & 1.763 [1.635, 1.891] & 0.0450875\\
+Rocky & 0.265 [0.041, 0.488] & 0.0450875\\
+Ruggedness & 0.013 [0.011, 0.016] & 0.0450875\\
+Scrub & 0.88 [0.775, 0.986] & 0.0450875\\
+WaterDist & -0.166 [-0.177, -0.156] & 0.0450875\\
+\bottomrule
+\end{tabular}
+
+\section{caribou spring}\label{caribou-spring}
+
+\begin{tabular}{llrrrrr}
+\toprule
+  & term & estimate & std.error & statistic & p.value & vif\\
+\midrule
+ & (Intercept) & -3.9207831 & 0.0436046 & -89.91669 & 0 & NA\\
+Anthro & Anthro & -2.7889885 & 0.1035390 & -26.93660 & 0 & 1.151858\\
+Broadleaf & Broadleaf & -15.7197310 & 0.7340328 & -21.41557 & 0 & 1.054516\\
+Conifer & Conifer & -0.9618174 & 0.0348181 & -27.62405 & 0 & 2.899940\\
+Lichen & Lichen & -2.0489101 & 0.0407536 & -50.27554 & 0 & 3.760965\\
+LinearDist & LinearDist & 0.2363903 & 0.0036116 & 65.45351 & 0 & 1.105304\\
+MixedWood & MixedWood & -2.8899803 & 0.0779226 & -37.08784 & 0 & 1.216039\\
+Rocky & Rocky & 1.2963744 & 0.0463216 & 27.98639 & 0 & 1.884969\\
+Ruggedness & Ruggedness & -0.0871843 & 0.0018640 & -46.77237 & 0 & 1.067385\\
+Scrub & Scrub & -1.5411937 & 0.0347399 & -44.36376 & 0 & 3.873514\\
+WaterDist & WaterDist & 0.0908850 & 0.0043165 & 21.05504 & 0 & 1.313086\\
+\bottomrule
+\end{tabular}
+
+\begin{tabular}{llr}
+\toprule
+Coefficient & Estimate & RSquared\\
+\midrule
+(Intercept) & -3.921 [-4.006, -3.835] & 0.0730616\\
+Anthro & -2.789 [-2.992, -2.586] & 0.0730616\\
+Broadleaf & -15.72 [-17.158, -14.281] & 0.0730616\\
+Conifer & -0.962 [-1.03, -0.894] & 0.0730616\\
+Lichen & -2.049 [-2.129, -1.969] & 0.0730616\\
+LinearDist & 0.236 [0.229, 0.243] & 0.0730616\\
+MixedWood & -2.89 [-3.043, -2.737] & 0.0730616\\
+Rocky & 1.296 [1.206, 1.387] & 0.0730616\\
+Ruggedness & -0.087 [-0.091, -0.084] & 0.0730616\\
+Scrub & -1.541 [-1.609, -1.473] & 0.0730616\\
+WaterDist & 0.091 [0.082, 0.099] & 0.0730616\\
+\bottomrule
+\end{tabular}
+
+\section{caribou winter}\label{caribou-winter}
+
+\begin{tabular}{llrrrrr}
+\toprule
+  & term & estimate & std.error & statistic & p.value & vif\\
+\midrule
+ & (Intercept) & -4.6877942 & 0.0587620 & -79.77588 & 0 & NA\\
+Conifer & Conifer & -6.3911359 & 0.1281551 & -49.87032 & 0 & 1.232850\\
+Lichen & Lichen & 2.0232045 & 0.0385940 & 52.42271 & 0 & 2.330424\\
+LinearDist & LinearDist & 0.2956177 & 0.0058361 & 50.65360 & 0 & 1.028449\\
+Rocky & Rocky & 1.8550741 & 0.0518736 & 35.76143 & 0 & 1.555976\\
+Ruggedness & Ruggedness & -0.0851683 & 0.0022140 & -38.46852 & 0 & 1.036752\\
+Scrub & Scrub & -2.7289207 & 0.0496198 & -54.99666 & 0 & 1.958404\\
+WaterDist & WaterDist & -0.1808684 & 0.0051332 & -35.23531 & 0 & 1.152373\\
+\bottomrule
+\end{tabular}
+
+\begin{tabular}{llr}
+\toprule
+Coefficient & Estimate & RSquared\\
+\midrule
+(Intercept) & -4.688 [-4.803, -4.573] & 0.269434\\
+Conifer & -6.391 [-6.642, -6.14] & 0.269434\\
+Lichen & 2.023 [1.948, 2.099] & 0.269434\\
+LinearDist & 0.296 [0.284, 0.307] & 0.269434\\
+Rocky & 1.855 [1.753, 1.957] & 0.269434\\
+Ruggedness & -0.085 [-0.09, -0.081] & 0.269434\\
+Scrub & -2.729 [-2.826, -2.632] & 0.269434\\
+WaterDist & -0.181 [-0.191, -0.171] & 0.269434\\
+\bottomrule
+\end{tabular}
+
+\section{coyote spring}\label{coyote-spring}
+
+\begin{tabular}{llrrrrr}
+\toprule
+  & term & estimate & std.error & statistic & p.value & vif\\
+\midrule
+ & (Intercept) & -2.0874546 & 0.0881100 & -23.6914596 & 0.0000000 & NA\\
+Anthro & Anthro & -1.3641865 & 0.1505535 & -9.0611427 & 0.0000000 & 1.622043\\
+Broadleaf & Broadleaf & -4.6863939 & 0.2479316 & -18.9019653 & 0.0000000 & 1.164441\\
+Conifer & Conifer & -1.7511743 & 0.0938513 & -18.6590305 & 0.0000000 & 2.443639\\
+Lichen & Lichen & 0.5036853 & 0.0903807 & 5.5729308 & 0.0000000 & 4.592172\\
+LinearDist & LinearDist & 0.0613202 & 0.0073403 & 8.3539316 & 0.0000000 & 1.399171\\
+MixedWood & MixedWood & 0.4357348 & 0.0943564 & 4.6179688 & 0.0000039 & 2.741021\\
+Rocky & Rocky & -0.9687529 & 0.1426044 & -6.7932883 & 0.0000000 & 1.678932\\
+Ruggedness & Ruggedness & -0.0515890 & 0.0023764 & -21.7087280 & 0.0000000 & 1.097682\\
+Scrub & Scrub & 0.0728612 & 0.0874689 & 0.8329957 & 0.4048471 & 3.960635\\
+WaterDist & WaterDist & -0.0506667 & 0.0093184 & -5.4372543 & 0.0000001 & 1.313798\\
+\bottomrule
+\end{tabular}
+
+\begin{tabular}{llr}
+\toprule
+Coefficient & Estimate & RSquared\\
+\midrule
+(Intercept) & -2.087 [-2.26, -1.915] & 0.0726553\\
+Anthro & -1.364 [-1.659, -1.069] & 0.0726553\\
+Broadleaf & -4.686 [-5.172, -4.2] & 0.0726553\\
+Conifer & -1.751 [-1.935, -1.567] & 0.0726553\\
+Lichen & 0.504 [0.327, 0.681] & 0.0726553\\
+LinearDist & 0.061 [0.047, 0.076] & 0.0726553\\
+MixedWood & 0.436 [0.251, 0.621] & 0.0726553\\
+Rocky & -0.969 [-1.248, -0.689] & 0.0726553\\
+Ruggedness & -0.052 [-0.056, -0.047] & 0.0726553\\
+Scrub & 0.073 [-0.099, 0.244] & 0.0726553\\
+WaterDist & -0.051 [-0.069, -0.032] & 0.0726553\\
+\bottomrule
+\end{tabular}
+
+\section{coyote winter}\label{coyote-winter}
+
+\begin{tabular}{llrrrrr}
+\toprule
+  & term & estimate & std.error & statistic & p.value & vif\\
+\midrule
+ & (Intercept) & -2.4804547 & 0.1161836 & -21.3494331 & 0.0000000 & NA\\
+Anthro & Anthro & 0.6811282 & 0.1556063 & 4.3772536 & 0.0000120 & 2.828222\\
+Broadleaf & Broadleaf & -1.0847213 & 0.1877073 & -5.7787928 & 0.0000000 & 1.590533\\
+Conifer & Conifer & -0.8009401 & 0.1258997 & -6.3617301 & 0.0000000 & 3.304626\\
+Lichen & Lichen & 0.0189342 & 0.1350497 & 0.1402016 & 0.8885007 & 4.474334\\
+LinearDist & LinearDist & 0.0307010 & 0.0097073 & 3.1626720 & 0.0015633 & 1.665079\\
+MixedWood & MixedWood & 0.8102647 & 0.1262581 & 6.4175286 & 0.0000000 & 3.520946\\
+Rocky & Rocky & -2.3070117 & 0.2631911 & -8.7655376 & 0.0000000 & 1.396543\\
+Ruggedness & Ruggedness & -0.0204736 & 0.0025095 & -8.1582841 & 0.0000000 & 1.121985\\
+Scrub & Scrub & -0.2396289 & 0.1287967 & -1.8605207 & 0.0628119 & 4.150592\\
+WaterDist & WaterDist & -0.1189132 & 0.0117743 & -10.0993575 & 0.0000000 & 1.410042\\
+\bottomrule
+\end{tabular}
+
+\begin{tabular}{llr}
+\toprule
+Coefficient & Estimate & RSquared\\
+\midrule
+(Intercept) & -2.48 [-2.708, -2.253] & 0.0207518\\
+Anthro & 0.681 [0.376, 0.986] & 0.0207518\\
+Broadleaf & -1.085 [-1.453, -0.717] & 0.0207518\\
+Conifer & -0.801 [-1.048, -0.554] & 0.0207518\\
+Lichen & 0.019 [-0.246, 0.284] & 0.0207518\\
+LinearDist & 0.031 [0.012, 0.05] & 0.0207518\\
+MixedWood & 0.81 [0.563, 1.058] & 0.0207518\\
+Rocky & -2.307 [-2.823, -1.791] & 0.0207518\\
+Ruggedness & -0.02 [-0.025, -0.016] & 0.0207518\\
+Scrub & -0.24 [-0.492, 0.013] & 0.0207518\\
+WaterDist & -0.119 [-0.142, -0.096] & 0.0207518\\
+\bottomrule
+\end{tabular}
+
+\section{elk spring}\label{elk-spring}
+
+\begin{tabular}{llrrrrr}
+\toprule
+  & term & estimate & std.error & statistic & p.value & vif\\
+\midrule
+ & (Intercept) & -2.0462269 & 0.0605176 & -33.81208 & 0 & NA\\
+Bog & Bog & -4.9538701 & 0.3897026 & -12.71193 & 0 & 1.005930\\
+Coniferous & Coniferous & -5.5837652 & 0.2562539 & -21.78997 & 0 & 1.049434\\
+LinFeat\_Dist & LinFeat\_Dist & -0.1049891 & 0.0060998 & -17.21186 & 0 & 1.039503\\
+Marsh & Marsh & -0.6677183 & 0.0373731 & -17.86629 & 0 & 1.098488\\
+Mixedwood & Mixedwood & -0.3951739 & 0.0331439 & -11.92296 & 0 & 1.107978\\
+Opendeciduous & Opendeciduous & -1.4296556 & 0.0948957 & -15.06554 & 0 & 1.012013\\
+Ruggedness & Ruggedness & -0.0796622 & 0.0045707 & -17.42906 & 0 & 1.073397\\
+Water\_Dist & Water\_Dist & 0.1643601 & 0.0074225 & 22.14348 & 0 & 1.128060\\
+\bottomrule
+\end{tabular}
+
+\begin{tabular}{llr}
+\toprule
+Coefficient & Estimate & RSquared\\
+\midrule
+(Intercept) & -2.046 [-2.165, -1.928] & 0.0565226\\
+Bog & -4.954 [-5.718, -4.19] & 0.0565226\\
+Coniferous & -5.584 [-6.086, -5.082] & 0.0565226\\
+LinFeat\_Dist & -0.105 [-0.117, -0.093] & 0.0565226\\
+Marsh & -0.668 [-0.741, -0.594] & 0.0565226\\
+Mixedwood & -0.395 [-0.46, -0.33] & 0.0565226\\
+Opendeciduous & -1.43 [-1.616, -1.244] & 0.0565226\\
+Ruggedness & -0.08 [-0.089, -0.071] & 0.0565226\\
+Water\_Dist & 0.164 [0.15, 0.179] & 0.0565226\\
+\bottomrule
+\end{tabular}
+
+\section{elk winter}\label{elk-winter}
+
+\begin{tabular}{llrrrrr}
+\toprule
+  & term & estimate & std.error & statistic & p.value & vif\\
+\midrule
+ & (Intercept) & -3.3398941 & 0.0650882 & -51.313356 & 0.0000000 & NA\\
+Bog & Bog & -1.8285205 & 0.1130512 & -16.174262 & 0.0000000 & 1.016326\\
+Coniferous & Coniferous & -0.8672874 & 0.0774550 & -11.197306 & 0.0000000 & 1.029701\\
+LinFeat\_Dist & LinFeat\_Dist & -0.0779341 & 0.0053830 & -14.477752 & 0.0000000 & 1.067406\\
+Marsh & Marsh & -0.1135758 & 0.0317669 & -3.575290 & 0.0003498 & 1.170914\\
+Mixedwood & Mixedwood & -0.1935492 & 0.0276940 & -6.988839 & 0.0000000 & 1.125973\\
+Opendeciduous & Opendeciduous & 1.5202210 & 0.0367653 & 41.349397 & 0.0000000 & 1.080229\\
+Ruggedness & Ruggedness & -0.0666640 & 0.0038046 & -17.521816 & 0.0000000 & 1.083906\\
+Water\_Dist & Water\_Dist & 0.3582001 & 0.0086075 & 41.615022 & 0.0000000 & 1.154824\\
+\bottomrule
+\end{tabular}
+
+\begin{tabular}{llr}
+\toprule
+Coefficient & Estimate & RSquared\\
+\midrule
+(Intercept) & -3.34 [-3.467, -3.212] & 0.0705193\\
+Bog & -1.829 [-2.05, -1.607] & 0.0705193\\
+Coniferous & -0.867 [-1.019, -0.715] & 0.0705193\\
+LinFeat\_Dist & -0.078 [-0.088, -0.067] & 0.0705193\\
+Marsh & -0.114 [-0.176, -0.051] & 0.0705193\\
+Mixedwood & -0.194 [-0.248, -0.139] & 0.0705193\\
+Opendeciduous & 1.52 [1.448, 1.592] & 0.0705193\\
+Ruggedness & -0.067 [-0.074, -0.059] & 0.0705193\\
+Water\_Dist & 0.358 [0.341, 0.375] & 0.0705193\\
+\bottomrule
+\end{tabular}
+
+\section{wolf spring}\label{wolf-spring}
+
+\begin{tabular}{llrrrrr}
+\toprule
+  & term & estimate & std.error & statistic & p.value & vif\\
+\midrule
+ & (Intercept) & -1.9265170 & 0.0512545 & -37.587271 & 0.0000000 & NA\\
+Bog & Bog & -1.1170325 & 0.1494312 & -7.475231 & 0.0000000 & 1.013876\\
+Coniferous & Coniferous & -3.0121630 & 0.1451069 & -20.758236 & 0.0000000 & 1.033491\\
+LinFeat\_Dist & LinFeat\_Dist & -0.1758235 & 0.0055917 & -31.443758 & 0.0000000 & 1.038630\\
+Marsh & Marsh & 1.5815661 & 0.0279418 & 56.602157 & 0.0000000 & 1.236218\\
+Mixedwood & Mixedwood & -0.2014065 & 0.0312024 & -6.454833 & 0.0000000 & 1.182107\\
+Opendeciduous & Opendeciduous & -0.3712509 & 0.0905075 & -4.101879 & 0.0000410 & 1.021663\\
+Ruggedness & Ruggedness & 0.0640292 & 0.0034781 & 18.409411 & 0.0000000 & 1.147425\\
+Water\_Dist & Water\_Dist & -0.0189315 & 0.0059990 & -3.155751 & 0.0016009 & 1.143012\\
+\bottomrule
+\end{tabular}
+
+\begin{tabular}{llr}
+\toprule
+Coefficient & Estimate & RSquared\\
+\midrule
+(Intercept) & -1.927 [-2.027, -1.826] & 0.0710404\\
+Bog & -1.117 [-1.41, -0.824] & 0.0710404\\
+Coniferous & -3.012 [-3.297, -2.728] & 0.0710404\\
+LinFeat\_Dist & -0.176 [-0.187, -0.165] & 0.0710404\\
+Marsh & 1.582 [1.527, 1.636] & 0.0710404\\
+Mixedwood & -0.201 [-0.263, -0.14] & 0.0710404\\
+Opendeciduous & -0.371 [-0.549, -0.194] & 0.0710404\\
+Ruggedness & 0.064 [0.057, 0.071] & 0.0710404\\
+Water\_Dist & -0.019 [-0.031, -0.007] & 0.0710404\\
+\bottomrule
+\end{tabular}
+
+\section{wolf winter}\label{wolf-winter}
+
+\begin{tabular}{llrrrrr}
+\toprule
+  & term & estimate & std.error & statistic & p.value & vif\\
+\midrule
+ & (Intercept) & -2.5804866 & 0.0696272 & -37.0614716 & 0.0000000 & NA\\
+Bog & Bog & -0.5515471 & 0.1314485 & -4.1959179 & 0.0000272 & 1.019603\\
+Coniferous & Coniferous & -0.2270503 & 0.0800544 & -2.8361985 & 0.0045654 & 1.028397\\
+LinFeat\_Dist & LinFeat\_Dist & -0.2181622 & 0.0063369 & -34.4270681 & 0.0000000 & 1.035357\\
+Marsh & Marsh & 0.0978449 & 0.0441596 & 2.2157092 & 0.0267114 & 1.164437\\
+Mixedwood & Mixedwood & -0.1370463 & 0.0334351 & -4.0988713 & 0.0000415 & 1.112124\\
+Opendeciduous & Opendeciduous & 0.0153167 & 0.0897311 & 0.1706953 & 0.8644634 & 1.021822\\
+Ruggedness & Ruggedness & 0.0546066 & 0.0038971 & 14.0122533 & 0.0000000 & 1.087128\\
+Water\_Dist & Water\_Dist & 0.1059910 & 0.0090974 & 11.6507063 & 0.0000000 & 1.139345\\
+\bottomrule
+\end{tabular}
+
+\begin{tabular}{llr}
+\toprule
+Coefficient & Estimate & RSquared\\
+\midrule
+(Intercept) & -2.58 [-2.717, -2.444] & 0.026874\\
+Bog & -0.552 [-0.809, -0.294] & 0.026874\\
+Coniferous & -0.227 [-0.384, -0.07] & 0.026874\\
+LinFeat\_Dist & -0.218 [-0.231, -0.206] & 0.026874\\
+Marsh & 0.098 [0.011, 0.184] & 0.026874\\
+Mixedwood & -0.137 [-0.203, -0.072] & 0.026874\\
+Opendeciduous & 0.015 [-0.161, 0.191] & 0.026874\\
+Ruggedness & 0.055 [0.047, 0.062] & 0.026874\\
+Water\_Dist & 0.106 [0.088, 0.124] & 0.026874\\
+\bottomrule
+\end{tabular}
+
+
+\end{document}
