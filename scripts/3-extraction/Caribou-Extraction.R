@@ -68,6 +68,10 @@ DT[season == 'winter', predatorRSF := coyotewinter]
 DT[season == 'spring', preyRSF := caribouspring]
 DT[season == 'winter', preyRSF := caribouwinter]
 
+# Drop caribouRSF
+DT[, 'caribouRSF' := NULL]
+
+
 ### Save output ----
 saveRDS(DT, 'output/3-extraction/caribouExtract.Rds')
 message('=== CARIBOU EXTRACTION COMPLETE ===')
