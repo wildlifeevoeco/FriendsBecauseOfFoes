@@ -20,7 +20,7 @@ idCol <- 'id'
 if (truelength(DT) == 0) alloc.col(DT)
 
 
-### 
+### Maybe move this to NNA script?
 # Dyads within 500m 
 DT[dyadDist >= 500, bin500m := TRUE]
 DT[dyadDist < 500, bin500m := FALSE]
@@ -29,64 +29,49 @@ DT[dyadDist < 500, bin500m := FALSE]
 DT[, nDyadTime := .N, by = dyadTime]
 # TODO: add is duplicated column
 
+summary(as.factor(DT$nDyadTime))
+
+### why dont all dyadTimes have duplicates
 
 ### removing duplicate dyad,times
 
-rmnp.dyad2<-rmnp.dyad1[!duplicated(rmnp.dyad1$dyad.time),]
+DT2<-DT[!duplicated(DT$dyadTime),]  
 
-nl.dyad1$dyad.time<-paste(nl.dyad1$dyadID,nl.dyad1$timegroup,sep="_")
+### removing duplicates is okay but as data currently stands we lose information from the endpreyRSF and endpredatorRSF columns
+## All other unique data columns have a counterpart "X".nn, we should create these for endpreyRSF and endpredatorRSF columns.
 
-nl.dyad2<-nl.dyad1[!duplicated(nl.dyad1$dyad.time),]
 
-
-#### Because we are focused on sociality, we only want to look at animals that:
+#### Because we are focused on sociality, we only want to look at dyads that:
 ### 1) had potential to be social (dyads within 500m)
 ### 2) dyads that choose to be social (dSl less 500m)
 
 ### we might be interested in the conditions that result in a dyad that had the potential to be social but choose to not be social
 
-nl.dyad3<-nl.dyad2[dyadDist<=500 & dSI<=500] #choose to be social (7637/9049; 84.4% of potential to be social were)
-nl.dyad4<-nl.dyad2[dyadDist<=500 & dSI>=500] #choose not to be social (1412/9049; 15.6% of potentail to be social choose not to be)
-nl.dyad5<-nl.dyad2[dyadDist>500] # did not have potential to be social (112159/121208; 92.5%)
+DTsoc<-DT2[dyadDist<=500 & dSI<=500] 
+DTnsoc<-DT2[dyadDist<=500 & dSI>=500] 
+DTsocNA<-DT2[dyadDist>500] 
 
-rmnp.dyad3<-rmnp.dyad2[dyadDist<=500 & dSI<=500] #choose to be social (2147/2291; 93.7% of potential to be social were)
-rmnp.dyad4<-rmnp.dyad2[dyadDist<=500 & dSI>=500] #choose not to be social (144/2291; 6.3% of potentail to be social choose not to be)
-rmnp.dyad5<-rmnp.dyad2[dyadDist>500] # did not have potential to be social (14477/16768; 86.3%)
+round((nrow(DTsoc)+nrow(DTnsoc))/nrow(DT2), 2)
+#proportion of dyadtimes where animals had potential to be social
+round(nrow(DTsocNA)/nrow(DT2), 2)
+#proportion of dyadtimes where animals did not have potential to be social
 
-### data to summarize, test for correlation, etc.
+round(nrow(DTsoc)/(nrow(DTsoc)+nrow(DTnsoc)),2)
+#proportion of dyadtimes where animals were social when they had potential to be social
+round(nrow(DTnsoc)/(nrow(DTsoc)+nrow(DTnsoc)),2)
+#proportion of dyadtimes where animals were not social when they had potential to be social
 
-### need to add nWithin500
-nl.dyad3.1<-nl.dyad3[, c("CarRSF","CoyRSF","BearRSF","absAngle","stepLength","predatorRSF","season","dyadID",
-       "julday","yr","dyadDist","dSI","dAbsAng","bin500m",
-       "rCarRSF","rCoyRSF","rBearRSF","rabsAngle","rstepLength","rpredatorRSF",
-       "dCarRSF","dCoyRSF","dBearRSF","dPredRSF",
-       "avgCarRSF","avgCoyRSF","avgBearRSF","avgPredRSF"), with=FALSE]
+c<-c(2,5:ncol(DTsoc)) ### for isolating correlation columns
 
-rmnp.dyad3.1<-rmnp.dyad3[, c("absAngle","stepLength","predatorRSF","preyRSF","season","dyadID",
-                           "julday","yr","dyadDist","dSI","dAbsAng","bin500m","nWithin500",
-                           "rabsAngle","rstepLength","rpredatorRSF","rpreyRSF",
-                           "dPredRSF","dPreyRSF","avgPredRSF","avgPreyRSF"), with=FALSE]
+COR<-round(cor(as.data.frame(DTsoc[,..c])[, sapply(as.data.frame(DTsoc[,..c]), is.numeric)], use = "complete.obs", method = "pearson"),2)
 
-rmnp.dyad3.1$season <- as.factor(rmnp.dyad3.1$season)
-rmnp.dyad3.1$dyadID <- as.factor(rmnp.dyad3.1$dyadID)
-rmnp.dyad3.1$julday <- as.factor(rmnp.dyad3.1$julday)
-rmnp.dyad3.1$yr <- as.factor(rmnp.dyad3.1$yr)
-rmnp.dyad3.1$bin500m <- as.factor(rmnp.dyad3.1$bin500m)
-rmnp.dyad3.1$nWithin500 <- as.factor(rmnp.dyad3.1$nWithin500)
-
-nl.dyad3.1$season <- as.factor(nl.dyad3.1$season)
-nl.dyad3.1$dyadID <- as.factor(nl.dyad3.1$dyadID)
-nl.dyad3.1$julday <- as.factor(nl.dyad3.1$julday)
-nl.dyad3.1$yr <- as.factor(nl.dyad3.1$yr)
-nl.dyad3.1$bin500m <- as.factor(nl.dyad3.1$bin500m)
-#nl.dyad3.1$nWithin500 <- as.factor(nl.dyad3.1$nWithin500) ### update after adding niwthin500
+COR[abs(COR) < 0.5] <- ""  ## just helps me find any correlations worth noting
 
 
-RMNP_cor<-c("predatorRSF","preyRSF","dPredRSF","dPreyRSF","dSI","dAbsAng.trnsfrm","avgPredRSF","avgPreyRSF","dyadDist","DI")
-NL_cor<-c("predatorRSF","CarRSF","CoyRSF","BearRSF","dPredRSF","dCarRSF","dCoyRSF","dBearRSF","dSI","dAbsAng.trnsfrm","avgPredRSF","avgCarRSF","avgCoyRSF","avgBearRSF","dyadDist","DI")
+### we might want to ask for summary information at some point here
 
-summary(rmnp.dyad3.1[,RMNP_cor, with=FALSE])
-summary(nl.dyad3.1[,NL_cor, with=FALSE])
+
+
 
 ### PredRSF and PreyRSF values are not quite on the same scale, going to standardize them at the 'avg' stages
 ### also standardized but did not center the dependents
