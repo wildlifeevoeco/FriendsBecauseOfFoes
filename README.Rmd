@@ -32,8 +32,8 @@ knitr::opts_chunk$set(
     * *Caribou-Extraction.R* (~~cariboudata-rsfvalues.R~~)
     * *Elk-Extraction.R* (~~elkdata-rsfvalues.R~~)
   * 4-sociality
-    * Calculate-Turn-Angles.R
-    * Nearest-Neighbour-Analysis.R
+    * *Calculate-Turn-Angles.R*
+    * *Nearest-Neighbour-Analysis.R*
   * 5-model
     * sociality-domain-GLM.R
   * 0-variables
