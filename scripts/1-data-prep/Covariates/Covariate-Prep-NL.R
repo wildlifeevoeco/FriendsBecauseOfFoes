@@ -26,6 +26,21 @@ source('scripts/0-variables/variables.R')
 #   overwrite = TRUE
 # )
 
+
+### Create forest class ----
+broad <- raster('input/covariates/NL/Broadleaf100.tif')
+conifer <- raster('input/covariates/NL/Conifer100.tif')
+mixed <- raster('input/covariates/NL/MixedWood100.tif')
+
+forest <- broad + conifer + mixed
+
+writeRaster(
+  forest,
+  'input/covariates/NL/Forest100',
+  format = 'GTiff',
+  overwrite = TRUE
+)
+
 ### List rasters ----
 rasterOptions(tmpdir = "output/1-data-prep/covariates/temp")
 
