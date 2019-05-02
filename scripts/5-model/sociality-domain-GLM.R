@@ -77,12 +77,16 @@ COR[abs(COR) < 0.5] <- ""  ## just helps me find any correlations worth noting
 ### also standardized but did not center the dependents
 ### but not DI since it is already on -1 to 1 and I think it is better to leave the values of DI comparable between datasets
 
-rmnp.dyad3.1$z.avgPreyRSF<-scale(rmnp.dyad3.1$avgPreyRSF, center=T, scale=T)
-rmnp.dyad3.1$z.avgPredRSF<-scale(rmnp.dyad3.1$avgPredRSF, center=T, scale=T)
+DTsoc$z.avgPreyRSF<-scale(DTsoc$avgPreyRSF, center=T, scale=T)
+DTsoc$z.avgPredRSF<-scale(DTsoc$avgPredRSF, center=T, scale=T)
 
-rmnp.dyad3.1$z.dSI<-scale(rmnp.dyad3.1$dSI, center=F, scale=T)
-rmnp.dyad3.1$z.dyadDist<-scale(rmnp.dyad3.1$dyadDist, center=F, scale=T)
-rmnp.dyad3.1$z.dAbsAng.trnsfrm<-scale(rmnp.dyad3.1$dAbsAng.trnsfrm, center=F, scale=T)
+DTsoc$z.dSI<-scale(DTsoc$dSI, center=F, scale=T)
+DTsoc$z.dyadDist<-scale(DTsoc$dyadDist, center=F, scale=T)
+DTsoc$z.dAbsAng.trnsfrm<-scale(DTsoc$dAbsAng.trnsfrm, center=F, scale=T)
+
+
+
+
 
 nl.dyad3.1$z.avgCarRSF<-scale(nl.dyad3.1$avgCarRSF, center=T, scale=T)
 nl.dyad3.1$z.avgPredRSF<-scale(nl.dyad3.1$avgPredRSF, center=T, scale=T)
