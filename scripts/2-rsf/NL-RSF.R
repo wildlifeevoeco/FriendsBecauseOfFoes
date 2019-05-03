@@ -37,7 +37,7 @@ rpath <- 'output/1-data-prep/covariates/NL'
 covers <- gsub(".tif|100|prep", "", dir(rpath, '.tif$'))
 paths <- dir(rpath, '.tif$', full.names = TRUE)
 
-dropCovers <- which(covers %in% c('Anthro', 'Broadleaf', 'MixedWood'))
+dropCovers <- which(covers %in% c('Anthro', 'Broadleaf', 'MixedWood', 'Conifer'))
 
 lsCovers <- covers[-dropCovers]
 lsPaths <- paths[-dropCovers]
