@@ -49,7 +49,15 @@ covers <- gsub(".tif|100", "", dir('input/covariates/NL', '.tif$'))
 paths <- dir('input/covariates/NL', '.tif$', full.names = TRUE)
 
 
-rmList <- which(covers %in% c('Water', 'NLElev', 'Wetland'))
+rmList <-
+  which(covers %in% c(
+    'Water',
+    'NLElev',
+    'Wetland',
+    'Broadleaf',
+    'MixedWood',
+    'Conifer'
+  ))
 
 lsCovers <- covers[-rmList]
 lsPaths <- paths[-rmList]
