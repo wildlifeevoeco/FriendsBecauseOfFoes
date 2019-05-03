@@ -31,6 +31,7 @@ if (length(commandArgs(trailingOnly = TRUE) > 1)) {
 }
 
 DT <- readRDS(paste0('output/1-data-prep/', species, '.Rds'))
+elk <- readRDS(paste0('output/1-data-prep/elk.Rds'))
 
 if (truelength(DT) == 0) alloc.col(DT)
 
@@ -148,6 +149,13 @@ springRaster[springRaster > springQ] <- springQ
 
 springScaled <-
   (springRaster - (cellStats(springRaster, min))) / (cellStats(springRaster, max) - (cellStats(springRaster, min)))
+
+
+### Crop ----
+outCrop <- mcp(elk, percent = 100)
+
+winterCrop <- crop(winterRaster, outCrop)
+springCrop <- crop(springRaster, outCrop)
 
 
 ### Output ----

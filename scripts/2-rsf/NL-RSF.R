@@ -29,6 +29,7 @@ if (length(commandArgs(trailingOnly = TRUE) > 1)) {
 }
 
 DT <- readRDS(paste0('output/1-data-prep/', species, '.Rds'))
+caribou <- readRDS(paste0('output/1-data-prep/caribou.Rds'))
 
 if (truelength(DT) == 0) alloc.col(DT)
 
@@ -84,9 +85,6 @@ samplePts <- samplePts[, ..cols]
 samplePts[, rowID := .I]
 
 # Sample rasters
-# TODO: should we crop?
-lsRasters <- lapply(lsPaths, function(r) crop(raster(r), mcps))
-
 samplePts[, (lsCovers) := lapply(
   lsRasters,
   FUN = function(r) {
@@ -161,9 +159,15 @@ springScaled <-
   (springRaster - (cellStats(springRaster, min))) / (cellStats(springRaster, max) - (cellStats(springRaster, min)))
 
 
+### Crop ----
+outCrop <- mcp(caribou, percent = 100)
+
+winterCrop <- crop(winterRaster, outCrop)
+springCrop <- crop(springRaster, outCrop)
+
 ### Output ----
 # Save the RSFs
-rsfs <- list('Winter' = winterScaled, 'Spring' = springScaled)
+rsfs <- list('Winter' = winterCrop, 'Spring' = springCrop)
 path <- 'output/2-rsf/'
 
 lapply(
