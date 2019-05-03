@@ -67,6 +67,17 @@ COR<-round(cor(as.data.frame(DTsoc[,..c])[, sapply(as.data.frame(DTsoc[,..c]), i
 
 COR[abs(COR) < 0.5] <- ""  ## just helps me find any correlations worth noting
 
+DTsoc_S<-subset(DTsoc, DTsoc$season=="spring")
+DTsoc_W<-subset(DTsoc, DTsoc$season=="winter")
+
+COR<-round(cor(as.data.frame(DTsoc_S[,..c])[, sapply(as.data.frame(DTsoc_S[,..c]), is.numeric)], use = "complete.obs", method = "pearson"),2)
+
+COR[abs(COR) < 0.5] <- ""  ## just helps me find any correlations worth noting
+
+COR<-round(cor(as.data.frame(DTsoc_W[,..c])[, sapply(as.data.frame(DTsoc_W[,..c]), is.numeric)], use = "complete.obs", method = "pearson"),2)
+
+COR[abs(COR) < 0.5] <- ""  ## just helps me find any correlations worth noting
+
 
 ### we might want to ask for summary information at some point here
 
