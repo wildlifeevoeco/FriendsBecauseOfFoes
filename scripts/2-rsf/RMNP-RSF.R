@@ -75,6 +75,8 @@ samplePts <- rbindlist(list(regPts, DT),
                        use.names = TRUE, fill = TRUE)
 
 ### Sampling ----
+lsRasters <- lapply(lsPaths, raster)
+
 # Drop columns leaving only needed
 cols <- c('id','EASTING', 'NORTHING', 'season', 'observed')
 samplePts <- samplePts[, ..cols]
@@ -84,15 +86,13 @@ samplePts[, rowID := .I]
 
 # Sample rasters
 samplePts[, (lsCovers) := lapply(
-  lsPaths,
+  lsRasters,
   FUN = function(r) {
-    extract(raster(r), matrix(c(EASTING, NORTHING), ncol = 2))
+    extract(r, matrix(c(EASTING, NORTHING), ncol = 2))
   }
 )]
 
 ### RSF ----
-lsRasters <- lapply(lsPaths, function(r) crop(raster(r), mcps))
-
 ## Winter RSF
 winterPts <- samplePts[season == "winter" | season == 'grid']
 winterPts[season == 'grid', season := "winter"]
@@ -106,7 +106,7 @@ winterCoefs <- coef(winterRSF)[-1]
 # Create the raster matching the first raster layer with the first fixed effect
 intercept <- coef(winterRSF)[1]
 
-if (all(names(winterCoefs) == names(lsRasters))) {
+if (all(names(winterCoefs) == lsCovers)) {
   winterRaster <-
     exp(intercept + Reduce('+', Map('*', winterCoefs, lsRasters)))
 } else {
@@ -127,7 +127,7 @@ springCoefs <- coef(springRSF)[-1]
 # Create the raster matching the first raster layer with the first fixed effect
 intercept <- coef(springRSF)[1]
 
-if (all(names(springCoefs) == names(lsRasters))) {
+if (all(names(springCoefs) == lsCovers)) {
   springRaster <-
     exp(intercept + Reduce('+', Map('*', springCoefs, lsRasters)))
 } else {
@@ -135,27 +135,28 @@ if (all(names(springCoefs) == names(lsRasters))) {
 }
 
 
-### Rescale RSFs ----
-q <- 0.999
-
-winterQ <- quantile(winterRaster, q)
-winterRaster[winterRaster > winterQ] <- winterQ
-
-winterScaled <-
-  (winterRaster - (cellStats(winterRaster, min))) / (quantile(winterRaster, q) - (cellStats(winterRaster, min)))
-
-springQ <- quantile(springRaster, q)
-springRaster[springRaster > springQ] <- springQ
-
-springScaled <-
-  (springRaster - (cellStats(springRaster, min))) / (cellStats(springRaster, max) - (cellStats(springRaster, min)))
-
-
 ### Crop ----
-outCrop <- mcp(elk, percent = 100)
+elkPts <- SpatialPoints(elk[, .(EASTING, NORTHING)],
+                            proj4string = CRS(utmMB))
+outCrop <- mcp(elkPts, percent = 100)
 
 winterCrop <- crop(winterRaster, outCrop)
 springCrop <- crop(springRaster, outCrop)
+
+### Rescale RSFs ----
+q <- 0.999
+
+winterQ <- quantile(winterCrop, q)
+winterCrop[winterCrop > winterQ] <- winterQ
+
+winterScaled <-
+  (winterCrop - (cellStats(winterCrop, min))) / (quantile(winterCrop, q) - (cellStats(winterCrop, min)))
+
+springQ <- quantile(springCrop, q)
+springCrop[springCrop > springQ] <- springQ
+
+springScaled <-
+  (springCrop - (cellStats(springCrop, min))) / (cellStats(springCrop, max) - (cellStats(springCrop, min)))
 
 
 ### Output ----

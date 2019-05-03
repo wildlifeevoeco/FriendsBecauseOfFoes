@@ -77,6 +77,8 @@ samplePts <- rbindlist(list(regPts, DT),
 
 
 ### Sampling ----
+lsRasters <- lapply(lsPaths, raster)
+
 # Drop columns leaving only needed
 cols <- c('id','EASTING', 'NORTHING', 'season', 'observed')
 samplePts <- samplePts[, ..cols]
@@ -114,7 +116,7 @@ springCoefs <- coef(springRSF)[-1]
 # Create the raster matching the first raster layer with the first fixed effect
 intercept <- coef(springRSF)[1]
 
-if (all(names(springCoefs) == names(lsRasters))) {
+if (all(names(springCoefs) == lsCovers)) {
   springRaster <-
     exp(intercept + Reduce('+', Map('*', springCoefs, lsRasters)))
 } else {
@@ -135,35 +137,38 @@ winterCoefs <- coef(winterRSF)[-1]
 # Create the raster matching the first raster layer with the first fixed effect
 intercept <- coef(winterRSF)[1]
 
-if (all(names(winterCoefs) == names(lsRasters))) {
+if (all(names(winterCoefs) == lsCovers)) {
   winterRaster <-
     exp(intercept + Reduce('+', Map('*', winterCoefs, lsRasters)))
 } else {
   stop('names dont match, check coef and rasters')
 }
 
+### Crop ----
+caribouPts <- SpatialPoints(caribou[, .(EASTING, NORTHING)],
+                            proj4string = CRS(utmMB))
+outCrop <- mcp(caribouPts, percent = 100)
+
+winterCrop <- crop(winterRaster, outCrop)
+springCrop <- crop(springRaster, outCrop)
 
 ### Rescale RSFs ----
 q <- 0.999
 
-winterQ <- quantile(winterRaster, q)
-winterRaster[winterRaster > winterQ] <- winterQ
+winterQ <- quantile(winterCrop, q)
+winterCrop[winterCrop > winterQ] <- winterQ
 
 winterScaled <-
-  (winterRaster - (cellStats(winterRaster, min))) / (quantile(winterRaster, q) - (cellStats(winterRaster, min)))
+  (winterCrop - (cellStats(winterCrop, min))) / (quantile(winterCrop, q) - (cellStats(winterCrop, min)))
 
-springQ <- quantile(springRaster, q)
-springRaster[springRaster > springQ] <- springQ
+springQ <- quantile(springCrop, q)
+springCrop[springCrop > springQ] <- springQ
 
 springScaled <-
-  (springRaster - (cellStats(springRaster, min))) / (cellStats(springRaster, max) - (cellStats(springRaster, min)))
+  (springCrop - (cellStats(springCrop, min))) / (cellStats(springCrop, max) - (cellStats(springCrop, min)))
 
 
-### Crop ----
-outCrop <- mcp(caribou, percent = 100)
 
-winterCrop <- crop(winterRaster, outCrop)
-springCrop <- crop(springRaster, outCrop)
 
 ### Output ----
 # Save the RSFs
