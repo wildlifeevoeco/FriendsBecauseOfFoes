@@ -34,10 +34,14 @@ if (truelength(DT) == 0) alloc.col(DT)
 
 # Covariates
 rpath <- 'output/1-data-prep/covariates/NL'
-lsCovers <- gsub(".tif|100|prep", "", dir(rpath, '.tif$'))
-lsPaths <- dir(rpath, '.tif$', full.names = TRUE)
-names(lsPaths) <- lsCovers
+covers <- gsub(".tif|100|prep", "", dir(rpath, '.tif$'))
+paths <- dir(rpath, '.tif$', full.names = TRUE)
 
+dropCovers <- which(covers %in% c('Anthro', 'Broadleaf', 'MixedWood'))
+
+lsCovers <- covers[-dropCovers]
+lsPaths <- paths[-dropCovers]
+names(lsPaths) <- lsCovers
 
 ### Processing ----
 points <- SpatialPoints(DT[, .(EASTING, NORTHING)],
@@ -120,13 +124,6 @@ if (all(names(springCoefs) == names(lsRasters))) {
 }
 
 # Winter RSF
-# If caribou winter, drop antro, broadleaf, mixedwood from RSF
-if (species == 'caribou') {
-  dropCovers <- which(lsCovers %in% c('Anthro', 'Broadleaf', 'MixedWood'))
-  lsCovers <- lsCovers[-dropCovers]
-  lsRasters <- lsRasters[-dropCovers]
-}
-
 winterPts <- samplePts[season == "winter" | season == 'grid']
 winterPts[season == 'grid', season := "winter"]
 
