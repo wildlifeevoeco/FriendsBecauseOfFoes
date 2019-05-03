@@ -145,10 +145,17 @@ if (all(names(winterCoefs) == names(lsRasters))) {
 }
 
 
-### Standardize RSFs ----
-# Using feature scaling
+### Rescale RSFs ----
+q <- 0.999
+
+winterQ <- quantile(winterRaster, q)
+winterRaster[winterRaster > winterQ] <- winterQ
+
 winterScaled <-
-  (winterRaster - (cellStats(winterRaster, min))) / (cellStats(winterRaster, max) - (cellStats(winterRaster, min)))
+  (winterRaster - (cellStats(winterRaster, min))) / (quantile(winterRaster, q) - (cellStats(winterRaster, min)))
+
+springQ <- quantile(springRaster, q)
+springRaster[springRaster > springQ] <- springQ
 
 springScaled <-
   (springRaster - (cellStats(springRaster, min))) / (cellStats(springRaster, max) - (cellStats(springRaster, min)))
