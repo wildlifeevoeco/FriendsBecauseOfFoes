@@ -66,7 +66,6 @@ if (species == 'elk') {
   rsfCols <-
     c('predatorRSF',
       'preyRSF',
-      'caribouRSF',
       'coyoteRSF',
       'bearRSF')
   cols <- c(cols, rsfCols)
