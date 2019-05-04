@@ -104,8 +104,8 @@ dyad_dist(
 out[, dSI := abs(stepLength - stepLength.nn)]
 
 # Dif in abs Angle
-out[, dAbsAng := abs(absAngle - absAngle.nn)]
- 
+out[, dAbsAng := 180 - abs(abs(absAngle - absAngle.nn) - 180)]
+
 
 ## RSF
 for (col in rsfCols) {
