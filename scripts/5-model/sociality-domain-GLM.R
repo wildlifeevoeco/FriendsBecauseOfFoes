@@ -51,6 +51,19 @@ DTsoc<-DT2[dyadDist<=500 & dSI<=500]
 DTnsoc<-DT2[dyadDist<=500 & dSI>=500] 
 DTsocNA<-DT2[dyadDist>500] 
 
+DT_S<-subset(DT2, DT2$season=="spring")
+DT_W<-subset(DT2, DT2$season=="winter")
+
+DTsoc_S<-subset(DTsoc, DTsoc$season=="spring")
+DTsoc_W<-subset(DTsoc, DTsoc$season=="winter")
+
+DTnsoc_S<-subset(DTnsoc, DTnsoc$season=="spring")
+DTnsoc_W<-subset(DTnsoc, DTnsoc$season=="winter")
+
+DTsocNA_S<-subset(DTsocNA, DTsocNA$season=="spring")
+DTsocNA_W<-subset(DTsocNA, DTsocNA$season=="winter")
+
+
 round((nrow(DTsoc)+nrow(DTnsoc))/nrow(DT2), 2)
 #proportion of dyadtimes where animals had potential to be social
 round(nrow(DTsocNA)/nrow(DT2), 2)
@@ -61,22 +74,40 @@ round(nrow(DTsoc)/(nrow(DTsoc)+nrow(DTnsoc)),2)
 round(nrow(DTnsoc)/(nrow(DTsoc)+nrow(DTnsoc)),2)
 #proportion of dyadtimes where animals were not social when they had potential to be social
 
+round((nrow(DTsoc_W)+nrow(DTnsoc_W))/nrow(DT_W), 2)
+#proportion of dyadtimes where animals had potential to be social
+round(nrow(DTsocNA_W)/nrow(DT_W), 2)
+#proportion of dyadtimes where animals did not have potential to be social
+
+round(nrow(DTsoc_W)/(nrow(DTsoc_W)+nrow(DTnsoc_W)),2)
+#proportion of dyadtimes where animals were social when they had potential to be social
+round(nrow(DTnsoc_W)/(nrow(DTsoc_W)+nrow(DTnsoc_W)),2)
+#proportion of dyadtimes where animals were not social when they had potential to be social
+
+round((nrow(DTsoc_S)+nrow(DTnsoc_S))/nrow(DT_S), 2)
+#proportion of dyadtimes where animals had potential to be social
+round(nrow(DTsocNA_S)/nrow(DT_S), 2)
+#proportion of dyadtimes where animals did not have potential to be social
+
+round(nrow(DTsoc_S)/(nrow(DTsoc_S)+nrow(DTnsoc_S)),2)
+#proportion of dyadtimes where animals were social when they had potential to be social
+round(nrow(DTnsoc_S)/(nrow(DTsoc_S)+nrow(DTnsoc_S)),2)
+#proportion of dyadtimes where animals were not social when they had potential to be social
+
+
 c<-c(2,5:ncol(DTsoc)) ### for isolating correlation columns
 
 COR<-round(cor(as.data.frame(DTsoc[,..c])[, sapply(as.data.frame(DTsoc[,..c]), is.numeric)], use = "complete.obs", method = "pearson"),2)
 
 COR[abs(COR) < 0.5] <- ""  ## just helps me find any correlations worth noting
 
-DTsoc_S<-subset(DTsoc, DTsoc$season=="spring")
-DTsoc_W<-subset(DTsoc, DTsoc$season=="winter")
+CORSp<-round(cor(as.data.frame(DTsoc_S[,..c])[, sapply(as.data.frame(DTsoc_S[,..c]), is.numeric)], use = "complete.obs", method = "pearson"),2)
 
-COR<-round(cor(as.data.frame(DTsoc_S[,..c])[, sapply(as.data.frame(DTsoc_S[,..c]), is.numeric)], use = "complete.obs", method = "pearson"),2)
+CORSp[abs(CORSp) < 0.5] <- ""  ## just helps me find any correlations worth noting
 
-COR[abs(COR) < 0.5] <- ""  ## just helps me find any correlations worth noting
+CORW<-round(cor(as.data.frame(DTsoc_W[,..c])[, sapply(as.data.frame(DTsoc_W[,..c]), is.numeric)], use = "complete.obs", method = "pearson"),2)
 
-COR<-round(cor(as.data.frame(DTsoc_W[,..c])[, sapply(as.data.frame(DTsoc_W[,..c]), is.numeric)], use = "complete.obs", method = "pearson"),2)
-
-COR[abs(COR) < 0.5] <- ""  ## just helps me find any correlations worth noting
+CORW[abs(CORW) < 0.5] <- ""  ## just helps me find any correlations worth noting
 
 
 ### we might want to ask for summary information at some point here
@@ -84,16 +115,18 @@ COR[abs(COR) < 0.5] <- ""  ## just helps me find any correlations worth noting
 
 
 
-### PredRSF and PreyRSF values are not quite on the same scale, going to standardize them at the 'avg' stages
-### also standardized but did not center the dependents
+### Standardized but did not center the dependents
 ### but not DI since it is already on -1 to 1 and I think it is better to leave the values of DI comparable between datasets
 
-DTsoc$z.avgPreyRSF<-scale(DTsoc$avgPreyRSF, center=T, scale=T)
-DTsoc$z.avgPredRSF<-scale(DTsoc$avgPredRSF, center=T, scale=T)
+
+
+
+#### stopping here something maybe up with dAbsAng???
+
 
 DTsoc$z.dSI<-scale(DTsoc$dSI, center=F, scale=T)
 DTsoc$z.dyadDist<-scale(DTsoc$dyadDist, center=F, scale=T)
-DTsoc$z.dAbsAng.trnsfrm<-scale(DTsoc$dAbsAng.trnsfrm, center=F, scale=T)
+DTsoc$z.dAbsAng<-scale(DTsoc$dAbsAng, center=F, scale=T)
 
 
 
