@@ -29,7 +29,7 @@ caribou <- readRDS('output/4-sociality/caribouNNA.Rds')
 #### Elk
 
 ```{r processing}
-cols <- c('dAbsAngle', 'dSI', 'predatorRSF', 'preyRSF', 'dyadDist', 'dSI', 'di')
+cols <- c('dAbsAng', 'dSI', 'predatorRSF', 'preyRSF', 'dyadDist', 'dSI', 'di')
 
 
 
