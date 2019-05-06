@@ -11,7 +11,7 @@ p <- suppressPackageStartupMessages(lapply(
 
 ### Input data ----
 # Which species?
-species <- 'elk'
+species <- 'caribou'
 DT <- readRDS(paste0('output/4-sociality/', species, 'NNA.Rds'))
 
 coordCols <- c('EASTING', 'NORTHING')
@@ -37,6 +37,13 @@ summary(as.factor(DT$nDyadTime))
 
 DT2<-DT[!duplicated(DT$dyadTime),]  
 
+DT2$avgpredatorRSF<-(DT2$predatorRSF+DT2$predatorRSF.nn)/2
+
+
+#### temporary fix to avg predator column
+
+
+
 ### removing duplicates is okay but as data currently stands we lose information from the endpreyRSF and endpredatorRSF columns
 ## All other unique data columns have a counterpart "X".nn, we should create these for endpreyRSF and endpredatorRSF columns.
 
@@ -50,6 +57,26 @@ DT2<-DT[!duplicated(DT$dyadTime),]
 DTsoc<-DT2[dyadDist<=500 & dSI<=500] 
 DTnsoc<-DT2[dyadDist<=500 & dSI>=500] 
 DTsocNA<-DT2[dyadDist>500] 
+
+### Standardized but did not center the dependents
+### but not DI since it is already on -1 to 1 and I think it is better to leave the values of DI comparable between datasets
+DTsoc$z.dSI<-scale(DTsoc$dSI, center=F, scale=T)
+DTsoc$z.dyadDist<-scale(DTsoc$dyadDist, center=F, scale=T)
+DTsoc$z.dAbsAng<-scale(DTsoc$dAbsAng, center=F, scale=T)
+
+### standardized avg RSF independents
+
+DTsoc$z.avgpreyRSF<-scale(DTsoc$avgpreyRSF, center=T, scale=T)
+DTsoc$z.avgpredatorRSF<-scale(DTsoc$avgpredatorRSF, center=T, scale=T)
+DTsoc$z.avgcoyoteRSF<-scale(DTsoc$avgcoyoteRSF, center=T, scale=T)
+DTsoc$z.avgbearRSF<-scale(DTsoc$avgbearRSF, center=T, scale=T)
+
+### temporary fix to di
+
+DTsoc$diang2<-(-1*(DTsoc$dAbsAng-90)/90)
+DTsoc$DI<-DTsoc$diang2*DTsoc$diDist
+
+### season subsets
 
 DT_S<-subset(DT2, DT2$season=="spring")
 DT_W<-subset(DT2, DT2$season=="winter")
@@ -95,6 +122,10 @@ round(nrow(DTnsoc_S)/(nrow(DTsoc_S)+nrow(DTnsoc_S)),2)
 #proportion of dyadtimes where animals were not social when they had potential to be social
 
 
+
+
+### for RMNP correlations
+
 c<-c(2,5:ncol(DTsoc)) ### for isolating correlation columns
 
 COR<-round(cor(as.data.frame(DTsoc[,..c])[, sapply(as.data.frame(DTsoc[,..c]), is.numeric)], use = "complete.obs", method = "pearson"),2)
@@ -110,137 +141,96 @@ CORW<-round(cor(as.data.frame(DTsoc_W[,..c])[, sapply(as.data.frame(DTsoc_W[,..c
 CORW[abs(CORW) < 0.5] <- ""  ## just helps me find any correlations worth noting
 
 
-### we might want to ask for summary information at some point here
+
+
+### for NL correlations
+
+c<-c(2,5:14,16:25,27:38,42:54,56:ncol(DTsoc)) ### for removing bear columns
+
+COR<-round(cor(as.data.frame(DTsoc[,..c])[, sapply(as.data.frame(DTsoc[,..c]), is.numeric)], use = "complete.obs", method = "pearson"),2)
+
+COR[abs(COR) < 0.5] <- ""  ## just helps me find any correlations worth noting
+
+c<-c(2,5:ncol(DTsoc)) ### for isolating correlation columns
+
+CORSp<-round(cor(as.data.frame(DTsoc_S[,..c])[, sapply(as.data.frame(DTsoc_S[,..c]), is.numeric)], use = "complete.obs", method = "pearson"),2)
+
+CORSp[abs(CORSp) < 0.5] <- ""  ## just helps me find any correlations worth noting
+
+c<-c(2,5:11,13,14,16:22,24,25,27:29,33:38,42:52,54,56:ncol(DTsoc)) ### for removing bear columns
+
+CORW<-round(cor(as.data.frame(DTsoc_W[,..c])[, sapply(as.data.frame(DTsoc_W[,..c]), is.numeric)], use = "complete.obs", method = "pearson"),2)
+
+CORW[abs(CORW) < 0.5] <- ""  ## just helps me find any correlations worth noting
 
 
 
 
-### Standardized but did not center the dependents
-### but not DI since it is already on -1 to 1 and I think it is better to leave the values of DI comparable between datasets
-
-
-
-
-#### stopping here something maybe up with dAbsAng???
-
-
-DTsoc$z.dSI<-scale(DTsoc$dSI, center=F, scale=T)
-DTsoc$z.dyadDist<-scale(DTsoc$dyadDist, center=F, scale=T)
-DTsoc$z.dAbsAng<-scale(DTsoc$dAbsAng, center=F, scale=T)
-
-
-
-
-
-nl.dyad3.1$z.avgCarRSF<-scale(nl.dyad3.1$avgCarRSF, center=T, scale=T)
-nl.dyad3.1$z.avgPredRSF<-scale(nl.dyad3.1$avgPredRSF, center=T, scale=T)
-
-nl.dyad3.1$z.avgCoyRSF<-scale(nl.dyad3.1$avgCoyRSF, center=T, scale=T)
-nl.dyad3.1$z.avgBearRSF<-scale(nl.dyad3.1$avgBearRSF, center=T, scale=T)
-
-nl.dyad3.1$z.dSI<-scale(nl.dyad3.1$dSI, center=F, scale=T)
-nl.dyad3.1$z.dyadDist<-scale(nl.dyad3.1$dyadDist, center=F, scale=T)
-nl.dyad3.1$z.dAbsAng.trnsfrm<-scale(nl.dyad3.1$dAbsAng.trnsfrm, center=F, scale=T)
-
-
-#### Testing for correlations in the data
-
-rcorr(as.matrix(rmnp.dyad3.1[,RMNP_cor, with=FALSE])) 
-rcorr(as.matrix(nl.dyad3.1[,NL_cor, with=FALSE]))
-
-### No unexpected correlations
-### note the strong correlation between dAbsAng.trnsfrm and DI
 
 
 ### plots of data
 
-## FULL
-## RMNP
+plot(as.factor(DTsoc$season))
 
-boxplot(rmnp.dyad3.1$dyadDist)
-hist(rmnp.dyad3.1$dyadDist)
+### pratically no spring observations  of social animals, n = 50 for elk
+### pretty even distribution across seasons for caribou
 
-boxplot(rmnp.dyad3.1$dSI)
-hist(rmnp.dyad3.1$dSI)
-
-boxplot(rmnp.dyad3.1$dAbsAng.trnsfrm)
-hist(rmnp.dyad3.1$dAbsAng.trnsfrm)
-
-boxplot(rmnp.dyad3.1$DI)
-hist(rmnp.dyad3.1$DI)
-
-boxplot(rmnp.dyad3.1$avgPredRSF)
-hist(rmnp.dyad3.1$avgPredRSF)
-
-boxplot(rmnp.dyad3.1$avgPreyRSF)
-hist(rmnp.dyad3.1$avgPreyRSF)
-
-boxplot(rmnp.dyad3.1$z.avgPredRSF)
-hist(rmnp.dyad3.1$z.avgPredRSF)
-
-boxplot(rmnp.dyad3.1$z.avgPreyRSF)
-hist(rmnp.dyad3.1$z.avgPreyRSF)
-
-## NL
-
-boxplot(nl.dyad3.1$dyadDist)
-hist(nl.dyad3.1$dyadDist)
-
-boxplot(nl.dyad3.1$dSI)
-hist(nl.dyad3.1$dSI)
-
-boxplot(nl.dyad3.1$dAbsAng.trnsfrm)
-hist(nl.dyad3.1$dAbsAng.trnsfrm)
-
-boxplot(nl.dyad3.1$DI)
-hist(nl.dyad3.1$DI)
-
-boxplot(nl.dyad3.1$avgCoyRSF)
-hist(nl.dyad3.1$avgCoyRSF)
-
-boxplot(nl.dyad3.1$avgBearRSF)
-hist(nl.dyad3.1$avgBearRSF)
-
-boxplot(nl.dyad3.1$avgPredRSF)
-hist(nl.dyad3.1$avgPredRSF)
-
-boxplot(nl.dyad3.1$avgCarRSF)
-hist(nl.dyad3.1$avgCarRSF)
+plot(as.factor(DTsoc$dyadID))
 
 
-boxplot(nl.dyad3.1$z.avgCoyRSF)
-hist(nl.dyad3.1$z.avgCoyRSF)
-
-boxplot(nl.dyad3.1$z.avgBearRSF)
-hist(nl.dyad3.1$z.avgBearRSF)
-
-boxplot(nl.dyad3.1$z.avgPredRSF)
-hist(nl.dyad3.1$z.avgPredRSF)
-
-boxplot(nl.dyad3.1$z.avgCarRSF)
-hist(nl.dyad3.1$z.avgCarRSF)
+plot(as.factor(DTsoc$nWithin))
+# most individuals only had 1 or 2 other known individuals within 500m for elk
+# most individuals only had 1 other known individuals within 500m for caribou
 
 
-plot(nl.dyad3.1$season)
-plot(rmnp.dyad3.1$season)
+### social dyads have more social encounters than others
 
-### pratically no spring RMNP data
+## WINTER
 
-plot(nl.dyad3.1$julday)
-plot(rmnp.dyad3.1$julday)
+boxplot(DTsoc_W$dyadDist)
+hist(DTsoc_W$dyadDist)
 
-plot(nl.dyad3.1$dyadID)
-plot(rmnp.dyad3.1$dyadID)
+boxplot(DTsoc_W$dSI)
+hist(DTsoc_W$dSI)
 
-plot(nl.dyad3.1$yr)
-plot(rmnp.dyad3.1$yr)
+boxplot(DTsoc_W$dAbsAng)
+hist(DTsoc_W$dAbsAng)
 
-### only 2016 for RMNP
+boxplot(DTsoc_W$di)
+hist(DTsoc_W$di)
 
-#### nwithin is special needs a different subset of data
-# update NL when nwithin500 is added
-plot(nl.dyad3.1$nWithin500)
-plot(rmnp.dyad3.1$nWithin500)
+boxplot(DTsoc_W$avgpredatorRSF)
+hist(DTsoc_W$avgpredatorRSF)
+
+boxplot(DTsoc_W$avgpreyRSF)
+hist(DTsoc_W$avgpreyRSF)
+
+
+## Spring (not needed for RMNP, low sample size)
+
+boxplot(DTsoc_S$dyadDist)
+hist(DTsoc_S$dyadDist)
+
+boxplot(DTsoc_S$dSI)
+hist(DTsoc_S$dSI)
+
+boxplot(DTsoc_S$dAbsAng)
+hist(DTsoc_S$dAbsAng)
+
+boxplot(DTsoc_S$di)
+hist(DTsoc_S$di)
+
+boxplot(DTsoc_S$avgpredatorRSF)
+hist(DTsoc_S$avgpredatorRSF)
+
+boxplot(DTsoc_S$avgpreyRSF)
+hist(DTsoc_S$avgpreyRSF)
+
+boxplot(DTsoc_S$avgcoyoteRSF)
+hist(DTsoc_S$avgcoyoteRSF)
+
+boxplot(DTsoc_S$avgbearRSF)
+hist(DTsoc_S$avgbearRSF)
 
 
 library(visreg)
@@ -253,436 +243,190 @@ library(rgl)
 ### nWithin5000 is a special social measure that will use a different dataset
 
 ## RMNP
-#dsl
-
-rmNN.dsl<-
-  glm(z.dSI ~ z.avgPreyRSF*z.avgPredRSF,
-      data = rmnp.dyad3.1)
-
+## winter
 #dyadDist
 
-rmNN.dd<-
-  glm(z.dyadDist ~ z.avgPreyRSF*z.avgPredRSF,
-      data = rmnp.dyad3.1)
+rmNN_W.dd<-
+  glm(z.dyadDist ~ z.avgpreyRSF*z.avgpredatorRSF,
+      data = DTsoc_W)
 
+#dsl
 
-#dAbsAng.trnsfrm
+rmNN_W.dsl<-
+  glm(z.dSI ~ z.avgpreyRSF*z.avgpredatorRSF,
+      data = DTsoc_W)
 
-rmNN.dAA<-
-  glm(z.dAbsAng.trnsfrm ~ z.avgPreyRSF*z.avgPredRSF,
-      data = rmnp.dyad3.1)
+#dAbsAng
+
+rmNN_W.dAA<-
+  glm(z.dAbsAng ~ z.avgpreyRSF*z.avgpredatorRSF,
+      data = DTsoc_W)
 
 #DI
 
-rmNN.DI<-
-  glm(DI ~ z.avgPreyRSF*z.avgPredRSF,
-      data = rmnp.dyad3.1)
+rmNN_W.DI<-
+  glm(DI ~ z.avgpreyRSF*z.avgpredatorRSF,
+      data = DTsoc_W)
 
-### RMNP is mostly winter data
 
-RMNP_win<-rmnp.dyad3.1[season=="winter"]
-RMNP_spr<-rmnp.dyad3.1[season=="spring"]
-
-RMNP_win$z.avgPreyRSF<-scale(RMNP_win$avgPreyRSF, center=T, scale=T)
-RMNP_win$z.avgPredRSF<-scale(RMNP_win$avgPredRSF, center=T, scale=T)
-
-RMNP_spr$z.avgPreyRSF<-scale(RMNP_spr$avgPreyRSF, center=T, scale=T)
-RMNP_spr$z.avgPredRSF<-scale(RMNP_spr$avgPredRSF, center=T, scale=T)
-
-RMNP_win$z.dSI<-scale(RMNP_win$dSI, center=F, scale=T)
-RMNP_win$z.dyadDist<-scale(RMNP_win$dyadDist, center=F, scale=T)
-RMNP_win$z.dAbsAng.trnsfrm<-scale(RMNP_win$dAbsAng.trnsfrm, center=F, scale=T)
-
-RMNP_spr$z.dSI<-scale(RMNP_spr$dSI, center=F, scale=T)
-RMNP_spr$z.dyadDist<-scale(RMNP_spr$dyadDist, center=F, scale=T)
-RMNP_spr$z.dAbsAng.trnsfrm<-scale(RMNP_spr$dAbsAng.trnsfrm, center=F, scale=T)
-
-## WINTER
-#dsl
-
-rm_winNN.dsl<-
-  glm(z.dSI ~ z.avgPreyRSF*z.avgPredRSF,
-      data = RMNP_win)
-
+## spring
 #dyadDist
 
-rm_winNN.dd<-
-  glm(z.dyadDist ~ z.avgPreyRSF*z.avgPredRSF,
-      data = RMNP_win)
+rmNN_S.dd<-
+  glm(z.dyadDist ~ z.avgpreyRSF*z.avgpredatorRSF,
+      data = DTsoc_S)
 
+#dsl
 
-#dAbsAng.trnsfrm
+rmNN_S.dsl<-
+  glm(z.dSI ~ z.avgpreyRSF*z.avgpredatorRSF,
+      data = DTsoc_S)
 
-rm_winNN.dAA<-
-  glm(z.dAbsAng.trnsfrm ~ z.avgPreyRSF*z.avgPredRSF,
-      data = RMNP_win)
+#dAbsAng
+
+rmNN_S.dAA<-
+  glm(z.dAbsAng ~ z.avgpreyRSF*z.avgpredatorRSF,
+      data = DTsoc_S)
 
 #DI
 
-rm_winNN.DI<-
-  glm(DI ~ z.avgPreyRSF*z.avgPredRSF,
-      data = RMNP_win)
+rmNN_S.DI<-
+  glm(DI ~ z.avgpreyRSF*z.avgpredatorRSF,
+      data = DTsoc_S)
 
-## SPRING
-#dsl
+summary(DTsoc_W$DI)
+summary(DTsoc_S$DI)  ### elk more social in winter not social in spring
 
-rm_sprNN.dsl<-
-  glm(z.dSI ~ z.avgPreyRSF*z.avgPredRSF,
-      data = RMNP_spr)
+summary(rmNN_W.dd)   ###
+summary(rmNN_W.dsl)  ### elk less social in good elk habitat
+summary(rmNN_W.dAA)  ### elk more social in good elk habitat
+summary(rmNN_W.DI)   ### elk more social in good elk habitat and more social in elk-wolf domain
 
-#dyadDist
+visreg2d(rmNN_W.DI, "z.avgpreyRSF", "z.avgpredatorRSF", plot.type="image") 
 
-rm_sprNN.dd<-
-  glm(z.dyadDist ~ z.avgPreyRSF*z.avgPredRSF,
-      data = RMNP_spr)
+summary(rmNN_S.dd)   ###
+summary(rmNN_S.dsl)  ### 
+summary(rmNN_S.dAA)  ### 
+summary(rmNN_S.DI)   ### 
 
-
-#dAbsAng.trnsfrm
-
-rm_sprNN.dAA<-
-  glm(z.dAbsAng.trnsfrm ~ z.avgPreyRSF*z.avgPredRSF,
-      data = RMNP_spr)
-
-#DI
-
-rm_sprNN.DI<-
-  glm(DI ~ z.avgPreyRSF*z.avgPredRSF,
-      data = RMNP_spr)
+visreg2d(rmNN_S.DI, "z.avgpreyRSF", "z.avgpredatorRSF", plot.type="image") ### note nothing was significant
 
 
 
-
-
-
-### Investigating results
-### RMNP
-summary(RMNP_win[,c(9,10,13,20:30)])
-summary(RMNP_spr[,c(9,10,13,20:30)])
-summary(RMNP_win$dyadID)
-summary(RMNP_spr$dyadID)
-
-summary(RMNP_win$DI)
-summary(RMNP_spr$DI)  ### elk more social in winter not social in spring
-
-### no overlap in dyad id's between seasons
-
-### my inclination is to trust the RMNP_win results over both seasons because spring does appear to be different and uses different dyads
-
-
-#### winter
-# smaller values of dSI, dd, dAA are more social
-# larger values of DI are more social
-
-summary(rm_winNN.dsl)  ### elk less social in good elk habitat
-summary(rm_winNN.dd)   ### weak trend elk more social in good wolf habitat
-summary(rm_winNN.dAA)  ### elk more social in good elk habitat
-summary(rm_winNN.DI)   ### elk more social in good elk habitat, weak trends for less social in good wolf habitat and more social in elk-wolf domain
-
-visreg2d(rm_winNN.DI, "z.avgPreyRSF", "z.avgPredRSF", plot.type="image") 
-
-### I think DI is most robust
-### suggesting elk more social in good elk habitat
-
-### otherwise some conflcting results - step length suggests (less social) but turning angle suggests more social in good elk habitat
-###                                   - perhaps dyad distance is closer in good wolf habitat but support is weak
 
 
 ## NL
-#dsl
-
-nlNN.dsl<-
-  glm(z.dSI ~ z.avgCarRSF*z.avgPredRSF,
-      data = nl.dyad3.1)
-
+## winter
 #dyadDist
 
-nlNN.dd<-
-  glm(z.dyadDist ~ z.avgCarRSF*z.avgPredRSF,
-      data = nl.dyad3.1)
+nlNN_W.dd<-
+  glm(z.dyadDist ~ z.avgpreyRSF*z.avgpredatorRSF,
+      data = DTsoc_W)
 
+#dsl
 
-#dAbsAng.trnsfrm
+nlNN_W.dsl<-
+  glm(z.dSI ~ z.avgpreyRSF*z.avgpredatorRSF,
+      data = DTsoc_W)
 
-nlNN.dAA<-
-  glm(z.dAbsAng.trnsfrm ~ z.avgCarRSF*z.avgPredRSF,
-      data = nl.dyad3.1)
+#dAbsAng
+
+nlNN_W.dAA<-
+  glm(z.dAbsAng ~ z.avgpreyRSF*z.avgpredatorRSF,
+      data = DTsoc_W)
 
 #DI
 
-nlNN.DI<-
-  glm(DI ~ z.avgCarRSF*z.avgPredRSF,
-      data = nl.dyad3.1)
-
-### NL is mostly evenly split between winter and spring
-
-NL_win<-nl.dyad3.1[season=="winter"]
-NL_spr<-nl.dyad3.1[season=="spring"]
-
-NL_win$z.avgCarRSF<-scale(NL_win$avgCarRSF, center=T, scale=T)
-NL_win$z.avgPredRSF<-scale(NL_win$avgPredRSF, center=T, scale=T)
-
-NL_win$z.avgCoyRSF<-scale(NL_win$avgCoyRSF, center=T, scale=T)
-NL_win$z.avgBearRSF<-scale(NL_win$avgBearRSF, center=T, scale=T)
-
-NL_spr$z.avgCarRSF<-scale(NL_spr$avgCarRSF, center=T, scale=T)
-NL_spr$z.avgPredRSF<-scale(NL_spr$avgPredRSF, center=T, scale=T)
-
-NL_spr$z.avgCoyRSF<-scale(NL_spr$avgCoyRSF, center=T, scale=T)
-NL_spr$z.avgBearRSF<-scale(NL_spr$avgBearRSF, center=T, scale=T)
-
-NL_win$z.dSI<-scale(NL_win$dSI, center=F, scale=T)
-NL_win$z.dyadDist<-scale(NL_win$dyadDist, center=F, scale=T)
-NL_win$z.dAbsAng.trnsfrm<-scale(NL_win$dAbsAng.trnsfrm, center=F, scale=T)
-
-NL_spr$z.dSI<-scale(NL_spr$dSI, center=F, scale=T)
-NL_spr$z.dyadDist<-scale(NL_spr$dyadDist, center=F, scale=T)
-NL_spr$z.dAbsAng.trnsfrm<-scale(NL_spr$dAbsAng.trnsfrm, center=F, scale=T)
+nlNN_W.DI<-
+  glm(DI ~ z.avgpreyRSF*z.avgpredatorRSF,
+      data = DTsoc_W)
 
 
-## WINTER
-#dsl
-
-nl_winNN.dsl<-
-  glm(z.dSI ~ z.avgCarRSF*z.avgPredRSF,
-      data = NL_win)
-
+## spring
 #dyadDist
 
-nl_winNN.dd<-
-  glm(z.dyadDist ~ z.avgCarRSF*z.avgPredRSF,
-      data = NL_win)
+nlNN_S.dd<-
+  glm(z.dyadDist ~ z.avgpreyRSF*z.avgpredatorRSF,
+      data = DTsoc_S)
 
+nlNN_S.dd_C<-
+  glm(z.dyadDist ~ z.avgpreyRSF*z.avgcoyoteRSF,
+      data = DTsoc_S)
 
-#dAbsAng.trnsfrm
+nlNN_S.dd_B<-
+  glm(z.dyadDist ~ z.avgpreyRSF*z.avgbearRSF,
+      data = DTsoc_S)
 
-nl_winNN.dAA<-
-  glm(z.dAbsAng.trnsfrm ~ z.avgCarRSF*z.avgPredRSF,
-      data = NL_win)
+#dsl
+
+nlNN_S.dsl<-
+  glm(z.dSI ~ z.avgpreyRSF*z.avgpredatorRSF,
+      data = DTsoc_S)
+
+nlNN_S.dsl_C<-
+  glm(z.dSI ~ z.avgpreyRSF*z.avgcoyoteRSF,
+      data = DTsoc_S)
+
+nlNN_S.dsl_B<-
+  glm(z.dSI ~ z.avgpreyRSF*z.avgbearRSF,
+      data = DTsoc_S)
+
+#dAbsAng
+
+nlNN_S.dAA<-
+  glm(z.dAbsAng ~ z.avgpreyRSF*z.avgpredatorRSF,
+      data = DTsoc_S)
+
+nlNN_S.dAA_C<-
+  glm(z.dAbsAng ~ z.avgpreyRSF*z.avgcoyoteRSF,
+      data = DTsoc_S)
+
+nlNN_S.dAA_B<-
+  glm(z.dAbsAng ~ z.avgpreyRSF*z.avgbearRSF,
+      data = DTsoc_S)
 
 #DI
 
-nl_winNN.DI<-
-  glm(DI ~ z.avgCarRSF*z.avgPredRSF,
-      data = NL_win)
-
-## SPRING
-#dsl
-
-nl_sprNN.dsl<-
-  glm(z.dSI ~ z.avgCarRSF*z.avgPredRSF,
-      data = NL_spr)
-
-#dyadDist
-
-nl_sprNN.dd<-
-  glm(z.dyadDist ~ z.avgCarRSF*z.avgPredRSF,
-      data = NL_spr)
-
-
-#dAbsAng.trnsfrm
-
-nl_sprNN.dAA<-
-  glm(z.dAbsAng.trnsfrm ~ z.avgCarRSF*z.avgPredRSF,
-      data = NL_spr)
-
-
-#DI
-
-nl_sprNN.DI<-
-  glm(DI ~ z.avgCarRSF*z.avgPredRSF,
-      data = NL_spr)
-
-
-## NL Coyote (year round)
-#dsl
-
-nlNN.dsl_coy<-
-  glm(z.dSI ~ z.avgCarRSF*z.avgCoyRSF,
-      data = nl.dyad3.1)
-
-#dyadDist
-
-nlNN.dd_coy<-
-  glm(z.dyadDist ~ z.avgCarRSF*z.avgCoyRSF,
-      data = nl.dyad3.1)
-
-
-#dAbsAng.trnsfrm
-
-nlNN.dAA_coy<-
-  glm(z.dAbsAng.trnsfrm ~ z.avgCarRSF*z.avgCoyRSF,
-      data = nl.dyad3.1)
-
-#DI
-
-nlNN.DI_coy<-
-  glm(DI ~ z.avgCarRSF*z.avgCoyRSF,
-      data = nl.dyad3.1)
-
-#NL
-## predator: bear/coyote only in spring (bears not active in winter so winter is the same as coyote winter)
-
-## NL Coyote
-### NL_spr
-#dsl
-
-nlNN.dsl_coy_spr<-
-  glm(z.dSI ~ z.avgCarRSF*z.avgCoyRSF,
-      data = NL_spr)
-
-#dyadDist
-
-nlNN.dd_coy_spr<-
-  glm(z.dyadDist ~ z.avgCarRSF*z.avgCoyRSF,
-      data = NL_spr)
-
-
-#dAbsAng.trnsfrm
-
-nlNN.dAA_coy_spr<-
-  glm(z.dAbsAng.trnsfrm ~ z.avgCarRSF*z.avgCoyRSF,
-      data = NL_spr)
-
-
-#DI
-
-nlNN.DI_coy_spr<-
-  glm(DI ~ z.avgCarRSF*z.avgCoyRSF,
-      data = NL_spr)
-
-## NL Bear
-### NL_spr
-#dsl
-
-nlNN.dsl_Bear_spr<-
-  glm(z.dSI ~ z.avgCarRSF*z.avgBearRSF,
-      data = NL_spr)
-
-#dyadDist
-
-nlNN.dd_Bear_spr<-
-  glm(z.dyadDist ~ z.avgCarRSF*z.avgBearRSF,
-      data = NL_spr)
-
-
-#dAbsAng.trnsfrm
-
-nlNN.dAA_Bear_spr<-
-  glm(z.dAbsAng.trnsfrm ~ z.avgCarRSF*z.avgBearRSF,
-      data = NL_spr)
-
-#DI
-
-nlNN.DI_Bear_spr<-
-  glm(DI ~ z.avgCarRSF*z.avgBearRSF,
-      data = NL_spr)
-
-
-
-
-
-### NL
-
-summary(nlNN.dsl)  ### caribou more social where good caribou and predator habitat & in good predator habitat; weak trend for more social in good caribou habitat
-                    #### new results caribou more in good caribou habitat and where caribou and pred habitat is good
-
-summary(nlNN.dd)   ### caribou less social in good caribou habitat and in good predator habitat but caribou more social where good caribou and predator habitat
-                    #### new results caribou less social in good predator habitat but more social where good caribou and predator habitat
-
-summary(nlNN.dAA)  ### caribou less social in good predator habitat
-                    #### new results caribou less social in good caribou and good predator habitat and weak trend for less social in good caribou and predator habitat
-
-summary(nlNN.DI)   ### caribou less social in good predator habitat and weak trend for less social in caribou-predator domain
-                       #### new results caribou less social in good caribou and good predator habitat and weak trend for less social in good caribou and predator habitat
-
-visreg2d(nlNN.DI, "z.avgCarRSF", "z.avgPredRSF", plot.type="image")
-
-#### winter
-summary(nl_winNN.dsl)  ### caribou more social in good predator habitat
-summary(nl_winNN.dd)   ### caribou less social in good caribou habitat but more social in caribou-predator domain
-summary(nl_winNN.dAA)  ### caribou less social in good caribou habitat and in good predator habitat but more social in caribou-predator domain
-summary(nl_winNN.DI)   ### caribou less social in good caribou habitat and in good predator habitat but more social in caribou-predator domain
-
-visreg2d(nl_winNN.DI, "z.avgCarRSF", "z.avgPredRSF", plot.type="image")
-
-#### spring
-summary(nl_sprNN.dsl)  ### weak trend for more social in good caribou habitat
-#### new results nothing significant
-summary(nl_sprNN.dd)   ### caribou more social in good caribou habitat but less social in good predator habitat and where good caribou and predator habitat
-summary(nl_sprNN.dAA)  ### caribou less social in good predator habitat and weak trend for less social where good caribou and predator habitat 
-#### new results nothing significant
-summary(nl_sprNN.DI)   ### no trends in spring
-
-### more social in winter than spring
-visreg2d(nl_sprNN.DI, "z.avgCarRSF", "z.avgPredRSF", plot.type="image")
-visreg2d(nl_sprNN.dd, "z.avgCarRSF", "z.avgPredRSF", plot.type="image")
-
-
-### bear (only in spring)
-summary(nlNN.dsl_Bear_spr)  ### caribou more social where good caribou and bear habitat
-summary(nlNN.dd_Bear_spr)   ### caribou more social in good caribou habitat but less social in good bear habitat and where good caribou and bear habitat
-summary(nlNN.dAA_Bear_spr)  ### caribou less social in good bear habitat
-summary(nlNN.DI_Bear_spr)   ### weak trends only for less social in good caribou and good bear habitat
-
-visreg2d(nlNN.DI_Bear_spr, "z.avgCarRSF", "z.avgBearRSF", plot.type="image")
-
-
-### coyote (spring)
-summary(nlNN.dsl_coy_spr)  ### weak trend for more social in good caribou habitat
-summary(nlNN.dd_coy_spr)   ### caribou more social in good caribou habitat but less social in good coyote habitat and where good caribou and coyote habitat
-summary(nlNN.dAA_coy_spr)  ### caribou less social where good caribou and good coyote habitat
-#### new results nothing significant
-summary(nlNN.DI_coy_spr)   ### weak trend for less social in good caribou habitat
-#### new results nothing significant
-
-visreg2d(nlNN.DI_coy_spr, "z.avgCarRSF", "z.avgCoyRSF", plot.type="image")
-
-### coyote (winter) is the same as just winter
-
-### coyote (year-round)
-summary(nlNN.dsl_coy)  ### caribou more social where good coyote habitat and weak trend for more social where caribou and coyote habitat good
-### new results caribou more social where good coyote habitat and more social where caribou and coyote habitat good
-
-summary(nlNN.dd_coy)   ### caribou less social in good coyote habitat but more social where good caribou and coyote habitat and weak trend for less social in good caribou habitat
-summary(nlNN.dAA_coy)  ### caribou less social in good coyote habitat but weak trend for more social in good caribou habitat
-### new results caribou less social in good caribou habitat, good coyote habitat and less social where caribou and coyote habitat good
-
-summary(nlNN.DI_coy)   ### caribou less social in good coyote habitat and weak trend for less social in caribou-coyote domain
-### new results caribou less social in good caribou habitat, good coyote habitat and less social where caribou and coyote habitat good
-
-visreg2d(nlNN.DI_coy, "z.avgCarRSF", "z.avgCoyRSF", plot.type="image")
-
-
-### Key findings of NL - big difference between seasons - caribou not as social (DI) in spring and no relationships between DI and habitat in spring
-### in winter caribou less social in good caribou habitat and in good coyote habitat but more social in caribou-coyote domain (supported by DI, dAA, dd)
-### however in spring caribou dyad distance was lower when in good caribou habitat and higher when in good predator habitat or caribou-predator domain
-### when seperating coyote and bear in spring not much difference in estimates of sociality
-
-### results of NL (year-round) and coyote (year-round) I think are not robust (clearly seasonal differences exist)
-### dSL likely not a good measurement on its own - but disagrees with results of other three
-
-### I think we could focus our results and any further analysis just on DI and dyad distance
-### and are more easily interpretable and have more support in literature
-
-### Key plots
-
-### winter DI RMNP
-visreg2d(rm_winNN.DI, "z.avgPreyRSF", "z.avgPredRSF", plot.type="image") 
-
-### winter DI NL
-visreg2d(nl_winNN.DI, "z.avgCarRSF", "z.avgPredRSF", plot.type="image")
-
-
-
-### spring DD
-visreg2d(nl_sprNN.dd, "z.avgCarRSF", "z.avgPredRSF", plot.type="image")
-
-
-
-
-
-
-
-
-
-
+nlNN_S.DI<-
+  glm(DI ~ z.avgpreyRSF*z.avgpredatorRSF,
+      data = DTsoc_S)
+
+nlNN_S.DI_C<-
+  glm(DI ~ z.avgpreyRSF*z.avgcoyoteRSF,
+      data = DTsoc_S)
+
+nlNN_S.DI_B<-
+  glm(DI ~ z.avgpreyRSF*z.avgbearRSF,
+      data = DTsoc_S)
+
+summary(DTsoc_W$DI)
+summary(DTsoc_S$DI)  ### a little less social in spring but not a big difference
+
+<<<<<<< refs/remotes/origin/master
+=======
+summary(nlNN_W.dd)   ### 
+summary(nlNN_W.dsl)  ### 
+summary(nlNN_W.dAA)  ### 
+summary(nlNN_W.DI)   ### 
+
+visreg2d(nlNN_W.DI, "z.avgpreyRSF", "z.avgpredatorRSF", plot.type="image") 
+
+summary(nlNN_S.dd)   ###
+summary(nlNN_S.dsl)  ### 
+summary(nlNN_S.dAA)  ### 
+summary(nlNN_S.DI)   ### 
+
+summary(nlNN_S.dd_C)   ###
+summary(nlNN_S.dsl_C)  ### 
+summary(nlNN_S.dAA_C)  ### 
+summary(nlNN_S.DI_C)   ### 
+
+summary(nlNN_S.dd_B)   ###
+summary(nlNN_S.dsl_B)  ### 
+summary(nlNN_S.dAA_B)  ### 
+summary(nlNN_S.DI_B)   ### 
+
+visreg2d(nlNN_S.DI, "z.avgpreyRSF", "z.avgpredatorRSF", plot.type="image") ### 
+visreg2d(nlNN_S.DI_C, "z.avgpreyRSF", "z.avgcoyoteRSF", plot.type="image") ### 
+visreg2d(nlNN_S.DI_B, "z.avgpreyRSF", "z.avgbearRSF", plot.type="image") ### 
+>>>>>>> WIP - model code
