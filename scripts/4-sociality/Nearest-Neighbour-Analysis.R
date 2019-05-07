@@ -120,17 +120,8 @@ for (col in rsfCols) {
   # Average within dyad 
   out[, (avgnm) := rowMeans(.SD), .SDcols = c(col, sufnm)]  
   
-  
   # End RSF 
   out[, (endnm) := shift(.SD, 1, NA, 'lead'), .SDcols = col]
-}
-
-
-# Adjust caribou where predatorRSF in spring is coyote and bear
-if (species == 'caribou') {
-  adjustCols <- c('coyoteRSF', 'bearRSF')
-  out[season == 'spring', avgpredatorRSF := rowMeans(.SD), 
-      .SDcols = c(adjustCols, paste0(adjustCols, suff))]
 }
 
 
