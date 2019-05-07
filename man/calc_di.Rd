@@ -4,7 +4,7 @@
 \alias{calc_di}
 \title{Calculate DI}
 \usage{
-calc_di(DT, suffix, angle, dist, alpha = 1)
+calc_di(DT, suffix, angle, dist, alpha = 1, radians)
 }
 \arguments{
 \item{DT}{}
@@ -14,6 +14,8 @@ calc_di(DT, suffix, angle, dist, alpha = 1)
 \item{dist}{}
 
 \item{alpha}{default is 1.}
+
+\item{radians}{TRUE/FALSE if angles provided are in radians (TRUE) or in degrees (FALSE)}
 }
 \description{
 Dynamic interaction as described by Long and Nelson (2013).

@@ -162,7 +162,8 @@ calc_di(
   DT = out,
   suffix = '.nn',
   angle = 'absAngle',
-  dist = 'stepLength'
+  dist = 'stepLength',
+  radians = FALSE
 )
 
 

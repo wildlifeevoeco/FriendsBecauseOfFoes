@@ -12,11 +12,11 @@
 #' 
 #'
 #' @examples
-calc_di <- function(DT, suffix, angle, dist, alpha = 1) {
+calc_di <- function(DT, suffix, angle, dist, alpha = 1, radians) {
   # NSE
   diAngle <- diDist <- di <- NULL
   
-  diff_azimuth(DT, suffix = suffix, angle = angle)
+  diff_azimuth(DT, suffix = suffix, angle = angle, radians = radians)
   
   diff_dist(DT, suffix = suffix, dist = dist, alpha = alpha)
   
@@ -40,6 +40,7 @@ calc_di <- function(DT, suffix, angle, dist, alpha = 1) {
 #' @inheritParams abs_angle
 #' @param suffix character to append directly to angle column name, indicating the angle of the neighbour. 
 #' @param angles character of column name with  azimuth angle.
+#' @param radians TRUE/FALSE if angles provided are in radians (TRUE) or in degrees (FALSE)
 #'
 #' @return
 #' 
@@ -48,11 +49,9 @@ calc_di <- function(DT, suffix, angle, dist, alpha = 1) {
 #' @export
 #'
 #' @examples
-diff_azimuth <- function(DT, suffix, angle) {
+diff_azimuth <- function(DT, suffix, angle, radians) {
   # NSE
   didist <- NULL
-  
-  
   
   
   angle1 <- angle
@@ -68,6 +67,9 @@ diff_azimuth <- function(DT, suffix, angle) {
   }
   
   
+  adjustDegrees <- ifelse(radians, 1, (pi/180))
+  
+  
   # If one undefined
   DT[is.na(get(angle1)) | is.na(get(angle2)), 
       diAngle := 0]
@@ -77,8 +79,9 @@ diff_azimuth <- function(DT, suffix, angle) {
       diAngle := 1]
   
   # Otherwise
+  
   DT[is.na(diAngle),
-     diAngle := cos(.SD[[1]] - .SD[[2]]),
+     diAngle := cos((.SD[[1]] * adjustDegrees) - (.SD[[2]] * adjustDegrees)),
      .SDcols = c(angle1, angle2)]
   
   return(DT)

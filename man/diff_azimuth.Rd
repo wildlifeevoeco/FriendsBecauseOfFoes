@@ -4,12 +4,14 @@
 \alias{diff_azimuth}
 \title{Difference in azimuth}
 \usage{
-diff_azimuth(DT, suffix, angle)
+diff_azimuth(DT, suffix, angle, radians)
 }
 \arguments{
 \item{DT}{data.table}
 
 \item{suffix}{character to append directly to angle column name, indicating the angle of the neighbour.}
+
+\item{radians}{TRUE/FALSE if angles provided are in radians (TRUE) or in degrees (FALSE)}
 
 \item{angles}{character of column name with  azimuth angle.}
 }
