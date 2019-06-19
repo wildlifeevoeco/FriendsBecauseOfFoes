@@ -68,13 +68,13 @@ wolf[, (dropCols) := NULL][, c('Fix2d3d', '2d3d') := .(`2d3d`, NULL)]
 ### Variables ----
 xCol <- 'longitude'
 yCol <- 'latitude'
-timeCol <- 'gmttime'
-dateCol <- 'gmtdate'
+timeCol <- 'time'
+dateCol <- 'date'
 idCol <- 'wolfid'
 projXCol <- 'EASTING'
 projYCol <- 'NORTHING'
 
-tz <- 'GMT'
+tz <- 'America/Winnipeg'
 
 ### Add fields ----
 # Date time fields
@@ -96,7 +96,7 @@ group_times(wolf, 'datetime', '15 minutes')
 ### Subset ----
 # Subset any NAs in defined cols
 checkCols <- c(xCol, yCol, timeCol, dateCol, 'season')
-wolf <- na.omit(wolf, cols = checkCols)
+# wolf <- na.omit(wolf, cols = checkCols)
 
 # Subset any 0 in lat/long and where longitude is positive
 wolf <- wolf[get(xCol) != 0 & get(xCol) < 0]
