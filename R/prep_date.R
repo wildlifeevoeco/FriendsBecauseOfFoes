@@ -49,6 +49,7 @@ prep_date <-
     
     if (all(c('idate', 'itime', 'datetime', 'julday', 'yr', 'mnth') %in% colnames(DT))) {
       message('date and time fields added successfully')
+      message('percentage of NAs in datetime: ', DT[, .N, is.na(datetime)][order(-is.na), round(Reduce(`/`, N), 2)])
     } else {
       stop('date and time fields NOT added successfully')
     }
