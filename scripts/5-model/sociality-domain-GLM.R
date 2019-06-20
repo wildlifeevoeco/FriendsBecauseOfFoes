@@ -653,20 +653,3 @@ visreg2d(nl_sprNN.dd, "z.avgCarRSF", "z.avgPredRSF", plot.type="image")
 
 
 
-
-### what is this???
-#NL file
-# nl <- 
-dd <- data.table(sapply(seq(0, 1000, by = 50), function(x){
-  nrow(unique(rmnp[dyadDist < x, .(dyadID, timegroup, dSI)]))
-}), 
-seq(0,1000,by = 50))
-
-ggplot(dd) + 
-  geom_line(aes(V2, V1)) + 
-  labs(x = 'dyadDist', y = 'n rows')
-
-unique(rmnp[dyadDist < 150, .(dyadID, timegroup)])
-
-
-#rmnp[dyadDist < 500, qplot()
