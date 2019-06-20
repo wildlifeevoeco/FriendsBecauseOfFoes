@@ -155,11 +155,11 @@ collect <- rbindlist(lapply(
   }
 ))
 
-out <- merge(na.omit(collect), 
-             wolf, by = 'idtime')
+wolf <- merge(na.omit(collect), 
+              wolf, by = 'idtime')
 
 step_length(
-  out,
+  wolf,
   coords = c(projXCol, projYCol),
   time = 'datetime',
   splitBy = c(idCol, 'yr', 'season'),
@@ -206,7 +206,7 @@ maxOfficeY <- 5612110
 wolf <- wolf[!(inrange(EASTING, minOfficeX, maxOfficeX) &
                  inrange(NORTHING, minOfficeY, maxOfficeY))]
 
-
+ 
 ### Output ----
 # Check 
 if (wolf[, .N, c('timegroup', idCol)][N > 1, .N] != 0) {
