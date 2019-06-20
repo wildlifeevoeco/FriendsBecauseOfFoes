@@ -199,9 +199,7 @@ coyote[, .N, by = HERD]
 
 ### Subset ----
 # Thresholds
-# TODO: is this really the step length threshold?? 
-stepLengthThreshold <- 7750000
-moveRateThreshold <- 10000
+moveRateThreshold <- 20000
 difTimeThreshold <- 24
 lowJul <- 0
 highJul <- 365

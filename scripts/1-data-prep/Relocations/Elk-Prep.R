@@ -109,13 +109,11 @@ elk[order(yr), .N, by = yr]
 
 ### Subset ----
 # Thresholds
-stepLengthThreshold <- 7750000
-moveRateThreshold <- 2000
+moveRateThreshold <- 20000
 lowJul <- 0
 highJul <- 365
 
-elk <- elk[stepLength < stepLengthThreshold & 
-             moveRate < moveRateThreshold &
+elk <- elk[moveRate < moveRateThreshold &
              between(julday, lowJul, highJul)]
 
 # Spatially constrain to RMNP bounds

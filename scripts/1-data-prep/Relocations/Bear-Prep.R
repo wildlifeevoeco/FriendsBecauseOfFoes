@@ -105,16 +105,13 @@ bear[order(yr), .N, by = yr]
 
 ### Subset ----
 # Thresholds
-# TODO: is this really the step length threshold?? 
-stepLengthThreshold <- 7750000
 moveRateThreshold <- 10000
 difTimeThreshold <- 24
 lowJul <- 0
 highJul <- 365
 herdList <- 'MIDRIDGE'
 
-bear <- bear[stepLength < stepLengthThreshold & 
-               moveRate < moveRateThreshold &
+bear <- bear[moveRate < moveRateThreshold &
                difdatetime < difTimeThreshold &
                between(julday, lowJul, highJul) & 
                HERD %in% herdList]

@@ -97,16 +97,14 @@ caribou[order(yr), .N, by = yr]
 
 ### Subset ----
 # Thresholds
-stepLengthThreshold <- 10000
-moveRateThreshold <- 500000
+moveRateThreshold <- 20000
 difTimeThreshold <- 24
 lowJul <- 0
 highJul <- 365
 
-caribou <- caribou[stepLength < stepLengthThreshold & 
-                   moveRate < moveRateThreshold &
-                   difdatetime < difTimeThreshold &
-                   between(julday, lowJul, highJul)]
+caribou <- caribou[moveRate < moveRateThreshold &
+                     difdatetime < difTimeThreshold &
+                     between(julday, lowJul, highJul)]
 
 ### Output ----
 # Check 
