@@ -40,20 +40,3 @@ dyad_id <- function(DT, id, nn) {
 
   return(dyads[])
 }
-
-# DT
-# nn <- 'NN'
-# id <- 'ID'
-# 
-# g <- igraph::graph_from_data_frame(unique(na.omit(edges)[, .SD, .SDcols = c(id, nn)]),
-#                                    directed = FALSE)
-# 
-# simpleG <- igraph::simplify(g)
-# 
-# edgeDT <- data.table::data.table(igraph::get.edgelist(simpleG), igraph::E(simpleG))
-# edgeNames <- c('id1', 'id2', 'dyadID')
-# data.table::setnames(edgeDT, edgeNames)
-# 
-# # ids <- edgeNames[1:2]
-# edgeDT[, (edgeNames) := lapply(.SD, as.numeric)]
-# edgeDT
