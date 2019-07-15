@@ -149,6 +149,30 @@ plot(as.factor(DTsoc3$nWithin))
 summary(as.factor(DTsoc3_W$nWithin))
 summary(as.factor(DTsoc3_S$nWithin))
 
+### playing around with some histograms of di
+
+
+h1 <- hist(DTsoc3_W$di) # or hist(x,plot=FALSE) to avoid the plot of the histogram
+h1$density = h1$counts/sum(h1$counts)*100
+
+g1 <- hist(DTsoc3_S$di) # or hist(x,plot=FALSE) to avoid the plot of the histogram
+g1$density = g1$counts/sum(g1$counts)*100
+
+
+limits <- range(0,25)
+par(mfrow=c(1,2))
+plot(h,freq=FALSE, ylim=limits)
+plot(g,freq=FALSE, ylim=limits)
+
+
+limits <- range(0,25)
+par(mfrow=c(1,2))
+plot(h,freq=FALSE, ylim=limits)
+plot(h1,freq=FALSE, ylim=limits)
+
+
+#####
+
 ## WINTER (for NL predator=coyote in winter)
 
 boxplot(DTsoc3_W$di)
