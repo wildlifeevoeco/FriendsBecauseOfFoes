@@ -44,6 +44,8 @@ lsCovers <- covers[-dropCovers]
 lsPaths <- paths[-dropCovers]
 names(lsPaths) <- lsCovers
 
+if (!('Forest' %in% lsCovers)) stop('missing forest class')
+
 ### Processing ----
 points <- SpatialPoints(DT[, .(EASTING, NORTHING)],
                         proj4string = CRS(utmNL))
