@@ -226,6 +226,14 @@ nlNN_W.DI<-
 
 summary(nlNN_W.DI)
 
+
+nlNN_W.DI_A<-
+  glm(di ~ z.avgpreyRSF+z.avgpredatorRSF,
+      data = DTsoc3_W)
+
+summary(nlNN_W.DI_A)
+
+
 ## spring
 
 nlNN_S.DIpy<-
@@ -246,6 +254,12 @@ nlNN_S.DI<-
 
 summary(nlNN_S.DI)
 
+nlNN_S.DI_A<-
+  glm(di ~ z.avgpreyRSF+z.avgpredatorRSF,
+      data = DTsoc3_S)
+
+summary(nlNN_S.DI_A)
+
 ### Bear v Coyote in Spring
 
 nlNN_S.DI_Cpd<-
@@ -258,6 +272,11 @@ nlNN_S.DI_C<-
       data = DTsoc3_S)
 summary(nlNN_S.DI_C)
 
+nlNN_S.DI_C_A<-
+  glm(di ~ z.avgpreyRSF+z.avgcoyoteRSF,
+      data = DTsoc3_S)
+summary(nlNN_S.DI_C_A)
+
 nlNN_S.DI_Bpd<-
   glm(di ~ z.avgbearRSF,
       data = DTsoc3_S)
@@ -267,6 +286,35 @@ nlNN_S.DI_B<-
   glm(di ~ z.avgpreyRSF*z.avgbearRSF,
       data = DTsoc3_S)
 summary(nlNN_S.DI_B)
+
+nlNN_S.DI_B_A<-
+  glm(di ~ z.avgpreyRSF+z.avgbearRSF,
+      data = DTsoc3_S)
+summary(nlNN_S.DI_B_A)
+
+## bear and coyote  ### Need to figure out a way to plot these
+
+nlNN_S.DI_CB_A<-
+  glm(di ~ z.avgpreyRSF+z.avgbearRSF+z.avgcoyoteRSF,
+      data = DTsoc3_S)
+summary(nlNN_S.DI_CB_A)
+
+nlNN_S.DI_CB<-
+  glm(di ~ z.avgpreyRSF*z.avgbearRSF+z.avgpreyRSF*z.avgcoyoteRSF,
+      data = DTsoc3_S)
+summary(nlNN_S.DI_CB)
+
+
+nlNN_S.DI_B_C<-
+  glm(di ~ z.avgpreyRSF*z.avgbearRSF+z.avgcoyoteRSF,
+      data = DTsoc3_S)
+summary(nlNN_S.DI_B_C)
+
+nlNN_S.DI_C_B<-
+  glm(di ~ z.avgbearRSF+z.avgpreyRSF*z.avgcoyoteRSF,
+      data = DTsoc3_S)
+summary(nlNN_S.DI_C_B)
+
 
 ### year-round coyote
 
@@ -289,12 +337,21 @@ nlNN.DI_C<-
 summary(nlNN.DI_C)
 
 
+nlNN.DI_C_A<-
+  glm(di ~ z.avgpreyRSF+z.avgcoyoteRSF,
+      data = DTsoc3)
+
+summary(nlNN.DI_C_A)
+
+
 ###  Make these plots on same axis scale
 ## winter caribou-coyote domain with di
 visreg2d(nlNN_W.DI, "z.avgpreyRSF", "z.avgpredatorRSF", plot.type="image") 
+visreg2d(nlNN_W.DI_A, "z.avgpreyRSF", "z.avgpredatorRSF", plot.type="image") 
 
 ## spring caribou-coyote domain with di
 visreg2d(nlNN_S.DI_C, "z.avgpreyRSF", "z.avgcoyoteRSF", plot.type="image") 
+visreg2d(nlNN_S.DI_C_A, "z.avgpreyRSF", "z.avgcoyoteRSF", plot.type="image") 
 
 ## year-round caribou-coyote domain with di
 visreg2d(nlNN.DI_C, "z.avgpreyRSF", "z.avgcoyoteRSF", plot.type="image") 
@@ -303,9 +360,12 @@ visreg2d(nlNN.DI_C, "z.avgpreyRSF", "z.avgcoyoteRSF", plot.type="image")
 ###  Make these plots on same axis scale
 ## spring caribou-bear domain with di
 visreg2d(nlNN_S.DI_B, "z.avgpreyRSF", "z.avgbearRSF", plot.type="image") 
+visreg2d(nlNN_S.DI_B_A, "z.avgpreyRSF", "z.avgbearRSF", plot.type="image") 
 
 ## spring caribou-coyote domain with di
 visreg2d(nlNN_S.DI_C, "z.avgpreyRSF", "z.avgcoyoteRSF", plot.type="image") 
+visreg2d(nlNN_S.DI_C_A, "z.avgpreyRSF", "z.avgcoyoteRSF", plot.type="image") 
 
 ## spring caribou-predator domain with di
 visreg2d(nlNN_S.DI, "z.avgpreyRSF", "z.avgpredatorRSF", plot.type="image") 
+visreg2d(nlNN_S.DI_A, "z.avgpreyRSF", "z.avgpredatorRSF", plot.type="image") 

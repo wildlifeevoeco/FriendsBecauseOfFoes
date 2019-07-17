@@ -165,12 +165,32 @@ hist(DTsoc3_S$z.avgpredatorRSF)
 boxplot(DTsoc3_S$z.avgpreyRSF)
 hist(DTsoc3_S$z.avgpreyRSF)
 
+
+h <- hist(DTsoc3_W$di) # or hist(x,plot=FALSE) to avoid the plot of the histogram
+h$density = h$counts/sum(h$counts)*100
+
+g <- hist(DTsoc3_S$di) # or hist(x,plot=FALSE) to avoid the plot of the histogram
+g$density = g$counts/sum(g$counts)*100
+
+
+limits <- range(0,25)
+par(mfrow=c(1,2))
+plot(h,freq=FALSE, ylim=limits)
+plot(g,freq=FALSE, ylim=limits)
+
+
+limits <- range(0,25)
+par(mfrow=c(1,2))
+plot(h,freq=FALSE, ylim=limits)
+plot(h1,freq=FALSE, ylim=limits)
+
+
+
 library(visreg)
 library(rgl)
 
 ###GLM
 ## RM
-## winter
 
 rmNN.DIpy<-
   glm(di ~ z.avgpreyRSF,
@@ -244,3 +264,33 @@ visreg2d(rmNN_S.DI, "z.avgpreyRSF", "z.avgpredatorRSF", plot.type="image")
 visreg2d(rmNN.DI, "z.avgpreyRSF", "z.avgpredatorRSF", plot.type="image")
 
 
+### Winter Prey
+visreg(rmNN_W.DIpy, "z.avgpreyRSF")
+
+#### playing around
+
+summary(DTsoc3_W$di)
+DTsoc3_W2<-subset(DTsoc3_W, DTsoc3_W$z.avgpreyRSF<=1.025105  & DTsoc3_W$z.avgpredatorRSF<=2.183941)
+DTsoc3_W2<-subset(DTsoc3_W, DTsoc3_W$di>=0)
+
+## winter
+
+rmNN_W.DIpy2<-
+  glm(di ~ z.avgpreyRSF,
+      data = DTsoc3_W2)
+
+summary(rmNN_W.DIpy2)
+
+rmNN_W.DIpd2<-
+  glm(di ~ z.avgpredatorRSF,
+      data = DTsoc3_W2)
+
+summary(rmNN_W.DIpd2)
+
+rmNN_W.DI2<-
+  glm(di ~ z.avgpreyRSF*z.avgpredatorRSF,
+      data = DTsoc3_W2)
+
+summary(rmNN_W.DI2)
+
+visreg(rmNN_W.DIpy2, "z.avgpreyRSF")
