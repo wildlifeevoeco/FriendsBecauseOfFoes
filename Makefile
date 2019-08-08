@@ -1,6 +1,12 @@
 ### Makefile
 # Alec Robitaille
 
+## Count Summary
+paper/summary-counts.pdf: paper/summary-counts.Rmd output/4-sociality/elkNNA.Rds output/4-sociality/caribouNNA.Rds paper/summary-sociality.pdf
+	Rscript -e "rmarkdown::render('paper/summary-counts.Rmd', quiet = TRUE)"
+	rm -- **/*.tex
+	echo "summary counts pdf rendered"
+
 ## Sociality Summary
 paper/summary-sociality.pdf: paper/summary-sociality.Rmd output/4-sociality/elkNNA.Rds output/4-sociality/caribouNNA.Rds
 	Rscript -e "rmarkdown::render('paper/summary-sociality.Rmd', quiet = TRUE)"
