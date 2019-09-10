@@ -294,3 +294,33 @@ rmNN_W.DI2<-
 summary(rmNN_W.DI2)
 
 visreg(rmNN_W.DIpy2, "z.avgpreyRSF")
+
+
+
+
+
+
+
+
+
+
+
+########### I want to make this plot be the second panel of figure 1
+##### I like the plot design but the actual data is misleading because in the model: rmNN_W.DI the coefficients 
+##### for z.avgpredatorRSF and z.avgpreyRSF*z.avgpredatorRSF are nonsignificant. So I forced new coefficients of zero
+
+MOD.rmNN_W.DI<-rmNN_W.DI
+MOD.rmNN_W.DI$coefficients[3]<-0
+MOD.rmNN_W.DI$coefficients[4]<-0
+
+## figure 1b
+visreg2d(MOD.rmNN_W.DI, "z.avgpreyRSF", "z.avgpredatorRSF", plot.type="image", zlim=c(-1,1), main="", 
+         xlab="Scaled estimate of selection value of elk landscape", 
+         ylab="Scaled estimate of selection value of wolf landscape", zlab = "Predicted dynamic interaction of elk dyad")
+
+
+
+### create raster of predicted DI from this modified model
+
+MOD.rmNN_W.DI  # Elk winter
+
