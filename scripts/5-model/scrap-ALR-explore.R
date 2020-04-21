@@ -27,29 +27,80 @@ if (truelength(DT) == 0) alloc.col(DT)
 # If nn > 500, the DI should be set to 0
 
 
-### New variables ----
+### Variables ----
+# Z
+DT[, z.avgpreyRSF := scale(avgpreyRSF, center=T, scale=T)]
+DT[, z.avgpredatorRSF := scale(avgpredatorRSF, center=T, scale=T)]
+
 # Dyads within 500m 
 DT[dyadDist >= 500, bin500m := TRUE]
 DT[dyadDist < 500, bin500m := FALSE]
 
-# Duplicated dyads
-DT[, nDyadTime := .N, by = dyadTime]
+# Drop duplicated dyads
+DT <- unique(DT, by = c('dyadID', 'timegroup'))
 
+
+# Set DI to 0 if > 500m between dyads
+DT[dyadDist >= 500, di0 := 0]
+DT[dyadDist < 500, di0 := di]
 
 
 # Global DI
-DTsoc3[, globalDI := mean(di), .(season, dyadID)]
-DTsoc3[, globalDIAngle := mean(diAngle), .(season, dyadID)]
-DTsoc3[, globalDIDist := mean(diDist), .(season, dyadID)]
+DT[, globalDI := mean(di0), .(season, dyadID)]
+DT[, globalDIAngle := mean(diAngle), .(season, dyadID)]
+DT[, globalDIDist := mean(diDist), .(season, dyadID)]
 
+# Dif RSF
+DT[, difPrey := (preyRSF - preyRSF.nn) / (preyRSF + preyRSF.nn)]
+DT[, difPred := (predatorRSF - predatorRSF.nn) / (predatorRSF + predatorRSF.nn)]
 
-### Set DI to 0 if > 500m between dyads? ----
-DT
-
-
+DT[, avgDifPrey := mean(difPrey, na.rm = TRUE), .(season, dyadID)]
+DT[, avgDifPred := mean(difPred, na.rm = TRUE), .(season, dyadID)]
 
 
 ### Plots ----
+g1 <- ggplot(DT[dyadDist <1000], aes(avgDifPrey, globalDI, color = season)) + 
+  geom_point(color = 'grey', aes(shape = season)) + 
+  facet_grid(season~cut_interval(dyadDist, 4)) +
+  labs(title = species) +
+  geom_smooth(method = glm)
+
+g2 <- ggplot(DT[dyadDist <1000], aes(avgDifPrey, globalDIAngle, color = season)) + 
+  geom_point(color = 'grey', aes(shape = season)) + 
+  facet_grid(season~cut_interval(dyadDist, 4)) +
+  # labs(title = species) +
+  geom_smooth(method = glm)
+
+g3 <- ggplot(DT[dyadDist <1000], aes(avgDifPrey, globalDIDist, color = season)) + 
+  geom_point(color = 'grey', aes(shape = season)) + 
+  facet_grid(season~cut_interval(dyadDist, 4)) +
+  # labs(title = species) +
+  geom_smooth(method = glm)
+
+g1 / g2 / g3
+
+
+g2 <- ggplot(DT[dyadDist <500], aes(avgpredatorRSF, globalDI, color = season)) + 
+  geom_point(color = 'grey', aes(shape = season)) + 
+  facet_grid(season~cut_interval(dyadDist, 6)) +
+  labs(title = species) +
+  geom_smooth(method = glm)
+
+g1 / g2
+
+
+
+
+
+
+### More plots ----
+# nlNN_W.DI<-
+#   glm(di ~ z.avgpreyRSF*z.avgpredatorRSF,
+#       data = DTsoc3_W)
+
+DTsoc3[, diffrsf := (avgpredatorRSF - avgpreyRSF) / (avgpredatorRSF + avgpreyRSF)]
+
+
 g1 <- ggplot(DTsoc3, aes(avgpreyRSF, globalDI, color = season)) + 
   geom_point(color = 'grey', aes(shape = season)) + 
   #facet_wrap(~cut_interval(dyadDist, 6)) + 
@@ -96,13 +147,6 @@ g2 <- ggplot(DTsoc3, aes(avgpredatorRSF, globalDIDist, color = season)) +
 g1 / g2
 
 
-
-### More plots ----
-# nlNN_W.DI<-
-#   glm(di ~ z.avgpreyRSF*z.avgpredatorRSF,
-#       data = DTsoc3_W)
-
-DTsoc3[, diffrsf := (avgpredatorRSF - avgpreyRSF) / (avgpredatorRSF + avgpreyRSF)]
 
 ggplot(DTsoc3, aes(diffrsf, di, color = season)) + 
   geom_point(color = 'grey', aes(shape = season)) + 
