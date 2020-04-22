@@ -60,70 +60,25 @@ DT[, avgDifPred := mean(difPred, na.rm = TRUE), .(season, dyadID)]
 DTsoc <- DT[dyadDist < 500]
 
 ### Plots ----
-library(ggeffects)
-
-nlNN_W.DI<-
-  glm(globalDIDist ~ z.avgpreyRSF*z.avgpredatorRSF + factor(season),
-      data = DTsoc)
-
-pred <- ggpredict(model = nlNN_W.DI, terms = c('z.avgpreyRSF',
-                                       'season'))
-g1 <- ggplot(pred, aes(x, predicted)) +
-  geom_line() +
-  geom_ribbon(aes(ymin = conf.low, ymax = conf.high),
-              alpha = .1) +
-  facet_wrap(~group) +
-  labs(x = 'z avg prey rsf', y = 'di') + 
-  ylim(c(-1, 1))
-
-pred <- ggpredict(model = nlNN_W.DI, terms = c('z.avgpredatorRSF',
-                                               'season'))
-g2 <- ggplot(pred, aes(x, predicted)) +
-  geom_line() +
-  geom_ribbon(aes(ymin = conf.low, ymax = conf.high),
-              alpha = .1) +
-  facet_wrap(~group) +
-  labs(x = 'z avg predator rsf', y = 'di') + 
-  ylim(c(-1, 1))
-
-
-g1 / g2
-
-
-dwplot(nlNN_W.DI)
-
-g1 <- ggplot(DTsoc, aes(avgDifPrey, globalDI, color = season)) + 
+g1 <- ggplot(DTsoc, aes(avgpreyRSF, avgpredatorRSF, color = season)) + 
   geom_point(color = 'grey', aes(shape = season)) + 
-  facet_grid(season~cut_interval(dyadDist, 4)) +
+  facet_grid(season ~ di > 0.8) +
   labs(title = species) +
   geom_smooth(method = glm)
 
-g2 <- ggplot(DTsoc, aes(avgDifPrey, globalDIAngle, color = season)) + 
+g2 <- ggplot(DTsoc, aes(avgpreyRSF, avgpredatorRSF, color = season)) + 
   geom_point(color = 'grey', aes(shape = season)) + 
-  facet_grid(season~cut_interval(dyadDist, 4)) +
+  facet_grid(season~ di > 0.8) +
   # labs(title = species) +
   geom_smooth(method = glm)
 
-g3 <- ggplot(DTsoc, aes(avgDifPrey, globalDIDist, color = season)) + 
+g3 <- ggplot(DTsoc, aes(avgpreyRSF, avgpredatorRSF, color = season)) + 
   geom_point(color = 'grey', aes(shape = season)) + 
-  facet_grid(season~cut_interval(dyadDist, 4)) +
+  facet_grid(season~ di > 0.8) +
   # labs(title = species) +
   geom_smooth(method = glm)
 
 g1 / g2 / g3
-
-
-g2 <- ggplot(DT[dyadDist <500], aes(avgpredatorRSF, globalDI, color = season)) + 
-  geom_point(color = 'grey', aes(shape = season)) + 
-  facet_grid(season~cut_interval(dyadDist, 6)) +
-  labs(title = species) +
-  geom_smooth(method = glm)
-
-g1 / g2
-
-
-
-
 
 
 ### More plots ----
