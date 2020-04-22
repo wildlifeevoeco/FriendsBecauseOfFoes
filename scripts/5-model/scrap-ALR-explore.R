@@ -62,19 +62,19 @@ DTsoc <- DT[dyadDist < 500]
 ### Plots ----
 g1 <- ggplot(DTsoc, aes(avgpreyRSF, avgpredatorRSF, color = season)) + 
   geom_point(color = 'grey', aes(shape = season)) + 
-  facet_grid(season ~ di > 0.8) +
+  facet_grid(season ~ cut_interval(di, 4)) +
   labs(title = species) +
   geom_smooth(method = glm)
 
 g2 <- ggplot(DTsoc, aes(avgpreyRSF, avgpredatorRSF, color = season)) + 
   geom_point(color = 'grey', aes(shape = season)) + 
-  facet_grid(season~ di > 0.8) +
+  facet_grid(season ~ cut_interval(di, 4)) +
   # labs(title = species) +
   geom_smooth(method = glm)
 
 g3 <- ggplot(DTsoc, aes(avgpreyRSF, avgpredatorRSF, color = season)) + 
   geom_point(color = 'grey', aes(shape = season)) + 
-  facet_grid(season~ di > 0.8) +
+  facet_grid(season ~ cut_interval(di, 4)) +
   # labs(title = species) +
   geom_smooth(method = glm)
 
