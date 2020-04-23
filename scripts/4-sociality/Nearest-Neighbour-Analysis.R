@@ -37,7 +37,8 @@ DT[, nByTimegroup := .N, timegroup]
 
 ### Find nearest neighbour with spatsoc ----
 edges <- edge_nn(DT, id = idCol, coords = coordCols, 
-                 timegroup = 'timegroup')
+                 timegroup = 'timegroup',
+                 returnDist = TRUE)
 # Check
 edges[, .N, timegroup][, sum(N)] == nrow(edges)
 
