@@ -12,25 +12,26 @@ p <- suppressPackageStartupMessages(lapply(
 
 ### Input data ----
 # Which species?
-species <- 'caribou'
-DT <- readRDS(paste0('output/4-sociality/', species, 'NNA.Rds'))
+caribou <- readRDS(paste0('output/4-sociality/', 'caribou', 'NNA.Rds'))
+elk <- readRDS(paste0('output/4-sociality/', 'elk', 'NNA.Rds'))
 
 coordCols <- c('EASTING', 'NORTHING')
 idCol <- 'id'
 
+caribou[, species := 'caribou']
+elk[, species := 'elk']
+DT <- rbindlist(list(caribou, elk), fill = TRUE)
+
 if (truelength(DT) == 0) alloc.col(DT)
-
-
 
 # Notes to self:
 # DT is edge_nn + number of individuals within threshold distance
 # If nn > 500, the DI should be set to 0
 
-
 ### Variables ----
 # Z
-DT[, z.avgpreyRSF := scale(avgpreyRSF, center=T, scale=T)]
-DT[, z.avgpredatorRSF := scale(avgpredatorRSF, center=T, scale=T)]
+DT[, z.avgpreyRSF := scale(avgpreyRSF, center = T, scale = T)]
+DT[, z.avgpredatorRSF := scale(avgpredatorRSF, center = T, scale = T)]
 
 # Dyads within 500m 
 DT[dyadDist >= 500, bin500m := TRUE]
