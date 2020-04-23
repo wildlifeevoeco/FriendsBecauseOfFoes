@@ -15,6 +15,9 @@ dyad_dist(DT, coords, suffix = NULL, returnIntermediate = FALSE)
 
 \item{returnIntermediate}{boolean; return intermediate columns}
 }
+\value{
+
+}
 \description{
 For each dyad, calculate the euclidean distance between locations.
 }

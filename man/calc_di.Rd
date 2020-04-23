@@ -17,6 +17,9 @@ calc_di(DT, suffix, angle, dist, alpha = 1, radians)
 
 \item{radians}{TRUE/FALSE if angles provided are in radians (TRUE) or in degrees (FALSE)}
 }
+\value{
+
+}
 \description{
 Dynamic interaction as described by Long and Nelson (2013).
 }

@@ -4,8 +4,7 @@
 \alias{prep_date}
 \title{Date prep}
 \usage{
-prep_date(DT, dateCol, timeCol, tz, dateFormat = NULL,
-  timeFormat = NULL)
+prep_date(DT, dateCol, timeCol, tz, dateFormat = NULL, timeFormat = NULL)
 }
 \arguments{
 \item{DT}{data.table}
@@ -17,6 +16,9 @@ prep_date(DT, dateCol, timeCol, tz, dateFormat = NULL,
 \item{dateFormat}{character of date format as described in `strptime`}
 
 \item{timeFormat}{character of time format as described in `strptime`}
+}
+\value{
+
 }
 \description{
 Date prep
