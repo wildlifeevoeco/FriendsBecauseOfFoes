@@ -12,8 +12,8 @@ p <- suppressPackageStartupMessages(lapply(
 
 ### Input data ----
 # Which species?
-caribou <- readRDS(paste0('output/4-sociality/', 'caribou', 'NNA.Rds'))
-elk <- readRDS(paste0('output/4-sociality/', 'elk', 'NNA.Rds'))
+caribou <- readRDS(paste0('output/4-sociality/', 'caribou', 'NNA-ALR.Rds'))
+elk <- readRDS(paste0('output/4-sociality/', 'elk', 'NNA-ALR.Rds'))
 
 coordCols <- c('EASTING', 'NORTHING')
 idCol <- 'id'
