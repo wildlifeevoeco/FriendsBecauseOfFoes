@@ -108,15 +108,21 @@ for (col in rsfCols) {
   endnm <- paste0('end', col)
   sufnm <- paste0(col, suff)
   
+  globavgnm <- paste0('glob', avgnm)
+  
   # Difference within dyad
   out[, (difnm) := abs(.SD[[1]] - .SD[[2]]), .SDcols = c(col, sufnm)]
   
   # Average within dyad 
   out[, (avgnm) := rowMeans(.SD), .SDcols = c(col, sufnm)]  
   
+  # Global average RSF for each dyad*season
+  out[, (globavgnm) := mean(.SD[[1]]), by = .(dyadID, season), .SDcols = avgnm]
+  
   # End RSF 
   out[, (endnm) := shift(.SD, 1, NA, 'lead'), .SDcols = col]
 }
+
 
 
 ### Find neighbours within distance with spatsoc ----
@@ -129,7 +135,8 @@ wiDist <- edge_dist(
   id = idCol,
   coords = coordCols,
   timegroup = 'timegroup',
-  fillNA = FALSE
+  fillNA = FALSE,
+  returnDist = FALSE
 )
 
 # Check
@@ -157,7 +164,7 @@ calc_di(
 out[, dyadTime := paste(dyadID, timegroup, sep = '-')]
 
 
-saveRDS(out, paste0('output/4-sociality/', species, 'NNA.Rds'))
+saveRDS(out, paste0('output/4-sociality/', species, 'NNA-ALR.Rds'))
 
 
 message('=== NNA COMPLETE ===')
