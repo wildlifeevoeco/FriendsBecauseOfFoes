@@ -76,15 +76,15 @@ setnames(slim, 'id', 'ID')
 m <- edges[slim, on = c('ID', 'timegroup')]
 
 
-suff <- '.nn'
-out <- merge(
-  x = m,
-  y = slim,
-  by.x = c('NN', 'timegroup'),
-  by.y = c('id', 'timegroup'),
-  all.x = TRUE,
-  suffixes = c('', suff)
-)
+# suff <- '.nn'
+# out <- merge(
+#   x = m,
+#   y = slim,
+#   by.x = c('NN', 'timegroup'),
+#   by.y = c('id', 'timegroup'),
+#   all.x = TRUE,
+#   suffixes = c('', suff)
+# )
 
 ### Calculate dyadic distance ----
 dyad_dist(
