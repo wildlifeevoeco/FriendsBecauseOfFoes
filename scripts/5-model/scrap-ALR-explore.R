@@ -30,10 +30,12 @@ if (truelength(DT) == 0) alloc.col(DT)
 
 ### Variables ----
 # Z
+# TODO: should this be seasonal? by species?
 DT[, z.avgpreyRSF := scale(avgpreyRSF, center = T, scale = T)]
 DT[, z.avgpredatorRSF := scale(avgpredatorRSF, center = T, scale = T)]
 
 # Dyads within 500m 
+setnames(DT, 'distance', 'dyadDist')
 DT[dyadDist >= 500, bin500m := TRUE]
 DT[dyadDist < 500, bin500m := FALSE]
 
