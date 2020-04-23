@@ -87,13 +87,6 @@ m <- edges[slim, on = c('ID', 'timegroup')]
 #   suffixes = c('', suff)
 # )
 
-### Calculate dyadic distance ----
-dyad_dist(
-  DT = out,
-  coords = coordCols,
-  suffix = suff,
-  returnIntermediate = FALSE
-)
 
 ### Differences within dyads ----
 # Dif in step length
