@@ -48,6 +48,10 @@ dyad_id(edges, id1 = 'ID', id2 = 'NN')
 # Check
 edges[is.na(dyadID), .N] == 0
 
+# NOTE: dyadN is not always equal to 2 - some cases the NN for A is not B, while B-A, A-C and C-A for example
+edges[, dyadN := .N, .(dyadID, timegropu)]
+
+edges[dyadN > 2, .N] == 0
 
 ### Combine ID + NN columns
 cols <- c('EASTING',
