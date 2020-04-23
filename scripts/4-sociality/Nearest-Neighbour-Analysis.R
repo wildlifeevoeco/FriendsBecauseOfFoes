@@ -49,9 +49,10 @@ dyad_id(edges, id1 = 'ID', id2 = 'NN')
 edges[is.na(dyadID), .N] == 0
 
 # NOTE: dyadN is not always equal to 2 - some cases the NN for A is not B, while B-A, A-C and C-A for example
-edges[, dyadN := .N, .(dyadID, timegropu)]
+edges[, dyadN := .N, .(dyadID, timegroup)]
 
 edges[dyadN > 2, .N] == 0
+
 
 ### Combine ID + NN columns
 cols <- c('EASTING',
@@ -81,15 +82,15 @@ setnames(slim, 'id', 'ID')
 m <- edges[slim, on = c('ID', 'timegroup')]
 
 
-# suff <- '.nn'
-# out <- merge(
-#   x = m,
-#   y = slim,
-#   by.x = c('NN', 'timegroup'),
-#   by.y = c('id', 'timegroup'),
-#   all.x = TRUE,
-#   suffixes = c('', suff)
-# )
+suff <- '.nn'
+out <- merge(
+  x = m,
+  y = slim,
+  by.x = c('NN', 'timegroup'),
+  by.y = c('ID', 'timegroup'),
+  all.x = TRUE,
+  suffixes = c('', suff)
+)
 
 
 ### Differences within dyads ----
