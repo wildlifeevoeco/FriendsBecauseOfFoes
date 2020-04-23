@@ -57,32 +57,28 @@ DTsoc <- DT[dyadDist < 500]
 
 
 
-# Sample land cover
-rasters <- dir('output/1-data-prep/covariates/NL', full.names = TRUE)
-names <- gsub('prep', '', gsub('.tif', '', dir('output/1-data-prep/covariates/NL')))
+# Global DI vs global average for dyads
+g1 <- ggplot(DTsoc, aes(glo, globalDI, color = season)) +
+  geom_point(color = 'grey', aes(shape = season)) + 
+  facet_grid(season + species ~ cut_interval(di, 4)) +
+  # labs(title = species) +
+  geom_smooth(method = glm)
 
-### Sampling ----
-# Sample rasters
-library(raster)
-DTsoc[, (names) := lapply(rasters, FUN = function(r){
-  extract(raster(r), matrix(c(EASTING, NORTHING), ncol = 2))})]
+g2 <- ggplot(DTsoc, aes(avgpreyRSF, globalDIAngle, color = season)) + 
+  geom_point(color = 'grey', aes(shape = season)) + 
+  facet_grid(season ~ cut_interval(di, 4)) +
+  # labs(title = species) +
+  geom_smooth(method = glm)
 
-names
-meltSoc <- melt(DTsoc, 
-     measure.vars = names,
-     id.vars =  c('species',
-                  'season',
-                  'dyadID',
-                  'timegroup',
-                  'di'))
-pdf('scrap2.pdf')
-lapply(names, function(nm) {
-  ggplot(DTsoc, aes(get(nm), di)) + 
-    geom_point() + 
-    geom_smooth(method = glm) +
-    xlab(nm)
-})
-dev.off()
+g3 <- ggplot(DTsoc, aes(avgpreyRSF, globalDIDist, color = season)) + 
+  geom_point(color = 'grey', aes(shape = season)) + 
+  facet_grid(season ~ cut_interval(di, 4)) +
+  # labs(title = species) +
+  geom_smooth(method = glm)
+
+g1 / g2 / g3
+
+
 
 
 melted <- melt(
@@ -108,6 +104,33 @@ ggplot(melted, aes(value, di)) +
   geom_smooth(method = glm) + 
   facet_grid(species + season ~ variable)
 ggsave('scrap.png', width = 10, height = 4, dpi = 300)
+
+
+### Sample land cover ----
+rasters <- dir('output/1-data-prep/covariates/NL', full.names = TRUE)
+names <- gsub('prep', '', gsub('.tif', '', dir('output/1-data-prep/covariates/NL')))
+
+# Sample rasters
+library(raster)
+DTsoc[, (names) := lapply(rasters, FUN = function(r){
+  extract(raster(r), matrix(c(EASTING, NORTHING), ncol = 2))})]
+
+meltSoc <- melt(DTsoc, 
+                measure.vars = names,
+                id.vars =  c('species',
+                             'season',
+                             'dyadID',
+                             'timegroup',
+                             'di'))
+pdf('scrap2.pdf')
+lapply(names, function(nm) {
+  ggplot(DTsoc, aes(get(nm), di)) + 
+    geom_point() + 
+    geom_smooth(method = glm) +
+    xlab(nm)
+})
+dev.off()
+
 
 ### Plots ----
 ggplot(DTsoc, aes(avgpreyRSF, avgpredatorRSF, color = season)) + 
