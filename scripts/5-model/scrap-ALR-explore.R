@@ -57,27 +57,40 @@ DTsoc <- DT[dyadDist < 500]
 
 
 
+
+
+# Dist vs diff in RSF
+ggplot(DTsoc, aes(dyadDist, dpreyRSF)) +
+  geom_point(color = 'black', alpha = 0.5) +
+  geom_smooth(method = glm)
+
+ggplot(DTsoc, aes(dyadDist, dpredatorRSF)) +
+  geom_point(color = 'black', alpha = 0.5) +
+  geom_smooth(method = glm)
+
+
+
 # Global DI vs global average for dyads
-g1 <- ggplot(DTsoc, aes(glo, globalDI, color = season)) +
+g1 <- ggplot(DTsoc, aes(globavgpredatorRSF, globalDI, color = season)) +
   geom_point(color = 'grey', aes(shape = season)) + 
   facet_grid(season + species ~ cut_interval(di, 4)) +
   # labs(title = species) +
   geom_smooth(method = glm)
 
-g2 <- ggplot(DTsoc, aes(avgpreyRSF, globalDIAngle, color = season)) + 
+g2 <- ggplot(DTsoc, aes(globavgpredatorRSF, globalDIAngle, color = season)) + 
   geom_point(color = 'grey', aes(shape = season)) + 
   facet_grid(season ~ cut_interval(di, 4)) +
   # labs(title = species) +
   geom_smooth(method = glm)
 
-g3 <- ggplot(DTsoc, aes(avgpreyRSF, globalDIDist, color = season)) + 
+g3 <- ggplot(DTsoc, aes(globavgpredatorRSF, globalDIDist, color = season)) + 
   geom_point(color = 'grey', aes(shape = season)) + 
   facet_grid(season ~ cut_interval(di, 4)) +
   # labs(title = species) +
   geom_smooth(method = glm)
 
 g1 / g2 / g3
-
+ggsave('globals-pred.png', width = 10, height = 10)
 
 
 
