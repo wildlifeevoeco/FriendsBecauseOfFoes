@@ -42,6 +42,7 @@ edges <- edge_nn(DT, id = idCol, coords = coordCols,
 edges[, .N, timegroup][, sum(N)] == nrow(edges)
 
 ### Create Dyadic ID ----
+# TODO: switch to dyad id from spatsoc
 dyads <- dyad_id(edges, id = 'ID', nn = 'NN')
 
 edges[dyads, dyadID := dyadID, on = .(ID = ID, NN = NN)]
