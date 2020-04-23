@@ -68,3 +68,5 @@ paper/summary-rsf-table_cache/
 paper/summary-sociality_cache/
 
 paper/summary-sociality_files/
+output/4-sociality/caribouNNA-ALR.Rds
+output/4-sociality/elkNNA-ALR.Rds
