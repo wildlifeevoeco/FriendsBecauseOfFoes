@@ -73,25 +73,27 @@ ggplot(DTsoc, aes(dyadDist, dpredatorRSF)) +
 # Global DI vs global average for dyads
 g1 <- ggplot(DTsoc, aes(globavgpredatorRSF, globalDI, color = season)) +
   geom_point(color = 'grey', aes(shape = season)) + 
-  facet_grid(season + species ~ cut_interval(di, 4)) +
+  facet_grid(species ~ season) +
   # labs(title = species) +
   geom_smooth(method = glm)
 
 g2 <- ggplot(DTsoc, aes(globavgpredatorRSF, globalDIAngle, color = season)) + 
   geom_point(color = 'grey', aes(shape = season)) + 
-  facet_grid(season ~ cut_interval(di, 4)) +
+  facet_grid(species ~ season) +
   # labs(title = species) +
   geom_smooth(method = glm)
 
 g3 <- ggplot(DTsoc, aes(globavgpredatorRSF, globalDIDist, color = season)) + 
   geom_point(color = 'grey', aes(shape = season)) + 
-  facet_grid(season ~ cut_interval(di, 4)) +
+  facet_grid(species ~ season) +
   # labs(title = species) +
   geom_smooth(method = glm)
 
 g1 / g2 / g3
-ggsave('globals-pred.png', width = 10, height = 10)
+ggsave('globals-pred-dropcut.png', width = 10, height = 10)
 
+glm(di ~ avgpreyRSF*avgpredatorRSF,
+    data = DTsoc)
 
 
 melted <- melt(
