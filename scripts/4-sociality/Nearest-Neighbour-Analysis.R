@@ -71,13 +71,10 @@ if (species == 'elk') {
 
 slim <- DT[, .SD, .SDcols = c('id', 'timegroup', cols)]
 
-m <- merge(
-  x = edges,
-  y = slim,
-  by.x = c('ID', 'timegroup'),
-  by.y = c('id', 'timegroup'),
-  all.x = TRUE
-)
+setnames(slim, 'id', 'ID')
+
+m <- edges[slim, on = c('ID', 'timegroup')]
+
 
 suff <- '.nn'
 out <- merge(
