@@ -49,8 +49,8 @@ DT <- unique(DT[!is.na(NN)], by = c('dyadID', 'timegroup'))
 
 
 # Set DI to 0 if > 500m between dyads
-DT[dyadDist >= 100, di0 := 0]
-DT[dyadDist < 100, di0 := di]
+DT[dyadDist >= 50, di0 := 0]
+DT[dyadDist < 50, di0 := di]
 
 
 # Global DI
@@ -63,15 +63,19 @@ DTsoc <- DT[dyadDist < 500]
 # Attempts at pred:prey domain
 DTsoc[, absDifRSF := (predatorRSF - preyRSF) / (predatorRSF + preyRSF)]
 
-ggplot(DTsoc, aes(dyadDist, di)) +
-  geom_point() +
-  geom_smooth(method = glm)
+
+ggplot(DTsoc[species == 'elk' & season == 'winter'], aes(avgpreyRSF, di0), ) +
+  geom_point(alpha = 0.5, color = '#666666') +
+  geom_smooth(method = glm) +
+  # facet_wrap(~cut_interval(dyadDist, 4)) +
+  geom_rug(alpha = 0.5, color = '#666666')# +
+  # facet_grid(season ~ species)
 
 DTsoc[between(di, -0.2, 0.2)]
 
 DTsoc[, qplot(dyadDist, di)]
 
-g1 <- ggplot(DTsoc[!between(di, -0.2, 0.2)], aes(absDifRSF, di, color = season)) +
+g1 <- ggplot(DTsoc[!between(di, -0.2, 0.2)], aes(avgpreyRSF, di, color = season)) +
   geom_point(color = 'grey', aes(shape = season)) + 
   facet_grid(species ~ season) +
   # labs(title = species) +

@@ -6,7 +6,10 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE,
                       eval = TRUE,
-                      message = FALSE)
+                      message = FALSE,
+                      warning = FALSE, 
+                      cache = FALSE)
+                      # TURN cache OFF)
 ```
 
 
@@ -103,7 +106,9 @@ DT[dyadDist < 500, bin500m := FALSE]
 ```
 
 
-> The DI approach, as in Cr,  measures  cohesiveness  irrespective  of  proximity between corresponding movement vectors (Table 2). Thus, to justify DI analysis, the researcher is required to havesomea prioriexpectation of cohesive movement, which, for example, can be based on proximity (defined by distance threshold dc), a measure of static interaction (e.g.home range overlap) or simultaneous capture (e.g. familial groups). DI can then be set to 0 when these conditions are not met
+> "The DI approach, as in Cr,  measures  cohesiveness  irrespective  of  proximity between corresponding movement vectors (Table 2). Thus, to justify DI analysis, the researcher is required to havesomea prioriexpectation of cohesive movement, which, for example, can be based on proximity (defined by distance threshold dc), a measure of static interaction (e.g.home range overlap) or simultaneous capture (e.g. familial groups). DI can then be set to 0 when these conditions are not met"
+
+From: A critical examination of indices of dynamic interaction for wildlife telemetry studies
 
 
 Is there a value less than 500m, relevant for setting DI to 0? Is 500m relevant for both elk and caribou?
@@ -135,21 +140,27 @@ DT[, globalDIAngle := mean(diAngle), .(season, dyadID)]
 DT[, globalDIDist := mean(diDist), .(season, dyadID)]
 ```
 
+### Global average RSF
+If we summarize dyads to a single value, we need a similar resolution RSF value
+
+```{r}
+DT[, globavgpredatorRSF := mean(avgpredatorRSF), .(season, dyadID)]
+DT[, globavgpreyRSF := mean(avgpreyRSF), .(season, dyadID)]
+```
 
 
 ### Subset
 ```{r}
-DTsoc <- DT[dyadDist < 500]
+DTsoc <- DT[dyadDist < 50]
 ```
 
 
 \newpage
 
 ## Plots
-
 Relationship between difference in RSF and distance within dyad
 
-```{r,  height = 7}
+```{r, fig.height = 6}
 # Dist vs diff in RSF
 g1 <- ggplot(DTsoc, aes(dyadDist, dpreyRSF)) +
   geom_point(color = 'black', alpha = 0.5) +
@@ -159,9 +170,53 @@ g2 <- ggplot(DTsoc, aes(dyadDist, dpredatorRSF)) +
   geom_point(color = 'black', alpha = 0.5) +
   geom_smooth(method = glm)
 
-g1 / g2
+g1 / g2 
 ```
 
+
+\newpage
+
+Relationship between DI and distance within dyad
+
+*Note: DI is not affected by distance of dyads, but this is interesting to see if there's any influence*
+
+
+```{r, fig.height = 6}
+# Dist vs DI
+g1 <- ggplot(DTsoc, aes(dyadDist, di)) +
+  geom_point(color = 'black', alpha = 0.5) + geom_smooth(method = glm)
+
+g2 <- ggplot(DTsoc, aes(di)) +
+  geom_histogram() + geom_vline(aes(xintercept = 0.8), color = 'red') +
+  labs(subtitle = 'chunks by interval dyad distance from 0-500')
+
+g3 <- g2 + facet_wrap(~ cut_number(dyadDist, 4)) + labs(subtitle = 'chunks by number/equal count in each chunk')
+g2 <- g2 + facet_wrap(~ cut_interval(dyadDist, 4))
+
+g1 / g2 / g3
+```
+
+
+\newpage
+
+Relationship between DI and distance within dyad *by species*
+
+
+```{r, fig.height = 6}
+# Dist vs DI
+g1 <- ggplot(DTsoc, aes(dyadDist, di)) +
+  geom_point(color = 'black', alpha = 0.5) + geom_smooth(method = glm)+
+  facet_wrap(~species)
+
+g2 <- ggplot(DTsoc, aes(di)) +
+  geom_histogram() + geom_vline(aes(xintercept = 0.8), color = 'red') +
+  labs(subtitle = 'chunks by interval dyad distance from 0-500')
+
+g3 <- g2 + facet_grid(species~ cut_number(dyadDist, 4), scales = 'free_y') + labs(subtitle = 'chunks by number/equal count in each chunk')
+g2 <- g2 + facet_grid(species ~ cut_interval(dyadDist, 4), scales = 'free_y')
+
+g1 / g2 / g3
+```
 
 \newpage
 
@@ -169,41 +224,93 @@ Relationship between average predator RSF and average prey RSF
 
 ```{r}
 ### Plots ----
-ggplot(DTsoc, aes(avgpreyRSF, avgpredatorRSF, color = season)) + 
-  geom_point(color = 'grey', aes(shape = season)) + 
-  facet_grid(season ~ species) +
-  geom_smooth(method = glm)
+g1 <- ggplot(DTsoc[species == 'caribou'], aes(avgpreyRSF, avgpredatorRSF)) + 
+  geom_point(color = 'grey') + 
+  geom_smooth(method = glm) + 
+  ggtitle('caribou')
+
+g2 <- ggplot(DTsoc[species == 'caribou'], aes(avgpreyRSF, avgcoyoteRSF)) + 
+  geom_point(color = 'grey') + geom_smooth(method = glm)
+
+g3 <- ggplot(DTsoc[species == 'caribou'], aes(avgpreyRSF, avgbearRSF)) + 
+  geom_point(color = 'grey')  + geom_smooth(method = glm)
+
+g4 <- ggplot(DTsoc[species == 'elk'], aes(avgpreyRSF, avgpredatorRSF)) + 
+  geom_point(color = 'grey') +  geom_smooth(method = glm) + ggtitle('elk')
+
+layout <- c('AD
+             B#
+             CE')
+```
+
+\newpage
+
+```{r, warning = FALSE, fig.height = 12, fig.width = 11}
+(g1 + g2 + g3 + g4 & facet_grid(~ season)) + guide_area() +
+  plot_layout(design = layout, guides = 'collect') 
 ```
 
 
 
 \newpage
-Relationship between average coyote, bear (and wolf for elk) RSF and average prey RSF
 
-```{r}
-### Plots ----
-g1 <- ggplot(DTsoc[species == 'caribou'], aes(avgpreyRSF, avgbearRSF, color = season)) + 
-  geom_point(color = 'grey', aes(shape = season)) + 
-  facet_grid(~ season) +
-  geom_smooth(method = glm) + 
-  ggtitle('caribou')
 
-g2 <- ggplot(DTsoc[species == 'caribou'], aes(avgpreyRSF, avgcoyoteRSF, color = season)) + 
-  geom_point(color = 'grey', aes(shape = season)) + 
-  facet_grid(~ season) +
-  geom_smooth(method = glm) + 
-  ggtitle('caribou')
+Relationship between DI and predator RSF
 
-g3 <- ggplot(DTsoc[species == 'elk'], aes(avgpreyRSF, avgpredatorRSF, color = season)) + 
-  geom_point(color = 'grey', aes(shape = season)) + 
-  facet_grid(~ season) +
-  geom_smooth(method = glm) + 
-  ggtitle('elk')
+```{r, fig.height = 10, fig.width = 9}
+g1 <- ggplot(DTsoc, aes(avgpredatorRSF, di)) 
+g2 <- ggplot(DTsoc, aes(avgpredatorRSF, diAngle)) 
+g3 <- ggplot(DTsoc, aes(avgpredatorRSF, diDist))
 
-g1 / g2 / g3
+g1 / g2 / g3 & geom_point(color = 'grey') &
+  facet_grid(season ~ species) &
+  geom_smooth(method = glm)
 ```
 
 
+\newpage
+
+Relationship between DI and prey RSF
+
+```{r, fig.height = 10, fig.width = 9}
+g1 <- ggplot(DTsoc, aes(avgpreyRSF, di)) 
+g2 <- ggplot(DTsoc, aes(avgpreyRSF, diAngle)) 
+g3 <- ggplot(DTsoc, aes(avgpreyRSF, diDist))
+
+g1 / g2 / g3 & geom_point(color = 'grey') &
+  facet_grid(season ~ species) &
+  geom_smooth(method = glm)
+```
+
+\newpage
+
+Relationship between global DI and global average predator RSF
+
+```{r, fig.height = 10, fig.width = 9}
+g1 <- ggplot(DTsoc, aes(globavgpredatorRSF, di)) 
+g2 <- ggplot(DTsoc, aes(globavgpredatorRSF, diAngle)) 
+g3 <- ggplot(DTsoc, aes(globavgpredatorRSF, diDist))
+
+g1 / g2 / g3 & geom_point(color = 'grey') &
+  facet_grid(season ~ species) &
+  geom_smooth(method = glm)
+```
+
+\newpage
+
+Relationship between global DI and global average prey RSF
+
+```{r, fig.height = 10, fig.width = 9}
+g1 <- ggplot(DTsoc, aes(globavgpreyRSF, di)) 
+g2 <- ggplot(DTsoc, aes(globavgpreyRSF, diAngle)) 
+g3 <- ggplot(DTsoc, aes(globavgpreyRSF, diDist))
+
+g1 / g2 / g3 & geom_point(color = 'grey') &
+  facet_grid(season ~ species) &
+  geom_smooth(method = glm)
+```
+
+\newpage
 
 ## Spatially explicit predator:prey domain
 
