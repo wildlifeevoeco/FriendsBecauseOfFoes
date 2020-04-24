@@ -103,10 +103,11 @@ DT[dyadDist < 500, bin500m := FALSE]
 ```
 
 
-> The DI approach, as inCr,  measures  cohesiveness  irrespective  of  proximitybetween corresponding movement vectors (Table 2). Thus,to justify DI analysis, the researcher is required to havesomea prioriexpectation of cohesive movement, which,for example, can be based on proximity (defined by dis-tance thresholddc), a measure of static interaction (e.g.home range overlap) or simultaneous capture (e.g. familialgroups). DI can then be set to 0 when these conditionsare not met
+> The DI approach, as in Cr,  measures  cohesiveness  irrespective  of  proximity between corresponding movement vectors (Table 2). Thus, to justify DI analysis, the researcher is required to havesomea prioriexpectation of cohesive movement, which, for example, can be based on proximity (defined by distance threshold dc), a measure of static interaction (e.g.home range overlap) or simultaneous capture (e.g. familial groups). DI can then be set to 0 when these conditions are not met
 
 
-**TODO:**
+Is there a value less than 500m, relevant for setting DI to 0? Is 500m relevant for both elk and caribou?
+
 
 ```{r}
 
