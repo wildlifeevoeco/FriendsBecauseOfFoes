@@ -5,8 +5,21 @@ output: pdf_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE,
-                      eval = TRUE)
+                      eval = TRUE,
+                      message = FALSE)
 ```
+
+
+Notes:
+
+* I've just plotted basic lines here, these are always `geom_smooth(method = glm)`
+
+
+Things I'm not sure about:
+
+> In subsequent analyses, we estimated the predator-prey habitat domain spatially as the interaction between the predator and prey habitat domains
+
+We don't actually *spatially* interact the predator and prey domains right? How could we do this? Correlation of rasters? Difference between predator - prey RSF values?
 
 
 
