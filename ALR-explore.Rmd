@@ -119,15 +119,17 @@ DT[dyadDist < 500, di0 := di]
 
 ### Drop duplicated dyads
 ```{r}
-# Drop duplicated dyads (won't be exactly half the number of rows because not all NN are NN with each other)
+# Drop duplicated dyads (won't be exactly half 
+#   the number of rows because not all NN are NN with each other)
 DT <- unique(DT[!is.na(NN)], by = c('dyadID', 'timegroup'))
 ```
 
 
 
 ### Global DI
+Seems to me that global DI should likely be calculated for the full dataset, before subsetting because it is relevant for dyads that are not observed within 500m often
+
 ```{r}
-# Global DI
 DT[, globalDI := mean(di0), .(season, dyadID)]
 DT[, globalDIAngle := mean(diAngle), .(season, dyadID)]
 DT[, globalDIDist := mean(diDist), .(season, dyadID)]
@@ -135,9 +137,70 @@ DT[, globalDIDist := mean(diDist), .(season, dyadID)]
 
 
 
-## Subset
+### Subset
 ```{r}
 DTsoc <- DT[dyadDist < 500]
+```
+
+
+\newpage
+
+## Plots
+
+Relationship between difference in RSF and distance within dyad
+
+```{r,  height = 7}
+# Dist vs diff in RSF
+g1 <- ggplot(DTsoc, aes(dyadDist, dpreyRSF)) +
+  geom_point(color = 'black', alpha = 0.5) +
+  geom_smooth(method = glm)
+
+g2 <- ggplot(DTsoc, aes(dyadDist, dpredatorRSF)) +
+  geom_point(color = 'black', alpha = 0.5) +
+  geom_smooth(method = glm)
+
+g1 / g2
+```
+
+
+\newpage
+
+Relationship between average predator RSF and average prey RSF
+
+```{r}
+### Plots ----
+ggplot(DTsoc, aes(avgpreyRSF, avgpredatorRSF, color = season)) + 
+  geom_point(color = 'grey', aes(shape = season)) + 
+  facet_grid(season ~ species) +
+  geom_smooth(method = glm)
+```
+
+
+
+\newpage
+Relationship between average coyote, bear (and wolf for elk) RSF and average prey RSF
+
+```{r}
+### Plots ----
+g1 <- ggplot(DTsoc[species == 'caribou'], aes(avgpreyRSF, avgbearRSF, color = season)) + 
+  geom_point(color = 'grey', aes(shape = season)) + 
+  facet_grid(~ season) +
+  geom_smooth(method = glm) + 
+  ggtitle('caribou')
+
+g2 <- ggplot(DTsoc[species == 'caribou'], aes(avgpreyRSF, avgcoyoteRSF, color = season)) + 
+  geom_point(color = 'grey', aes(shape = season)) + 
+  facet_grid(~ season) +
+  geom_smooth(method = glm) + 
+  ggtitle('caribou')
+
+g3 <- ggplot(DTsoc[species == 'elk'], aes(avgpreyRSF, avgpredatorRSF, color = season)) + 
+  geom_point(color = 'grey', aes(shape = season)) + 
+  facet_grid(~ season) +
+  geom_smooth(method = glm) + 
+  ggtitle('elk')
+
+g1 / g2 / g3
 ```
 
 
