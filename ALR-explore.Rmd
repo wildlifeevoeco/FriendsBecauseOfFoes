@@ -1,0 +1,136 @@
+---
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      eval = TRUE)
+```
+
+
+
+
+## Setup 
+```{r}
+pkgs <- c('data.table', 'ggplot2', 'patchwork')
+p <- suppressPackageStartupMessages(lapply(
+  pkgs, 
+  library, 
+  character.only = TRUE)
+)
+
+```
+
+
+## Data
+
+```{r}
+caribou <- readRDS('output/4-sociality/caribouNNA-ALR.Rds')
+elk <- readRDS('output/4-sociality/elkNNA-ALR.Rds')
+
+coordCols <- c('EASTING', 'NORTHING')
+idCol <- 'id'
+
+caribou[, species := 'caribou']
+elk[, species := 'elk']
+
+DT <- rbindlist(list(caribou, elk), fill = TRUE)
+```
+
+A note regarding differences between this and the sociality models R scripts: I've combined the caribou and elk data into a global `DT`. Downstream I've added `by = species` wherever necessary. 
+
+
+## Variables
+
+### Scaled RSF
+
+Shouldn't this scaling be seasonal?
+
+
+```{r}
+DT[, z.avgpreyRSF := scale(avgpreyRSF, center = T, scale = T)]
+DT[, z.avgpredatorRSF := scale(avgpredatorRSF, center = T, scale = T)]
+
+# By species*seasonal 
+DT[, z.avgpreyRSFBy := scale(avgpreyRSF, center = T, scale = T), .(species, season)]
+DT[, z.avgpredatorRSFBy := scale(avgpredatorRSF, center = T, scale = T), .(species, season)]
+
+```
+
+
+Isn't this the second time scaling is performed? We scaled the global RSFs, then rescaled within the sampled points?
+
+In scripts `NL-RSF.R` and `RMNP-RSF.R`:
+
+```
+### Rescale RSFs ----
+q <- 0.999
+
+winterQ <- quantile(winterCrop, q)
+winterCrop[winterCrop > winterQ] <- winterQ
+
+winterScaled <-
+  (winterCrop - (cellStats(winterCrop, min))) / (quantile(winterCrop, q) - (cellStats(winterCrop, min)))
+
+springQ <- quantile(springCrop, q)
+springCrop[springCrop > springQ] <- springQ
+
+springScaled <-
+  (springCrop - (cellStats(springCrop, min))) / (cellStats(springCrop, max) - (cellStats(springCrop, min)))
+```
+
+
+### Bin 500m
+```{r}
+# Dyads within 500m 
+setnames(DT, 'distance', 'dyadDist')
+DT[dyadDist >= 500, bin500m := TRUE]
+DT[dyadDist < 500, bin500m := FALSE]
+```
+
+
+> The DI approach, as inCr,  measures  cohesiveness  irrespective  of  proximitybetween corresponding movement vectors (Table 2). Thus,to justify DI analysis, the researcher is required to havesomea prioriexpectation of cohesive movement, which,for example, can be based on proximity (defined by dis-tance thresholddc), a measure of static interaction (e.g.home range overlap) or simultaneous capture (e.g. familialgroups). DI can then be set to 0 when these conditionsare not met
+
+
+**TODO:**
+
+```{r}
+
+# Set DI to 0 if > 500m between dyads
+DT[dyadDist >= 500, di0 := 0]
+DT[dyadDist < 500, di0 := di]
+```
+
+
+### Drop duplicated dyads
+```{r}
+# Drop duplicated dyads (won't be exactly half the number of rows because not all NN are NN with each other)
+DT <- unique(DT[!is.na(NN)], by = c('dyadID', 'timegroup'))
+```
+
+
+
+### Global DI
+```{r}
+# Global DI
+DT[, globalDI := mean(di0), .(season, dyadID)]
+DT[, globalDIAngle := mean(diAngle), .(season, dyadID)]
+DT[, globalDIDist := mean(diDist), .(season, dyadID)]
+```
+
+
+
+## Subset
+```{r}
+DTsoc <- DT[dyadDist < 500]
+```
+
+
+
+## Spatially explicit predator:prey domain
+
+```{r}
+# Attempts at pred:prey domain
+DTsoc[, predpreyRSF := predatorRSF - preyRSF]
+DTsoc[, predpreyRSF.nn := predatorRSF.nn - preyRSF.nn]
+```
