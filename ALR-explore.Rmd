@@ -1,4 +1,5 @@
 ---
+title: Explore EWC - ALR
 output: pdf_document
 ---
 
@@ -6,7 +7,6 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE,
                       eval = TRUE)
 ```
-
 
 
 
@@ -18,7 +18,6 @@ p <- suppressPackageStartupMessages(lapply(
   library, 
   character.only = TRUE)
 )
-
 ```
 
 
@@ -70,13 +69,15 @@ winterQ <- quantile(winterCrop, q)
 winterCrop[winterCrop > winterQ] <- winterQ
 
 winterScaled <-
-  (winterCrop - (cellStats(winterCrop, min))) / (quantile(winterCrop, q) - (cellStats(winterCrop, min)))
+  (winterCrop - (cellStats(winterCrop, min))) /
+  (quantile(winterCrop, q) - (cellStats(winterCrop, min)))
 
 springQ <- quantile(springCrop, q)
 springCrop[springCrop > springQ] <- springQ
 
 springScaled <-
-  (springCrop - (cellStats(springCrop, min))) / (cellStats(springCrop, max) - (cellStats(springCrop, min)))
+  (springCrop - (cellStats(springCrop, min))) /
+  (cellStats(springCrop, max) - (cellStats(springCrop, min)))
 ```
 
 
