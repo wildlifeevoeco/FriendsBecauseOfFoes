@@ -10,6 +10,54 @@ p <- suppressPackageStartupMessages(lapply(
   character.only = TRUE)
 )
 
+
+bear <- readRDS('output/1-data-prep/bear.Rds')
+coyote <- readRDS('output/1-data-prep/coyote.Rds')
+caribou <- readRDS('output/1-data-prep/caribou.Rds')
+
+DT <- rbindlist(list(bear, coyote, caribou))
+library(sf)
+lapply(DT[, unique(species)], function(sp) {
+  b <- st_bbox(st_as_sf(DT[species == sp, .(EASTING, NORTHING)],
+                   coords = c('EASTING', 'NORTHING'),
+                   crs = '+proj=utm +zone=21 ellps=WGS84'))
+  st_as_sfc(b)
+}) -> lbbox
+
+Reduce(st_intersection, lbbox)
+
+library(mapview)
+mapview(lbbox[[1]]) + 
+  mapview(lbbox[[2]]) + 
+  mapview(lbbox[[3]]) +
+  mapview(, color = 'red')
+
+
+elk <- readRDS('output/1-data-prep/elk.Rds')
+wolf <- readRDS('output/1-data-prep/wolf.Rds')
+
+DT <- rbindlist(list(elk, wolf), fill = TRUE)
+lapply(DT[, unique(species)], function(sp) {
+  b <- st_bbox(st_as_sf(DT[species == sp, .(EASTING, NORTHING)],
+                        coords = c('EASTING', 'NORTHING'),
+                        crs = 'proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'))
+  st_as_sfc(b)
+}) -> lbbox
+
+mapview(lbbox[[1]]) + 
+  mapview(lbbox[[2]]) + 
+  mapview(Reduce(st_intersection, lbbox), color = 'red')
+
+st_union(st_polygon(lbbox[[1]]), lbbox[[2]])
+mapview(Reduce(st_intersection, lbbox))
+st_union()
+
+DT[, range(datetime), species]
+
+ggplot(DT, aes(EASTING, NORTHING, color = species)) + 
+  geom_point()
+
+
 ### Input data ----
 # Which species?
 caribou <- readRDS(paste0('output/4-sociality/', 'caribou', 'NNA-ALR.Rds'))
