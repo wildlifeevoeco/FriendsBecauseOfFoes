@@ -18,11 +18,6 @@ Alright. I've spent a lot of time looking at this but unfortunately that hasn't 
 
 
 
-TODO:
-* heatmaps are islands
-* only use actual spatial overlap of 100% pred and prey mcp?
-
-
 ## Setup 
 ```{r}
 pkgs <- c('data.table', 'ggplot2', 'patchwork')
