@@ -17,7 +17,7 @@ if (length(commandArgs(trailingOnly = TRUE) > 1)) {
   species <- tolower(commandArgs(trailingOnly = TRUE)[2])
   print(paste0('using species: ', species))
 } else {
-  species <- 'elk'
+  species <- 'caribou'
 }
 DT <- readRDS(paste0('output/4-sociality/', species, 'Angle.Rds'))
 
@@ -57,16 +57,38 @@ edges[dyadN > 2, .N] == 0
 
 
 
+
 ### Group size ----
-group_pts(DT, threshold = 50, 
-          id = idCol, 
-          coords = coordCols, 
-          timegroup = 'timegroup')
+group_pts(
+  DT,
+  threshold = 50,
+  id = idCol,
+  coords = coordCols,
+  timegroup = 'timegroup'
+)
 
 DT[, nByGroup := .N, group]
 
+DT[, avgPred := mean(predatorRSF), .(group, season)]
 
-cols <- c('group', 'nByGroup', 'timegroup', 'id')
+DT[, avgPrey := mean(preyRSF), .(group, season)]
+
+m <-
+  melt(
+    DT,
+    id.vars = c('group', 'nByGroup', 'season'),
+    measure.vars = c('avgPrey', 'avgPred')
+  )
+library(ggplot2)
+ggplot(m, aes(value, nByGroup)) + 
+  geom_point() + 
+  facet_grid(variable ~ season)
+
+
+
+
+
+cols <- c('group', 'nByGroup', 'timegroup', 'id', 'season')
 if (species == 'elk') {
   rsfCols <- c('predatorRSF', 'preyRSF')
   cols <- c(cols, rsfCols)
@@ -127,33 +149,33 @@ out <- edges[DT[, .SD, .SDcols = cols], on = .(timegroup, ID = id)]
 # 
 # ### Differences within dyads ----
 # # Dif in step length
-out[, dSI := abs(stepLength - stepLength.nn)]
+# out[, dSI := abs(stepLength - stepLength.nn)]
 # 
 # # Dif in abs Angle
-out[, dAbsAng := 180 - abs(abs(absAngle - absAngle.nn) - 180)]
+# out[, dAbsAng := 180 - abs(abs(absAngle - absAngle.nn) - 180)]
 # 
 # 
 # ## RSF
-for (col in rsfCols) {
-  difnm <- paste0('d', col)
-  avgnm <- paste0('avg', col)
-  endnm <- paste0('end', col)
-  sufnm <- paste0(col, suff)
-
-  globavgnm <- paste0('glob', avgnm)
-
-  # Difference within dyad
-  out[, (difnm) := abs(.SD[[1]] - .SD[[2]]), .SDcols = c(col, sufnm)]
-
-  # Average within dyad
-  out[, (avgnm) := rowMeans(.SD), .SDcols = c(col, sufnm)]
-
-  # Global average RSF for each dyad*season
-  out[, (globavgnm) := mean(.SD[[1]]), by = .(dyadID, season), .SDcols = avgnm]
-
-  # End RSF
-  out[, (endnm) := shift(.SD, 1, NA, 'lead'), .SDcols = col]
-}
+# for (col in rsfCols) {
+#   difnm <- paste0('d', col)
+#   avgnm <- paste0('avg', col)
+#   endnm <- paste0('end', col)
+#   sufnm <- paste0(col, suff)
+# 
+#   globavgnm <- paste0('glob', avgnm)
+# 
+#   # Difference within dyad
+#   out[, (difnm) := abs(.SD[[1]] - .SD[[2]]), .SDcols = c(col, sufnm)]
+# 
+#   # Average within dyad
+#   out[, (avgnm) := rowMeans(.SD), .SDcols = c(col, sufnm)]
+# 
+#   # Global average RSF for each dyad*season
+#   out[, (globavgnm) := mean(.SD[[1]]), by = .(dyadID, season), .SDcols = avgnm]
+# 
+#   # End RSF
+#   out[, (endnm) := shift(.SD, 1, NA, 'lead'), .SDcols = col]
+# }
 # 
 # 
 # 
