@@ -61,7 +61,7 @@ edges[dyadN > 2, .N] == 0
 ### Group size ----
 group_pts(
   DT,
-  threshold = 50,
+  threshold = 500,
   id = idCol,
   coords = coordCols,
   timegroup = 'timegroup'
@@ -71,20 +71,29 @@ DT[, nByGroup := .N, group]
 
 DT[, avgPred := mean(predatorRSF), .(group, season)]
 
+DT[, avgCoyote := mean(coyoteRSF), .(group, season)]
+DT[, avgBear := mean(bearRSF), .(group, season)]
+
 DT[, avgPrey := mean(preyRSF), .(group, season)]
 
 m <-
   melt(
     DT,
     id.vars = c('group', 'nByGroup', 'season'),
-    measure.vars = c('avgPrey', 'avgPred')
+    measure.vars = c('avgPrey', 'avgPred', 'avgCoyote', 'avgBear')
   )
 library(ggplot2)
-ggplot(m, aes(value, nByGroup)) + 
+ggplot(m[nByGroup > 1], aes(value)) + 
+  geom_histogram(aes(fill = factor(nByGroup))) + 
+  facet_grid(variable ~ season, scales = 'free') 
+
+ggplot(m[nByGroup > 1], aes(value, nByGroup)) + 
   geom_point() + 
-  facet_grid(variable ~ season)
+  facet_grid(season ~ variable)
 
-
+ggplot(m, aes(value, factor(nByGroup))) + 
+  geom_point() + 
+  facet_grid(season ~ variable)
 
 
 
