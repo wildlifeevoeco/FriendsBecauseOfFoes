@@ -13,6 +13,9 @@ generate_grid(pol, spacing, crs)
 
 \item{crs}{proj4string of coordinate reference system for pol.}
 }
+\value{
+
+}
 \description{
 Generate a regular grid within a polygon object.
 }

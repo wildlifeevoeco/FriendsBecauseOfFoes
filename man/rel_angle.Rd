@@ -15,6 +15,9 @@ rel_angle(DT, coords = NULL, datetime = NULL, by = NULL)
 
 \item{by}{character vector; columns identifying within which groups (e.g. each individual and year) to calculate angles}
 }
+\value{
+
+}
 \description{
 Calculate Relative Angles
 }

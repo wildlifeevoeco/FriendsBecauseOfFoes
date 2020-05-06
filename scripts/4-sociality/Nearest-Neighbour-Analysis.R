@@ -37,17 +37,21 @@ DT[, nByTimegroup := .N, timegroup]
 
 ### Find nearest neighbour with spatsoc ----
 edges <- edge_nn(DT, id = idCol, coords = coordCols, 
-                 timegroup = 'timegroup')
+                 timegroup = 'timegroup',
+                 returnDist = TRUE)
 # Check
 edges[, .N, timegroup][, sum(N)] == nrow(edges)
 
 ### Create Dyadic ID ----
-dyads <- dyad_id(edges, id = 'ID', nn = 'NN')
-
-edges[dyads, dyadID := dyadID, on = .(ID = ID, NN = NN)]
+dyad_id(edges, id1 = 'ID', id2 = 'NN')
 
 # Check
 edges[is.na(dyadID), .N] == 0
+
+# NOTE: dyadN is not always equal to 2 - some cases the NN for A is not B, while B-A, A-C and C-A for example
+edges[, dyadN := .N, .(dyadID, timegroup)]
+
+edges[dyadN > 2, .N] == 0
 
 
 ### Combine ID + NN columns
@@ -73,31 +77,21 @@ if (species == 'elk') {
 
 slim <- DT[, .SD, .SDcols = c('id', 'timegroup', cols)]
 
-m <- merge(
-  x = edges,
-  y = slim,
-  by.x = c('ID', 'timegroup'),
-  by.y = c('id', 'timegroup'),
-  all.x = TRUE
-)
+setnames(slim, 'id', 'ID')
+
+m <- edges[slim, on = c('ID', 'timegroup')]
+
 
 suff <- '.nn'
 out <- merge(
   x = m,
   y = slim,
   by.x = c('NN', 'timegroup'),
-  by.y = c('id', 'timegroup'),
+  by.y = c('ID', 'timegroup'),
   all.x = TRUE,
   suffixes = c('', suff)
 )
 
-### Calculate dyadic distance ----
-dyad_dist(
-  DT = out,
-  coords = coordCols,
-  suffix = suff,
-  returnIntermediate = FALSE
-)
 
 ### Differences within dyads ----
 # Dif in step length
@@ -114,15 +108,21 @@ for (col in rsfCols) {
   endnm <- paste0('end', col)
   sufnm <- paste0(col, suff)
   
+  globavgnm <- paste0('glob', avgnm)
+  
   # Difference within dyad
   out[, (difnm) := abs(.SD[[1]] - .SD[[2]]), .SDcols = c(col, sufnm)]
   
   # Average within dyad 
   out[, (avgnm) := rowMeans(.SD), .SDcols = c(col, sufnm)]  
   
+  # Global average RSF for each dyad*season
+  out[, (globavgnm) := mean(.SD[[1]]), by = .(dyadID, season), .SDcols = avgnm]
+  
   # End RSF 
   out[, (endnm) := shift(.SD, 1, NA, 'lead'), .SDcols = col]
 }
+
 
 
 ### Find neighbours within distance with spatsoc ----
@@ -135,7 +135,8 @@ wiDist <- edge_dist(
   id = idCol,
   coords = coordCols,
   timegroup = 'timegroup',
-  fillNA = FALSE
+  fillNA = FALSE,
+  returnDist = FALSE
 )
 
 # Check
@@ -163,7 +164,7 @@ calc_di(
 out[, dyadTime := paste(dyadID, timegroup, sep = '-')]
 
 
-saveRDS(out, paste0('output/4-sociality/', species, 'NNA.Rds'))
+saveRDS(out, paste0('output/4-sociality/', species, 'NNA-ALR.Rds'))
 
 
 message('=== NNA COMPLETE ===')

@@ -4,9 +4,15 @@
 \alias{step_length}
 \title{Step Length}
 \usage{
-step_length(DT, coords = c("EASTING", "NORTHING"), time = "datetime",
-  splitBy = c("id", "yr"), moverate = FALSE, type = "lag",
-  preserve = FALSE)
+step_length(
+  DT,
+  coords = c("EASTING", "NORTHING"),
+  time = "datetime",
+  splitBy = c("id", "yr"),
+  moverate = FALSE,
+  type = "lag",
+  preserve = FALSE
+)
 }
 \arguments{
 \item{DT}{data.table}
