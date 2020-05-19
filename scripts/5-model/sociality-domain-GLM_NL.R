@@ -56,28 +56,6 @@ DTsoc3<-DT2[dyadDist<=500 & dSI<=10000]
 DTnsoc<-DT2[dyadDist<=500 & dSI>=500] 
 DTsocNA<-DT2[dyadDist>500] 
 
-### Standardized but did not center the dependents
-### but not DI since it is already on -1 to 1 and I think it is better to leave the values of DI comparable between datasets
-DTsoc$z.dSI<-scale(DTsoc$dSI, center=F, scale=T)
-DTsoc$z.dyadDist<-scale(DTsoc$dyadDist, center=F, scale=T)
-DTsoc$z.dAbsAng<-scale(DTsoc$dAbsAng, center=F, scale=T)
-
-DTsoc3$z.dSI<-scale(DTsoc3$dSI, center=F, scale=T)
-DTsoc3$z.dyadDist<-scale(DTsoc3$dyadDist, center=F, scale=T)
-DTsoc3$z.dAbsAng<-scale(DTsoc3$dAbsAng, center=F, scale=T)
-
-### standardized avg RSF independents
-
-DTsoc$z.avgpreyRSF<-scale(DTsoc$avgpreyRSF, center=T, scale=T)
-DTsoc$z.avgpredatorRSF<-scale(DTsoc$avgpredatorRSF, center=T, scale=T)
-DTsoc$z.avgcoyoteRSF<-scale(DTsoc$avgcoyoteRSF, center=T, scale=T)
-DTsoc$z.avgbearRSF<-scale(DTsoc$avgbearRSF, center=T, scale=T)
-
-DTsoc3$z.avgpreyRSF<-scale(DTsoc3$avgpreyRSF, center=T, scale=T)
-DTsoc3$z.avgpredatorRSF<-scale(DTsoc3$avgpredatorRSF, center=T, scale=T)
-DTsoc3$z.avgcoyoteRSF<-scale(DTsoc3$avgcoyoteRSF, center=T, scale=T)
-DTsoc3$z.avgbearRSF<-scale(DTsoc3$avgbearRSF, center=T, scale=T)
-
 DTsoc_S<-subset(DTsoc, DTsoc$season=="spring")
 DTsoc_W<-subset(DTsoc, DTsoc$season=="winter")
 DTsoc3_S<-subset(DTsoc3, DTsoc3$season=="spring")
@@ -161,15 +139,8 @@ g1$density = g1$counts/sum(g1$counts)*100
 
 limits <- range(0,25)
 par(mfrow=c(1,2))
-plot(h,freq=FALSE, ylim=limits)
-plot(g,freq=FALSE, ylim=limits)
-
-
-limits <- range(0,25)
-par(mfrow=c(1,2))
-plot(h,freq=FALSE, ylim=limits)
 plot(h1,freq=FALSE, ylim=limits)
-
+plot(g1,freq=FALSE, ylim=limits)
 
 #####
 
@@ -178,28 +149,28 @@ plot(h1,freq=FALSE, ylim=limits)
 boxplot(DTsoc3_W$di)
 hist(DTsoc3_W$di)
 
-boxplot(DTsoc3_W$z.avgpredatorRSF)
-hist(DTsoc3_W$z.avgpredatorRSF)
+boxplot(DTsoc3_W$avgpredatorRSF)
+hist(DTsoc3_W$avgpredatorRSF)
 
-boxplot(DTsoc3_W$z.avgpreyRSF)
-hist(DTso3c_W$z.avgpreyRSF)
+boxplot(DTsoc3_W$avgpreyRSF)
+hist(DTsoc3_W$avgpreyRSF)
 
 ## Spring
 
 boxplot(DTsoc3_S$di)
 hist(DTsoc3_S$di)
 
-boxplot(DTsoc3_S$z.avgpredatorRSF)
-hist(DTsoc3_S$z.avgpredatorRSF)
+boxplot(DTsoc3_S$avgpredatorRSF)
+hist(DTsoc3_S$avgpredatorRSF)
 
-boxplot(DTsoc3_S$z.avgpreyRSF)
-hist(DTsoc3_S$z.avgpreyRSF)
+boxplot(DTsoc3_S$avgpreyRSF)
+hist(DTsoc3_S$avgpreyRSF)
 
-boxplot(DTsoc3_S$z.avgcoyoteRSF)
-hist(DTsoc3_S$z.avgcoyoteRSF)
+boxplot(DTsoc3_S$avgcoyoteRSF)
+hist(DTsoc3_S$avgcoyoteRSF)
 
-boxplot(DTsoc3_S$z.avgbearRSF)
-hist(DTsoc3_S$z.avgbearRSF)
+boxplot(DTsoc3_S$avgbearRSF)
+hist(DTsoc3_S$avgbearRSF)
 
 library(visreg)
 library(rgl)
@@ -209,53 +180,52 @@ library(rgl)
 ## winter
 
 nlNN_W.DIpy<-
-  glm(di ~ z.avgpreyRSF,
+  glm(di ~ avgpreyRSF,
       data = DTsoc3_W)
 
 summary(nlNN_W.DIpy)
 
 nlNN_W.DIpd<-
-  glm(di ~ z.avgpredatorRSF,
+  glm(di ~ avgpredatorRSF,
       data = DTsoc3_W)
 
 summary(nlNN_W.DIpd)
 
 nlNN_W.DI<-
-  glm(di ~ z.avgpreyRSF*z.avgpredatorRSF,
+  glm(di ~ avgpreyRSF*avgpredatorRSF,
       data = DTsoc3_W)
 
 summary(nlNN_W.DI)
 
 
 nlNN_W.DI_A<-
-  glm(di ~ z.avgpreyRSF+z.avgpredatorRSF,
+  glm(di ~ avgpreyRSF+avgpredatorRSF,
       data = DTsoc3_W)
 
 summary(nlNN_W.DI_A)
 
-
 ## spring
 
 nlNN_S.DIpy<-
-  glm(di ~ z.avgpreyRSF,
+  glm(di ~ avgpreyRSF,
       data = DTsoc3_S)
 
 summary(nlNN_S.DIpy)
 
 nlNN_S.DIpd<-
-  glm(di ~ z.avgpredatorRSF,
+  glm(di ~ avgpredatorRSF,
       data = DTsoc3_S)
 
 summary(nlNN_S.DIpd)
 
 nlNN_S.DI<-
-  glm(di ~ z.avgpreyRSF*z.avgpredatorRSF,
+  glm(di ~ avgpreyRSF*avgpredatorRSF,
       data = DTsoc3_S)
 
 summary(nlNN_S.DI)
 
 nlNN_S.DI_A<-
-  glm(di ~ z.avgpreyRSF+z.avgpredatorRSF,
+  glm(di ~ avgpreyRSF+avgpredatorRSF,
       data = DTsoc3_S)
 
 summary(nlNN_S.DI_A)
@@ -263,120 +233,160 @@ summary(nlNN_S.DI_A)
 ### Bear v Coyote in Spring
 
 nlNN_S.DI_Cpd<-
-  glm(di ~ z.avgcoyoteRSF,
+  glm(di ~ avgcoyoteRSF,
       data = DTsoc3_S)
 summary(nlNN_S.DI_Cpd)
 
 nlNN_S.DI_C<-
-  glm(di ~ z.avgpreyRSF*z.avgcoyoteRSF,
+  glm(di ~ avgpreyRSF*avgcoyoteRSF,
       data = DTsoc3_S)
 summary(nlNN_S.DI_C)
 
 nlNN_S.DI_C_A<-
-  glm(di ~ z.avgpreyRSF+z.avgcoyoteRSF,
+  glm(di ~ avgpreyRSF+avgcoyoteRSF,
       data = DTsoc3_S)
 summary(nlNN_S.DI_C_A)
 
 nlNN_S.DI_Bpd<-
-  glm(di ~ z.avgbearRSF,
+  glm(di ~ avgbearRSF,
       data = DTsoc3_S)
 summary(nlNN_S.DI_Bpd)
 
 nlNN_S.DI_B<-
-  glm(di ~ z.avgpreyRSF*z.avgbearRSF,
+  glm(di ~ avgpreyRSF*avgbearRSF,
       data = DTsoc3_S)
 summary(nlNN_S.DI_B)
 
 nlNN_S.DI_B_A<-
-  glm(di ~ z.avgpreyRSF+z.avgbearRSF,
+  glm(di ~ avgpreyRSF+avgbearRSF,
       data = DTsoc3_S)
 summary(nlNN_S.DI_B_A)
 
-## bear and coyote  ### Need to figure out a way to plot these
+## bear and coyote  
 
 nlNN_S.DI_CB_A<-
-  glm(di ~ z.avgpreyRSF+z.avgbearRSF+z.avgcoyoteRSF,
+  glm(di ~ avgpreyRSF+avgbearRSF+avgcoyoteRSF,
       data = DTsoc3_S)
 summary(nlNN_S.DI_CB_A)
 
 nlNN_S.DI_CB<-
-  glm(di ~ z.avgpreyRSF*z.avgbearRSF+z.avgpreyRSF*z.avgcoyoteRSF,
+  glm(di ~ avgpreyRSF*avgbearRSF+avgpreyRSF*avgcoyoteRSF,
       data = DTsoc3_S)
 summary(nlNN_S.DI_CB)
 
 
 nlNN_S.DI_B_C<-
-  glm(di ~ z.avgpreyRSF*z.avgbearRSF+z.avgcoyoteRSF,
+  glm(di ~ avgpreyRSF*avgbearRSF+avgcoyoteRSF,
       data = DTsoc3_S)
 summary(nlNN_S.DI_B_C)
 
 nlNN_S.DI_C_B<-
-  glm(di ~ z.avgbearRSF+z.avgpreyRSF*z.avgcoyoteRSF,
+  glm(di ~ avgbearRSF+avgpreyRSF*avgcoyoteRSF,
       data = DTsoc3_S)
 summary(nlNN_S.DI_C_B)
-
 
 ### year-round coyote
 
 nlNN.DIpy<-
-  glm(di ~ z.avgpreyRSF,
+  glm(di ~ avgpreyRSF,
       data = DTsoc3)
 
 summary(nlNN.DIpy)
 
 nlNN.DI_Cpd<-
-  glm(di ~ z.avgcoyoteRSF,
+  glm(di ~ avgcoyoteRSF,
       data = DTsoc3)
 
 summary(nlNN.DI_Cpd)
 
 nlNN.DI_C<-
-  glm(di ~ z.avgpreyRSF*z.avgcoyoteRSF,
+  glm(di ~ avgpreyRSF*avgcoyoteRSF,
       data = DTsoc3)
 
 summary(nlNN.DI_C)
 
 
 nlNN.DI_C_A<-
-  glm(di ~ z.avgpreyRSF+z.avgcoyoteRSF,
+  glm(di ~ avgpreyRSF+avgcoyoteRSF,
       data = DTsoc3)
 
 summary(nlNN.DI_C_A)
 
 
-### Figure 1a
-MOD.nlNN_W.DI<-nlNN_W.DI
-MOD.nlNN_W.DI$coefficients[4]<-0
-visreg2d(MOD.nlNN_W.DI, "z.avgpreyRSF", "z.avgpredatorRSF", plot.type="image", zlim=c(-1,1), main="", 
-         xlab="Scaled estimate of selection value of caribou landscape", 
-         ylab="Scaled estimate of selection value of coyote landscape",
-         zlab = "Predicted dynamic interaction of caribou dyad") 
 
 
-## year-round caribou-coyote domain with di
-visreg2d(nlNN.DI_C, "z.avgpreyRSF", "z.avgcoyoteRSF", plot.type="image") 
+
+p<-ggplot(DTsoc3_W,aes(avgpreyRSF,avgpredatorRSF))
+p<-p + geom_point(aes(colour = avgpreyRSF*avgpredatorRSF))+scale_fill_gradient(low = "lightpink1", high = "red4",aesthetics = "colour")+ylim(0,0.80)+xlim(0,0.35)
+p + geom_density_2d()
+
+p<-ggplot(DTsocNA_W,aes(avgpreyRSF,avgpredatorRSF))
+p<-p + geom_point(aes(colour = avgpreyRSF*avgpredatorRSF))+scale_fill_gradient(low = "lightpink1", high = "red4",aesthetics = "colour")+ylim(0,0.80)+xlim(0,0.35)
+p + geom_density_2d()
+
+p<-ggplot(DTsoc3_S,aes(avgpreyRSF,avgpredatorRSF))
+p<-p + geom_point(aes(colour = avgpreyRSF*avgpredatorRSF))+scale_fill_gradient(low = "lightpink1", high = "red4",aesthetics = "colour")+ylim(0.25,1.35)+xlim(0,0.36)
+p + geom_density_2d()
+
+p<-ggplot(DTsocNA_S,aes(avgpreyRSF,avgpredatorRSF))
+p<-p + geom_point(aes(colour = avgpreyRSF*avgpredatorRSF))+scale_fill_gradient(low = "lightpink1", high = "red4",aesthetics = "colour")+ylim(0.25,1.35)+xlim(0,0.36)
+p + geom_density_2d()
+
+p<-ggplot(DTsoc3_S,aes(avgpreyRSF,avgcoyoteRSF))
+p<-p + geom_point(aes(colour = avgpreyRSF*avgcoyoteRSF))+scale_fill_gradient(low = "lightpink1", high = "red4",aesthetics = "colour")+ylim(0,1)+xlim(0,0.36)
+p + geom_density_2d()
+
+p<-ggplot(DTsocNA_S,aes(avgpreyRSF,avgcoyoteRSF))
+p<-p + geom_point(aes(colour = avgpreyRSF*avgcoyoteRSF))+scale_fill_gradient(low = "lightpink1", high = "red4",aesthetics = "colour")+ylim(0,1)+xlim(0,0.36)
+p + geom_density_2d()
+
+p<-ggplot(DTsoc3_S,aes(avgpreyRSF,avgbearRSF))
+p<-p + geom_point(aes(colour = avgpreyRSF*avgbearRSF))+scale_fill_gradient(low = "lightpink1", high = "red4",aesthetics = "colour")+ylim(0,0.36)+xlim(0,0.36)
+p + geom_density_2d()
+
+p<-ggplot(DTsocNA_S,aes(avgpreyRSF,avgbearRSF))
+p<-p + geom_point(aes(colour = avgpreyRSF*avgbearRSF))+scale_fill_gradient(low = "lightpink1", high = "red4",aesthetics = "colour")+ylim(0,0.36)+xlim(0,0.36)
+p + geom_density_2d()
+
+
+
+
+
+
+
+### Figure 1a.1
+MOD.nlNN_W.DI<-nlNN_W.DI_A
+MOD.nlNN_W.DI$coefficients
+visreg2d(MOD.nlNN_W.DI, "avgpreyRSF", "avgpredatorRSF", plot.type="image", ylim=c(0,0.80), xlim=c(0,0.35), zlim=c(-1,1), main="", 
+         xlab="Estimate of selection value of caribou landscape", 
+         ylab="Estimate of selection value of coyote landscape",
+         zlab = "Predicted dynamic interaction of caribou dyad",nlevels=100) 
 
 
 ### Figure 2a
 MOD.nlNN_S.DI<-nlNN_S.DI
-MOD.nlNN_S.DI$coefficients[3]<-0
-visreg2d(MOD.nlNN_S.DI, "z.avgpreyRSF", "z.avgpredatorRSF", plot.type="image", ylim=c(-1,6), zlim=c(-1,1), main="", 
-         xlab="Scaled estimate of selection value of caribou landscape", 
-         ylab="Scaled estimate of selection value of coyote and bear landscape",
-         zlab = "Predicted dynamic interaction of caribou dyad") 
+MOD.nlNN_S.DI$coefficients[1]<-0
+visreg2d(MOD.nlNN_S.DI, "avgpreyRSF", "avgpredatorRSF", plot.type="image", ylim=c(0.25,1.35), xlim=c(0,0.35), zlim=c(-1,1), main="", 
+         xlab="Estimate of selection value of caribou landscape", 
+         ylab="Estimate of selection value of coyote and bear landscape",
+         zlab = "Predicted dynamic interaction of caribou dyad",nlevels=100) 
 
 
 ### Figure 2b (note all coefficients are meaningful so no modification)
-visreg2d(nlNN_S.DI_C, "z.avgpreyRSF", "z.avgcoyoteRSF", plot.type="image", ylim=c(-1,6), zlim=c(-1,1), main="", 
+MOD.nlNN_S.DI_C<-nlNN_S.DI_C
+MOD.nlNN_S.DI_C$coefficients[1]<-0
+visreg2d(MOD.nlNN_S.DI_C, "avgpreyRSF", "avgcoyoteRSF", plot.type="image", ylim=c(0,1), xlim=c(0,0.35), zlim=c(-1,1), main="", 
          xlab="Scaled estimate of selection value of caribou landscape", 
          ylab="Scaled estimate of selection value of coyote landscape",
-         zlab = "Predicted dynamic interaction of caribou dyad")  
+         zlab = "Predicted dynamic interaction of caribou dyad",nlevels=100)  
 
 ### Figure 2c (note all coefficients are meaningful so no modification)
-visreg2d(nlNN_S.DI_B, "z.avgpreyRSF", "z.avgbearRSF", plot.type="image", ylim=c(-1,6), zlim=c(-1,1), main="", 
+MOD.nlNN_S.DI_B<-nlNN_S.DI_B
+MOD.nlNN_S.DI_B$coefficients[3]<-0
+visreg2d(MOD.nlNN_S.DI_B, "avgpreyRSF", "avgbearRSF", plot.type="image", ylim=c(0,0.35), xlim=c(0,0.35), zlim=c(-1,1), main="", 
          xlab="Scaled estimate of selection value of caribou landscape", 
          ylab="Scaled estimate of selection value of bear landscape",
-         zlab = "Predicted dynamic interaction of caribou dyad")  
+         zlab = "Predicted dynamic interaction of caribou dyad",nlevels=100)  
 
 
 ### Figure 3a-e
@@ -384,7 +394,7 @@ visreg2d(nlNN_S.DI_B, "z.avgpreyRSF", "z.avgbearRSF", plot.type="image", ylim=c(
 ### 
 
 MOD.nlNN_S.DI_CB<-nlNN_S.DI_CB
-MOD.nlNN_S.DI_CB$coefficients[2]<-0
+MOD.nlNN_S.DI_CB$coefficients[1]<-0
 MOD.nlNN_S.DI_CB$coefficients[4]<-0  ### because we are going to set specific coyote values into intercept
 MOD.nlNN_S.DI_CB$coefficients[6]<-0
 
@@ -394,45 +404,38 @@ MOD.nlNN_S.DI_CB_C<-MOD.nlNN_S.DI_CB
 MOD.nlNN_S.DI_CB_D<-MOD.nlNN_S.DI_CB
 MOD.nlNN_S.DI_CB_E<-MOD.nlNN_S.DI_CB
 
-MOD.nlNN_S.DI_CB_A$coefficients[1]<-0.151164+0.041422*-0.70
-MOD.nlNN_S.DI_CB_B$coefficients[1]<-0.151164+0.041422*0.23
-MOD.nlNN_S.DI_CB_C$coefficients[1]<-0.151164+0.041422*0.55
-MOD.nlNN_S.DI_CB_D$coefficients[1]<-0.151164+0.041422*1.03
-MOD.nlNN_S.DI_CB_E$coefficients[1]<-0.151164+0.041422*5.78
+MOD.nlNN_S.DI_CB_A$coefficients[1]<-0.4397792*0.1718
+MOD.nlNN_S.DI_CB_B$coefficients[1]<-0.4397792*0.2872
+MOD.nlNN_S.DI_CB_C$coefficients[1]<-0.4397792*0.3263
+MOD.nlNN_S.DI_CB_D$coefficients[1]<-0.4397792*0.3859
+MOD.nlNN_S.DI_CB_E$coefficients[1]<-0.4397792*0.9753
 
-visreg2d(MOD.nlNN_S.DI_CB_A, "z.avgpreyRSF", "z.avgbearRSF", plot.type="image", ylim=c(-1,6), zlim=c(-1,1), main="", 
-         xlab="Scaled estimate of selection value of caribou landscape", 
-         ylab="Scaled estimate of selection value of bear landscape",
-         zlab = "Predicted dynamic interaction of caribou dyad")  
+visreg2d(MOD.nlNN_S.DI_CB_A, "avgpreyRSF", "avgbearRSF", plot.type="image", ylim=c(0.02,0.31), zlim=c(-1,1), main="", 
+         xlab="Estimate of selection value of caribou landscape", 
+         ylab="Estimate of selection value of bear landscape",
+         zlab = "Predicted dynamic interaction of caribou dyad",nlevels=100)  
 
-visreg2d(MOD.nlNN_S.DI_CB_B, "z.avgpreyRSF", "z.avgbearRSF", plot.type="image", ylim=c(-1,6), zlim=c(-1,1), main="", 
-         xlab="Scaled estimate of selection value of caribou landscape", 
-         ylab="Scaled estimate of selection value of bear landscape",
-         zlab = "Predicted dynamic interaction of caribou dyad")  
+visreg2d(MOD.nlNN_S.DI_CB_B, "avgpreyRSF", "avgbearRSF", plot.type="image", ylim=c(0.02,0.31), zlim=c(-1,1), main="", 
+         xlab="Estimate of selection value of caribou landscape", 
+         ylab="Estimate of selection value of bear landscape",
+         zlab = "Predicted dynamic interaction of caribou dyad",nlevels=100)  
 
-visreg2d(MOD.nlNN_S.DI_CB_C, "z.avgpreyRSF", "z.avgbearRSF", plot.type="image", ylim=c(-1,6), zlim=c(-1,1), main="", 
-         xlab="Scaled estimate of selection value of caribou landscape", 
-         ylab="Scaled estimate of selection value of bear landscape",
-         zlab = "Predicted dynamic interaction of caribou dyad")  
+visreg2d(MOD.nlNN_S.DI_CB_C, "avgpreyRSF", "avgbearRSF", plot.type="image", ylim=c(0.02,0.31), zlim=c(-1,1), main="", 
+         xlab="Estimate of selection value of caribou landscape", 
+         ylab="Estimate of selection value of bear landscape",
+         zlab = "Predicted dynamic interaction of caribou dyad",nlevels=100)  
 
-visreg2d(MOD.nlNN_S.DI_CB_D, "z.avgpreyRSF", "z.avgbearRSF", plot.type="image", ylim=c(-1,6), zlim=c(-1,1), main="", 
-         xlab="Scaled estimate of selection value of caribou landscape", 
-         ylab="Scaled estimate of selection value of bear landscape",
-         zlab = "Predicted dynamic interaction of caribou dyad")  
+visreg2d(MOD.nlNN_S.DI_CB_D, "avgpreyRSF", "avgbearRSF", plot.type="image", ylim=c(0.02,0.31), zlim=c(-1,1), main="", 
+         xlab="Estimate of selection value of caribou landscape", 
+         ylab="Estimate of selection value of bear landscape",
+         zlab = "Predicted dynamic interaction of caribou dyad",nlevels=100)  
 
-visreg2d(MOD.nlNN_S.DI_CB_E, "z.avgpreyRSF", "z.avgbearRSF", plot.type="image", ylim=c(-1,6), zlim=c(-1,1), main="", 
-         xlab="Scaled estimate of selection value of caribou landscape", 
-         ylab="Scaled estimate of selection value of bear landscape",
-         zlab = "Predicted dynamic interaction of caribou dyad")  
+visreg2d(MOD.nlNN_S.DI_CB_E, "avgpreyRSF", "avgbearRSF", plot.type="image", ylim=c(0.02,0.31), zlim=c(-1,1), main="", 
+         xlab="Estimate of selection value of caribou landscape", 
+         ylab="Estimate of selection value of bear landscape",
+         zlab = "Predicted dynamic interaction of caribou dyad",nlevels=100)  
 
 
 
-#### create raster of predicted DI based on these models
 
-# Caribou spring
-MOD.nlNN_S.DI_CB2<-nlNN_S.DI_CB
-MOD.nlNN_S.DI_CB2$coefficients[2]<-0
-MOD.nlNN_S.DI_CB2$coefficients[6]<-0
 
-# Caribou winter
-MOD.nlNN_W.DI
