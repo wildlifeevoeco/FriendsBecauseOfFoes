@@ -56,23 +56,7 @@ DTsoc3<-DT2[dyadDist<=500 & dSI<=10000]
 DTnsoc<-DT2[dyadDist<=500 & dSI>=500] 
 DTsocNA<-DT2[dyadDist>500] 
 
-### Standardized but did not center the dependents
-### but not DI since it is already on -1 to 1 and I think it is better to leave the values of DI comparable between datasets
-DTsoc$z.dSI<-scale(DTsoc$dSI, center=F, scale=T)
-DTsoc$z.dyadDist<-scale(DTsoc$dyadDist, center=F, scale=T)
-DTsoc$z.dAbsAng<-scale(DTsoc$dAbsAng, center=F, scale=T)
-
-DTsoc3$z.dSI<-scale(DTsoc3$dSI, center=F, scale=T)
-DTsoc3$z.dyadDist<-scale(DTsoc3$dyadDist, center=F, scale=T)
-DTsoc3$z.dAbsAng<-scale(DTsoc3$dAbsAng, center=F, scale=T)
-
 ### standardized avg RSF independents
-
-DTsoc$z.avgpreyRSF<-scale(DTsoc$avgpreyRSF, center=T, scale=T)
-DTsoc$z.avgpredatorRSF<-scale(DTsoc$avgpredatorRSF, center=T, scale=T)
-
-DTsoc3$z.avgpreyRSF<-scale(DTsoc3$avgpreyRSF, center=T, scale=T)
-DTsoc3$z.avgpredatorRSF<-scale(DTsoc3$avgpredatorRSF, center=T, scale=T)
 
 DTsoc_S<-subset(DTsoc, DTsoc$season=="spring")
 DTsoc_W<-subset(DTsoc, DTsoc$season=="winter")
@@ -146,24 +130,59 @@ summary(as.factor(DTsoc3_S$nWithin))
 ## WINTER (for NL predator=coyote in winter)
 
 boxplot(DTsoc3_W$di)
-hist(DTsoc3_W$di)
+hist(DTsoc3_W$di, breaks=20, freq=FALSE)
 
-boxplot(DTsoc3_W$z.avgpredatorRSF)
-hist(DTsoc3_W$z.avgpredatorRSF)
 
-boxplot(DTsoc3_W$z.avgpreyRSF)
-hist(DTsoc3_W$z.avgpreyRSF)
+ggplot(DTsoc3_W, aes(x=di)) + geom_histogram(aes(x=di, y = ..count../sum(..count..)),binwidth = 0.05, fill = "grey", color = "black")+
+  ylim(0,1)+
+  xlim(-1.05,1.05)+
+  geom_vline(aes(xintercept=mean(di)), color="blue", linetype="dashed", size=1)+
+  geom_vline(aes(xintercept=0.80), color="red", linetype="solid", size=1)+
+  geom_vline(aes(xintercept=0), color="black", linetype="solid", size=1)
+
+
+ggplot(DTsoc3_S, aes(x=di)) + geom_histogram(aes(x=di, y = ..count../sum(..count..)),binwidth = 0.05, fill = "grey", color = "black")+
+  ylim(0,1)+
+  xlim(-1.05,1.05)+
+  geom_vline(aes(xintercept=mean(di)), color="blue", linetype="dashed", size=1)+
+  geom_vline(aes(xintercept=0.80), color="red", linetype="solid", size=1)+
+  geom_vline(aes(xintercept=0), color="black", linetype="solid", size=1)
+
+ggplot(DTsoc3_S, aes(x=di)) + geom_histogram(aes(x=di, y = ..count../sum(..count..)),binwidth = 0.05, fill = "grey", color = "black")+
+  ylim(0,0.10)+
+  xlim(-1.05,1.05)+
+  geom_vline(aes(xintercept=mean(di)), color="blue", linetype="dashed", size=1)+
+  geom_vline(aes(xintercept=0.80), color="red", linetype="solid", size=1)+
+  geom_vline(aes(xintercept=0), color="black", linetype="solid", size=1)
+
+ggplot(DTsoc3_W, aes(x=as.factor(DTsoc3_W$nWithin))) + geom_bar(aes(x=as.factor(DTsoc3_W$nWithin), y = ..count../sum(..count..)),fill = "grey", color = "black")+
+  ylim(0,0.9)
+
+
+ggplot(DTsoc3_S, aes(x=as.factor(DTsoc3_S$nWithin))) + geom_bar(aes(x=as.factor(DTsoc3_S$nWithin), y = ..count../sum(..count..)),fill = "grey", color = "black")+
+  ylim(0,0.9)
+
+
+
+
+
+
+boxplot(DTsoc3_W$avgpredatorRSF)
+hist(DTsoc3_W$avgpredatorRSF)
+
+boxplot(DTsoc3_W$avgpreyRSF)
+hist(DTsoc3_W$avgpreyRSF)
 
 ## Spring (not needed for RMNP, low sample size)
 
 boxplot(DTsoc3_S$di)
 hist(DTsoc3_S$di)
 
-boxplot(DTsoc3_S$z.avgpredatorRSF)
-hist(DTsoc3_S$z.avgpredatorRSF)
+boxplot(DTsoc3_S$avgpredatorRSF)
+hist(DTsoc3_S$avgpredatorRSF)
 
-boxplot(DTsoc3_S$z.avgpreyRSF)
-hist(DTsoc3_S$z.avgpreyRSF)
+boxplot(DTsoc3_S$avgpreyRSF)
+hist(DTsoc3_S$avgpreyRSF)
 
 
 h <- hist(DTsoc3_W$di) # or hist(x,plot=FALSE) to avoid the plot of the histogram
@@ -178,147 +197,51 @@ par(mfrow=c(1,2))
 plot(h,freq=FALSE, ylim=limits)
 plot(g,freq=FALSE, ylim=limits)
 
-
-limits <- range(0,25)
-par(mfrow=c(1,2))
-plot(h,freq=FALSE, ylim=limits)
-plot(h1,freq=FALSE, ylim=limits)
-
-
-
 library(visreg)
 library(rgl)
 
 ###GLM
 ## RM
-
-rmNN.DIpy<-
-  glm(di ~ z.avgpreyRSF,
-      data = DTsoc3)
-
-summary(rmNN.DIpy)
-
-rmNN.DIpd<-
-  glm(di ~ z.avgpredatorRSF,
-      data = DTsoc3)
-
-summary(rmNN.DIpd)
-
-rmNN.DI<-
-  glm(di ~ z.avgpreyRSF*z.avgpredatorRSF,
-      data = DTsoc3)
-
-summary(rmNN.DI)
-
-
-
+## winter
 ## winter
 
 rmNN_W.DIpy<-
-  glm(di ~ z.avgpreyRSF,
+  glm(di ~ avgpreyRSF,
       data = DTsoc3_W)
 
-summary(rmNN_W.DIpy)
+summary(rmNN_W.DIpy1)
 
 rmNN_W.DIpd<-
-  glm(di ~ z.avgpredatorRSF,
+  glm(di ~ avgpredatorRSF,
       data = DTsoc3_W)
 
-summary(rmNN_W.DIpd)
+summary(rmNN_W.DIpd1)
 
 rmNN_W.DI<-
-  glm(di ~ z.avgpreyRSF*z.avgpredatorRSF,
+  glm(di ~ avgpreyRSF*avgpredatorRSF,
       data = DTsoc3_W)
 
-summary(rmNN_W.DI)
-
-## spring
-
-rmNN_S.DIpy<-
-  glm(di ~ z.avgpreyRSF,
-      data = DTsoc3_S)
-
-summary(rmNN_S.DIpy)
-
-rmNN_S.DIpd<-
-  glm(di ~ z.avgpredatorRSF,
-      data = DTsoc3_S)
-
-summary(rmNN_S.DIpd)
-
-rmNN_S.DI<-
-  glm(di ~ z.avgpreyRSF*z.avgpredatorRSF,
-      data = DTsoc3_S)
-
-summary(rmNN_S.DI)
+summary(rmNN_W.DI1)
 
 
-###  Make these plots on same axis scale
-## winter elk-wolf domain with di
-visreg2d(rmNN_W.DI, "z.avgpreyRSF", "z.avgpredatorRSF", plot.type="image") 
+rmNN_W.DI_A<-
+  glm(di ~ avgpreyRSF+avgpredatorRSF,
+      data = DTsoc3_W)
 
-## spring elk-wolf domain with di
-visreg2d(rmNN_S.DI, "z.avgpreyRSF", "z.avgpredatorRSF", plot.type="image")
+summary(rmNN_W.DI_A1)
 
-## year-round elk-wolf domain with di
-visreg2d(rmNN.DI, "z.avgpreyRSF", "z.avgpredatorRSF", plot.type="image")
-
-
-### Winter Prey
-visreg(rmNN_W.DIpy, "z.avgpreyRSF")
-
-#### playing around
-
-summary(DTsoc3_W$di)
-DTsoc3_W2<-subset(DTsoc3_W, DTsoc3_W$z.avgpreyRSF<=1.025105  & DTsoc3_W$z.avgpredatorRSF<=2.183941)
-DTsoc3_W2<-subset(DTsoc3_W, DTsoc3_W$di>=0)
-
-## winter
-
-rmNN_W.DIpy2<-
-  glm(di ~ z.avgpreyRSF,
-      data = DTsoc3_W2)
-
-summary(rmNN_W.DIpy2)
-
-rmNN_W.DIpd2<-
-  glm(di ~ z.avgpredatorRSF,
-      data = DTsoc3_W2)
-
-summary(rmNN_W.DIpd2)
-
-rmNN_W.DI2<-
-  glm(di ~ z.avgpreyRSF*z.avgpredatorRSF,
-      data = DTsoc3_W2)
-
-summary(rmNN_W.DI2)
-
-visreg(rmNN_W.DIpy2, "z.avgpreyRSF")
-
-
-
-
-
-
-
-
-
-
-
-########### I want to make this plot be the second panel of figure 1
-##### I like the plot design but the actual data is misleading because in the model: rmNN_W.DI the coefficients 
-##### for z.avgpredatorRSF and z.avgpreyRSF*z.avgpredatorRSF are nonsignificant. So I forced new coefficients of zero
+########### For panelled figure 1
 
 MOD.rmNN_W.DI<-rmNN_W.DI
+MOD.rmNN_W.DI$coefficients[1]<-rmNN_W.DIpy$coefficients[1]
+MOD.rmNN_W.DI$coefficients[2]<-rmNN_W.DIpy$coefficients[2]
 MOD.rmNN_W.DI$coefficients[3]<-0
 MOD.rmNN_W.DI$coefficients[4]<-0
 
 ## figure 1b
-visreg2d(MOD.rmNN_W.DI, "z.avgpreyRSF", "z.avgpredatorRSF", plot.type="image", zlim=c(-1,1), main="", 
+visreg2d(MOD.rmNN_W.DI, "avgpreyRSF", "avgpredatorRSF", plot.type="image", zlim=c(-1,1), main="", 
          xlab="Scaled estimate of selection value of elk landscape", 
          ylab="Scaled estimate of selection value of wolf landscape", zlab = "Predicted dynamic interaction of elk dyad")
-
-
 
 ### create raster of predicted DI from this modified model
 
