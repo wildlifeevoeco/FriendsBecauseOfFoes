@@ -17,7 +17,7 @@ if (length(commandArgs(trailingOnly = TRUE) > 1)) {
   species <- tolower(commandArgs(trailingOnly = TRUE)[2])
   print(paste0('using species: ', species))
 } else {
-  species <- 'caribou'
+  species <- 'elk'
 }
 DT <- readRDS(paste0('output/4-sociality/', species, 'Angle.Rds'))
 
@@ -64,14 +64,16 @@ cols <- c('EASTING',
           'season')
 
 if (species == 'elk') {
-  rsfCols <- c('predatorRSF', 'preyRSF')
+  # rsfCols <- c('predatorRSF', 'preyRSF')
+  rsfCols <- grep('_st', colnames(DT), value = TRUE)
   cols <- c(cols, rsfCols)
 } else if (species == 'caribou') {
-  rsfCols <-
-    c('predatorRSF',
-      'preyRSF',
-      'coyoteRSF',
-      'bearRSF')
+  # rsfCols <-
+  #   c('predatorRSF',
+  #     'preyRSF',
+  #     'coyoteRSF',
+  #     'bearRSF')
+  rsfCols <- grep('_st', colnames(DT), value = TRUE)
   cols <- c(cols, rsfCols)
 }
 
@@ -103,24 +105,24 @@ out[, dAbsAng := 180 - abs(abs(absAngle - absAngle.nn) - 180)]
 
 ## RSF
 for (col in rsfCols) {
-  difnm <- paste0('d', col)
+  # difnm <- paste0('d', col)
   avgnm <- paste0('avg', col)
-  endnm <- paste0('end', col)
+  # endnm <- paste0('end', col)
   sufnm <- paste0(col, suff)
   
-  globavgnm <- paste0('glob', avgnm)
+  # globavgnm <- paste0('glob', avgnm)
   
   # Difference within dyad
-  out[, (difnm) := abs(.SD[[1]] - .SD[[2]]), .SDcols = c(col, sufnm)]
+  # out[, (difnm) := abs(.SD[[1]] - .SD[[2]]), .SDcols = c(col, sufnm)]
   
   # Average within dyad 
   out[, (avgnm) := rowMeans(.SD), .SDcols = c(col, sufnm)]  
   
   # Global average RSF for each dyad*season
-  out[, (globavgnm) := mean(.SD[[1]]), by = .(dyadID, season), .SDcols = avgnm]
+  # out[, (globavgnm) := mean(.SD[[1]]), by = .(dyadID, season), .SDcols = avgnm]
   
   # End RSF 
-  out[, (endnm) := shift(.SD, 1, NA, 'lead'), .SDcols = col]
+  # out[, (endnm) := shift(.SD, 1, NA, 'lead'), .SDcols = col]
 }
 
 
@@ -164,7 +166,7 @@ calc_di(
 out[, dyadTime := paste(dyadID, timegroup, sep = '-')]
 
 
-saveRDS(out, paste0('output/4-sociality/', species, 'NNA-ALR.Rds'))
+saveRDS(out, paste0('output/4-sociality/', species, 'NNA.Rds'))
 
 
 message('=== NNA COMPLETE ===')
