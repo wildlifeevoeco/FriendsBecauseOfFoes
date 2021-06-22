@@ -22,10 +22,16 @@ if (length(commandArgs(trailingOnly = TRUE) > 1)) {
   species <- commandArgs(trailingOnly = TRUE)[2]
   print(paste0('using species: ', species))
 } else {
-  species <- 'elk'
+  species <- 'caribou'
 }
 
-DT <- readRDS(paste0('output/3-extraction/', species, 'Extract.Rds'))
+# DT <- readRDS(paste0('output/3-extraction/', species, 'Extract.Rds'))
+load('for_step4_ewc.Rdata')
+if (species == 'caribou') {
+  DT <- caribouExtract
+} else if (species == 'elk') {
+  DT <- elkExtract
+}
 
 if (truelength(DT) == 0) alloc.col(DT) 
 
