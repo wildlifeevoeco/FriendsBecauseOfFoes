@@ -11,3 +11,15 @@ knitr::opts_chunk$set(
 ```
 
 ## Friends because of foes: synchronous movement within predator-prey domains
+
+
+* Authors:
+    + Christina M. Prokopenko
+    + E. Hance Ellington
+    + Alec L. Robitaille
+    + Jaclyn A. Aubin
+    + Juliana Balluffi-Fry
+    + Michel Laforge
+    + Quinn M.R. Webber
+    + Sana Zabihi-Seissan
+    + Eric Vander Wal
