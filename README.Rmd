@@ -9,5 +9,5 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
-# Easter Week Challenge 2018
 
+## Friends because of foes: synchronous movement within predator-prey domains
