@@ -11,12 +11,3 @@ knitr::opts_chunk$set(
 ```
 # Easter Week Challenge 2018
 
-
-
-
-## TODOs/NOTEs
-
-```{bash}
-grep -rni 'R/' -e 'TODO' || true;
-grep -rni 'scripts/' -e 'TODO' || true;
-```
