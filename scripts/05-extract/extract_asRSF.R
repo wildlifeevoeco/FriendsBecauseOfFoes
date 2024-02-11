@@ -9,7 +9,7 @@ library(sp)
 #### Extracting raster values for ISSF
 crs<-CRS("+init=epsg:32614") 
 
-GIS_source<-"C:/Users/ehanc/OneDrive/Desktop/EWC/ewc/input/RMNP/"
+GIS_source<-"input/RMNP/"
 
 ### RMNP rasters
 
@@ -86,7 +86,7 @@ wolf1h_rsf<-subset(wolf1h_full, !is.na(wolf1h_full$ag))
 crs<-CRS("+init=epsg:32620") #### same mistake again using wrong zone, should be zone21 
 crs2<-CRS("+init=epsg:32621") ### this is the right zone
 
-GIS_source<-"C:/Users/ehanc/OneDrive/Desktop/EWC/ewc/input/NL/"
+GIS_source<-"input/NL/"
 
 ### NL rasters
 

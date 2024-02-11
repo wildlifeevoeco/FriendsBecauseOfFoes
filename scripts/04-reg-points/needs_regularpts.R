@@ -87,26 +87,26 @@ load("usedpts.Rdata")
 
 ### regular points.R to create _200m.Rds files
 
-coyote8h_w_regpts <- readRDS("C:/Users/ehanc/OneDrive/Desktop/EWC/ewc/input/regpts/coyote8h_mcp_w_regpts_200m.Rds")
-coyote8h_s_regpts <- readRDS("C:/Users/ehanc/OneDrive/Desktop/EWC/ewc/input/regpts/coyote8h_mcp_s_regpts_200m.Rds")
-coyote4h_s_regpts <- readRDS("C:/Users/ehanc/OneDrive/Desktop/EWC/ewc/input/regpts/coyote4h_mcp_s_regpts_200m.Rds")
+coyote8h_w_regpts <- readRDS("input/regpts/coyote8h_mcp_w_regpts_200m.Rds")
+coyote8h_s_regpts <- readRDS("input/regpts/coyote8h_mcp_s_regpts_200m.Rds")
+coyote4h_s_regpts <- readRDS("input/regpts/coyote4h_mcp_s_regpts_200m.Rds")
 
-caribou2h_s_regpts <- readRDS("C:/Users/ehanc/OneDrive/Desktop/EWC/ewc/input/regpts/caribou2h_mcp_s_regpts_200m.Rds")
-caribou2h_w_regpts <- readRDS("C:/Users/ehanc/OneDrive/Desktop/EWC/ewc/input/regpts/caribou2h_mcp_w_regpts_200m.Rds")
+caribou2h_s_regpts <- readRDS("input/regpts/caribou2h_mcp_s_regpts_200m.Rds")
+caribou2h_w_regpts <- readRDS("input/regpts/caribou2h_mcp_w_regpts_200m.Rds")
 
-bear4h_s_regpts <- readRDS("C:/Users/ehanc/OneDrive/Desktop/EWC/ewc/input/regpts/bear4h_mcp_s_regpts_200m.Rds")
-bear2h_s_regpts <- readRDS("C:/Users/ehanc/OneDrive/Desktop/EWC/ewc/input/regpts/bear2h_mcp_s_regpts_200m.Rds")
+bear4h_s_regpts <- readRDS("input/regpts/bear4h_mcp_s_regpts_200m.Rds")
+bear2h_s_regpts <- readRDS("input/regpts/bear2h_mcp_s_regpts_200m.Rds")
 
-elk2h_s_regpts <- readRDS("C:/Users/ehanc/OneDrive/Desktop/EWC/ewc/input/regpts/elk2h_mcp_s_regpts_200m.Rds")
-elk2h_w_regpts <- readRDS("C:/Users/ehanc/OneDrive/Desktop/EWC/ewc/input/regpts/elk2h_mcp_w_regpts_200m.Rds")
+elk2h_s_regpts <- readRDS("input/regpts/elk2h_mcp_s_regpts_200m.Rds")
+elk2h_w_regpts <- readRDS("input/regpts/elk2h_mcp_w_regpts_200m.Rds")
 
-wolf1h_s_regpts <- readRDS("C:/Users/ehanc/OneDrive/Desktop/EWC/ewc/input/regpts/wolf1h_mcp_s_regpts_200m.Rds")
-wolf1h_w_regpts <- readRDS("C:/Users/ehanc/OneDrive/Desktop/EWC/ewc/input/regpts/wolf1h_mcp_w_regpts_200m.Rds")
+wolf1h_s_regpts <- readRDS("input/regpts/wolf1h_mcp_s_regpts_200m.Rds")
+wolf1h_w_regpts <- readRDS("input/regpts/wolf1h_mcp_w_regpts_200m.Rds")
 
 # 
 # library(sf)
 # 
-# NL <- st_read("C:/Users/ehanc/OneDrive/Desktop/EWC/ewc/input/extent/NL/NL-Bounds.shp")
+# NL <- st_read("input/extent/NL/NL-Bounds.shp")
 # 
 # bear2h_s_regpts<-st_as_sf(bear2h_s_regpts, coords = c("EASTING", "NORTHING"), crs = 32620)
 # 

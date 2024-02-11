@@ -3,11 +3,11 @@ library(lubridate)
 library(adehabitatLT)
 
 
-bear <- readRDS("C:/Users/ehanc/OneDrive/Desktop/EWC/ewc/output/1-data-prep/bear.Rds")
-caribou <- readRDS("C:/Users/ehanc/OneDrive/Desktop/EWC/ewc/output/1-data-prep/caribou.Rds")
-coyote <- readRDS("C:/Users/ehanc/OneDrive/Desktop/EWC/ewc/output/1-data-prep/coyote.Rds")
-elk <- readRDS("C:/Users/ehanc/OneDrive/Desktop/EWC/ewc/output/1-data-prep/elk.Rds")
-wolf <- readRDS("C:/Users/ehanc/OneDrive/Desktop/EWC/ewc/output/1-data-prep/wolf.Rds")
+bear <- readRDS("output/1-data-prep/bear.Rds")
+caribou <- readRDS("output/1-data-prep/caribou.Rds")
+coyote <- readRDS("output/1-data-prep/coyote.Rds")
+elk <- readRDS("output/1-data-prep/elk.Rds")
+wolf <- readRDS("output/1-data-prep/wolf.Rds")
 
 coyote$id<-as.character(coyote$id)
 
@@ -18,7 +18,6 @@ colnames(elk)[1]<-"ID"
 colnames(wolf)[1]<-"ID"
 
 ### First generate data with regular trajectory
-###  
 
 round(summary(as.factor(round(coyote$fixRate, 2)))*100/nrow(coyote),0)
 round(summary(as.factor(round(elk$fixRate, 2)))*100/nrow(elk),0)

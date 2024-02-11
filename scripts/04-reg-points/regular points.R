@@ -6,7 +6,7 @@ p <- suppressPackageStartupMessages(lapply(
   character.only = TRUE)
 )
 
-source("C:/Users/ehanc/OneDrive/Desktop/EWC/ewc/scripts/0-variables/variables.R")
+source("scripts/0-variables/variables.R")
 
 generate_grid <- function(pol, spacing, crs) {
   rn <- n <- dif <- NULL
@@ -32,7 +32,7 @@ generate_grid <- function(pol, spacing, crs) {
 }
 
 
-load("C:/Users/ehanc/OneDrive/Desktop/EWC/ewc/need_regpts.Rdata")
+load("need_regpts.Rdata")
 
 gridsize <-200
 
@@ -44,6 +44,6 @@ lsregpts <- lapply(l, function(m) {
     crs = proj4string(get(m))
   )
   setnames(regPts, c('x', 'y'))
-  saveRDS(regPts, paste0('C:/Users/ehanc/OneDrive/Desktop/EWC/ewc/input/regpts/', m, '_regpts_200m.Rds'))
+  saveRDS(regPts, paste0('input/regpts/', m, '_regpts_200m.Rds'))
   return(1)
 })

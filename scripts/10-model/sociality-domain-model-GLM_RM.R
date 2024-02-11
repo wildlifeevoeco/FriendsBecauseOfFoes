@@ -1,4 +1,3 @@
-#
 ## SOCIALITY ~ DOMAIN MODEL ----
 # Authors: Alec Robitaille, Christina M Prokopenko, Hance Ellington
 
@@ -9,8 +8,6 @@ p <- suppressPackageStartupMessages(lapply(
   library, 
   character.only = TRUE)
 )
-
-setwd("C:/Users/ehanc/OneDrive/Desktop/ewc/ewc")
 
 ### Input data ----
 # Which species?

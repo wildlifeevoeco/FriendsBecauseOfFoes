@@ -5,7 +5,7 @@ library(tibble)
 
 ### stacking rasters together by study area for faster processing and extracting
 
-rastlist <- list.files(path = "C:/Users/ehanc/OneDrive/Desktop/EWC/ewc/OUTPUT_NEW/DOMAINS", 
+rastlist <- list.files(path = "OUTPUT_NEW/DOMAINS", 
                        pattern =".tif$", full.names=TRUE)
 
 allrasters.NL <- lapply(rastlist[c(1:15)], raster)
@@ -59,8 +59,8 @@ for(i in 1:length(allrasters.NL)){
 
 ### caribou and elk files
 
-caribou <- readRDS("C:/Users/ehanc/OneDrive/Desktop/EWC/ewc/output/1-data-prep/caribou.Rds")
-elk <- readRDS("C:/Users/ehanc/OneDrive/Desktop/EWC/ewc/output/1-data-prep/elk.Rds")
+caribou <- readRDS("output/1-data-prep/caribou.Rds")
+elk <- readRDS("output/1-data-prep/elk.Rds")
 
 
 

@@ -26,8 +26,8 @@ rm(list=setdiff(ls(), c("b","b2","bear.spr.st2","caribou.spr.st1","caribou.win.s
                         "wolf.win.st2","res.NL","crs1","crs2","min.log_RMNP","min.rlog_RMNP","min.log_NL","min.rlog_NL")))
 
 
-caribou <- readRDS("C:/Users/ehanc/OneDrive/Desktop/EWC/ewc/output/1-data-prep/caribou.Rds")
-elk <- readRDS("C:/Users/ehanc/OneDrive/Desktop/EWC/ewc/output/1-data-prep/elk.Rds")
+caribou <- readRDS("output/1-data-prep/caribou.Rds")
+elk <- readRDS("output/1-data-prep/elk.Rds")
 
 
 ### sps of elk and caribou for extracting domains
