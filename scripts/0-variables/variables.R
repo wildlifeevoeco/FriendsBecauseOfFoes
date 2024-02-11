@@ -1,11 +1,4 @@
 ### Set variables ----
-# Packages
-suppressPackageStartupMessages({
-  library(sp)
-  library(rgdal)
-})
-
-
 # Season thresholds
 winter <- c(1, 72)
 spring <- c(141, 212)
@@ -14,7 +7,7 @@ spring <- c(141, 212)
 utmNL <- '+proj=utm +zone=21 ellps=WGS84'
 
 # NL Bounds shapefile
-nlBounds <- spTransform(readOGR('input/extent/NL/NL-Bounds.shp',
+nlBounds <- sp::spTransform(rgdal::readOGR('input/extent/NL/NL-Bounds.shp',
                                 verbose = FALSE),
                         CRSobj = utmNL)
 
@@ -23,7 +16,7 @@ nlBounds <- spTransform(readOGR('input/extent/NL/NL-Bounds.shp',
 utmMB <- '+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
 
 # MB Bounds shapefile
-mbBounds <- spTransform(readOGR('input/extent/RMNP/RMNPextent.shp', verbose = FALSE),
+mbBounds <- sp::spTransform(rgdal::readOGR('input/extent/RMNP/RMNPextent.shp', verbose = FALSE),
                         CRSobj = utmMB)
 
 
