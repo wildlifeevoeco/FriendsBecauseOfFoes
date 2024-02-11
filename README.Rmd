@@ -12,6 +12,7 @@ knitr::opts_chunk$set(
 
 ## Friends because of foes: synchronous movement within predator-prey domains
 
+[![DOI](https://zenodo.org/badge/ZZZ.svg)](https://zenodo.org/badge/latestdoi/ZZZ)
 
 * Authors:
     + Christina M. Prokopenko

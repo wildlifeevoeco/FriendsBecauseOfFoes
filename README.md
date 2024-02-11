@@ -1,10 +1,12 @@
 
 ## Friends because of foes: synchronous movement within predator-prey domains
 
+[![DOI](https://zenodo.org/badge/ZZZ.svg)](https://zenodo.org/badge/latestdoi/ZZZ)
+
 - Authors:
   - Christina M. Prokopenko
   - E. Hance Ellington
-  - Alec Robitaille
+  - Alec L. Robitaille
   - Jaclyn A. Aubin
   - Juliana Balluffi-Fry
   - Michel Laforge
