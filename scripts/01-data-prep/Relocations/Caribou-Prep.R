@@ -1,4 +1,4 @@
-message('=== Caribou data preparation ===')
+# Caribou data preparation
 # Authors: Quinn Webber, Alec Robitaille
 
 
@@ -123,5 +123,3 @@ setnames(caribou, c('ANIMAL_ID', 'SPECIES', 'season', 'timegroup',
 
 saveRDS(caribou[, ..outputVariables], 
         'output/1-data-prep/caribou.Rds')
-
-message('=== CARIBOU PREP COMPLETE ===')

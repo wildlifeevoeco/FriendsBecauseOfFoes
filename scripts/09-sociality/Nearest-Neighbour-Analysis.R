@@ -1,4 +1,4 @@
-message('=== Nearest Neighbour Analysis ===')
+# Nearest Neighbour Analysis
 # Authors: Alec Robitaille, Hance Ellington
 
 library(spatsoc)
@@ -313,7 +313,3 @@ out[, dyadTime := paste(dyadID, timegroup, sep = '-')]
 
 
 saveRDS(out, paste0('OUTPUT_NEW/SOCIAL/', species, 'NNA_log2.Rds'))
-
-
-
-message('=== NNA COMPLETE ===')

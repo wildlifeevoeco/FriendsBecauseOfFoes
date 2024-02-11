@@ -1,4 +1,4 @@
-message('=== Wolf data preparation ===')
+# Wolf data preparation
 # Authors: Alec Robitaille, Christina M Prokopenko, Sana Zabihi
 
 
@@ -226,5 +226,3 @@ setnames(wolf, c('wolfid', 'SPECIES', 'season', 'timegroup',
          outputVariables)
 
 saveRDS(wolf[, ..outputVariables], 'output/1-data-prep/wolf.Rds')
-
-message('=== WOLF PREP COMPLETE ===')
