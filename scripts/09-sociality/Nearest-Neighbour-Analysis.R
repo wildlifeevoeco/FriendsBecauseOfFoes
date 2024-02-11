@@ -6,14 +6,6 @@ library(igraph)
 library(data.table)
 
 ### Input data ----
-# Which species would you like to calculate abs and rel TA for?
-# Flexible for Makefile: if running script manually, edit species in else block
-if (length(commandArgs(trailingOnly = TRUE) > 1)) {
-  species <- tolower(commandArgs(trailingOnly = TRUE)[2])
-  print(paste0('using species: ', species))
-} else {
-  species <- 'elk'
-}
 DT <- readRDS(paste0('OUTPUT_NEW/SOCIAL/', species, 'Angle_log2.Rds'))
 
 coordCols <- c('EASTING', 'NORTHING')
@@ -164,12 +156,6 @@ saveRDS(out, paste0('OUTPUT_NEW/SOCIAL/', species, 'NNA_log2.Rds'))
 ### Input data ----
 # Which species would you like to calculate abs and rel TA for?
 # Flexible for Makefile: if running script manually, edit species in else block
-if (length(commandArgs(trailingOnly = TRUE) > 1)) {
-  species <- tolower(commandArgs(trailingOnly = TRUE)[2])
-  print(paste0('using species: ', species))
-} else {
-  species <- 'caribou'
-}
 DT <- readRDS(paste0('OUTPUT_NEW/SOCIAL/', species, 'Angle_log2.Rds'))
 
 coordCols <- c('EASTING', 'NORTHING')
