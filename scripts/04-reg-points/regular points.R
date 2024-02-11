@@ -1,35 +1,14 @@
-pkgs <- c('data.table', 'sp', 'adehabitatHR', 'raster',
-          'ewc', 'rgeos', 'lme4', 'car','piecewiseSEM')
-p <- suppressPackageStartupMessages(lapply(
-  pkgs,
-  library,
-  character.only = TRUE)
-)
+### Packages ----
+library(data.table)
+library(raster)
+library(rgeos)
+library(lme4)
+library(car)
+library(piecewiseSEM)
+library(adehabitatHR)
 
-source("scripts/0-variables/variables.R")
-
-generate_grid <- function(pol, spacing, crs) {
-  rn <- n <- dif <- NULL
-  
-  if (missing(spacing))
-    stop('spacing is missing')
-  if (missing(crs))
-    stop('crs is missing')
-  if (missing(pol))
-    stop('pol is missing')
-  
-  r <- raster::extent(pol)
-  ra <- raster::raster(r)
-  raster::res(ra) <- c(spacing, spacing)
-  
-  raster::projection(ra) <- sp::CRS(crs)
-  
-  rSP <- raster::rasterToPoints(ra, spatial = TRUE)
-  
-  data.table::data.table(
-    rSP@coords[sp::over(pol, rSP, returnList = TRUE)[[1]], ]
-  )
-}
+### Variables ----
+source('scripts/0-variables/variables.R')
 
 
 load("need_regpts.Rdata")

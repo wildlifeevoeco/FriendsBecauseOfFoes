@@ -2,12 +2,9 @@
 # Authors: Michel Laforge, Alec Robitaille
 
 ### Packages ----
-pkgs <- c('data.table', 'sp', 'raster')
-p <- suppressPackageStartupMessages(lapply(
-  pkgs, 
-  library, 
-  character.only = TRUE)
-)
+library(data.table)
+library(sp)
+library(raster)
 
 
 ### Set variables ----

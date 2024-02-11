@@ -2,12 +2,16 @@
 # Authors: Alec Robitaille, Christina M Prokopenko, Hance Ellington
 
 ### Packages ----
-pkgs <- c('data.table', 'lme4', 'ggplot2', 'Hmisc')
-p <- suppressPackageStartupMessages(lapply(
-  pkgs, 
-  library, 
-  character.only = TRUE)
-)
+library(data.table)
+library(lme4)
+library(ggplot2)
+library(Hmisc)
+library(visreg)
+library(rgl)
+library(ggstance)
+library(broom.mixed)
+library(sandwich)
+library(interactions)
 
 
 ### Input data ----
@@ -224,9 +228,6 @@ hist(DTsoc3_S$avgbear_rsf)
 
 
 
-library(visreg)
-library(rgl)
-
 ###GLM
 ## NL
 ## winter
@@ -261,9 +262,6 @@ nlNN_W_null<-
 
 summary(nlNN_W_null)
 
-
-library(ggstance)
-library(broom.mixed)
 
 plot(sim_slopes(nlNN_W.DI_rsf, pred = avgcoyotew_rsf, modx = avgcaribouw_rsf, robust=T))
 
@@ -387,11 +385,6 @@ visreg2d(rsf_nlNN_S.DI_CB, "avgcaribous_rsf", "avgcoyotes_rsf", plot.type="image
 
 
 
-library(sandwich)
-
-
-library(interactions)
-
 # rsf_nlNN_S.DI_B_C
 # rsf_nlNN_S.DI_B
 # 
@@ -440,8 +433,6 @@ probe_interaction(rsf_nlNN_S.DI_CB, pred = avgcoyotes_rsf, modx = avgcaribous_rs
 
 # probe_interaction(rsf_nlNN_S.DI_3W, pred = avgbear_rsf, modx = avgcaribous_rsf, mod2 = avgcoyotes_rsf, robust=T)
 
-library(ggstance)
-library(broom.mixed)
 
 plot(sim_slopes(nlNN_W.DI_rsf, pred = avgcoyotew_rsf, modx = avgcaribouw_rsf, robust=T))
 plot(sim_slopes(rsf_nlNN_S.DI_CB, pred = avgbear_rsf, modx = avgcaribous_rsf, robust=T))

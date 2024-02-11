@@ -160,7 +160,6 @@ caribou2h$case<-1
 elk2h$case<-1
 wolf1h$case<-1
 
-library(dplyr)
 
 
 bear2h_full<-bind_rows(bear2h,bear2h_s_regpts)

@@ -3,17 +3,15 @@ message('=== Bear data preparation ===')
 
 
 ### Packages ----
-pkgs <- c('data.table', 'ggplot2', 
-          'spatsoc', 'ewc',
-          'sp', 'rgdal')
-p <- suppressPackageStartupMessages(lapply(
-  pkgs, 
-  library, 
-  character.only = TRUE)
-)
+library(data.table)
+library(ggplot2)
+library(spatsoc)
+library(sp)
+library(rgdal)
 
 ### Variables ----
 source('scripts/0-variables/variables.R')
+source('R/prep_date.R')
 
 ### Input data ----
 dropCols <-

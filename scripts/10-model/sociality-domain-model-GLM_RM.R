@@ -2,12 +2,17 @@
 # Authors: Alec Robitaille, Christina M Prokopenko, Hance Ellington
 
 # ### Packages ----
-pkgs <- c('data.table', 'lme4', 'ggplot2', 'Hmisc')
-p <- suppressPackageStartupMessages(lapply(
-  pkgs, 
-  library, 
-  character.only = TRUE)
-)
+library(data.table)
+library(lme4)
+library(Hmisc)
+library(ggplot2)
+library(ggstance)
+library(broom.mixed)
+library(jtools)
+library(interactions)
+library(visreg)
+library(rgl)
+
 
 ### Input data ----
 # Which species?
@@ -102,8 +107,6 @@ plot(as.factor(DTsoc3_50$season))
 boxplot(DTsoc3_W$di)
 hist(DTsoc3_W$di, breaks=20, freq=FALSE)
 
-library(ggplot2)
-
 ggplot(DTsoc3_W, aes(x=di)) + geom_histogram(aes(x=di, y = ..count../sum(..count..)),binwidth = 0.05, fill = "grey", color = "black")+
   ylim(0,0.1)+
   xlim(-1.05,1.05)+
@@ -143,10 +146,6 @@ hist(DTsoc3_W$avgelk_rsf)
 hist(DTsoc3_W$avgwolf_rsf)
 
 ## Spring (not needed for RMNP, low sample size)
-
-library(visreg)
-library(rgl)
-
 
 
 ###GLM
@@ -196,10 +195,6 @@ summary(rmNN_W.DI_A_rsf)
 
 
 
-
-library(jtools)
-library(interactions)
-
 # interact_plot(rmNN_W.DI_rsf, pred = avgwolf_rsf, modx = avgelk_rsf, data = DTsoc3_W, linearity.check = TRUE, plot.points = TRUE)
 # 
 # interact_plot(rmNN_W.DI_rsf, pred = avgwolf_rsf, modx = avgelk_rsf, plot.points = TRUE)
@@ -212,9 +207,6 @@ library(interactions)
 # interact_plot(rmNN_W.DI_rsf, pred = avgwolf_rsf, modx = avgelk_rsf, partial.residuals = TRUE,  modx.values = c(0, 0.25, 0.50, 0.75, 1.0), interval = TRUE, int.width = 0.8, robust=TRUE)
 
 probe_interaction(rmNN_W.DI_rsf, pred = avgwolf_rsf, modx = avgelk_rsf, robust=T, control.fdr = TRUE)
-
-library(ggstance)
-library(broom.mixed)
 
 plot(sim_slopes(rmNN_W.DI_rsf, pred = avgwolf_rsf, modx = avgelk_rsf, robust=T))
 

@@ -2,12 +2,10 @@
 # Authors: Alec Robitaille, Christina M Prokopenko, Sana Zabihi
 
 ### Packages ----
-pkgs <- c('data.table', 'ggplot2', 'sp', 'raster')
-p <- suppressPackageStartupMessages(lapply(
-  pkgs, 
-  library, 
-  character.only = TRUE)
-)
+library(data.table)
+library(ggplot2)
+library(sp)
+library(raster)
 
 
 ### Set variables ----

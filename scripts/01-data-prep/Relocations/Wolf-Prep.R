@@ -3,18 +3,16 @@ message('=== Wolf data preparation ===')
 
 
 ### Packages ----
-pkgs <- c('data.table', 'ggplot2', 'magrittr',
-          'spatsoc', 'ewc', 
-          'sp', 'rgdal', 'adehabitatLT')
-p <- suppressPackageStartupMessages(lapply(
-  pkgs, 
-  library, 
-  character.only = TRUE)
-)
+library(data.table)
+library(ggplot2)
+library(spatsoc)
+library(sp)
+library(rgdal)
+library(adehabitatLT)
 
-
-### Set variables ----
+### Variables ----
 source('scripts/0-variables/variables.R')
+source('R/prep_date.R')
 
 
 ### Input data ----
