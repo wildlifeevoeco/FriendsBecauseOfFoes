@@ -1,12 +1,12 @@
-# Nearest Neighbour Analysis
-# Authors: Alec Robitaille, Hance Ellington
+# === Nearest Neighbour Analysis ===
 
 library(spatsoc)
 library(igraph)
 library(data.table)
 
 ### Input data ----
-DT <- readRDS(paste0('OUTPUT_NEW/SOCIAL/', species, 'Angle_log2.Rds'))
+species <- 'elk'
+DT <- readRDS(paste0(species, 'Angle_log2.Rds'))
 
 coordCols <- c('EASTING', 'NORTHING')
 idCol <- 'id'
@@ -52,10 +52,10 @@ cols <- c('EASTING',
 
 if (species == 'elk') {
   # rsfCols <- c('predatorRSF', 'preyRSF')
-  rsfCols <- colnames(DT[,16:35])
+  rsfCols <- colnames(DT[,16:23])
   cols <- c(cols, rsfCols)
 } else if (species == 'caribou') {
-  rsfCols <- colnames(DT[,18:54])
+  rsfCols <- colnames(DT[,18:35])
   cols <- c(cols, rsfCols)
 }
 
@@ -148,15 +148,14 @@ calc_di(
 out[, dyadTime := paste(dyadID, timegroup, sep = '-')]
 
 
-saveRDS(out, paste0('OUTPUT_NEW/SOCIAL/', species, 'NNA_log2.Rds'))
+saveRDS(out, paste0(species, 'NNA_log2.Rds'))
 
 
 
 
 ### Input data ----
-# Which species would you like to calculate abs and rel TA for?
-# Flexible for Makefile: if running script manually, edit species in else block
-DT <- readRDS(paste0('OUTPUT_NEW/SOCIAL/', species, 'Angle_log2.Rds'))
+species <- 'caribou'
+DT <- readRDS(paste0(species, 'Angle_log2.Rds'))
 
 coordCols <- c('EASTING', 'NORTHING')
 idCol <- 'id'
@@ -202,10 +201,10 @@ cols <- c('EASTING',
 
 if (species == 'elk') {
   # rsfCols <- c('predatorRSF', 'preyRSF')
-  rsfCols <- colnames(DT[,16:35])
+  rsfCols <- colnames(DT[,16:23])
   cols <- c(cols, rsfCols)
 } else if (species == 'caribou') {
-  rsfCols <- colnames(DT[,18:54])
+  rsfCols <- colnames(DT[,18:35])
   cols <- c(cols, rsfCols)
 }
 
@@ -298,4 +297,4 @@ calc_di(
 out[, dyadTime := paste(dyadID, timegroup, sep = '-')]
 
 
-saveRDS(out, paste0('OUTPUT_NEW/SOCIAL/', species, 'NNA_log2.Rds'))
+saveRDS(out, paste0(species, 'NNA_log2.Rds'))
