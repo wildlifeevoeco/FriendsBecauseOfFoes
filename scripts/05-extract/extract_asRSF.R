@@ -183,10 +183,10 @@ bear4h_full$ru<-extract(ru2, bear4h_sp)
 
 #### removing locations beyond bounds
 
+
 caribou2h_rsf<-subset(caribou2h_full, !is.na(caribou2h_full$f))
 bear2h_rsf<-subset(bear2h_full, !is.na(bear2h_full$f))
 bear4h_rsf<-subset(bear4h_full, !is.na(bear4h_full$f))
-
 
 
 coyote4h_full$f<-extract(f, coyote4h_sp)
@@ -202,14 +202,14 @@ coyote4h_rsf<-subset(coyote4h_rsf, !is.na(coyote4h_rsf$ru))
 coyote4h_sp<-SpatialPoints(coyote4h_rsf[,c(1,2)]) # Specify x_end and y_end columns
 proj4string(coyote4h_sp)<- crs  
 
-save.image("WIP_EXTRACT1_200.Rdata")
+# save.image("WIP_EXTRACT1_200.Rdata")
 
 coyote4h_rsf$l<-extract(l, coyote4h_sp)
 coyote4h_rsf$r<-extract(r, coyote4h_sp)
 coyote4h_rsf$s<-extract(s, coyote4h_sp)
 coyote4h_rsf$w<-extract(w2, coyote4h_sp)
 
-save.image("WIP_EXTRACT2_200.Rdata")
+# save.image("WIP_EXTRACT2_200.Rdata")
 
 coyote8h_full$f<-extract(f, coyote8h_sp)
 coyote8h_rsf<-subset(coyote8h_full, !is.na(coyote8h_full$f))
@@ -224,18 +224,18 @@ coyote8h_rsf<-subset(coyote8h_rsf, !is.na(coyote8h_rsf$ru))
 coyote8h_sp<-SpatialPoints(coyote8h_rsf[,c(1,2)]) # Specify x_end and y_end columns
 proj4string(coyote8h_sp)<- crs  
 
-save.image("WIP_EXTRACT3_200.Rdata")
+# save.image("WIP_EXTRACT3_200.Rdata")
 
 coyote8h_rsf$l<-extract(l, coyote8h_sp)
 coyote8h_rsf$r<-extract(r, coyote8h_sp)
 coyote8h_rsf$s<-extract(s, coyote8h_sp)
 coyote8h_rsf$w<-extract(w2, coyote8h_sp)
 
-save.image("WIP_EXTRACT4_200.Rdata")
+# save.image("WIP_EXTRACT4_200.Rdata")
 
 rm(list= ls()[!(ls() %in% c('bear2h_rsf','bear4h_rsf','caribou2h_rsf',
                             'coyote4h_rsf','coyote8h_rsf','elk2h_rsf','wolf1h_rsf'))])
 
 
 
-save.image("READY_FOR_MODELS2.Rdata")
+save.image("READY_FOR_MODELS2_new.Rdata")
