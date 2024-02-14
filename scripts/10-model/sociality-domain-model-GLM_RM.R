@@ -1,5 +1,4 @@
 ## SOCIALITY ~ DOMAIN MODEL ----
-# Authors: Alec Robitaille, Christina M Prokopenko, Hance Ellington
 
 # ### Packages ----
 library(data.table)
@@ -13,11 +12,10 @@ library(interactions)
 library(visreg)
 library(rgl)
 
-
 ### Input data ----
 # Which species?
 species <- 'elk'
-DT <- readRDS(paste0('OUTPUT_NEW/SOCIAL/', species, 'NNA_log2.Rds'))
+DT <- readRDS(paste0(species, 'NNA_log2.Rds'))
 
 coordCols <- c('EASTING', 'NORTHING')
 idCol <- 'id'
@@ -60,7 +58,7 @@ DT_W<-subset(DT2, DT2$season=="winter")
 
 
 #### change as needed for dyad distance threshold
-DTsoc3_50<-DT2[distance<=50 & dSI<=10000]
+DTsoc3_50<-DT2[distance<=50]
 
 
 ### standardized avg RSF independents
@@ -87,7 +85,7 @@ round(nrow(DTsoc3_S)/nrow(DT_S), 2)
 
 ### for RMNP correlations
 
-c1<-c(63:82) ### for isolating correlation columns
+c1<-c(39:46) ### for isolating correlation columns
 CORW<-round(cor(as.data.frame(DTsoc3_W[,..c1])[, sapply(as.data.frame(DTsoc3_W[,..c1]), is.numeric)], use = "complete.obs", method = "pearson"),2)
 
 # c2<-c(4,7:9,14:16,21,35:38) ### for isolating correlation columns
@@ -113,7 +111,7 @@ ggplot(DTsoc3_W, aes(x=di)) + geom_histogram(aes(x=di, y = ..count../sum(..count
   geom_vline(aes(xintercept=mean(di)), color="blue", linetype="dashed", size=1)+
   geom_vline(aes(xintercept=0.80), color="red", linetype="solid", size=1)+
   geom_vline(aes(xintercept=0), color="black", linetype="solid", size=1)
-  
+
 
 ### domains to model based on correlations
 # prey
@@ -134,7 +132,8 @@ ggplot(DTsoc3_W, aes(x=di)) + geom_histogram(aes(x=di, y = ..count../sum(..count
 # hist(DTsoc3_W$avgelk_raw)
 # 
 # boxplot(DTsoc3_W$avgelk_rsf)
-hist(DTsoc3_W$avgelk_rsf)
+hist(DTsoc3_W$avgelk_rsf_LOG_n)
+hist(DTsoc3_W$avgwolf_rsf_LOG_n)
 
 # boxplot(DTsoc3_W$avgwolf_class)
 # hist(DTsoc3_W$avgwolf_class)
@@ -143,10 +142,11 @@ hist(DTsoc3_W$avgelk_rsf)
 # hist(DTsoc3_W$avgwolf_raw)
 # 
 # boxplot(DTsoc3_W$avgwolf_rsf)
-hist(DTsoc3_W$avgwolf_rsf)
+# hist(DTsoc3_W$avgwolf_rsf)
+# hist(DTsoc3_W$avgwolf_rsf_red)
+
 
 ## Spring (not needed for RMNP, low sample size)
-
 
 ###GLM
 ## RM
@@ -167,31 +167,29 @@ summary(rmNN_null)
 
 
 rmNN_W.DIpy_rsf<-
-  glm(di ~ avgelk_rsf,
+  glm(di ~ avgelk_rsf_LOG_n,
       data = DTsoc3_W)
 
 summary(rmNN_W.DIpy_rsf)
 
 rmNN_W.DIpd_rsf<-
-  glm(di ~ avgwolf_rsf,
+  glm(di ~ avgwolf_rsf_LOG_n,
       data = DTsoc3_W)
 
 summary(rmNN_W.DIpd_rsf)
 
 rmNN_W.DI_rsf<-
-  glm(di ~ avgelk_rsf*avgwolf_rsf,
+  glm(di ~ avgelk_rsf_LOG_n*avgwolf_rsf_LOG_n,
       data = DTsoc3_W)
 
 summary(rmNN_W.DI_rsf)
 
 
 rmNN_W.DI_A_rsf<-
-  glm(di ~ avgelk_rsf+avgwolf_rsf,
+  glm(di ~ avgelk_rsf_LOG_n+avgwolf_rsf_LOG_n,
       data = DTsoc3_W)
 
 summary(rmNN_W.DI_A_rsf)
-
-
 
 
 
@@ -206,14 +204,16 @@ summary(rmNN_W.DI_A_rsf)
 # interact_plot(rmNN_W.DI_rsf, pred = avgwolf_rsf, modx = avgelk_rsf, partial.residuals = TRUE, interval = TRUE, int.width = 0.8, robust=TRUE)
 # interact_plot(rmNN_W.DI_rsf, pred = avgwolf_rsf, modx = avgelk_rsf, partial.residuals = TRUE,  modx.values = c(0, 0.25, 0.50, 0.75, 1.0), interval = TRUE, int.width = 0.8, robust=TRUE)
 
-probe_interaction(rmNN_W.DI_rsf, pred = avgwolf_rsf, modx = avgelk_rsf, robust=T, control.fdr = TRUE)
-
-plot(sim_slopes(rmNN_W.DI_rsf, pred = avgwolf_rsf, modx = avgelk_rsf, robust=T))
-
-johnson_neyman(rmNN_W.DI_rsf, pred = avgwolf_rsf, modx = avgelk_rsf, control.fdr = TRUE)
-
-effect_plot(rmNN_W.DI_A_rsf, pred = avgwolf_rsf, interval = TRUE, rug = TRUE)
-effect_plot(rmNN_W.DI_A_rsf, pred = avgelk_rsf, interval = TRUE, rug = TRUE)
+probe_interaction(rmNN_W.DI_rsf, pred = avgwolf_rsf_LOG_n, modx = avgelk_rsf_LOG_n, robust=T, control.fdr = TRUE)
 
 
-save.image("OUTPUT_NEW/FINAL/RMNP_results_log_50m.Rdata")
+
+plot(sim_slopes(rmNN_W.DI_rsf, pred = avgwolf_rsf_LOG_n, modx = avgelk_rsf_LOG_n, robust=T))
+
+johnson_neyman(rmNN_W.DI_rsf, pred = avgwolf_rsf_LOG_n, modx = avgelk_rsf_LOG_n, control.fdr = TRUE)
+
+effect_plot(rmNN_W.DI_A_rsf, pred = avgwolf_rsf_LOG_n, interval = TRUE, rug = TRUE)
+effect_plot(rmNN_W.DI_A_rsf, pred = avgelk_rsf_LOG_n, interval = TRUE, rug = TRUE)
+
+
+save.image("RMNP_results_LOG_N.Rdata")
