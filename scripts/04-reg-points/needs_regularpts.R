@@ -49,17 +49,27 @@ wolf1h<-full_join(wolf2a[,c(2:11,13:20,23:33,36:37)], wolfhmm_1hr[,c(6,17:21)], 
 #### these should have been crs_NL2, but it might not matter, mcp generated from caribou_w from both crs_NL and crs_NL2 perfectly match
 #### caribou 2h w points when no crs is assumed (via plot and points)
 
-bear2h_mcp_s<-mcp(SpatialPoints(subset(bear2h, bear2h$season=="spring")[,1:2], proj4string=crs_NL), percent=100)
-bear4h_mcp_s<-mcp(SpatialPoints(subset(bear4h, bear4h$season=="spring")[,1:2], proj4string=crs_NL), percent=100)
-caribou2h_mcp_s<-mcp(SpatialPoints(subset(caribou2h, caribou2h$season=="spring")[,1:2], proj4string=crs_NL), percent=100)
-caribou2h_mcp_w<-mcp(SpatialPoints(subset(caribou2h, caribou2h$season=="winter")[,1:2], proj4string=crs_NL), percent=100)
-coyote4h_mcp_s<-mcp(SpatialPoints(subset(coyote4h, coyote4h$season=="spring")[,1:2], proj4string=crs_NL), percent=100)
-coyote8h_mcp_s<-mcp(SpatialPoints(subset(coyote8h, coyote8h$season=="spring")[,1:2], proj4string=crs_NL), percent=100)
-coyote8h_mcp_w<-mcp(SpatialPoints(subset(coyote8h, coyote8h$season=="winter")[,1:2], proj4string=crs_NL), percent=100)
+
+library(dplyr)
+
+### removing caribou that are outside of MR study area
+### removing coyotes that are outside of MR study area
+
+coyote4h$SA<-substr(coyote4h$ANIM_ID,4,5)
+coyote8h$SA<-substr(coyote8h$ANIM_ID,4,5)
+
+bear2h_mcp_s<-mcp(SpatialPoints(subset(bear2h, bear2h$season=="spring")[,1:2], proj4string=crs_NL2), percent=100)
+bear4h_mcp_s<-mcp(SpatialPoints(subset(bear4h, bear4h$season=="spring")[,1:2], proj4string=crs_NL2), percent=100)
+caribou2h_mcp_s<-mcp(SpatialPoints((caribou2h %>% filter(y<=5400000 & season=="spring"))[,1:2], proj4string=crs_NL2), percent=100)
+caribou2h_mcp_w<-mcp(SpatialPoints((caribou2h %>% filter(y<=5400000 & season=="winter"))[,1:2], proj4string=crs_NL2), percent=100)
+coyote4h_mcp_s<-mcp(SpatialPoints((coyote4h %>% filter(season=="spring" & SA=="mr"))[,1:2], proj4string=crs_NL2), percent=100)
+coyote8h_mcp_s<-mcp(SpatialPoints((coyote8h %>% filter(season=="spring" & SA=="mr"))[,1:2], proj4string=crs_NL2), percent=100)
+coyote8h_mcp_w<-mcp(SpatialPoints((coyote8h %>% filter(season=="winter" & SA=="mr"))[,1:2], proj4string=crs_NL2), percent=100)
 elk2h_mcp_s<-mcp(SpatialPoints(subset(elk2h, elk2h$season=="spring")[,1:2], proj4string=crs_RMNP), percent=100)
 elk2h_mcp_w<-mcp(SpatialPoints(subset(elk2h, elk2h$season=="winter")[,1:2], proj4string=crs_RMNP), percent=100)
 wolf1h_mcp_s<-mcp(SpatialPoints(subset(wolf1h, wolf1h$season=="spring")[,1:2], proj4string=crs_RMNP), percent=100)
 wolf1h_mcp_w<-mcp(SpatialPoints(subset(wolf1h, wolf1h$season=="winter")[,1:2], proj4string=crs_RMNP), percent=100)
+
 
 
 #save.image("WIP_JUNE28_2021.Rdata")
@@ -71,6 +81,9 @@ rm(list= ls()[!(ls() %in% c('bear2h_mcp_s','bear4h_mcp_s','caribou2h_mcp_s','car
                             'coyote4h','coyote8h','elk2h','wolf1h'))])
 
 
+caribou2h<-caribou2h %>% filter(y<=5400000)
+coyote4h<-coyote4h %>% filter(SA=="mr")
+coyote8h<-coyote8h %>% filter(SA=="mr")
 
 save.image("need_regpts.Rdata")
 
@@ -87,21 +100,21 @@ load("usedpts.Rdata")
 
 ### regular points.R to create _200m.Rds files
 
-coyote8h_w_regpts <- readRDS("input/regpts/coyote8h_mcp_w_regpts_200m.Rds")
-coyote8h_s_regpts <- readRDS("input/regpts/coyote8h_mcp_s_regpts_200m.Rds")
-coyote4h_s_regpts <- readRDS("input/regpts/coyote4h_mcp_s_regpts_200m.Rds")
+coyote8h_w_regpts <- readRDS("C:/Users/ehanc/OneDrive/Desktop/RScripts for EWC_Jan2024/input/regpts/coyote8h_mcp_w_regpts_200m.Rds")
+coyote8h_s_regpts <- readRDS("C:/Users/ehanc/OneDrive/Desktop/RScripts for EWC_Jan2024/input/regpts/coyote8h_mcp_s_regpts_200m.Rds")
+coyote4h_s_regpts <- readRDS("C:/Users/ehanc/OneDrive/Desktop/RScripts for EWC_Jan2024/input/regpts/coyote4h_mcp_s_regpts_200m.Rds")
 
-caribou2h_s_regpts <- readRDS("input/regpts/caribou2h_mcp_s_regpts_200m.Rds")
-caribou2h_w_regpts <- readRDS("input/regpts/caribou2h_mcp_w_regpts_200m.Rds")
+caribou2h_s_regpts <- readRDS("C:/Users/ehanc/OneDrive/Desktop/RScripts for EWC_Jan2024/input/regpts/caribou2h_mcp_s_regpts_200m.Rds")
+caribou2h_w_regpts <- readRDS("C:/Users/ehanc/OneDrive/Desktop/RScripts for EWC_Jan2024/input/regpts/caribou2h_mcp_w_regpts_200m.Rds")
 
-bear4h_s_regpts <- readRDS("input/regpts/bear4h_mcp_s_regpts_200m.Rds")
-bear2h_s_regpts <- readRDS("input/regpts/bear2h_mcp_s_regpts_200m.Rds")
+bear4h_s_regpts <- readRDS("C:/Users/ehanc/OneDrive/Desktop/RScripts for EWC_Jan2024/input/regpts/bear4h_mcp_s_regpts_200m.Rds")
+bear2h_s_regpts <- readRDS("C:/Users/ehanc/OneDrive/Desktop/RScripts for EWC_Jan2024/input/regpts/bear2h_mcp_s_regpts_200m.Rds")
 
-elk2h_s_regpts <- readRDS("input/regpts/elk2h_mcp_s_regpts_200m.Rds")
-elk2h_w_regpts <- readRDS("input/regpts/elk2h_mcp_w_regpts_200m.Rds")
+elk2h_s_regpts <- readRDS("C:/Users/ehanc/OneDrive/Desktop/RScripts for EWC_Jan2024/input/regpts/elk2h_mcp_s_regpts_200m.Rds")
+elk2h_w_regpts <- readRDS("C:/Users/ehanc/OneDrive/Desktop/RScripts for EWC_Jan2024/input/regpts/elk2h_mcp_w_regpts_200m.Rds")
 
-wolf1h_s_regpts <- readRDS("input/regpts/wolf1h_mcp_s_regpts_200m.Rds")
-wolf1h_w_regpts <- readRDS("input/regpts/wolf1h_mcp_w_regpts_200m.Rds")
+wolf1h_s_regpts <- readRDS("C:/Users/ehanc/OneDrive/Desktop/RScripts for EWC_Jan2024/input/regpts/wolf1h_mcp_s_regpts_200m.Rds")
+wolf1h_w_regpts <- readRDS("C:/Users/ehanc/OneDrive/Desktop/RScripts for EWC_Jan2024/input/regpts/wolf1h_mcp_w_regpts_200m.Rds")
 
 # 
 # library(sf)
@@ -160,6 +173,7 @@ caribou2h$case<-1
 elk2h$case<-1
 wolf1h$case<-1
 
+library(dplyr)
 
 
 bear2h_full<-bind_rows(bear2h,bear2h_s_regpts)
