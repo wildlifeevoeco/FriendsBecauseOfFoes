@@ -1,18 +1,6 @@
 ### Makefile
 # Alec Robitaille
 
-## Count Summary
-paper/summary-counts.pdf: paper/summary-counts.Rmd output/4-sociality/elkNNA.Rds output/4-sociality/caribouNNA.Rds paper/summary-sociality.pdf
-	Rscript -e "rmarkdown::render('paper/summary-counts.Rmd', quiet = TRUE)"
-	rm -- **/*.tex
-	echo "summary counts pdf rendered"
-
-## Sociality Summary
-paper/summary-sociality.pdf: paper/summary-sociality.Rmd output/4-sociality/elkNNA.Rds output/4-sociality/caribouNNA.Rds
-	Rscript -e "rmarkdown::render('paper/summary-sociality.Rmd', quiet = TRUE)"
-	rm -- **/*.tex
-	echo "summary sociality pdf rendered"
-
 ## 4 - Sociality
 # NNA
 output/4-sociality/elkNNA.Rds: scripts/4-sociality/Nearest-Neighbour-Analysis.R output/4-sociality/elkAngle.Rds
@@ -27,13 +15,6 @@ output/4-sociality/elkAngle.Rds: scripts/4-sociality/Calculate-Turn-Angles.R out
 
 output/4-sociality/caribouAngle.Rds: scripts/4-sociality/Calculate-Turn-Angles.R output/3-extraction/caribouExtract.Rds paper/summary-rsf-table.pdf
 	Rscript scripts/4-sociality/Calculate-Turn-Angles.R --arg caribou
-
-## RSF Summary
-paper/summary-rsf-table.pdf: paper/summary-rsf-table.Rmd output/3-extraction/elkExtract.Rds output/3-extraction/caribouExtract.Rds
-	Rscript -e "rmarkdown::render('paper/summary-rsf-table.Rmd', quiet = TRUE)"
-	rm -- **/*.tex
-	echo "summary rsf tables rendered"
-
 
 ## 3 - Extract
 # RMNP

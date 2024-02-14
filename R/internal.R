@@ -1,5 +1,3 @@
-#TODO: remove? is this used?
-
 #' check col
 #' @param DT data.table
 #' @param col column name

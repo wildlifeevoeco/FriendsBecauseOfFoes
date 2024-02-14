@@ -29,5 +29,5 @@ generate_grid <- function(pol, spacing, crs) {
   
   data.table::data.table(
     rSP@coords[sp::over(pol, rSP, returnList = TRUE)[[1]], ]
-    )
+  )
 }
