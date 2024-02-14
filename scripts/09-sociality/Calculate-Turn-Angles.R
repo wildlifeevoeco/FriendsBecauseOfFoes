@@ -1,16 +1,13 @@
 # Calculate Turn Angles
-# Authors: Alec Robitaille
-
 
 
 library(data.table)
 
-### Set variables ----
-source('scripts/0-variables/variables.R')
 
 ### Input data ----
-load('OUTPUT_NEW/EXTRACT_DOMAINS/for_step4_ewc.Rdata')
-
+load('for_step4_ewc_new.Rdata')
+DT <- elkExtract
+species <- 'Elk'
 if (truelength(DT) == 0) alloc.col(DT) 
 
 # List relevant column names
@@ -44,13 +41,15 @@ if (any(!(DT[is.na(relAngle), .N, by = .(id, yr, season)][, range(N)] ==
   stop('check NAs in relAngle')
 }
 
-dir.create("OUTPUT_NEW/SOCIAL")
+# dir.create("OUTPUT_NEW/SOCIAL")
 
-saveRDS(DT, paste0('OUTPUT_NEW/SOCIAL/', species, 'Angle_log2.Rds'))
+saveRDS(DT, paste0(species, 'Angle_log2.Rds'))
 
 
 
 ### Input data ----
+DT <- caribouExtract
+species <- 'caribou'
 if (truelength(DT) == 0) alloc.col(DT) 
 
 # List relevant column names
@@ -86,4 +85,4 @@ if (any(!(DT[is.na(relAngle), .N, by = .(id, yr, season)][, range(N)] ==
 
 
 
-saveRDS(DT, paste0('OUTPUT_NEW/SOCIAL/', species, 'Angle_log2.Rds'))
+saveRDS(DT, paste0(species, 'Angle_log2.Rds'))
