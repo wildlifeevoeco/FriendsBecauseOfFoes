@@ -1,5 +1,4 @@
 # Caribou data preparation
-# Authors: Quinn Webber, Alec Robitaille
 
 
 ### Packages ----

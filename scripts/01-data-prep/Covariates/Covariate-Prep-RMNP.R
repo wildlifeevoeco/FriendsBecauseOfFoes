@@ -1,5 +1,4 @@
 ### Covariate (Raster) Processing ----
-# Authors: Alec Robitaille, Christina M Prokopenko, Sana Zabihi
 
 ### Packages ----
 library(data.table)

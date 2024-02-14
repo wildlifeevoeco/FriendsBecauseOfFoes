@@ -1,5 +1,4 @@
 ### Covariate (Raster) Processing ----
-# Authors: Michel Laforge, Alec Robitaille
 
 ### Packages ----
 library(data.table)
