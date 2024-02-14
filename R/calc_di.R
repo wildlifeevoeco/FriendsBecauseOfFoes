@@ -72,11 +72,11 @@ diff_azimuth <- function(DT, suffix, angle, radians) {
   
   # If one undefined
   DT[is.na(get(angle1)) | is.na(get(angle2)), 
-      diAngle := 0]
+     diAngle := 0]
   
   # If both undefined
   DT[is.na(get(angle1)) & is.na(get(angle2)), 
-      diAngle := 1]
+     diAngle := 1]
   
   # Otherwise
   
@@ -124,7 +124,7 @@ diff_dist <- function(DT, suffix, dist, alpha = 1) {
      diDist := 1 - (
        (abs(.SD[[1]] - .SD[[2]]) / 
           (.SD[[1]] + .SD[[2]])
-        ) ^ alpha),
+       ) ^ alpha),
      .SDcols = c(dist1, dist2)]
   
   return(DT)
