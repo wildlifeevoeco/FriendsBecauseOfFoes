@@ -1,23 +1,22 @@
 ### SOCIALITY ~ DOMAIN MODEL ----
-# Authors: Alec Robitaille, Christina M Prokopenko, Hance Ellington
 
 ### Packages ----
 library(data.table)
 library(lme4)
 library(ggplot2)
 library(Hmisc)
-library(visreg)
-library(rgl)
-library(ggstance)
-library(broom.mixed)
 library(sandwich)
 library(interactions)
+library(ggstance)
+library(broom.mixed)
+library(visreg)
+library(rgl)
 
 
 ### Input data ----
 # Which species?
 species <- 'caribou'
-DT <- readRDS(paste0('OUTPUT_NEW/SOCIAL/', species, 'NNA_log2.Rds'))
+DT <- readRDS(paste0(species, 'NNA_log2.Rds'))
 
 coordCols <- c('EASTING', 'NORTHING')
 idCol <- 'id'
@@ -67,7 +66,7 @@ DT_W<-subset(DT2, DT2$season=="winter")
 #### change as needed for dyad distance threshold
 
 
-DTsoc3_50<-DT2[distance<=50 & dSI<=10000]
+DTsoc3_50<-DT2[distance<=50]
 
 
 
@@ -103,8 +102,8 @@ round(nrow(DTsoc3_S)/nrow(DT_S), 2)
 
 ### for NL correlations
 
-c1<-c(97:102,106:108) ### for isolating correlation columns
-c2<-c(103:105,109:111) ### for isolating correlation columns
+c1<-c(59:76) ### for isolating correlation columns
+c2<-c(59:76) ### for isolating correlation columns
 
 CORSp<-round(cor(as.data.frame(DTsoc3_S[,..c1])[, sapply(as.data.frame(DTsoc3_S[,..c1]), is.numeric)], use = "complete.obs", method = "pearson"),2)
 # CORSp2<-round(cor(as.data.frame(DTsoc3_S[,..c2])[, sapply(as.data.frame(DTsoc3_S[,..c2]), is.numeric)], use = "complete.obs", method = "pearson"),2)
@@ -164,24 +163,24 @@ ggplot(DTsoc3_W, aes(x=di)) + geom_histogram(aes(x=di, y = ..count../sum(..count
   geom_vline(aes(xintercept=0), color="black", linetype="solid", size=1)
 
 
+# 
+# boxplot(DTsoc3_W$avgcaribouw_class)
+# hist(DTsoc3_W$avgcaribouw_class)
+# 
+# boxplot(DTsoc3_W$avgcaribouw_raw)
+# hist(DTsoc3_W$avgcaribouw_raw)
 
-boxplot(DTsoc3_W$avgcaribouw_class)
-hist(DTsoc3_W$avgcaribouw_class)
+boxplot(DTsoc3_W$avgcaribouw_rsf_LOG_n)
+hist(DTsoc3_W$avgcaribouw_rsf_LOG_n)
+# 
+# boxplot(DTsoc3_W$avgcoyotew_class)
+# hist(DTsoc3_W$avgcoyotew_class)
+# 
+# boxplot(DTsoc3_W$avgcoyotew_raw)
+# hist(DTsoc3_W$avgcoyotew_raw)
 
-boxplot(DTsoc3_W$avgcaribouw_raw)
-hist(DTsoc3_W$avgcaribouw_raw)
-
-boxplot(DTsoc3_W$avgcaribouw_rsf)
-hist(DTsoc3_W$avgcaribouw_rsf)
-
-boxplot(DTsoc3_W$avgcoyotew_class)
-hist(DTsoc3_W$avgcoyotew_class)
-
-boxplot(DTsoc3_W$avgcoyotew_raw)
-hist(DTsoc3_W$avgcoyotew_raw)
-
-boxplot(DTsoc3_W$avgcoyotew_rsf)
-hist(DTsoc3_W$avgcoyotew_rsf)
+boxplot(DTsoc3_W$avgcoyotew_rsf_LOG_n)
+hist(DTsoc3_W$avgcoyotew_rsf_LOG_n)
 
 ## Spring
 
@@ -200,61 +199,41 @@ ggplot(DTsoc3_S, aes(x=di)) + geom_histogram(aes(x=di, y = ..count../sum(..count
 
 
 #boxplot(DTsoc3_S$avgcaribous_class)
-hist(DTsoc3_S$avgcaribous_class)
-
-#boxplot(DTsoc3_S$avgcaribous_raw)
-hist(DTsoc3_S$avgcaribous_raw)
+# hist(DTsoc3_S$avgcaribous_class)
+# 
+# #boxplot(DTsoc3_S$avgcaribous_raw)
+# hist(DTsoc3_S$avgcaribous_raw)
 
 #boxplot(DTsoc3_S$avgcaribous_rsf)
+hist(DTsoc3_S$avgcaribous_rsf_LOG_n)
+hist(DTsoc3_S$avgcaribous_rsf_LOG)
 hist(DTsoc3_S$avgcaribous_rsf)
 
-#boxplot(DTsoc3_S$avgcoyotes_class)
-hist(DTsoc3_S$avgcoyotes_class)
-
-#boxplot(DTsoc3_S$avgcoyotes_raw)
-hist(DTsoc3_S$avgcoyotes_raw)
+# #boxplot(DTsoc3_S$avgcoyotes_class)
+# hist(DTsoc3_S$avgcoyotes_class)
+# 
+# #boxplot(DTsoc3_S$avgcoyotes_raw)
+# hist(DTsoc3_S$avgcoyotes_raw)
 
 #boxplot(DTsoc3_S$avgcoyotes_rsf)
+hist(DTsoc3_S$avgcoyotes_rsf_LOG_n)
+hist(DTsoc3_S$avgcoyotes_rsf_LOG)
 hist(DTsoc3_S$avgcoyotes_rsf)
 
-#boxplot(DTsoc3_S$avgbear_class)
-hist(DTsoc3_S$avgbear_class)
-
-#boxplot(DTsoc3_S$avgbear_raw)
-hist(DTsoc3_S$avgbear_raw)
+# #boxplot(DTsoc3_S$avgbear_class)
+# hist(DTsoc3_S$avgbear_class)
+# 
+# #boxplot(DTsoc3_S$avgbear_raw)
+# hist(DTsoc3_S$avgbear_raw)
 
 #boxplot(DTsoc3_S$avgbear_rsf)
-hist(DTsoc3_S$avgbear_rsf)
+hist(DTsoc3_S$avgbear_rsf_LOG_n)
 
 
 
 ###GLM
 ## NL
 ## winter
-
-nlNN_W.DIpy_rsf<-
-  glm(di ~ avgcaribouw_rsf,
-      data = DTsoc3_W)
-
-summary(nlNN_W.DIpy_rsf)
-
-nlNN_W.DIpd_rsf<-
-  glm(di ~ avgcoyotew_rsf,
-      data = DTsoc3_W)
-
-summary(nlNN_W.DIpd_rsf)
-
-nlNN_W.DI_rsf<-
-  glm(di ~ avgcaribouw_rsf*avgcoyotew_rsf,
-      data = DTsoc3_W)
-
-summary(nlNN_W.DI_rsf)
-
-nlNN_W.DI_A_rsf<-
-  glm(di ~ avgcaribouw_rsf+avgcoyotew_rsf,
-      data = DTsoc3_W)
-
-summary(nlNN_W.DI_A_rsf)
 
 nlNN_W_null<-
   glm(di ~ 1,
@@ -263,114 +242,145 @@ nlNN_W_null<-
 summary(nlNN_W_null)
 
 
-plot(sim_slopes(nlNN_W.DI_rsf, pred = avgcoyotew_rsf, modx = avgcaribouw_rsf, robust=T))
+nlNN_W.DIpy_rsf<-
+  glm(di ~ avgcaribouw_rsf_LOG_n,
+      data = DTsoc3_W)
 
-johnson_neyman(nlNN_W.DI_rsf, pred = avgcoyotew_rsf, modx = avgcaribouw_rsf, control.fdr = TRUE,
+summary(nlNN_W.DIpy_rsf)
+
+nlNN_W.DIpd_rsf<-
+  glm(di ~ avgcoyotew_rsf_LOG_n,
+      data = DTsoc3_W)
+
+summary(nlNN_W.DIpd_rsf)
+
+nlNN_W.DI_rsf<-
+  glm(di ~ avgcaribouw_rsf_LOG_n*avgcoyotew_rsf_LOG_n,
+      data = DTsoc3_W)
+
+summary(nlNN_W.DI_rsf)
+
+nlNN_W.DI_A_rsf<-
+  glm(di ~ avgcaribouw_rsf_LOG_n+avgcoyotew_rsf_LOG_n,
+      data = DTsoc3_W)
+
+summary(nlNN_W.DI_A_rsf)
+
+
+
+# plot(sim_slopes(nlNN_W.DI_rsf, pred = avgcoyotew_rsf_LOG_n, modx = avgcaribouw_rsf_LOG_n, robust=T))
+
+johnson_neyman(nlNN_W.DI_rsf, pred = avgcoyotew_rsf_LOG_n, modx = avgcaribouw_rsf_LOG_n, control.fdr = TRUE,
                sig.color = "#00BFC4",
                insig.color = "gray50")
 
-effect_plot(nlNN_W.DI_rsf, pred = avgcoyotew_rsf, interval = TRUE, rug = TRUE)
-effect_plot(nlNN_W.DI_rsf, pred = avgcaribouw_rsf, interval = TRUE, rug = TRUE)
+probe_interaction(nlNN_W.DI_rsf, pred = avgcoyotew_rsf_LOG_n, modx = avgcaribouw_rsf_LOG_n, control.fdr = TRUE)
 
 
-visreg2d(nlNN_W.DI_rsf, "avgcaribouw_rsf", "avgcoyotew_rsf", plot.type="image", zlim=c(0.25,0.6), main="",
+effect_plot(nlNN_W.DI_rsf, pred = avgcoyotew_rsf_LOG_n, interval = TRUE, rug = TRUE)
+effect_plot(nlNN_W.DI_rsf, pred = avgcaribouw_rsf_LOG_n, interval = TRUE, rug = TRUE)
+
+
+visreg2d(nlNN_W.DI_rsf, "avgcaribouw_rsf_LOG_n", "avgcoyotew_rsf_LOG_n", plot.type="image", zlim=c(0.25,0.6), main="",
          xlab="Caribou foraging domain",
          ylab="Coyote hunting domain", zlab = "Predicted dynamic interaction of caribou dyad",nlevels=100)
 
 
 ## spring
-
-rsf_nlNN_S.DIpy<-
-  glm(di ~ avgcaribous_rsf,
-      data = DTsoc3_S)
-
-summary(rsf_nlNN_S.DIpy)
-
 rsf_nlNN_S_null<-
   glm(di ~ 1,
       data = DTsoc3_S)
 
 summary(rsf_nlNN_S_null)
 
+rsf_nlNN_S.DIpy<-
+  glm(di ~ avgcaribous_rsf_LOG_n,
+      data = DTsoc3_S)
+
+summary(rsf_nlNN_S.DIpy)
+
+
+
 
 ### Bear v Coyote in Spring
 
 rsf_nlNN_S.DI_Cpd<-
-  glm(di ~ avgcoyotes_rsf,
+  glm(di ~ avgcoyotes_rsf_LOG_n,
       data = DTsoc3_S)
 summary(rsf_nlNN_S.DI_Cpd)
 
 rsf_nlNN_S.DI_C<-
-  glm(di ~ avgcaribous_rsf*avgcoyotes_rsf,
+  glm(di ~ avgcaribous_rsf_LOG_n*avgcoyotes_rsf_LOG_n,
       data = DTsoc3_S)
 summary(rsf_nlNN_S.DI_C)
 
 rsf_nlNN_S.DI_C_A<-
-  glm(di ~ avgcaribous_rsf+avgcoyotes_rsf,
+  glm(di ~ avgcaribous_rsf_LOG_n+avgcoyotes_rsf_LOG_n,
       data = DTsoc3_S)
 summary(rsf_nlNN_S.DI_C_A)
 
 rsf_nlNN_S.DI_Bpd<-
-  glm(di ~ avgbear_rsf,
+  glm(di ~ avgbear_rsf_LOG_n,
       data = DTsoc3_S)
 summary(rsf_nlNN_S.DI_Bpd)
 
 rsf_nlNN_S.DI_B<-
-  glm(di ~ avgcaribous_rsf*avgbear_rsf,
+  glm(di ~ avgcaribous_rsf_LOG_n*avgbear_rsf_LOG_n,
       data = DTsoc3_S)
 summary(rsf_nlNN_S.DI_B)
 
 rsf_nlNN_S.DI_B_A<-
-  glm(di ~ avgcaribous_rsf+avgbear_rsf,
+  glm(di ~ avgcaribous_rsf_LOG_n+avgbear_rsf_LOG_n,
       data = DTsoc3_S)
 summary(rsf_nlNN_S.DI_B_A)
 
 ## bear and coyote  
 
 rsf_nlNN_S.DI_CB_A<-
-  glm(di ~ avgcaribous_rsf+avgbear_rsf+avgcoyotes_rsf,
+  glm(di ~ avgcaribous_rsf_LOG_n+avgbear_rsf_LOG_n+avgcoyotes_rsf_LOG_n,
       data = DTsoc3_S)
 summary(rsf_nlNN_S.DI_CB_A)
 
 rsf_nlNN_S.DI_CB<-
-  glm(di ~ avgcaribous_rsf*avgbear_rsf+avgcaribous_rsf*avgcoyotes_rsf,
+  glm(di ~ avgcaribous_rsf_LOG_n*avgbear_rsf_LOG_n+avgcaribous_rsf_LOG_n*avgcoyotes_rsf_LOG_n,
       data = DTsoc3_S)
 summary(rsf_nlNN_S.DI_CB)
 
-
-rsf_nlNN_S.DI_B_C<-
-  glm(di ~ avgcaribous_rsf*avgbear_rsf+avgcoyotes_rsf,
-      data = DTsoc3_S)
-summary(rsf_nlNN_S.DI_B_C)
-
-rsf_nlNN_S.DI_C_B<-
-  glm(di ~ avgbear_rsf+avgcaribous_rsf*avgcoyotes_rsf,
-      data = DTsoc3_S)
-summary(rsf_nlNN_S.DI_C_B)
-
-
-rsf_nlNN_S.DI_3W<-
-  glm(di ~ avgbear_rsf*avgcaribous_rsf*avgcoyotes_rsf,
-      data = DTsoc3_S)
-summary(rsf_nlNN_S.DI_3W)
-
-
+# 
+# rsf_nlNN_S.DI_B_C<-
+#   glm(di ~ avgcaribous_rsf*avgbear_rsf+avgcoyotes_rsf,
+#       data = DTsoc3_S)
+# summary(rsf_nlNN_S.DI_B_C)
+# 
+# rsf_nlNN_S.DI_C_B<-
+#   glm(di ~ avgbear_rsf+avgcaribous_rsf*avgcoyotes_rsf,
+#       data = DTsoc3_S)
+# summary(rsf_nlNN_S.DI_C_B)
+# 
+# 
+# rsf_nlNN_S.DI_3W<-
+#   glm(di ~ avgbear_rsf*avgcaribous_rsf*avgcoyotes_rsf,
+#       data = DTsoc3_S)
+# summary(rsf_nlNN_S.DI_3W)
 
 
 
-johnson_neyman(rsf_nlNN_S.DI_CB, pred = avgcoyotes_rsf, modx = avgcaribous_rsf, control.fdr = TRUE,
+johnson_neyman(rsf_nlNN_S.DI_C, pred = avgcoyotes_rsf_LOG_n, modx = avgcaribous_rsf_LOG_n, control.fdr = TRUE,
                sig.color = "#00BFC4",
                insig.color = "gray50")
 
-effect_plot(rsf_nlNN_S.DI_CB, pred = avgcoyotes_rsf, interval = TRUE, rug = TRUE)
-effect_plot(rsf_nlNN_S.DI_CB, pred = avgcaribous_rsf, interval = TRUE, rug = TRUE)
-effect_plot(rsf_nlNN_S.DI_CB, pred = avgbear_rsf, interval = TRUE, rug = TRUE)
+johnson_neyman(rsf_nlNN_S.DI_CB, pred = avgcoyotes_rsf_LOG_n, modx = avgcaribous_rsf_LOG_n, control.fdr = TRUE,
+               sig.color = "#00BFC4",
+               insig.color = "gray50")
+
+effect_plot(rsf_nlNN_S.DI_CB_A, pred = avgcoyotes_rsf_LOG_n, interval = TRUE, rug = TRUE)
+effect_plot(rsf_nlNN_S.DI_CB_A, pred = avgcaribous_rsf_LOG_n, interval = TRUE, rug = TRUE)
+effect_plot(rsf_nlNN_S.DI_CB_A, pred = avgbear_rsf_LOG_n, interval = TRUE, rug = TRUE)
 
 
-visreg2d(rsf_nlNN_S.DI_CB, "avgcaribous_rsf", "avgcoyotes_rsf", plot.type="image", zlim=c(0,1), main="",
+visreg2d(rsf_nlNN_S.DI_CB, "avgcaribous_rsf_LOG_n", "avgcoyotes_rsf_LOG_n", plot.type="image", zlim=c(0,1), main="",
          xlab="Caribou foraging domain",
          ylab="Coyote hunting domain", zlab = "Predicted dynamic interaction of caribou dyad",nlevels=100)
-
 
 
 
@@ -389,70 +399,75 @@ visreg2d(rsf_nlNN_S.DI_CB, "avgcaribous_rsf", "avgcoyotes_rsf", plot.type="image
 # rsf_nlNN_S.DI_B
 # 
 # rsf_nlNN_S.DI_CB
+# 
+# interact_plot(nlNN_W.DI_rsf, pred = avgcoyotew_rsf_LOG_n, modx = avgcaribouw_rsf_LOG_n, data = DTsoc3_W, linearity.check = TRUE, plot.points = TRUE)
+# interact_plot(rsf_nlNN_S.DI_CB, pred = avgbear_rsf_LOG_n_LOG_n, modx = avgcaribous_rsf_LOG_n, data = DTsoc3_S, linearity.check = TRUE, plot.points = TRUE)
+# interact_plot(rsf_nlNN_S.DI_CB, pred = avgcoyotes_rsf_LOG_n_LOG_n, modx = avgcaribous_rsf_LOG_n, data = DTsoc3_S, linearity.check = TRUE, plot.points = TRUE)
+# 
+# interact_plot(nlNN_W.DI_rsf, pred = avgcoyotew_rsf_LOG_n, modx = avgcaribouw_rsf_LOG_n, plot.points = TRUE)
+# interact_plot(nlNN_W.DI_rsf, pred = avgcoyotew_rsf_LOG_n, modx = avgcaribouw_rsf_LOG_n, plot.points = TRUE,  modx.values = c(0, 0.25, 0.50, 0.75, 1.0))
+# 
+# interact_plot(nlNN_W.DI_rsf, pred = avgcoyotew_rsf_LOG_n, modx = avgcaribouw_rsf_LOG_n, partial.residuals = TRUE)
+# interact_plot(nlNN_W.DI_rsf, pred = avgcoyotew_rsf_LOG_n, modx = avgcaribouw_rsf_LOG_n, partial.residuals = TRUE,  modx.values = c(0, 0.25, 0.50, 0.75, 1.0))
+# 
+# interact_plot(nlNN_W.DI_rsf, pred = avgcoyotew_rsf_LOG_n, modx = avgcaribouw_rsf_LOG_n, partial.residuals = TRUE, interval = TRUE, int.width = 0.8, robust=TRUE)
+# interact_plot(nlNN_W.DI_rsf, pred = avgcoyotew_rsf_LOG_n, modx = avgcaribouw_rsf_LOG_n, partial.residuals = TRUE,  modx.values = c(0, 0.25, 0.50, 0.75, 1.0), interval = TRUE, int.width = 0.8, robust=TRUE)
+# 
+# interact_plot(rsf_nlNN_S.DI_CB, pred = avgbear_rsf_LOG_n, modx = avgcaribous_rsf_LOG_n, plot.points = TRUE)
+# interact_plot(rsf_nlNN_S.DI_CB, pred = avgbear_rsf_LOG_n, modx = avgcaribous_rsf_LOG_n, plot.points = TRUE,  modx.values = c(0, 0.25, 0.50, 0.75, 1.0))
+# 
+# interact_plot(rsf_nlNN_S.DI_CB, pred = avgbear_rsf_LOG_n, modx = avgcaribous_rsf_LOG_n, partial.residuals = TRUE)
+# interact_plot(rsf_nlNN_S.DI_CB, pred = avgbear_rsf_LOG_n, modx = avgcaribous_rsf_LOG_n, partial.residuals = TRUE,  modx.values = c(0, 0.25, 0.50, 0.75, 1.0))
+# 
+# interact_plot(rsf_nlNN_S.DI_CB, pred = avgbear_rsf_LOG_n, modx = avgcaribous_rsf_LOG_n, partial.residuals = TRUE, interval = TRUE, int.width = 0.8, robust=TRUE)
+# interact_plot(rsf_nlNN_S.DI_CB, pred = avgbear_rsf_LOG_n, modx = avgcaribous_rsf_LOG_n, partial.residuals = TRUE,  modx.values = c(0, 0.25, 0.50, 0.75, 1.0), interval = TRUE, int.width = 0.8, robust=TRUE)
+# 
+# interact_plot(rsf_nlNN_S.DI_CB, pred = avgcoyotes_rsf_LOG_n, modx = avgcaribous_rsf_LOG_n, plot.points = TRUE)
+# interact_plot(rsf_nlNN_S.DI_CB, pred = avgcoyotes_rsf_LOG_n, modx = avgcaribous_rsf_LOG_n, plot.points = TRUE,  modx.values = c(0, 0.25, 0.50, 0.75, 1.0))
+# 
+# interact_plot(rsf_nlNN_S.DI_CB, pred = avgcoyotes_rsf_LOG_n, modx = avgcaribous_rsf_LOG_n, partial.residuals = TRUE)
+# interact_plot(rsf_nlNN_S.DI_CB, pred = avgcoyotes_rsf_LOG_n, modx = avgcaribous_rsf_LOG_n, partial.residuals = TRUE,  modx.values = c(0, 0.25, 0.50, 0.75, 1.0))
+# 
+# interact_plot(rsf_nlNN_S.DI_CB, pred = avgcoyotes_rsf_LOG_n, modx = avgcaribous_rsf_LOG_n, partial.residuals = TRUE, interval = TRUE, int.width = 0.8, robust=TRUE)
+# interact_plot(rsf_nlNN_S.DI_CB, pred = avgcoyotes_rsf_LOG_n, modx = avgcaribous_rsf_LOG_n, partial.residuals = TRUE,  modx.values = c(0, 0.25, 0.50, 0.75, 1.0), interval = TRUE, int.width = 0.8, robust=TRUE)
+# 
 
-interact_plot(nlNN_W.DI_rsf, pred = avgcoyotew_rsf, modx = avgcaribouw_rsf, data = DTsoc3_W, linearity.check = TRUE, plot.points = TRUE)
-interact_plot(rsf_nlNN_S.DI_CB, pred = avgbear_rsf, modx = avgcaribous_rsf, data = DTsoc3_S, linearity.check = TRUE, plot.points = TRUE)
-interact_plot(rsf_nlNN_S.DI_CB, pred = avgcoyotes_rsf, modx = avgcaribous_rsf, data = DTsoc3_S, linearity.check = TRUE, plot.points = TRUE)
 
-interact_plot(nlNN_W.DI_rsf, pred = avgcoyotew_rsf, modx = avgcaribouw_rsf, plot.points = TRUE)
-interact_plot(nlNN_W.DI_rsf, pred = avgcoyotew_rsf, modx = avgcaribouw_rsf, plot.points = TRUE,  modx.values = c(0, 0.25, 0.50, 0.75, 1.0))
-
-interact_plot(nlNN_W.DI_rsf, pred = avgcoyotew_rsf, modx = avgcaribouw_rsf, partial.residuals = TRUE)
-interact_plot(nlNN_W.DI_rsf, pred = avgcoyotew_rsf, modx = avgcaribouw_rsf, partial.residuals = TRUE,  modx.values = c(0, 0.25, 0.50, 0.75, 1.0))
-
-interact_plot(nlNN_W.DI_rsf, pred = avgcoyotew_rsf, modx = avgcaribouw_rsf, partial.residuals = TRUE, interval = TRUE, int.width = 0.8, robust=TRUE)
-interact_plot(nlNN_W.DI_rsf, pred = avgcoyotew_rsf, modx = avgcaribouw_rsf, partial.residuals = TRUE,  modx.values = c(0, 0.25, 0.50, 0.75, 1.0), interval = TRUE, int.width = 0.8, robust=TRUE)
-
-interact_plot(rsf_nlNN_S.DI_CB, pred = avgbear_rsf, modx = avgcaribous_rsf, plot.points = TRUE)
-interact_plot(rsf_nlNN_S.DI_CB, pred = avgbear_rsf, modx = avgcaribous_rsf, plot.points = TRUE,  modx.values = c(0, 0.25, 0.50, 0.75, 1.0))
-
-interact_plot(rsf_nlNN_S.DI_CB, pred = avgbear_rsf, modx = avgcaribous_rsf, partial.residuals = TRUE)
-interact_plot(rsf_nlNN_S.DI_CB, pred = avgbear_rsf, modx = avgcaribous_rsf, partial.residuals = TRUE,  modx.values = c(0, 0.25, 0.50, 0.75, 1.0))
-
-interact_plot(rsf_nlNN_S.DI_CB, pred = avgbear_rsf, modx = avgcaribous_rsf, partial.residuals = TRUE, interval = TRUE, int.width = 0.8, robust=TRUE)
-interact_plot(rsf_nlNN_S.DI_CB, pred = avgbear_rsf, modx = avgcaribous_rsf, partial.residuals = TRUE,  modx.values = c(0, 0.25, 0.50, 0.75, 1.0), interval = TRUE, int.width = 0.8, robust=TRUE)
-
-interact_plot(rsf_nlNN_S.DI_CB, pred = avgcoyotes_rsf, modx = avgcaribous_rsf, plot.points = TRUE)
-interact_plot(rsf_nlNN_S.DI_CB, pred = avgcoyotes_rsf, modx = avgcaribous_rsf, plot.points = TRUE,  modx.values = c(0, 0.25, 0.50, 0.75, 1.0))
-
-interact_plot(rsf_nlNN_S.DI_CB, pred = avgcoyotes_rsf, modx = avgcaribous_rsf, partial.residuals = TRUE)
-interact_plot(rsf_nlNN_S.DI_CB, pred = avgcoyotes_rsf, modx = avgcaribous_rsf, partial.residuals = TRUE,  modx.values = c(0, 0.25, 0.50, 0.75, 1.0))
-
-interact_plot(rsf_nlNN_S.DI_CB, pred = avgcoyotes_rsf, modx = avgcaribous_rsf, partial.residuals = TRUE, interval = TRUE, int.width = 0.8, robust=TRUE)
-interact_plot(rsf_nlNN_S.DI_CB, pred = avgcoyotes_rsf, modx = avgcaribous_rsf, partial.residuals = TRUE,  modx.values = c(0, 0.25, 0.50, 0.75, 1.0), interval = TRUE, int.width = 0.8, robust=TRUE)
-
-
-
-probe_interaction(nlNN_W.DI_rsf, pred = avgcoyotew_rsf, modx = avgcaribouw_rsf, robust=T, control.fdr = TRUE)
+probe_interaction(nlNN_W.DI_rsf, pred = avgcoyotew_rsf_LOG_n, modx = avgcaribouw_rsf_LOG_n, control.fdr = TRUE)
 
 # probe_interaction(rsf_nlNN_S.DI_B, pred = avgbear_rsf, modx = avgcaribous_rsf, robust=T)
 # probe_interaction(rsf_nlNN_S.DI_C, pred = avgcoyotes_rsf, modx = avgcaribous_rsf, robust=T)
 
-probe_interaction(rsf_nlNN_S.DI_CB, pred = avgbear_rsf, modx = avgcaribous_rsf, robust=T, control.fdr = TRUE)
-probe_interaction(rsf_nlNN_S.DI_CB, pred = avgcoyotes_rsf, modx = avgcaribous_rsf, robust=T, control.fdr = TRUE)
+probe_interaction(rsf_nlNN_S.DI_CB, pred = avgbear_rsf_LOG_n, modx = avgcaribous_rsf_LOG_n, control.fdr = TRUE)
+probe_interaction(rsf_nlNN_S.DI_CB, pred = avgcoyotes_rsf_LOG_n, modx = avgcaribous_rsf_LOG_n, control.fdr = TRUE)
 
 # probe_interaction(rsf_nlNN_S.DI_3W, pred = avgbear_rsf, modx = avgcaribous_rsf, mod2 = avgcoyotes_rsf, robust=T)
 
 
-plot(sim_slopes(nlNN_W.DI_rsf, pred = avgcoyotew_rsf, modx = avgcaribouw_rsf, robust=T))
-plot(sim_slopes(rsf_nlNN_S.DI_CB, pred = avgbear_rsf, modx = avgcaribous_rsf, robust=T))
-plot(sim_slopes(rsf_nlNN_S.DI_CB, pred = avgcoyotes_rsf, modx = avgcaribous_rsf, robust=T))
+# plot(sim_slopes(nlNN_W.DI_rsf, pred = avgcoyotew_rsf_LOG_n, modx = avgcaribouw_rsf_LOG_n, robust=T))
+# plot(sim_slopes(rsf_nlNN_S.DI_CB, pred = avgbear_rsf_LOG_n, modx = avgcaribous_rsf_LOG_n, robust=T))
+# plot(sim_slopes(rsf_nlNN_S.DI_CB, pred = avgcoyotes_rsf_LOG_n, modx = avgcaribous_rsf_LOG_n, robust=T))
 
-johnson_neyman(nlNN_W.DI_rsf, pred = avgcoyotew_rsf, modx = avgcaribouw_rsf, control.fdr = TRUE)
-johnson_neyman(rsf_nlNN_S.DI_CB, pred = avgbear_rsf, modx = avgcaribous_rsf, control.fdr = TRUE)
-johnson_neyman(rsf_nlNN_S.DI_CB, pred = avgcoyotes_rsf, modx = avgcaribous_rsf, control.fdr = TRUE)
-
-
-
-visreg2d(rsf_nlNN_S.DI_CB, "avgcaribous_rsf", "avgbear_rsf", plot.type="image", zlim=c(0,0.5), main="",
-          xlab="Caribou foraging domain",
-          ylab="Black bear hunting domain", zlab = "Predicted dynamic interaction of caribou dyad",nlevels=100)
+johnson_neyman(nlNN_W.DI_rsf, pred = avgcoyotew_rsf_LOG_n, modx = avgcaribouw_rsf_LOG_n, control.fdr = TRUE)
+johnson_neyman(rsf_nlNN_S.DI_CB, pred = avgbear_rsf_LOG_n, modx = avgcaribous_rsf_LOG_n, control.fdr = TRUE)
+johnson_neyman(rsf_nlNN_S.DI_CB, pred = avgcoyotes_rsf_LOG_n, modx = avgcaribous_rsf_LOG_n, control.fdr = TRUE)
 
 
-visreg2d(nlNN_W.DI_rsf, "avgcaribouw_rsf", "avgcoyotew_rsf", plot.type="image", zlim=c(0,0.5), main="",
+
+visreg2d(rsf_nlNN_S.DI_CB, "avgcaribous_rsf_LOG_n", "avgbear_rsf_LOG_n", plot.type="image", zlim=c(0,0.5), main="",
+         xlab="Caribou foraging domain",
+         ylab="Black bear hunting domain", zlab = "Predicted dynamic interaction of caribou dyad",nlevels=100)
+
+
+visreg2d(nlNN_W.DI_rsf, "avgcaribouw_rsf_LOG_n", "avgcoyotew_rsf_LOG_n", plot.type="image", zlim=c(-0.5,0.80), main="",
          xlab="Caribou foraging domain",
          ylab="Coyote hunting domain", zlab = "Predicted dynamic interaction of caribou dyad",nlevels=100)
 
+
+
+visreg2d(rsf_nlNN_S.DI_C, "avgcaribous_rsf_LOG_n", "avgcoyotes_rsf_LOG_n", plot.type="image", zlim=c(0,0.5), main="",
+         xlab="Caribou foraging domain",
+         ylab="Coyote hunting domain", zlab = "Predicted dynamic interaction of caribou dyad",nlevels=100)
 
 
 
@@ -460,4 +475,4 @@ visreg2d(nlNN_W.DI_rsf, "avgcaribouw_rsf", "avgcoyotew_rsf", plot.type="image", 
 ### (Esarey & Sumner, 2017)
 
 dir.create("OUTPUT_NEW/FINAL")
-save.image("OUTPUT_NEW/FINAL/NL_results_log_50m.Rdata")
+save.image("NL_results_LOG_N.Rdata")
