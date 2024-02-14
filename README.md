@@ -1,7 +1,7 @@
 
 ## Friends because of foes: synchronous movement within predator-prey domains
 
-[![DOI](https://zenodo.org/badge/ZZZ.svg)](https://zenodo.org/badge/latestdoi/ZZZ)
+[![DOI](https://zenodo.org/badge/757536188.svg)](https://zenodo.org/doi/10.5281/zenodo.10659026)
 
 - Authors:
   - Christina M. Prokopenko
