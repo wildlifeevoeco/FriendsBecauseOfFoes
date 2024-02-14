@@ -1,15 +1,11 @@
-### Packages ----
 library(data.table)
+library(sp)
+library(adehabitatHR)
 library(raster)
 library(rgeos)
 library(lme4)
 library(car)
 library(piecewiseSEM)
-library(adehabitatHR)
-
-### Variables ----
-source('scripts/0-variables/variables.R')
-
 
 load("need_regpts.Rdata")
 
@@ -23,6 +19,6 @@ lsregpts <- lapply(l, function(m) {
     crs = proj4string(get(m))
   )
   setnames(regPts, c('x', 'y'))
-  saveRDS(regPts, paste0('input/regpts/', m, '_regpts_200m.Rds'))
+  saveRDS(regPts, paste0(m, '_regpts_200m.Rds'))
   return(1)
 })
